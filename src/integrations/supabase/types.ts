@@ -44,6 +44,41 @@ export type Database = {
           },
         ]
       }
+      event_rsvps: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          id: string
+          player_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          player_id?: string | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          player_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           created_at: string
@@ -53,6 +88,10 @@ export type Database = {
           num_teams: number
           roster_spots: number
           rsvp_deadline_hours: number
+          team1_color: string | null
+          team1_name: string | null
+          team2_color: string | null
+          team2_name: string | null
           title: string
           updated_at: string
         }
@@ -64,6 +103,10 @@ export type Database = {
           num_teams: number
           roster_spots: number
           rsvp_deadline_hours: number
+          team1_color?: string | null
+          team1_name?: string | null
+          team2_color?: string | null
+          team2_name?: string | null
           title: string
           updated_at?: string
         }
@@ -75,6 +118,10 @@ export type Database = {
           num_teams?: number
           roster_spots?: number
           rsvp_deadline_hours?: number
+          team1_color?: string | null
+          team1_name?: string | null
+          team2_color?: string | null
+          team2_name?: string | null
           title?: string
           updated_at?: string
         }
@@ -132,6 +179,50 @@ export type Database = {
           },
         ]
       }
+      player_stats: {
+        Row: {
+          created_at: string
+          id: string
+          league_id: string | null
+          losses: number | null
+          player_id: string | null
+          points: number | null
+          ties: number | null
+          updated_at: string
+          wins: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          league_id?: string | null
+          losses?: number | null
+          player_id?: string | null
+          points?: number | null
+          ties?: number | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          league_id?: string | null
+          losses?: number | null
+          player_id?: string | null
+          points?: number | null
+          ties?: number | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_stats_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -158,6 +249,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      teammate_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          league_id: string | null
+          rated_id: string | null
+          rater_id: string | null
+          rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          league_id?: string | null
+          rated_id?: string | null
+          rater_id?: string | null
+          rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          league_id?: string | null
+          rated_id?: string | null
+          rater_id?: string | null
+          rating?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teammate_ratings_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
