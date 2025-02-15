@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import type { PlayerProfile } from '@/pages/PlayerRegistration';
@@ -32,6 +32,13 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
   const [sports, setSports] = useState<string[]>(initialData.sports || []);
   const [positions, setPositions] = useState<string[]>(initialData.positions || []);
   const [date, setDate] = useState<Date>();
+  const [calendarMonth, setCalendarMonth] = useState<Date>(dateOfBirth || new Date());
+
+  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
   const handleSportToggle = (sport: string) => {
     if (sports.includes(sport)) {
@@ -96,7 +103,48 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
               {dateOfBirth ? format(dateOfBirth, "PPP") : <span>Pick a date</span>}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto p-0" align="start">
+            <div className="flex gap-2 p-3">
+              <Select
+                value={calendarMonth.getMonth().toString()}
+                onValueChange={(value) => {
+                  const newDate = new Date(calendarMonth);
+                  newDate.setMonth(parseInt(value));
+                  setCalendarMonth(newDate);
+                }}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {months.map((month, index) => (
+                    <SelectItem key={month} value={index.toString()}>
+                      {month}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={calendarMonth.getFullYear().toString()}
+                onValueChange={(value) => {
+                  const newDate = new Date(calendarMonth);
+                  newDate.setFullYear(parseInt(value));
+                  setCalendarMonth(newDate);
+                }}
+              >
+                <SelectTrigger className="w-[95px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Calendar
               mode="single"
               selected={dateOfBirth}
@@ -104,6 +152,8 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
               disabled={(date) =>
                 date > new Date() || date < new Date("1900-01-01")
               }
+              month={calendarMonth}
+              onMonthChange={setCalendarMonth}
               initialFocus
             />
           </PopoverContent>
