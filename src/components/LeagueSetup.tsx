@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +25,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useAuth } from '@/integrations/auth';
+import { useAuth } from '@/contexts/AuthContext';  // Fixed import path
 
 export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
   const { user } = useAuth();
