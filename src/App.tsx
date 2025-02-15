@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
+import PlayerRegistration from "./pages/PlayerRegistration";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const AppRoutes = () => (
     <Route path="/sign-in" element={<PublicRoute><SignIn /></PublicRoute>} />
     <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
     <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+    <Route path="/complete-registration" element={<PrivateRoute><PlayerRegistration /></PrivateRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

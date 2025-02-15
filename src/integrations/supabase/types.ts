@@ -135,6 +135,42 @@ export type Database = {
           },
         ]
       }
+      league_members: {
+        Row: {
+          id: string
+          joined_at: string | null
+          league_id: string | null
+          player_id: string | null
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          league_id?: string | null
+          player_id?: string | null
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          league_id?: string | null
+          player_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_members_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_members_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leagues: {
         Row: {
           city: string
@@ -228,27 +264,42 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          date_of_birth: string | null
           full_name: string | null
           id: string
+          nickname: string | null
           phone: string | null
+          positions: string[] | null
           role: string | null
+          sports: string[] | null
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           id: string
+          nickname?: string | null
           phone?: string | null
+          positions?: string[] | null
           role?: string | null
+          sports?: string[] | null
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           id?: string
+          nickname?: string | null
           phone?: string | null
+          positions?: string[] | null
           role?: string | null
+          sports?: string[] | null
           updated_at?: string
         }
         Relationships: []
