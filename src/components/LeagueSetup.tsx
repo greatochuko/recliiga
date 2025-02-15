@@ -11,6 +11,7 @@ import { LogoStep } from './league-setup/LogoStep';
 import { EventsStep } from './league-setup/EventsStep';
 import { ReviewStep } from './league-setup/ReviewStep';
 import { LeagueFormData } from './league-setup/types';
+import { format } from 'date-fns';
 
 export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
   const { user } = useAuth();
@@ -214,16 +215,21 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
 
         const eventDatesInsert = event.eventDates.map(date => ({
           event_id: eventData.id,
-          date: date.date,
+          date: date.date ? format(date.date, 'yyyy-MM-dd') : null, // Convert Date to string format
           start_time: `${date.startHour}:${date.startMinute} ${date.startAmPm}`,
           end_time: `${date.endHour}:${date.endMinute} ${date.endAmPm}`,
         }));
 
-        const { error: datesError } = await supabase
-          .from('event_dates')
-          .insert(eventDatesInsert);
+        // Filter out any dates that are null
+        const validEventDates = eventDatesInsert.filter(date => date.date !== null);
 
-        if (datesError) throw datesError;
+        if (validEventDates.length > 0) {
+          const { error: datesError } = await supabase
+            .from('event_dates')
+            .insert(validEventDates);
+
+          if (datesError) throw datesError;
+        }
       }
 
       toast.success('League created successfully!');
