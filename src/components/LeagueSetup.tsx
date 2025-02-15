@@ -24,8 +24,10 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useAuth } from '@/integrations/auth';
 
 export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [leagueData, setLeagueData] = useState({
     leagueName: '',
@@ -146,6 +148,11 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
 
   const handleCreateLeague = async () => {
     try {
+      if (!user) {
+        toast.error('You must be logged in to create a league');
+        return;
+      }
+
       // Upload logo to Supabase Storage if provided
       let logoUrl = null;
       if (leagueData.logo) {
@@ -173,6 +180,7 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
           city: leagueData.city,
           description: leagueData.description,
           logo_url: logoUrl,
+          owner_id: user.id
         })
         .select()
         .single();

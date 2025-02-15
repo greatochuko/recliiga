@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import LeagueSetup from "@/components/LeagueSetup";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const { user } = useAuth();
