@@ -141,6 +141,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          league_code: string | null
           logo_url: string | null
           name: string
           owner_id: string
@@ -152,6 +153,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          league_code?: string | null
           logo_url?: string | null
           name: string
           owner_id: string
@@ -163,6 +165,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          league_code?: string | null
           logo_url?: string | null
           name?: string
           owner_id?: string
