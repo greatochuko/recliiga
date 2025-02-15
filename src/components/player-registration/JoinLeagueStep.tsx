@@ -24,7 +24,7 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
         .from('leagues')
         .select('*')
         .eq('league_code', leagueCode)
-        .single();
+        .maybeSingle();  // Changed from .single() to .maybeSingle()
 
       if (error) throw error;
       return data;
@@ -37,7 +37,7 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
     setError('');
 
     if (!league) {
-      setError('Please enter a valid league code');
+      setError('No league found with this code. Please check and try again.');
       return;
     }
 
