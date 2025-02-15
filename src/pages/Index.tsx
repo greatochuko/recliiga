@@ -4,33 +4,40 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import LeagueSetup from "@/components/LeagueSetup";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const { user } = useAuth();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [showLeagueSetup, setShowLeagueSetup] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserRole = async () => {
+    const fetchUserProfile = async () => {
       try {
-        const { data: profiles } = await supabase
+        const { data: profile } = await supabase
           .from('profiles')
-          .select('role')
+          .select('role, nickname, date_of_birth, sports')
           .eq('id', user?.id)
           .single();
         
-        if (profiles) {
-          setUserRole(profiles.role);
+        if (profile) {
+          setUserRole(profile.role);
+          
+          // If user is a player and hasn't completed their profile, redirect to registration
+          if (profile.role === 'player' && (!profile.nickname || !profile.date_of_birth || !profile.sports)) {
+            navigate('/complete-registration');
+          }
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        console.error('Error fetching user profile:', error);
       }
     };
 
     if (user) {
-      fetchUserRole();
+      fetchUserProfile();
     }
-  }, [user]);
+  }, [user, navigate]);
 
   if (!userRole) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
