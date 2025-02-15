@@ -8,8 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Star, User } from "lucide-react";
+import { Loader2, Star, User, LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface League {
   id: string;
@@ -85,11 +86,41 @@ const LeagueCard = ({ league }: { league: League }) => (
   </Card>
 );
 
+const Header = ({ onLogout }: { onLogout: () => void }) => (
+  <header className="bg-white shadow-sm">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center h-16">
+        <div className="text-2xl font-bold" style={{ color: '#9b87f5' }}>
+          REC LiiGA
+        </div>
+        <Button 
+          variant="ghost" 
+          onClick={onLogout}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          <LogOut className="h-5 w-5 mr-2" />
+          Logout
+        </Button>
+      </div>
+    </div>
+  </header>
+);
+
 const Index = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [showLeagueSetup, setShowLeagueSetup] = useState(false);
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/sign-in');
+      toast.success('Successfully logged out');
+    } catch (error) {
+      toast.error('Error logging out');
+    }
+  };
 
   // Fetch user profile
   useEffect(() => {
@@ -177,15 +208,23 @@ const Index = () => {
   });
 
   if (!userRole) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <>
+        <Header onLogout={handleLogout} />
+        <div className="min-h-screen flex items-center justify-center">Loading...</div>
+      </>
+    );
   }
 
   if (userRole === 'player') {
     if (statsLoading) {
       return (
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
-        </div>
+        <>
+          <Header onLogout={handleLogout} />
+          <div className="min-h-screen flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
+          </div>
+        </>
       );
     }
 
@@ -193,127 +232,133 @@ const Index = () => {
     const rating = 2.5; // This would normally come from the database
 
     return (
-      <div className="min-h-screen bg-gray-100 p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Your Stats</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <PlayerRankCard 
-                  league={{
-                    name: playerStats?.leagues?.name || 'Premier League',
-                    playerName: user?.email?.split('@')[0] || 'Player',
-                    rank: 8,
-                    totalPlayers: 15,
-                    rating: rating
-                  }} 
-                />
-                
-                {/* Record Card */}
-                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-                  <h3 className="text-lg font-bold mb-4">Record</h3>
-                  <div className="space-y-4">
-                    {/* Points Display */}
-                    <div className="flex justify-center mb-4">
-                      <div className="text-center">
-                        <span className="text-3xl font-bold">{playerStats?.points || 0}</span>
-                        <span className="text-gray-500 block">PTS</span>
+      <>
+        <Header onLogout={handleLogout} />
+        <div className="min-h-screen bg-gray-100 p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold">Your Stats</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <PlayerRankCard 
+                    league={{
+                      name: playerStats?.leagues?.name || 'Premier League',
+                      playerName: user?.email?.split('@')[0] || 'Player',
+                      rank: 8,
+                      totalPlayers: 15,
+                      rating: rating
+                    }} 
+                  />
+                  
+                  {/* Record Card */}
+                  <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                    <h3 className="text-lg font-bold mb-4">Record</h3>
+                    <div className="space-y-4">
+                      {/* Points Display */}
+                      <div className="flex justify-center mb-4">
+                        <div className="text-center">
+                          <span className="text-3xl font-bold">{playerStats?.points || 0}</span>
+                          <span className="text-gray-500 block">PTS</span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-emerald-100 rounded p-2">
-                        <div className="text-emerald-700 font-bold text-lg">{playerStats?.wins || 0}</div>
-                        <div className="text-emerald-600 text-xs">Won</div>
-                      </div>
-                      <div className="bg-red-100 rounded p-2">
-                        <div className="text-red-700 font-bold text-lg">{playerStats?.losses || 0}</div>
-                        <div className="text-red-600 text-xs">Loss</div>
-                      </div>
-                      <div className="bg-orange-100 rounded p-2">
-                        <div className="text-orange-700 font-bold text-lg">{playerStats?.ties || 0}</div>
-                        <div className="text-orange-600 text-xs">Tied</div>
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-3 gap-2 text-center">
+                        <div className="bg-emerald-100 rounded p-2">
+                          <div className="text-emerald-700 font-bold text-lg">{playerStats?.wins || 0}</div>
+                          <div className="text-emerald-600 text-xs">Won</div>
+                        </div>
+                        <div className="bg-red-100 rounded p-2">
+                          <div className="text-red-700 font-bold text-lg">{playerStats?.losses || 0}</div>
+                          <div className="text-red-600 text-xs">Loss</div>
+                        </div>
+                        <div className="bg-orange-100 rounded p-2">
+                          <div className="text-orange-700 font-bold text-lg">{playerStats?.ties || 0}</div>
+                          <div className="text-orange-600 text-xs">Tied</div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Teammates Section */}
-            <div className="flex flex-col h-full">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
-                <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
-                  View all
-                </Button>
-              </div>
-              <div className="grid grid-cols-2 gap-4 flex-grow">
-                {[1, 2, 3, 4].map((teammate) => (
-                  <div
-                    key={teammate}
-                    className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-gray-400" />
+              {/* Teammates Section */}
+              <div className="flex flex-col h-full">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
+                  <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
+                    View all
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 gap-4 flex-grow">
+                  {[1, 2, 3, 4].map((teammate) => (
+                    <div
+                      key={teammate}
+                      className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          <User className="w-4 h-4 text-gray-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm">Player {teammate}</h3>
+                          <p className="text-gray-500 text-xs">Midfielder</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-sm">Player {teammate}</h3>
-                        <p className="text-gray-500 text-xs">Midfielder</p>
-                      </div>
+                      <StarRating rating={3} />
                     </div>
-                    <StarRating rating={3} />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {!showLeagueSetup ? (
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-4xl font-bold text-[#FF7A00]">My Leagues</h1>
-              <Button 
-                onClick={() => setShowLeagueSetup(true)}
-                className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
-              >
-                Create New League
-              </Button>
+    <>
+      <Header onLogout={handleLogout} />
+      <div className="min-h-screen bg-gray-100">
+        {!showLeagueSetup ? (
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-4xl font-bold text-[#FF7A00]">My Leagues</h1>
+                <Button 
+                  onClick={() => setShowLeagueSetup(true)}
+                  className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+                >
+                  Create New League
+                </Button>
+              </div>
+              
+              {isLoading ? (
+                <div className="flex justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
+                </div>
+              ) : leagues?.length ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {leagues.map((league: League) => (
+                    <LeagueCard key={league.id} league={league} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-xl text-gray-600">You haven't created any leagues yet.</p>
+                  <p className="text-gray-500 mt-2">Click the button above to create your first league!</p>
+                </div>
+              )}
             </div>
-            
-            {isLoading ? (
-              <div className="flex justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
-              </div>
-            ) : leagues?.length ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {leagues.map((league: League) => (
-                  <LeagueCard key={league.id} league={league} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-xl text-gray-600">You haven't created any leagues yet.</p>
-                <p className="text-gray-500 mt-2">Click the button above to create your first league!</p>
-              </div>
-            )}
           </div>
-        </div>
-      ) : (
-        <LeagueSetup onCancel={() => setShowLeagueSetup(false)} />
-      )}
-    </div>
+        ) : (
+          <LeagueSetup onCancel={() => setShowLeagueSetup(false)} />
+        )}
+      </div>
+    </>
   );
 };
 
