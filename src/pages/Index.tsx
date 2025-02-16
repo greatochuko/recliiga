@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Star, User, LogOut } from "lucide-react";
+import { Loader2, Star, User, LogOut, Calendar, MapPin, Edit } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -19,6 +19,20 @@ interface League {
   city: string;
   description: string | null;
   logo_url: string | null;
+}
+
+interface Event {
+  id: number;
+  date: string;
+  time: string;
+  location: string;
+  team1: { name: string; avatar: string; color: string };
+  team2: { name: string; avatar: string; color: string };
+  rsvp_deadline: Date;
+  status: string | null;
+  league: string;
+  hasResults: boolean;
+  spotsLeft?: number;
 }
 
 const StarRating = ({ rating }: { rating: number }) => {
@@ -106,10 +120,177 @@ const Header = ({ onLogout }: { onLogout: () => void }) => (
   </header>
 );
 
+const CountdownClock = ({ deadline }: { deadline: Date }) => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      const difference = deadline.getTime() - now.getTime();
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60)
+        });
+      } else {
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [deadline]);
+
+  return (
+    <div className="text-xs text-gray-500 flex space-x-2">
+      <span>{timeLeft.days}d</span>
+      <span>{timeLeft.hours}h</span>
+      <span>{timeLeft.minutes}m</span>
+    </div>
+  );
+};
+
+const EventCard = ({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) => {
+  const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
+  const isRsvpOpen = event.rsvp_deadline && new Date() < event.rsvp_deadline;
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleAttend = async () => {
+    try {
+      await supabase
+        .from('event_rsvps')
+        .upsert({ 
+          event_id: event.id,
+          status: 'attending'
+        });
+      setAttendanceStatus('attending');
+      setIsEditing(false);
+      toast.success('Successfully RSVP\'d to event');
+    } catch (error) {
+      toast.error('Failed to update RSVP status');
+    }
+  };
+
+  const handleDecline = async () => {
+    try {
+      await supabase
+        .from('event_rsvps')
+        .upsert({ 
+          event_id: event.id,
+          status: 'declined'
+        });
+      setAttendanceStatus('declined');
+      setIsEditing(false);
+      toast.success('Successfully declined event');
+    } catch (error) {
+      toast.error('Failed to update RSVP status');
+    }
+  };
+
+  return (
+    <Card className="mb-4">
+      <CardContent className="p-4 relative">
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-center">
+            <Calendar className="w-4 h-4 text-gray-500 mr-2" />
+            <span className="text-xs text-gray-500 mr-4">{event.date}</span>
+            <span className="text-xs text-gray-500 mr-4">{event.time}</span>
+            <MapPin className="w-4 h-4 text-gray-500 mr-2" />
+            <span className="text-xs text-gray-500">{event.location}</span>
+          </div>
+          {attendanceStatus === 'attending' && !isEditing && (
+            <Badge variant="secondary" className="bg-[#FF7A00] bg-opacity-20 text-[#FF7A00] text-xs">
+              Attending
+            </Badge>
+          )}
+          {attendanceStatus === 'declined' && !isEditing && (
+            <Badge variant="secondary" className="bg-red-100 text-red-600 text-xs">
+              Declined
+            </Badge>
+          )}
+        </div>
+
+        <div className="grid grid-cols-3 items-center justify-items-center mb-4">
+          <div className="flex flex-col items-center">
+            <Avatar className="w-16 h-16" style={{ backgroundColor: event.team1.color }}>
+              <AvatarImage src={event.team1.avatar} alt={event.team1.name} />
+              <AvatarFallback>{event.team1.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-semibold mt-2">{event.team1.name}</span>
+          </div>
+          <span className="text-lg font-semibold">vs</span>
+          <div className="flex flex-col items-center">
+            <Avatar className="w-16 h-16" style={{ backgroundColor: event.team2.color }}>
+              <AvatarImage src={event.team2.avatar} alt={event.team2.name} />
+              <AvatarFallback>{event.team2.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-semibold mt-2">{event.team2.name}</span>
+          </div>
+        </div>
+
+        {showLeagueName && (
+          <div className="absolute bottom-4 left-4 text-xs">
+            <span className="font-bold text-[#FF7A00]">{event.league}</span>
+          </div>
+        )}
+
+        <div className="flex justify-center mt-2 space-x-2">
+          <Button 
+            variant="outline" 
+            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors"
+          >
+            {event.hasResults ? "View Results" : "View Details"}
+          </Button>
+        </div>
+
+        {isRsvpOpen && (
+          <>
+            <div className="flex justify-center mt-2 space-x-2">
+              {(isEditing || !attendanceStatus) && (
+                <>
+                  <Button 
+                    className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+                    onClick={handleAttend}
+                  >
+                    Attend
+                  </Button>
+                  <Button 
+                    variant="secondary"
+                    onClick={handleDecline}
+                  >
+                    Decline
+                  </Button>
+                </>
+              )}
+              {attendanceStatus && !isEditing && (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit RSVP
+                </Button>
+              )}
+            </div>
+            <div className="flex justify-end items-center mt-2">
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-gray-500">RSVP in:</span>
+                <CountdownClock deadline={event.rsvp_deadline} />
+              </div>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
 const Index = () => {
   const { user, signOut } = useAuth();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [showLeagueSetup, setShowLeagueSetup] = useState(false);
+  const [selectedLeagueId, setSelectedLeagueId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -122,7 +303,6 @@ const Index = () => {
     }
   };
 
-  // Fetch user profile
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -150,61 +330,74 @@ const Index = () => {
     }
   }, [user, navigate]);
 
-  // Fetch leagues based on user role
-  const { data: leagues, isLoading } = useQuery({
-    queryKey: ['leagues', userRole, user?.id],
-    queryFn: async () => {
-      if (!user || !userRole) return [];
-
-      if (userRole === 'organizer') {
-        // Fetch leagues owned by the organizer
-        const { data, error } = await supabase
-          .from('leagues')
-          .select('*')
-          .eq('owner_id', user.id);
-
-        if (error) throw error;
-        return data;
-      } else {
-        // Fetch leagues the player is a member of
-        const { data, error } = await supabase
-          .from('league_members')
-          .select(`
-            league_id,
-            leagues:league_id (*)
-          `)
-          .eq('player_id', user.id);
-
-        if (error) throw error;
-        return data.map(item => item.leagues);
-      }
-    },
-    enabled: !!user && !!userRole,
-  });
-
-  // Fetch player stats
-  const { data: playerStats, isLoading: statsLoading } = useQuery({
-    queryKey: ['playerStats', user?.id],
+  const { data: userLeagues } = useQuery({
+    queryKey: ['userLeagues', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('player_stats')
+        .from('league_members')
         .select(`
-          wins,
-          losses,
-          ties,
-          points,
-          leagues:league_id (
-            name,
-            id
+          league:league_id (
+            id,
+            name
           )
         `)
-        .eq('player_id', user?.id)
-        .single();
+        .eq('player_id', user?.id);
 
       if (error) throw error;
-      return data;
+      return data.map(item => item.league);
     },
     enabled: !!user && userRole === 'player',
+  });
+
+  useEffect(() => {
+    if (userLeagues?.length && !selectedLeagueId) {
+      setSelectedLeagueId(userLeagues[0].id);
+    }
+  }, [userLeagues]);
+
+  const { data: upcomingEvents } = useQuery({
+    queryKey: ['upcomingEvents', selectedLeagueId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          *,
+          event_dates (
+            date,
+            start_time,
+            end_time
+          ),
+          event_rsvps (
+            status
+          )
+        `)
+        .eq('league_id', selectedLeagueId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      return data.map(event => ({
+        id: event.id,
+        date: new Date(event.event_dates[0].date).toLocaleDateString(),
+        time: event.event_dates[0].start_time,
+        location: event.location,
+        team1: { 
+          name: event.team1_name || 'Team 1',
+          avatar: '/placeholder.svg',
+          color: event.team1_color || '#272D31'
+        },
+        team2: { 
+          name: event.team2_name || 'Team 2',
+          avatar: '/placeholder.svg',
+          color: event.team2_color || '#FFC700'
+        },
+        rsvp_deadline: new Date(event.event_dates[0].date),
+        status: event.event_rsvps[0]?.status || null,
+        league: event.league_id,
+        hasResults: false,
+        spotsLeft: event.roster_spots
+      }));
+    },
+    enabled: !!selectedLeagueId,
   });
 
   if (!userRole) {
@@ -217,17 +410,6 @@ const Index = () => {
   }
 
   if (userRole === 'player') {
-    if (statsLoading) {
-      return (
-        <>
-          <Header onLogout={handleLogout} />
-          <div className="min-h-screen flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
-          </div>
-        </>
-      );
-    }
-
     const totalGames = (playerStats?.wins || 0) + (playerStats?.losses || 0) + (playerStats?.ties || 0);
     const rating = 2.5; // This would normally come from the database
 
@@ -240,7 +422,22 @@ const Index = () => {
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">Your Stats</h2>
+                  {userLeagues && userLeagues.length > 0 && (
+                    <Select value={selectedLeagueId || ''} onValueChange={setSelectedLeagueId}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select League" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {userLeagues.map((league) => (
+                          <SelectItem key={league.id} value={league.id}>
+                            {league.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PlayerRankCard 
                     league={{
@@ -252,11 +449,9 @@ const Index = () => {
                     }} 
                   />
                   
-                  {/* Record Card */}
                   <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
                     <h3 className="text-lg font-bold mb-4">Record</h3>
                     <div className="space-y-4">
-                      {/* Points Display */}
                       <div className="flex justify-center mb-4">
                         <div className="text-center">
                           <span className="text-3xl font-bold">{playerStats?.points || 0}</span>
@@ -264,7 +459,6 @@ const Index = () => {
                         </div>
                       </div>
 
-                      {/* Stats Grid */}
                       <div className="grid grid-cols-3 gap-2 text-center">
                         <div className="bg-emerald-100 rounded p-2">
                           <div className="text-emerald-700 font-bold text-lg">{playerStats?.wins || 0}</div>
@@ -284,7 +478,6 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Teammates Section */}
               <div className="flex flex-col h-full">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
@@ -313,6 +506,20 @@ const Index = () => {
                 </div>
               </div>
             </div>
+
+            <section className="mt-8">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">Upcoming Events</h2>
+                <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
+                  View all
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {upcomingEvents?.map(event => (
+                  <EventCard key={event.id} event={event} showLeagueName={true} />
+                ))}
+              </div>
+            </section>
           </div>
         </div>
       </>
