@@ -2,10 +2,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, User } from "lucide-react";
-import { PlayerStats } from "@/types/dashboard";
+import type { PlayerStats as PlayerStatsType } from "@/types/dashboard";
 
 interface PlayerStatsProps {
-  stats: PlayerStats;
+  stats: PlayerStatsType;
   userName: string;
 }
 
@@ -63,7 +63,7 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-export const PlayerStats = ({ stats, userName }: PlayerStatsProps) => {
+export const PlayerStatsDisplay = ({ stats, userName }: PlayerStatsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <PlayerRankCard
@@ -105,3 +105,6 @@ export const PlayerStats = ({ stats, userName }: PlayerStatsProps) => {
     </div>
   );
 };
+
+// Re-export with the original name for backward compatibility
+export { PlayerStatsDisplay as PlayerStats };
