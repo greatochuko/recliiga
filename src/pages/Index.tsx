@@ -351,7 +351,11 @@ const Index = () => {
         .select(`
           league:league_id (
             id,
-            name
+            name,
+            sport,
+            city,
+            description,
+            logo_url
           )
         `)
         .eq('player_id', user?.id);
@@ -387,7 +391,13 @@ const Index = () => {
         .single();
 
       if (error) throw error;
-      return data || { wins: 0, losses: 0, ties: 0, points: 0 };
+      return data || { 
+        wins: 0, 
+        losses: 0, 
+        ties: 0, 
+        points: 0,
+        league: { name: 'League' } 
+      };
     },
     enabled: !!selectedLeagueId && !!user,
   });
