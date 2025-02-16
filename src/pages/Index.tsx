@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -5,301 +6,16 @@ import LeagueSetup from "@/components/LeagueSetup";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Star, User, LogOut, Calendar, MapPin, Edit } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-
-interface League {
-  id: string;
-  name: string;
-  sport: string;
-  city: string;
-  description: string | null;
-  logo_url: string | null;
-}
-
-interface Event {
-  id: string;
-  date: string;
-  time: string;
-  location: string;
-  team1: { name: string; avatar: string; color: string };
-  team2: { name: string; avatar: string; color: string };
-  rsvp_deadline: Date;
-  status: string | null;
-  league: string;
-  hasResults: boolean;
-  spotsLeft?: number;
-}
-
-interface PlayerStats {
-  wins: number;
-  losses: number;
-  ties: number;
-  points: number;
-  league?: {
-    name: string;
-  };
-}
-
-const StarRating = ({ rating }: { rating: number }) => {
-  return (
-    <div className="flex">
-      {[1, 2, 3].map((star) => (
-        <Star
-          key={star}
-          className={`h-6 w-6 ${star <= rating ? "text-[#FF7A00] fill-current" : "text-gray-300"}`}
-        />
-      ))}
-    </div>
-  );
-};
-
-function PlayerRankCard({ league }: { league: { name: string, playerName: string, rank: number, totalPlayers: number, rating: number } }) {
-  return (
-    <Card className="bg-[#FF7A00] text-white w-full h-full flex flex-col justify-between">
-      <CardContent className="p-4 flex flex-col items-center h-full justify-between">
-        <div className="flex flex-col items-center w-full">
-          <h2 className="text-base font-bold mb-2">{league.name}</h2>
-          <Avatar className="w-16 h-16 mb-2">
-            <AvatarImage src="/placeholder.svg" alt="Player avatar" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <h3 className="text-sm font-semibold mb-1">{league.playerName}</h3>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="flex items-start">
-            <div className="flex items-start">
-              <span className="text-lg font-bold">{league.rank}</span>
-              <span className="text-xs font-bold mt-0.5">th</span>
-            </div>
-            <span className="text-lg font-bold ml-0.5">/{league.totalPlayers}</span>
-          </div>
-          <span className="text-xs mt-1">{league.name}</span>
-          <div className="flex items-center mt-2">
-            <span className="text-base font-bold">{Math.max(0.50, Math.min(3.00, league.rating)).toFixed(2)}</span>
-            <Star className="w-4 h-4 ml-1 fill-white" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-const LeagueCard = ({ league }: { league: League }) => (
-  <Card className="hover:shadow-lg transition-shadow">
-    <CardHeader>
-      <CardTitle className="flex items-center gap-4">
-        {league.logo_url && (
-          <img src={league.logo_url} alt={league.name} className="w-12 h-12 rounded-full object-cover" />
-        )}
-        <div>
-          <h3 className="text-xl font-bold">{league.name}</h3>
-          <p className="text-sm text-gray-500">{league.sport} • {league.city}</p>
-        </div>
-      </CardTitle>
-    </CardHeader>
-    {league.description && (
-      <CardContent>
-        <p className="text-gray-600">{league.description}</p>
-      </CardContent>
-    )}
-  </Card>
-);
-
-const Header = ({ onLogout }: { onLogout: () => void }) => (
-  <header className="bg-white shadow-sm">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center h-16">
-        <div className="text-2xl font-bold" style={{ color: '#9b87f5' }}>
-          REC LiiGA
-        </div>
-        <Button 
-          variant="ghost" 
-          onClick={onLogout}
-          className="text-gray-600 hover:text-gray-900"
-        >
-          <LogOut className="h-5 w-5 mr-2" />
-          Logout
-        </Button>
-      </div>
-    </div>
-  </header>
-);
-
-const CountdownClock = ({ deadline }: { deadline: Date }) => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      const difference = deadline.getTime() - now.getTime();
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60)
-        });
-      } else {
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [deadline]);
-
-  return (
-    <div className="text-xs text-gray-500 flex space-x-2">
-      <span>{timeLeft.days}d</span>
-      <span>{timeLeft.hours}h</span>
-      <span>{timeLeft.minutes}m</span>
-    </div>
-  );
-};
-
-const EventCard = ({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) => {
-  const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
-  const isRsvpOpen = event.rsvp_deadline && new Date() < event.rsvp_deadline;
-  const [isEditing, setIsEditing] = useState(false);
-  const { user } = useAuth();
-
-  const handleAttend = async () => {
-    try {
-      await supabase
-        .from('event_rsvps')
-        .upsert({ 
-          event_id: event.id,
-          player_id: user?.id,
-          status: 'attending'
-        });
-      setAttendanceStatus('attending');
-      setIsEditing(false);
-      toast.success('Successfully RSVP\'d to event');
-    } catch (error) {
-      toast.error('Failed to update RSVP status');
-    }
-  };
-
-  const handleDecline = async () => {
-    try {
-      await supabase
-        .from('event_rsvps')
-        .upsert({ 
-          event_id: event.id,
-          player_id: user?.id,
-          status: 'declined'
-        });
-      setAttendanceStatus('declined');
-      setIsEditing(false);
-      toast.success('Successfully declined event');
-    } catch (error) {
-      toast.error('Failed to update RSVP status');
-    }
-  };
-
-  return (
-    <Card className="mb-4">
-      <CardContent className="p-4 relative">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center">
-            <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-            <span className="text-xs text-gray-500 mr-4">{event.date}</span>
-            <span className="text-xs text-gray-500 mr-4">{event.time}</span>
-            <MapPin className="w-4 h-4 text-gray-500 mr-2" />
-            <span className="text-xs text-gray-500">{event.location}</span>
-          </div>
-          {attendanceStatus === 'attending' && !isEditing && (
-            <Badge variant="secondary" className="bg-[#FF7A00] bg-opacity-20 text-[#FF7A00] text-xs">
-              Attending
-            </Badge>
-          )}
-          {attendanceStatus === 'declined' && !isEditing && (
-            <Badge variant="secondary" className="bg-red-100 text-red-600 text-xs">
-              Declined
-            </Badge>
-          )}
-        </div>
-
-        <div className="grid grid-cols-3 items-center justify-items-center mb-4">
-          <div className="flex flex-col items-center">
-            <Avatar className="w-16 h-16" style={{ backgroundColor: event.team1.color }}>
-              <AvatarImage src={event.team1.avatar} alt={event.team1.name} />
-              <AvatarFallback>{event.team1.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-semibold mt-2">{event.team1.name}</span>
-          </div>
-          <span className="text-lg font-semibold">vs</span>
-          <div className="flex flex-col items-center">
-            <Avatar className="w-16 h-16" style={{ backgroundColor: event.team2.color }}>
-              <AvatarImage src={event.team2.avatar} alt={event.team2.name} />
-              <AvatarFallback>{event.team2.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-semibold mt-2">{event.team2.name}</span>
-          </div>
-        </div>
-
-        {showLeagueName && (
-          <div className="absolute bottom-4 left-4 text-xs">
-            <span className="font-bold text-[#FF7A00]">{event.league}</span>
-          </div>
-        )}
-
-        <div className="flex justify-center mt-2 space-x-2">
-          <Button 
-            variant="outline" 
-            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors"
-          >
-            {event.hasResults ? "View Results" : "View Details"}
-          </Button>
-        </div>
-
-        {isRsvpOpen && (
-          <>
-            <div className="flex justify-center mt-2 space-x-2">
-              {(isEditing || !attendanceStatus) && (
-                <>
-                  <Button 
-                    className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
-                    onClick={handleAttend}
-                  >
-                    Attend
-                  </Button>
-                  <Button 
-                    variant="secondary"
-                    onClick={handleDecline}
-                  >
-                    Decline
-                  </Button>
-                </>
-              )}
-              {attendanceStatus && !isEditing && (
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditing(true)}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit RSVP
-                </Button>
-              )}
-            </div>
-            <div className="flex justify-end items-center mt-2">
-              <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500">RSVP in:</span>
-                <CountdownClock deadline={event.rsvp_deadline} />
-              </div>
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
+import { PlayerStats } from "@/components/dashboard/PlayerStats";
+import { TeamRatings } from "@/components/dashboard/TeamRatings";
+import { UpcomingEvents } from "@/components/dashboard/Events";
+import { LeagueCard } from "@/components/dashboard/LeagueCard";
+import { League, Event, PlayerStats as PlayerStatsType } from "@/types/dashboard";
 
 const Index = () => {
   const { user, signOut } = useAuth();
@@ -374,7 +90,7 @@ const Index = () => {
     }
   }, [userLeagues]);
 
-  const { data: playerStats, isLoading: statsLoading } = useQuery({
+  const { data: playerStats } = useQuery({
     queryKey: ['playerStats', selectedLeagueId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -398,13 +114,13 @@ const Index = () => {
         losses: 0, 
         ties: 0, 
         points: 0,
-        league: { name: 'League' } 
+        league: { name: 'League' }
       };
     },
     enabled: !!selectedLeagueId && !!user,
   });
 
-  const { data: upcomingEvents, isLoading: eventsLoading } = useQuery({
+  const { data: upcomingEvents } = useQuery({
     queryKey: ['upcomingEvents', selectedLeagueId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -478,88 +194,13 @@ const Index = () => {
               )}
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <PlayerRankCard 
-                league={{
-                  name: playerStats?.league?.name || 'League',
-                  playerName: user?.email?.split('@')[0] || 'Player',
-                  rank: 8,
-                  totalPlayers: 15,
-                  rating: 2.5
-                }} 
-              />
-              
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-                <h3 className="text-lg font-bold mb-4">Record</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-center mb-4">
-                    <div className="text-center">
-                      <span className="text-3xl font-bold">{playerStats?.points || 0}</span>
-                      <span className="text-gray-500 block">PTS</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-emerald-100 rounded p-2">
-                      <div className="text-emerald-700 font-bold text-lg">{playerStats?.wins || 0}</div>
-                      <div className="text-emerald-600 text-xs">Won</div>
-                    </div>
-                    <div className="bg-red-100 rounded p-2">
-                      <div className="text-red-700 font-bold text-lg">{playerStats?.losses || 0}</div>
-                      <div className="text-red-600 text-xs">Loss</div>
-                    </div>
-                    <div className="bg-orange-100 rounded p-2">
-                      <div className="text-orange-700 font-bold text-lg">{playerStats?.ties || 0}</div>
-                      <div className="text-orange-600 text-xs">Tied</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {playerStats && <PlayerStats stats={playerStats} userName={user?.email?.split('@')[0] || 'Player'} />}
           </div>
 
-          <div className="flex flex-col h-full">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
-              <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
-                View all
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-4 flex-grow">
-              {[1, 2, 3, 4].map((teammate) => (
-                <div
-                  key={teammate}
-                  className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm">Player {teammate}</h3>
-                      <p className="text-gray-500 text-xs">Midfielder</p>
-                    </div>
-                  </div>
-                  <StarRating rating={3} />
-                </div>
-              ))}
-            </div>
-          </div>
+          <TeamRatings />
         </div>
 
-        <section className="mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Upcoming Events</h2>
-            <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
-              View all
-            </Button>
-          </div>
-          <div className="space-y-4">
-            {upcomingEvents?.map(event => (
-              <EventCard key={event.id} event={event} showLeagueName={true} />
-            ))}
-          </div>
-        </section>
+        {upcomingEvents && <UpcomingEvents events={upcomingEvents} />}
       </div>
     </div>
   ) : (

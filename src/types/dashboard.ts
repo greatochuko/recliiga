@@ -1,0 +1,41 @@
+
+export interface PlayerStats {
+  wins: number;
+  losses: number;
+  ties: number;
+  points: number;
+  league?: {
+    name: string;
+  };
+}
+
+export interface League {
+  id: string;
+  name: string;
+  sport: string;
+  city: string;
+  description: string | null;
+  logo_url: string | null;
+}
+
+export interface Event {
+  id: string;
+  date: string;
+  time: string;
+  location: string;
+  team1: {
+    name: string;
+    avatar: string;
+    color: string;
+  };
+  team2: {
+    name: string;
+    avatar: string;
+    color: string;
+  };
+  rsvp_deadline: Date;
+  status: string | null;
+  league: string;
+  hasResults: boolean;
+  spotsLeft?: number;
+}
