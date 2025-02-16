@@ -40,7 +40,7 @@ interface PlayerStats {
   losses: number;
   ties: number;
   points: number;
-  leagues?: {
+  league?: {
     name: string;
   };
 }
@@ -491,7 +491,7 @@ const Index = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PlayerRankCard 
                     league={{
-                      name: playerStats?.leagues?.name || 'Premier League',
+                      name: playerStats?.league?.name || 'League',
                       playerName: user?.email?.split('@')[0] || 'Player',
                       rank: 8,
                       totalPlayers: 15,
@@ -593,13 +593,9 @@ const Index = () => {
                 </Button>
               </div>
               
-              {isLoading ? (
-                <div className="flex justify-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
-                </div>
-              ) : leagues?.length ? (
+              {userLeagues?.length ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {leagues.map((league: League) => (
+                  {userLeagues.map((league) => (
                     <LeagueCard key={league.id} league={league} />
                   ))}
                 </div>
