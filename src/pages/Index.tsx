@@ -22,7 +22,7 @@ interface League {
 }
 
 interface Event {
-  id: number;
+  id: string;
   date: string;
   time: string;
   location: string;
@@ -33,6 +33,16 @@ interface Event {
   league: string;
   hasResults: boolean;
   spotsLeft?: number;
+}
+
+interface PlayerStats {
+  wins: number;
+  losses: number;
+  ties: number;
+  points: number;
+  leagues?: {
+    name: string;
+  };
 }
 
 const StarRating = ({ rating }: { rating: number }) => {
@@ -155,6 +165,7 @@ const EventCard = ({ event, showLeagueName = false }: { event: Event; showLeague
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvp_deadline && new Date() < event.rsvp_deadline;
   const [isEditing, setIsEditing] = useState(false);
+  const { user } = useAuth();
 
   const handleAttend = async () => {
     try {
@@ -162,6 +173,7 @@ const EventCard = ({ event, showLeagueName = false }: { event: Event; showLeague
         .from('event_rsvps')
         .upsert({ 
           event_id: event.id,
+          player_id: user?.id,
           status: 'attending'
         });
       setAttendanceStatus('attending');
@@ -178,6 +190,7 @@ const EventCard = ({ event, showLeagueName = false }: { event: Event; showLeague
         .from('event_rsvps')
         .upsert({ 
           event_id: event.id,
+          player_id: user?.id,
           status: 'declined'
         });
       setAttendanceStatus('declined');
@@ -355,7 +368,31 @@ const Index = () => {
     }
   }, [userLeagues]);
 
-  const { data: upcomingEvents } = useQuery({
+  const { data: playerStats, isLoading: statsLoading } = useQuery({
+    queryKey: ['playerStats', selectedLeagueId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('player_stats')
+        .select(`
+          wins,
+          losses,
+          ties,
+          points,
+          league:league_id (
+            name
+          )
+        `)
+        .eq('player_id', user?.id)
+        .eq('league_id', selectedLeagueId)
+        .single();
+
+      if (error) throw error;
+      return data || { wins: 0, losses: 0, ties: 0, points: 0 };
+    },
+    enabled: !!selectedLeagueId && !!user,
+  });
+
+  const { data: upcomingEvents, isLoading: eventsLoading } = useQuery({
     queryKey: ['upcomingEvents', selectedLeagueId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -410,8 +447,21 @@ const Index = () => {
   }
 
   if (userRole === 'player') {
+    if (statsLoading || eventsLoading) {
+      return (
+        <>
+          <Header onLogout={handleLogout} />
+          <div className="min-h-screen flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-[#FF7A00]" />
+          </div>
+        </>
+      );
+    }
+
     const totalGames = (playerStats?.wins || 0) + (playerStats?.losses || 0) + (playerStats?.ties || 0);
-    const rating = 2.5; // This would normally come from the database
+    const winFraction = totalGames ? (playerStats?.wins || 0) / totalGames : 0;
+    const lossFraction = totalGames ? (playerStats?.losses || 0) / totalGames : 0;
+    const tieFraction = totalGames ? (playerStats?.ties || 0) / totalGames : 0;
 
     return (
       <>
@@ -445,7 +495,7 @@ const Index = () => {
                       playerName: user?.email?.split('@')[0] || 'Player',
                       rank: 8,
                       totalPlayers: 15,
-                      rating: rating
+                      rating: 2.5
                     }} 
                   />
                   
