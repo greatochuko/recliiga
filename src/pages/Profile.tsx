@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { AppSidebar } from "@/components/AppSidebar";
 
 interface ProfileFormData {
   full_name: string;
@@ -123,114 +124,120 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-pulse">Loading...</div>
+      <div className="flex h-screen">
+        <AppSidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-pulse">Loading...</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm border">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={handleEditToggle}
-                disabled={loading}
-                className="text-[#FF7A00] border-[#FF7A00] hover:bg-orange-50"
-              >
-                {isEditing ? 'Save' : 'Edit'}
-              </Button>
-              <button
-                onClick={handleClose}
-                className="text-gray-500 hover:text-gray-700"
-                aria-label="Close"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center mb-8">
-            <div className="relative">
-              <Avatar className="w-32 h-32 border-2 border-gray-200">
-                <AvatarImage src={formData.avatar_url} />
-                <AvatarFallback className="bg-orange-100 text-[#FF7A00] text-xl">
-                  {formData.full_name?.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              {isEditing && (
-                <>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="absolute bottom-0 right-0"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={loading}
-                  >
-                    Change
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div>
-              <Label>Full name</Label>
-              <Input
-                value={formData.full_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
-                disabled={!isEditing || loading}
-                placeholder="Enter your full name"
-              />
+    <div className="flex h-screen">
+      <AppSidebar />
+      <div className="flex-1 overflow-auto bg-white p-8">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm border">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={handleEditToggle}
+                  disabled={loading}
+                  className="text-[#FF7A00] border-[#FF7A00] hover:bg-orange-50"
+                >
+                  {isEditing ? 'Save' : 'Edit'}
+                </Button>
+                <button
+                  onClick={handleClose}
+                  className="text-gray-500 hover:text-gray-700"
+                  aria-label="Close"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
             </div>
 
-            <div>
-              <Label>Email</Label>
-              <Input
-                value={formData.email}
-                disabled
-                type="email"
-                placeholder="Enter your email"
-              />
+            <div className="flex flex-col items-center mb-8">
+              <div className="relative">
+                <Avatar className="w-32 h-32 border-2 border-gray-200">
+                  <AvatarImage src={formData.avatar_url} />
+                  <AvatarFallback className="bg-orange-100 text-[#FF7A00] text-xl">
+                    {formData.full_name?.split(' ').map(n => n[0]).join('')}
+                  </AvatarFallback>
+                </Avatar>
+                {isEditing && (
+                  <>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="absolute bottom-0 right-0"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={loading}
+                    >
+                      Change
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
 
-            <div>
-              <Label>City</Label>
-              <Input
-                value={formData.city}
-                onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                disabled={!isEditing || loading}
-                placeholder="Enter your city"
-              />
-            </div>
-
-            <div>
-              <Label>Mobile Number</Label>
-              <div className="flex gap-2">
+            <div className="space-y-6">
+              <div>
+                <Label>Full name</Label>
                 <Input
-                  value="+1"
-                  disabled
-                  className="w-16"
-                />
-                <Input
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  value={formData.full_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
                   disabled={!isEditing || loading}
-                  type="tel"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter your full name"
                 />
+              </div>
+
+              <div>
+                <Label>Email</Label>
+                <Input
+                  value={formData.email}
+                  disabled
+                  type="email"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <div>
+                <Label>City</Label>
+                <Input
+                  value={formData.city}
+                  onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                  disabled={!isEditing || loading}
+                  placeholder="Enter your city"
+                />
+              </div>
+
+              <div>
+                <Label>Mobile Number</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value="+1"
+                    disabled
+                    className="w-16"
+                  />
+                  <Input
+                    value={formData.phone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    disabled={!isEditing || loading}
+                    type="tel"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
               </div>
             </div>
           </div>
