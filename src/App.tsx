@@ -11,6 +11,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import PlayerRegistration from "./pages/PlayerRegistration";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const AppRoutes = () => (
     <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
     <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
     <Route path="/complete-registration" element={<PrivateRoute><PlayerRegistration /></PrivateRoute>} />
+    <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
