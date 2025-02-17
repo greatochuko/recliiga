@@ -137,7 +137,7 @@ export default function Profile() {
     <div className="flex h-screen">
       <AppSidebar />
       <div className="flex-1 overflow-auto bg-white p-8">
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm border">
+        <div className="w-full bg-white rounded-lg shadow-sm border">
           <div className="p-6">
             <div className="flex items-center justify-between mb-8">
               <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
@@ -191,7 +191,7 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label>Full name</Label>
                 <Input
