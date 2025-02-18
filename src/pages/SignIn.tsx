@@ -1,15 +1,17 @@
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { toast } from 'sonner'
 
 export default function SignInPage() {
-  const { signIn } = useAuth();
+  const { signIn } = useAuth()
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -38,8 +40,11 @@ export default function SignInPage() {
     try {
       setIsLoading(true)
       await signIn(email, password)
+      toast.success('Successfully signed in!')
+      navigate('/')
     } catch (error: any) {
       setError(error.message)
+      toast.error('Failed to sign in')
     } finally {
       setIsLoading(false)
     }
@@ -65,6 +70,7 @@ export default function SignInPage() {
                 className="w-full" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
             <div className="space-y-2">
@@ -77,6 +83,8 @@ export default function SignInPage() {
                   className="w-full pr-10" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
                 />
                 <button 
                   type="button"
