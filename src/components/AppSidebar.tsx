@@ -25,6 +25,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -36,6 +46,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface Notification {
@@ -49,6 +60,7 @@ export function AppSidebar() {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const notifications: Notification[] = [
     {
@@ -165,7 +177,7 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2">
                   <User className="w-5 h-5 text-gray-500" />
-                  <span className="text-sm font-medium">John Doe</span>
+                  <span className="text-sm font-medium">{user?.user_metadata?.full_name || 'User'}</span>
                   <ChevronDown className="w-4 h-4 text-gray-500" />
                 </button>
               </DropdownMenuTrigger>
@@ -190,7 +202,7 @@ export function AppSidebar() {
                   <span>Delete Account</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600">
                   <LogOut className="w-4 h-4 mr-2" />
                   <span>Logout</span>
                 </DropdownMenuItem>
@@ -234,6 +246,29 @@ export function AppSidebar() {
           © 2024 REC LiiGA. All rights reserved.
         </div>
       </div>
+
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to log out of your account?
+              <div className="mt-2 text-[#FF7A00]">
+                You will need to log in again to access your account.
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleLogout}
+              className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+            >
+              Logout
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sidebar>
   );
 }
