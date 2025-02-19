@@ -1,34 +1,20 @@
 
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { toast } from 'sonner'
-import { supabase } from '@/integrations/supabase/client'
 
 export default function SignInPage() {
-  const { signIn, user } = useAuth()
-  const navigate = useNavigate()
+  const { signIn } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
-  // Redirect if user is already logged in
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        navigate('/')
-      }
-    }
-    checkSession()
-  }, [navigate, user])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,22 +22,9 @@ export default function SignInPage() {
     setIsLoading(true)
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (signInError) {
-        throw signInError
-      }
-
-      // On successful sign-in, AuthContext will handle the session update
-      toast.success('Successfully signed in!')
-      navigate('/')
+      await signIn(email, password)
     } catch (error: any) {
-      console.error('Sign-in error:', error)
       setError(error.message)
-      toast.error('Failed to sign in')
     } finally {
       setIsLoading(false)
     }
