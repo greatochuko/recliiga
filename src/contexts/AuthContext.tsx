@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   loading: boolean;
 }
 
@@ -24,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initial session check
     const initializeAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -39,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -80,7 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      // Let the onAuthStateChange handle the state update
       navigate('/sign-in');
       toast.success('Successfully signed out');
     } catch (error: any) {
@@ -102,8 +99,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteAccount = async () => {
+    try {
+      const { error: dataError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user?.id);
+
+      if (dataError) throw dataError;
+
+      const { error: authError } = await supabase.auth.admin.deleteUser(user?.id as string);
+      if (authError) throw authError;
+
+      await signOut();
+      toast.success('Your account has been deleted successfully');
+    } catch (error: any) {
+      toast.error('Failed to delete account: ' + error.message);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, resetPassword, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      signUp, 
+      signIn, 
+      signOut, 
+      resetPassword,
+      deleteAccount, 
+      loading 
+    }}>
       {children}
     </AuthContext.Provider>
   );

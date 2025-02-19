@@ -21,11 +21,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 
 export function UserMenu() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
 
   const handleLogout = async () => {
     try {
@@ -37,8 +40,19 @@ export function UserMenu() {
     }
   };
 
-  const handleDeleteAccount = () => {
-    toast.info('Delete account functionality will be implemented soon');
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation !== "Delete") {
+      toast.error('Please type "Delete" to confirm');
+      return;
+    }
+    
+    try {
+      await deleteAccount();
+      setShowDeleteDialog(false);
+      navigate('/sign-in');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    }
   };
 
   return (
@@ -67,7 +81,7 @@ export function UserMenu() {
               <span>Invite Players</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleDeleteAccount} className="text-red-600">
+          <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600">
             <Trash2 className="w-4 h-4 mr-2" />
             <span>Delete Account</span>
           </DropdownMenuItem>
@@ -78,6 +92,43 @@ export function UserMenu() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+              <div className="mt-4 text-red-600">
+                Please read this message carefully before proceeding.
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="my-4">
+            <p className="mb-2">Type 'Delete' to confirm:</p>
+            <Input
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              placeholder="Type 'Delete' here"
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteConfirmation("");
+              setShowDeleteDialog(false);
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAccount}
+              disabled={deleteConfirmation !== "Delete"}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              Delete Account
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
