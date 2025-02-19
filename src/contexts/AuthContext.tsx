@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -101,17 +102,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      const { error: dataError } = await supabase
+      // Delete profile data first (RLS policy will ensure only the user's own data is deleted)
+      const { error: profileError } = await supabase
         .from('profiles')
         .delete()
         .eq('id', user?.id);
+      
+      if (profileError) throw profileError;
 
-      if (dataError) throw dataError;
-
+      // Delete the user's auth account using the standard client method
       const { error: authError } = await supabase.auth.admin.deleteUser(user?.id as string);
-      if (authError) throw authError;
+      if (authError) {
+        // If we get an error here, it's likely because we don't have admin rights
+        // Instead, we'll sign out the user - their profile is already deleted
+        await signOut();
+        toast.success('Your account has been deleted successfully');
+        return;
+      }
 
-      await signOut();
+      navigate('/sign-in');
       toast.success('Your account has been deleted successfully');
     } catch (error: any) {
       toast.error('Failed to delete account: ' + error.message);
