@@ -24,13 +24,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Initialize session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -39,7 +43,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    metadata: { full_name: string; role: string; phone: string }
+  ) => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
@@ -67,9 +75,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) throw error;
-      
-      toast.success('Successfully signed in!');
-      navigate('/');
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setSession(session);
+        setUser(session.user);
+        navigate('/');
+        toast.success('Successfully signed in!');
+      }
     } catch (error: any) {
       toast.error(error.message);
       throw error;
@@ -80,9 +93,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      
+      setUser(null);
+      setSession(null);
       navigate('/sign-in');
+      toast.success('Successfully signed out');
     } catch (error: any) {
       toast.error(error.message);
+      throw error;
     }
   };
 
