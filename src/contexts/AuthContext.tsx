@@ -102,24 +102,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      // Delete profile data first (RLS policy will ensure only the user's own data is deleted)
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user?.id);
+      // Delete the auth user first - this will trigger our RLS cascade deletes
+      const { error: authError } = await supabase.auth.api.deleteUser(
+        user?.id as string,
+        session?.access_token as string
+      );
       
-      if (profileError) throw profileError;
+      if (authError) throw authError;
 
-      // Delete the user's auth account using the standard client method
-      const { error: authError } = await supabase.auth.admin.deleteUser(user?.id as string);
-      if (authError) {
-        // If we get an error here, it's likely because we don't have admin rights
-        // Instead, we'll sign out the user - their profile is already deleted
-        await signOut();
-        toast.success('Your account has been deleted successfully');
-        return;
-      }
-
+      // No need to manually delete profile - it will be handled by RLS cascade
       navigate('/sign-in');
       toast.success('Your account has been deleted successfully');
     } catch (error: any) {
