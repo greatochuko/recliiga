@@ -16,11 +16,15 @@ serve(async (req) => {
   try {
     // Get the user ID from the request
     const { user_id } = await req.json()
+    console.log('Attempting to delete user:', user_id)
 
     if (!user_id) {
       return new Response(
         JSON.stringify({ error: 'user_id is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+          status: 400 
+        }
       )
     }
 
@@ -28,27 +32,51 @@ serve(async (req) => {
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
     )
 
-    // Delete the user
-    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
-      user_id
-    )
+    // First delete the profile and related data
+    console.log('Deleting user profile and related data...')
+    const { error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .delete()
+      .eq('id', user_id)
+
+    if (profileError) {
+      console.error('Error deleting profile:', profileError)
+      throw profileError
+    }
+
+    // Then delete the user from auth
+    console.log('Deleting user from auth system...')
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user_id)
 
     if (deleteError) {
-      console.error('Error deleting user:', deleteError)
+      console.error('Error deleting auth user:', deleteError)
       throw deleteError
     }
 
+    console.log('Successfully deleted user and all related data')
     return new Response(
       JSON.stringify({ success: true }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      }
     )
   } catch (error) {
-    console.error('Error:', error.message)
+    console.error('Error in delete-user function:', error.message)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+        status: 500 
+      }
     )
   }
 })

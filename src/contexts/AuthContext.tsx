@@ -107,18 +107,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Call the Edge Function to delete the user
-      const { error: deleteError } = await supabase.functions.invoke('delete-user', {
+      const { data, error: deleteError } = await supabase.functions.invoke('delete-user', {
         body: { user_id: user.id }
       });
 
       if (deleteError) throw deleteError;
-
-      // If successful, sign out the user
-      await signOut();
       
+      // Sign out the user after successful deletion
+      await signOut();
       toast.success('Your account has been deleted successfully');
       navigate('/sign-in');
     } catch (error: any) {
+      console.error('Error deleting account:', error);
       toast.error('Failed to delete account: ' + error.message);
       throw error;
     }
