@@ -102,15 +102,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      // First delete the profile - this will cascade delete related data
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user?.id);
-      
-      if (profileError) throw profileError;
+      if (!user?.id) {
+        throw new Error('No user found to delete');
+      }
 
-      // Then sign out the user
+      // Call the Edge Function to delete the user
+      const { error: deleteError } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: user.id }
+      });
+
+      if (deleteError) throw deleteError;
+
+      // If successful, sign out the user
       await signOut();
       
       toast.success('Your account has been deleted successfully');
