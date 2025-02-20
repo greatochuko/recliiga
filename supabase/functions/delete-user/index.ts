@@ -14,8 +14,7 @@ serve(async (req) => {
 
   try {
     const { user_id } = await req.json();
-    console.log('Attempting to delete user:', user_id);
-
+    
     if (!user_id) {
       return new Response(
         JSON.stringify({ error: 'user_id is required' }),
@@ -23,14 +22,14 @@ serve(async (req) => {
       );
     }
 
+    // Create Supabase admin client with service role key
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // 1. Delete user-related data first
-    console.log('Deleting user profile and related data...');
+    // First delete related data from profiles table
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .delete()
@@ -44,8 +43,7 @@ serve(async (req) => {
       );
     }
 
-    // 2. Delete the user from authentication
-    console.log('Deleting user from auth system...');
+    // Then delete the user from auth
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user_id);
     
     if (deleteError) {
@@ -56,7 +54,6 @@ serve(async (req) => {
       );
     }
 
-    console.log('Successfully deleted user and all related data');
     return new Response(
       JSON.stringify({ success: true }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }

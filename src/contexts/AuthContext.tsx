@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -77,21 +76,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // First clear all stored data
       localStorage.clear();
       sessionStorage.clear();
-
-      // Then clear the state
       setUser(null);
       setSession(null);
-
-      // Then sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-
       toast.success('Successfully signed out');
-
-      // Finally navigate and reload
       navigate('/sign-in', { replace: true });
       window.location.reload();
     } catch (error: any) {
@@ -119,35 +110,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('No user found to delete');
       }
 
-      // Delete user-related data from "profiles" table first
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user.id);
+      const { error: deleteError } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: user.id }
+      });
 
-      if (profileError) {
-        throw profileError;
-      }
-
-      // Delete user from authentication system
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
       if (deleteError) {
         throw deleteError;
       }
 
-      // Clear all stored data
       localStorage.clear();
       sessionStorage.clear();
-
-      // Reset app state
       setUser(null);
       setSession(null);
-
-      // Sign out and show success message
       await supabase.auth.signOut();
       toast.success('Your account has been deleted successfully');
-      
-      // Navigate with replace to prevent history issues
       navigate('/sign-in', { replace: true });
       window.location.reload();
     } catch (error: any) {
