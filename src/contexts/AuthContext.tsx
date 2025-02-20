@@ -77,17 +77,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // First reset the user state
-      setUser(null);
-      setSession(null);
-      
-      // Then sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      // Finally navigate and show success message
+      // Ensure local user state is cleared
+      setUser(null);
+      setSession(null);
+
       toast.success('Successfully signed out');
+
+      // Navigate and force a page reload to ensure the UI resets properly
       navigate('/sign-in');
+      window.location.reload();
     } catch (error: any) {
       toast.error(error.message);
       throw error;
@@ -113,22 +114,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('No user found to delete');
       }
 
-      // Call the Edge Function to delete the user
-      const { data, error: deleteError } = await supabase.functions.invoke('delete-user', {
-        body: { user_id: user.id }
-      });
+      // Delete user-related data from "profiles" table first
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id);
 
-      if (deleteError) throw deleteError;
+      if (profileError) {
+        throw profileError;
+      }
 
-      // Clear local state first
+      // Delete user from authentication system
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
+      if (deleteError) {
+        throw deleteError;
+      }
+
+      // Clear all stored data
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Reset app state
       setUser(null);
       setSession(null);
 
-      // Explicitly sign out to clear any session data
+      // Sign out and show success message
       await supabase.auth.signOut();
-      
       toast.success('Your account has been deleted successfully');
+      
+      // Navigate and force reload
       navigate('/sign-in');
+      window.location.reload();
     } catch (error: any) {
       console.error('Error deleting account:', error);
       toast.error('Failed to delete account: ' + error.message);
