@@ -22,8 +22,28 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   if (loading) {
     return <div>Loading...</div>;
   }
-  
-  return user ? <>{children}</> : <Navigate to="/sign-in" />;
+
+  // If not logged in, redirect to sign-in
+  if (!user) {
+    return <Navigate to="/sign-in" />;
+  }
+
+  // If user is logged in but hasn't completed profile setup
+  const userMetadata = user.user_metadata;
+  const isPlayer = userMetadata?.role === 'player';
+  const hasProfile = userMetadata?.profile_completed === true;
+
+  // Redirect to appropriate registration flow if profile is not complete
+  if (!hasProfile) {
+    if (isPlayer) {
+      return <Navigate to="/complete-registration" />;
+    } else {
+      // For league organizers, redirect to league creation
+      return <Navigate to="/create-league" />;
+    }
+  }
+
+  return <>{children}</>;
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {

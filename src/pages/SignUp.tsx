@@ -82,7 +82,11 @@ export default function SignUpPage() {
         full_name: fullName,
         role: role,
         phone: finalPhone,
-      })
+      });
+
+      // After successful signup, we'll show them the success message and automatically redirect them to sign in.
+      // Once they sign in, they'll be redirected to the appropriate registration flow based on their role
+      // through the private route protection in App.tsx
     } catch (error: any) {
       setError(error.message)
     } finally {
