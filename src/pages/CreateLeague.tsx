@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { BasicInfoStep } from '@/components/league-setup/BasicInfoStep';
 import { LogoStep } from '@/components/league-setup/LogoStep';
 import { EventsStep } from '@/components/league-setup/EventsStep';
@@ -188,8 +188,6 @@ export default function CreateLeague() {
 
   const handleSubmit = async () => {
     try {
-      // TODO: Implement league creation logic with Supabase
-      // For now, we'll just mark the profile as completed
       const { error } = await supabase.auth.updateUser({
         data: { profile_completed: true }
       });
