@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { User } from '@supabase/supabase-js';
@@ -6,27 +5,55 @@ import { League, PlayerStats, Event } from '@/types/dashboard';
 
 export function useLeagueData(user: User | null, selectedLeagueId: string | null) {
   const [userLeagues, setUserLeagues] = useState<League[] | null>(null);
+  const [allPublicLeagues, setAllPublicLeagues] = useState<League[] | null>(null);
   const [playerStats, setPlayerStats] = useState<PlayerStats | undefined>();
   const [upcomingEvents, setUpcomingEvents] = useState<Event[] | undefined>();
+  const [membershipStatus, setMembershipStatus] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const fetchUserLeagues = async () => {
+    const fetchLeagues = async () => {
       if (!user) return;
 
       try {
-        const { data: leaguesData } = await supabase
+        const { data: publicLeagues } = await supabase
           .from('leagues')
-          .select('id, name, sport, city, description, logo_url, is_private, requires_approval, league_code');
+          .select(`
+            *,
+            league_members!left(player_id)
+          `)
+          .eq('is_private', false);
 
-        if (leaguesData) {
-          setUserLeagues(leaguesData as League[]);
+        if (publicLeagues) {
+          const leaguesWithCounts = publicLeagues.map(league => ({
+            ...league,
+            member_count: league.league_members?.length || 0
+          }));
+          setAllPublicLeagues(leaguesWithCounts);
+        }
+
+        const { data: userLeaguesData } = await supabase
+          .from('leagues')
+          .select(`
+            *,
+            league_members!inner(player_id)
+          `)
+          .eq('league_members.player_id', user.id);
+
+        if (userLeaguesData) {
+          setUserLeagues(userLeaguesData);
+          
+          const status: Record<string, string> = {};
+          userLeaguesData.forEach(league => {
+            status[league.id] = 'member';
+          });
+          setMembershipStatus(status);
         }
       } catch (error) {
         console.error('Error fetching leagues:', error);
       }
     };
 
-    fetchUserLeagues();
+    fetchLeagues();
   }, [user]);
 
   useEffect(() => {
@@ -36,21 +63,18 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
       try {
         const { data: stats } = await supabase
           .from('player_stats')
-          .select('*')
+          .select('*, leagues(name)')
           .eq('player_id', user.id)
           .eq('league_id', selectedLeagueId)
           .single();
 
         if (stats) {
-          setPlayerStats(stats as PlayerStats);
-        } else {
-          // If no stats, initialize with default values
           setPlayerStats({
-            wins: 0,
-            losses: 0,
-            ties: 0,
-            points: 0,
-            league: { name: userLeagues?.find(league => league.id === selectedLeagueId)?.name || '' }
+            wins: stats.wins || 0,
+            losses: stats.losses || 0,
+            ties: stats.ties || 0,
+            points: stats.points || 0,
+            league: { name: stats.leagues?.name || '' }
           });
         }
       } catch (error) {
@@ -59,14 +83,13 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
     };
 
     fetchPlayerStats();
-  }, [user, selectedLeagueId, userLeagues]);
+  }, [user, selectedLeagueId]);
 
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       if (!selectedLeagueId) return;
 
       try {
-        // First, get events data
         const { data: eventsData } = await supabase
           .from('events')
           .select(`
@@ -77,9 +100,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
           .limit(5);
 
         if (eventsData) {
-          // Transform the data to match the Event type
           const transformedEvents: Event[] = eventsData.map(event => {
-            // Get the first event date (assuming it's the primary date)
             const eventDate = event.event_dates?.[0];
             
             return {
@@ -89,19 +110,19 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
               location: event.location,
               team1: {
                 name: event.team1_name || '',
-                avatar: '', // Add default avatar if needed
+                avatar: '',
                 color: event.team1_color || '#000000'
               },
               team2: {
                 name: event.team2_name || '',
-                avatar: '', // Add default avatar if needed
+                avatar: '',
                 color: event.team2_color || '#000000'
               },
               rsvp_deadline: new Date(Date.now() + (event.rsvp_deadline_hours * 60 * 60 * 1000)),
               status: null,
               league: userLeagues?.find(league => league.id === event.league_id)?.name || '',
-              hasResults: false, // Add logic for results if needed
-              spotsLeft: event.roster_spots * event.num_teams // Calculate available spots
+              hasResults: false,
+              spotsLeft: event.roster_spots * event.num_teams
             };
           });
 
@@ -115,5 +136,49 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
     fetchUpcomingEvents();
   }, [selectedLeagueId, userLeagues]);
 
-  return { userLeagues, playerStats, upcomingEvents };
+  const joinLeague = async (leagueId: string) => {
+    if (!user) return;
+
+    try {
+      const { data: league } = await supabase
+        .from('leagues')
+        .select('requires_approval')
+        .eq('id', leagueId)
+        .single();
+
+      await supabase
+        .from('league_members')
+        .insert({
+          league_id: leagueId,
+          player_id: user.id,
+        });
+
+      setMembershipStatus(prev => ({
+        ...prev,
+        [leagueId]: 'member'
+      }));
+
+      const { data: newLeague } = await supabase
+        .from('leagues')
+        .select('*')
+        .eq('id', leagueId)
+        .single();
+
+      if (newLeague) {
+        setUserLeagues(prev => prev ? [...prev, newLeague] : [newLeague]);
+      }
+    } catch (error) {
+      console.error('Error joining league:', error);
+      throw error;
+    }
+  };
+
+  return { 
+    userLeagues,
+    allPublicLeagues,
+    playerStats,
+    upcomingEvents,
+    membershipStatus,
+    joinLeague
+  };
 }
