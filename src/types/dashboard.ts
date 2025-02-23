@@ -19,6 +19,8 @@ export interface League {
   is_private: boolean;
   requires_approval: boolean;
   league_code: string | null;
+  member_count?: number;
+  created_at: string;
 }
 
 export interface Event {
@@ -42,4 +44,3 @@ export interface Event {
   hasResults: boolean;
   spotsLeft?: number;
 }
-
