@@ -5,7 +5,7 @@ import { User } from '@supabase/supabase-js';
 
 export function useUserProfile(user: User | null) {
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [memberships, setMemberships] = useState<Array<{ league_id: string, status: string }>>([]);
+  const [memberships, setMemberships] = useState<Array<{ league_id: string }>>([]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -23,7 +23,7 @@ export function useUserProfile(user: User | null) {
         // Fetch user's league memberships
         const { data: memberships } = await supabase
           .from('league_members')
-          .select('league_id, status')
+          .select('league_id')
           .eq('player_id', user?.id);
 
         if (memberships) {

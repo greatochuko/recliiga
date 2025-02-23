@@ -22,6 +22,12 @@ const Index = () => {
   const { userLeagues, playerStats, upcomingEvents } = useLeagueData(user, selectedLeagueId);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/sign-in');
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     if (userLeagues?.length && !selectedLeagueId) {
       setSelectedLeagueId(userLeagues[0].id);
     }
