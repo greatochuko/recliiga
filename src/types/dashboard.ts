@@ -16,6 +16,9 @@ export interface League {
   city: string;
   description: string | null;
   logo_url: string | null;
+  is_private: boolean;
+  requires_approval: boolean;
+  league_code: string | null;
 }
 
 export interface Event {
@@ -39,3 +42,4 @@ export interface Event {
   hasResults: boolean;
   spotsLeft?: number;
 }
+
