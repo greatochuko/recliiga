@@ -28,10 +28,11 @@ const Index = () => {
   }, [user, navigate]);
 
   useEffect(() => {
+    // Set the first league as selected when leagues are loaded
     if (userLeagues?.length && !selectedLeagueId) {
       setSelectedLeagueId(userLeagues[0].id);
     }
-  }, [userLeagues]);
+  }, [userLeagues, selectedLeagueId]);
 
   const handleLogout = async () => {
     try {
@@ -59,11 +60,11 @@ const Index = () => {
             </Button>
           </div>
           <div className="p-6">
-            {showLeagueSetup ? (
+            {!userLeagues?.length ? (
               <LeagueSetup onCancel={() => setShowLeagueSetup(false)} />
             ) : (
               <DashboardContent
-                userLeagues={userLeagues || []}
+                userLeagues={userLeagues}
                 selectedLeagueId={selectedLeagueId}
                 setSelectedLeagueId={setSelectedLeagueId}
                 playerStats={playerStats}

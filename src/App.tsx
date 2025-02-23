@@ -14,6 +14,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import PlayerRegistration from "./pages/PlayerRegistration";
 import CreateLeague from "./pages/CreateLeague";
 import Profile from "./pages/Profile";
+import Leagues from "./pages/Leagues";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,7 @@ const AppRoutes = () => (
       
       {/* Private routes */}
       <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
+      <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
       <Route path="/complete-registration" element={<PlayerRegistration />} />
       <Route path="/create-league" element={<CreateLeague />} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
