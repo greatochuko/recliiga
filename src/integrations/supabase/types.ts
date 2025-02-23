@@ -177,10 +177,12 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_private: boolean
           league_code: string | null
           logo_url: string | null
           name: string
           owner_id: string
+          requires_approval: boolean
           sport: string
           updated_at: string
         }
@@ -189,10 +191,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_private?: boolean
           league_code?: string | null
           logo_url?: string | null
           name: string
           owner_id: string
+          requires_approval?: boolean
           sport: string
           updated_at?: string
         }
@@ -201,10 +205,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_private?: boolean
           league_code?: string | null
           logo_url?: string | null
           name?: string
           owner_id?: string
+          requires_approval?: boolean
           sport?: string
           updated_at?: string
         }
