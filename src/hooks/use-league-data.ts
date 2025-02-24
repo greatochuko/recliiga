@@ -34,7 +34,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
           if (user) {
             const { data: memberships, error: membershipError } = await supabase
               .from('league_members')
-              .select('league_id, status')
+              .select('league_id')
               .eq('player_id', user.id);
 
             if (membershipError) throw membershipError;
@@ -42,7 +42,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
             if (memberships && isMounted) {
               const membershipMap: Record<string, string> = {};
               memberships.forEach(membership => {
-                membershipMap[membership.league_id] = membership.status === 'active' ? 'member' : 'pending';
+                membershipMap[membership.league_id] = 'member';
               });
               setMembershipStatus(membershipMap);
 
@@ -161,27 +161,18 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
     }
 
     try {
-      const { data: league } = await supabase
-        .from('leagues')
-        .select('requires_approval')
-        .eq('id', leagueId)
-        .single();
-
-      const newStatus = league?.requires_approval ? 'pending' : 'active';
-
       const { error: insertError } = await supabase
         .from('league_members')
         .insert({
           league_id: leagueId,
-          player_id: user.id,
-          status: newStatus
+          player_id: user.id
         });
 
       if (insertError) throw insertError;
 
       setMembershipStatus(prev => ({
         ...prev,
-        [leagueId]: league?.requires_approval ? 'pending' : 'member'
+        [leagueId]: 'member'
       }));
 
       const { data: newLeague, error: leagueError } = await supabase
