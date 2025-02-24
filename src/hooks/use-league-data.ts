@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { User } from '@supabase/supabase-js';
 import { League, PlayerStats, Event } from '@/types/dashboard';
+import { toast } from 'sonner';
 
 export function useLeagueData(user: User | null, selectedLeagueId: string | null) {
   const [userLeagues, setUserLeagues] = useState<League[] | null>(null);
@@ -13,69 +13,69 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchLeagues = async () => {
       try {
-        console.log('Fetching leagues...');
-        
-        // Fetch all public leagues
         const { data: publicLeagues, error: publicError } = await supabase
           .from('leagues')
-          .select(`
-            *,
-            league_members!left(player_id)
-          `)
+          .select('*, league_members(player_id)')
           .eq('is_private', false);
 
-        if (publicError) {
-          console.error('Error fetching public leagues:', publicError);
-          return;
-        }
+        if (publicError) throw publicError;
 
-        console.log('Public leagues fetched:', publicLeagues);
-
-        if (publicLeagues) {
+        if (publicLeagues && isMounted) {
           const leaguesWithCounts = publicLeagues.map(league => ({
             ...league,
-            member_count: league.league_members?.length || 0
+            member_count: (league.league_members as any[] || []).length
           }));
           setAllPublicLeagues(leaguesWithCounts);
-        }
 
-        if (user) {
-          // Fetch user's leagues
-          const { data: userLeaguesData, error: userError } = await supabase
-            .from('leagues')
-            .select(`
-              *,
-              league_members!inner(player_id)
-            `)
-            .eq('league_members.player_id', user.id);
+          if (user) {
+            const { data: memberships, error: membershipError } = await supabase
+              .from('league_members')
+              .select('league_id, status')
+              .eq('player_id', user.id);
 
-          if (userError) {
-            console.error('Error fetching user leagues:', userError);
-            return;
-          }
+            if (membershipError) throw membershipError;
 
-          console.log('User leagues fetched:', userLeaguesData);
+            if (memberships && isMounted) {
+              const membershipMap: Record<string, string> = {};
+              memberships.forEach(membership => {
+                membershipMap[membership.league_id] = membership.status === 'active' ? 'member' : 'pending';
+              });
+              setMembershipStatus(membershipMap);
 
-          if (userLeaguesData) {
-            setUserLeagues(userLeaguesData);
-            
-            const status: Record<string, string> = {};
-            userLeaguesData.forEach(league => {
-              status[league.id] = 'member';
-            });
-            setMembershipStatus(status);
+              const userLeagueIds = memberships.map(m => m.league_id);
+              if (userLeagueIds.length > 0) {
+                const { data: userLeaguesData, error: userLeaguesError } = await supabase
+                  .from('leagues')
+                  .select('*')
+                  .in('id', userLeagueIds);
+
+                if (userLeaguesError) throw userLeaguesError;
+
+                if (userLeaguesData && isMounted) {
+                  setUserLeagues(userLeaguesData);
+                }
+              }
+            }
           }
         }
       } catch (error) {
-        console.error('Error in fetchLeagues:', error);
+        console.error('Error fetching leagues:', error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchLeagues();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   useEffect(() => {
@@ -161,45 +161,48 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
     }
 
     try {
-      console.log('Joining league:', leagueId);
-      
       const { data: league } = await supabase
         .from('leagues')
         .select('requires_approval')
         .eq('id', leagueId)
         .single();
 
-      await supabase
+      const newStatus = league?.requires_approval ? 'pending' : 'active';
+
+      const { error: insertError } = await supabase
         .from('league_members')
         .insert({
           league_id: leagueId,
           player_id: user.id,
-          status: league?.requires_approval ? 'pending' : 'active'
+          status: newStatus
         });
+
+      if (insertError) throw insertError;
 
       setMembershipStatus(prev => ({
         ...prev,
         [leagueId]: league?.requires_approval ? 'pending' : 'member'
       }));
 
-      const { data: newLeague } = await supabase
+      const { data: newLeague, error: leagueError } = await supabase
         .from('leagues')
         .select('*')
         .eq('id', leagueId)
         .single();
 
+      if (leagueError) throw leagueError;
+
       if (newLeague) {
         setUserLeagues(prev => prev ? [...prev, newLeague] : [newLeague]);
       }
 
-      console.log('Successfully joined league');
     } catch (error) {
       console.error('Error joining league:', error);
       throw error;
     }
   };
 
-  return { 
+  return {
     userLeagues,
     allPublicLeagues,
     playerStats,
