@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { User } from '@supabase/supabase-js';
@@ -17,53 +18,68 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
 
     const fetchLeagues = async () => {
       try {
+        // Fetch public leagues without league_members join
         const { data: publicLeagues, error: publicError } = await supabase
           .from('leagues')
-          .select('*, league_members(player_id)')
+          .select('*')
           .eq('is_private', false);
 
-        if (publicError) throw publicError;
+        if (publicError) {
+          console.error('Error fetching public leagues:', publicError);
+          return;
+        }
+
+        console.log('Fetched public leagues:', publicLeagues);
 
         if (publicLeagues && isMounted) {
-          const leaguesWithCounts = publicLeagues.map(league => ({
-            ...league,
-            member_count: (league.league_members as any[] || []).length
-          }));
-          setAllPublicLeagues(leaguesWithCounts);
+          // For each league, fetch member count separately
+          const leaguesWithMemberCounts = await Promise.all(
+            publicLeagues.map(async (league) => {
+              const { count } = await supabase
+                .from('league_members')
+                .select('*', { count: 'exact', head: true })
+                .eq('league_id', league.id);
+              
+              return {
+                ...league,
+                member_count: count || 0
+              };
+            })
+          );
+
+          console.log('Leagues with member counts:', leaguesWithMemberCounts);
+          setAllPublicLeagues(leaguesWithMemberCounts);
 
           if (user) {
-            const { data: memberships, error: membershipError } = await supabase
+            // Fetch user's league memberships
+            const { data: memberships } = await supabase
               .from('league_members')
               .select('league_id')
               .eq('player_id', user.id);
 
-            if (membershipError) throw membershipError;
-
-            if (memberships && isMounted) {
+            if (memberships) {
               const membershipMap: Record<string, string> = {};
-              memberships.forEach(membership => {
-                membershipMap[membership.league_id] = 'member';
+              const userLeagueIds = memberships.map(m => {
+                membershipMap[m.league_id] = 'member';
+                return m.league_id;
               });
               setMembershipStatus(membershipMap);
 
-              const userLeagueIds = memberships.map(m => m.league_id);
               if (userLeagueIds.length > 0) {
-                const { data: userLeaguesData, error: userLeaguesError } = await supabase
+                const { data: userLeagues } = await supabase
                   .from('leagues')
                   .select('*')
                   .in('id', userLeagueIds);
 
-                if (userLeaguesError) throw userLeaguesError;
-
-                if (userLeaguesData && isMounted) {
-                  setUserLeagues(userLeaguesData);
+                if (userLeagues && isMounted) {
+                  setUserLeagues(userLeagues);
                 }
               }
             }
           }
         }
       } catch (error) {
-        console.error('Error fetching leagues:', error);
+        console.error('Error in fetchLeagues:', error);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -114,10 +130,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
       try {
         const { data: eventsData } = await supabase
           .from('events')
-          .select(`
-            *,
-            event_dates(date, start_time, end_time)
-          `)
+          .select('*, event_dates(date, start_time, end_time)')
           .eq('league_id', selectedLeagueId)
           .limit(5);
 
