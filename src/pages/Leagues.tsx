@@ -50,9 +50,7 @@ const Leagues = () => {
         <main className="flex-1 bg-gray-100">
           <div className="flex items-center justify-between p-4 bg-white shadow-sm">
             <SidebarTrigger />
-            <Button onClick={handleLogout} variant="ghost" size="icon">
-              <LogOut className="h-5 w-5" />
-            </Button>
+            
           </div>
           <div className="p-6">
             <div className="mb-8">
