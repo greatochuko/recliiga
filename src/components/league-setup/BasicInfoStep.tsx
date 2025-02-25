@@ -48,6 +48,17 @@ export function BasicInfoStep({ leagueData, onDataChange }: BasicInfoStepProps) 
           />
         </div>
         <div className="grid gap-2">
+          <Label htmlFor="location">Location</Label>
+          <Input
+            type="text"
+            id="location"
+            name="location"
+            value={leagueData.location}
+            onChange={onDataChange}
+            placeholder="Enter specific location (e.g., venue, address)"
+          />
+        </div>
+        <div className="grid gap-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"

@@ -20,6 +20,7 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
     leagueName: '',
     sport: '',
     city: '',
+    location: '',
     description: '',
     logo: null,
     events: [{
@@ -186,9 +187,11 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
           name: leagueData.leagueName,
           sport: leagueData.sport,
           city: leagueData.city,
+          location: leagueData.location,
           description: leagueData.description,
           logo_url: logoUrl,
-          owner_id: user.id
+          owner_id: user.id,
+          start_date: new Date().toISOString()
         })
         .select()
         .single();

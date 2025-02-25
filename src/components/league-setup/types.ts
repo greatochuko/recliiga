@@ -23,6 +23,7 @@ export interface LeagueFormData {
   leagueName: string;
   sport: string;
   city: string;
+  location: string;
   description: string;
   logo: File | null;
   events: Event[];
