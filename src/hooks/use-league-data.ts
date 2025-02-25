@@ -18,7 +18,13 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
 
     const fetchLeagues = async () => {
       try {
-        // Fetch public leagues without league_members join
+        if (!user) {
+          console.log('No user found, skipping league fetching');
+          setLoading(false);
+          return;
+        }
+
+        // Fetch public leagues
         const { data: publicLeagues, error: publicError } = await supabase
           .from('leagues')
           .select('*')
@@ -26,13 +32,13 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
 
         if (publicError) {
           console.error('Error fetching public leagues:', publicError);
-          return;
+          throw publicError;
         }
 
         console.log('Fetched public leagues:', publicLeagues);
 
         if (publicLeagues && isMounted) {
-          // For each league, fetch member count separately
+          // For each league, fetch member count
           const leaguesWithMemberCounts = await Promise.all(
             publicLeagues.map(async (league) => {
               const { count } = await supabase
@@ -50,36 +56,34 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
           console.log('Leagues with member counts:', leaguesWithMemberCounts);
           setAllPublicLeagues(leaguesWithMemberCounts);
 
-          if (user) {
-            // Fetch user's league memberships
-            const { data: memberships } = await supabase
-              .from('league_members')
-              .select('league_id')
-              .eq('player_id', user.id);
+          // Fetch user's memberships
+          const { data: memberships } = await supabase
+            .from('league_members')
+            .select('league_id')
+            .eq('player_id', user.id);
 
-            if (memberships) {
-              const membershipMap: Record<string, string> = {};
-              const userLeagueIds = memberships.map(m => {
-                membershipMap[m.league_id] = 'member';
-                return m.league_id;
-              });
-              setMembershipStatus(membershipMap);
+          if (memberships) {
+            const membershipMap: Record<string, string> = {};
+            memberships.forEach(m => {
+              membershipMap[m.league_id] = 'member';
+            });
+            setMembershipStatus(membershipMap);
 
-              if (userLeagueIds.length > 0) {
-                const { data: userLeagues } = await supabase
-                  .from('leagues')
-                  .select('*')
-                  .in('id', userLeagueIds);
+            // Fetch user's leagues (including both joined and owned)
+            const { data: userLeagues } = await supabase
+              .from('leagues')
+              .select('*')
+              .or(`owner_id.eq.${user.id},id.in.(${memberships.map(m => m.league_id).join(',')})`);
 
-                if (userLeagues && isMounted) {
-                  setUserLeagues(userLeagues);
-                }
-              }
+            if (userLeagues && isMounted) {
+              console.log('User leagues:', userLeagues);
+              setUserLeagues(userLeagues);
             }
           }
         }
       } catch (error) {
         console.error('Error in fetchLeagues:', error);
+        toast.error('Failed to fetch leagues');
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -104,7 +108,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
           .select('*, leagues(name)')
           .eq('player_id', user.id)
           .eq('league_id', selectedLeagueId)
-          .single();
+          .maybeSingle();
 
         if (stats) {
           setPlayerStats({
@@ -117,6 +121,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
         }
       } catch (error) {
         console.error('Error fetching player stats:', error);
+        toast.error('Failed to fetch player stats');
       }
     };
 
@@ -161,6 +166,7 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
         }
       } catch (error) {
         console.error('Error fetching upcoming events:', error);
+        toast.error('Failed to fetch upcoming events');
       }
     };
 
@@ -183,11 +189,13 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
 
       if (insertError) throw insertError;
 
+      // Update membership status
       setMembershipStatus(prev => ({
         ...prev,
         [leagueId]: 'member'
       }));
 
+      // Fetch the league details
       const { data: newLeague, error: leagueError } = await supabase
         .from('leagues')
         .select('*')
@@ -198,10 +206,12 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
 
       if (newLeague) {
         setUserLeagues(prev => prev ? [...prev, newLeague] : [newLeague]);
+        toast.success('Successfully joined league');
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error joining league:', error);
+      toast.error(error.message || 'Failed to join league');
       throw error;
     }
   };
