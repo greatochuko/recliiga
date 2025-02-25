@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,6 +16,7 @@ const initialLeagueData: LeagueFormData = {
   leagueName: '',
   sport: '',
   city: '',
+  location: '',
   description: '',
   logo: null,
   events: [{
