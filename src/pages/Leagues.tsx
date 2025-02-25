@@ -32,7 +32,7 @@ const Leagues = () => {
       !searchQuery || 
       league.name.toLowerCase().includes(searchLower) ||
       league.sport.toLowerCase().includes(searchLower) ||
-      league.city.toLowerCase().includes(searchLower) ||
+      league.location.toLowerCase().includes(searchLower) ||
       (league.league_code && league.league_code.toLowerCase().includes(searchLower))
     );
   });
@@ -57,7 +57,7 @@ const Leagues = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   type="text"
-                  placeholder="Search by Name, Sport, League Code, City, or League Organizer"
+                  placeholder="Search by Name, Sport, League Code, or Location"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 h-12 text-base border-gray-200"
@@ -111,11 +111,11 @@ const Leagues = () => {
                             </div>
                             <div className="flex items-center gap-2">
                               <MapPin className="h-4 w-4 text-gray-400" />
-                              <span>{league.city}</span>
+                              <span>{league.location}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-gray-400" />
-                              <span>{format(new Date(league.created_at), "MMM d, yyyy")}</span>
+                              <span>{format(new Date(league.start_date), "MMM d, yyyy")}</span>
                             </div>
                           </div>
                         </div>

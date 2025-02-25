@@ -14,6 +14,7 @@ export interface League {
   name: string;
   sport: string;
   city: string;
+  location: string;
   description: string | null;
   logo_url: string | null;
   is_private: boolean;
@@ -21,6 +22,7 @@ export interface League {
   league_code: string | null;
   member_count?: number;
   created_at: string;
+  start_date: string;
 }
 
 export interface Event {

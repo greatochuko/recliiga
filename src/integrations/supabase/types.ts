@@ -179,11 +179,13 @@ export type Database = {
           id: string
           is_private: boolean
           league_code: string | null
+          location: string
           logo_url: string | null
           name: string
           owner_id: string
           requires_approval: boolean
           sport: string
+          start_date: string
           updated_at: string
         }
         Insert: {
@@ -193,11 +195,13 @@ export type Database = {
           id?: string
           is_private?: boolean
           league_code?: string | null
+          location: string
           logo_url?: string | null
           name: string
           owner_id: string
           requires_approval?: boolean
           sport: string
+          start_date?: string
           updated_at?: string
         }
         Update: {
@@ -207,11 +211,13 @@ export type Database = {
           id?: string
           is_private?: boolean
           league_code?: string | null
+          location?: string
           logo_url?: string | null
           name?: string
           owner_id?: string
           requires_approval?: boolean
           sport?: string
+          start_date?: string
           updated_at?: string
         }
         Relationships: [
