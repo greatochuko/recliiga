@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLeagueData } from "@/hooks/use-league-data";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -17,17 +17,17 @@ const Leagues = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { userLeagues, allPublicLeagues, membershipStatus, joinLeague } = useLeagueData(user, null);
 
-  const handleJoinLeague = async (leagueId: string) => {
+  const handleJoinLeague = useCallback(async (leagueId: string) => {
     try {
       await joinLeague(leagueId);
-      toast.success('Successfully joined league');
-    } catch (error) {
-      toast.error('Error joining league');
+      toast.success("Successfully joined league");
+    } catch (error: any) {
+      toast.error(`Error joining league: ${error.message || "Please try again"}`);
     }
-  };
+  }, [joinLeague]);
 
+  const searchLower = searchQuery.toLowerCase();
   const filteredLeagues = allPublicLeagues?.filter(league => {
-    const searchLower = searchQuery.toLowerCase();
     return (
       !searchQuery || 
       league.name.toLowerCase().includes(searchLower) ||
@@ -61,11 +61,13 @@ const Leagues = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 h-12 text-base border-gray-200"
+                  aria-label="Search Leagues"
                 />
               </div>
               <Button 
                 size="lg"
                 className="bg-orange-500 hover:bg-orange-600 text-white h-12 px-8"
+                aria-label="Search leagues"
               >
                 Search
               </Button>
@@ -84,12 +86,12 @@ const Leagues = () => {
                         {league.logo_url ? (
                           <img 
                             src={league.logo_url}
-                            alt={league.name}
+                            alt={`${league.name} Logo`}
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (
                           <span className="text-2xl font-semibold text-orange-500">
-                            {league.name[0].toUpperCase()}
+                            {league.name.charAt(0).toUpperCase()}
                           </span>
                         )}
                       </div>
@@ -113,7 +115,7 @@ const Leagues = () => {
                             </div>
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-gray-400" />
-                              <span>{format(new Date(league.created_at), 'MMM d, yyyy')}</span>
+                              <span>{format(new Date(league.created_at), "MMM d, yyyy")}</span>
                             </div>
                           </div>
                         </div>
@@ -129,11 +131,12 @@ const Leagues = () => {
                           {league.sport}
                         </span>
                         
-                        {membershipStatus[league.id] === 'member' ? (
+                        {membershipStatus[league.id] === "member" ? (
                           <Button
                             variant="outline"
                             className="border-orange-500 text-orange-500 hover:bg-orange-50"
                             onClick={() => navigate(`/leagues/${league.id}`)}
+                            aria-label={`View details for ${league.name}`}
                           >
                             See More <ChevronRight className="ml-1 h-4 w-4" />
                           </Button>
@@ -141,6 +144,7 @@ const Leagues = () => {
                           <Button
                             className="bg-orange-500 hover:bg-orange-600 text-white"
                             onClick={() => handleJoinLeague(league.id)}
+                            aria-label={`Join ${league.name}`}
                           >
                             Join <Plus className="ml-1 h-4 w-4" />
                           </Button>
