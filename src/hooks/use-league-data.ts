@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { User } from '@supabase/supabase-js';
@@ -24,64 +23,67 @@ export function useLeagueData(user: User | null, selectedLeagueId: string | null
           return;
         }
 
-        // Fetch public leagues
-        const { data: publicLeagues, error: publicError } = await supabase
+        // First, fetch all leagues visible to the user based on RLS
+        const { data: visibleLeagues, error: leaguesError } = await supabase
           .from('leagues')
-          .select('*')
-          .eq('is_private', false);
+          .select('*');
 
-        if (publicError) {
-          console.error('Error fetching public leagues:', publicError);
-          throw publicError;
+        if (leaguesError) {
+          console.error('Error fetching leagues:', leaguesError);
+          throw leaguesError;
         }
 
-        console.log('Fetched public leagues:', publicLeagues);
+        if (!visibleLeagues || !isMounted) return;
 
-        if (publicLeagues && isMounted) {
-          // For each league, fetch member count
-          const leaguesWithMemberCounts = await Promise.all(
-            publicLeagues.map(async (league) => {
-              const { count } = await supabase
-                .from('league_members')
-                .select('*', { count: 'exact', head: true })
-                .eq('league_id', league.id);
-              
-              return {
-                ...league,
-                member_count: count || 0
-              };
-            })
-          );
+        console.log('Fetched visible leagues:', visibleLeagues);
 
-          console.log('Leagues with member counts:', leaguesWithMemberCounts);
-          setAllPublicLeagues(leaguesWithMemberCounts);
+        // Separate public and user's leagues
+        const publicLeagues = visibleLeagues.filter(league => !league.is_private);
+        const userOwnedLeagues = visibleLeagues.filter(league => league.owner_id === user.id);
 
-          // Fetch user's memberships
-          const { data: memberships } = await supabase
-            .from('league_members')
-            .select('league_id')
-            .eq('player_id', user.id);
+        // Fetch memberships to identify joined leagues
+        const { data: memberships, error: membershipsError } = await supabase
+          .from('league_members')
+          .select('league_id')
+          .eq('player_id', user.id);
 
-          if (memberships) {
-            const membershipMap: Record<string, string> = {};
-            memberships.forEach(m => {
-              membershipMap[m.league_id] = 'member';
-            });
-            setMembershipStatus(membershipMap);
-
-            // Fetch user's leagues (including both joined and owned)
-            const { data: userLeagues } = await supabase
-              .from('leagues')
-              .select('*')
-              .or(`owner_id.eq.${user.id},id.in.(${memberships.map(m => m.league_id).join(',')})`);
-
-            if (userLeagues && isMounted) {
-              console.log('User leagues:', userLeagues);
-              setUserLeagues(userLeagues);
-            }
-          }
+        if (membershipsError) {
+          console.error('Error fetching memberships:', membershipsError);
+          throw membershipsError;
         }
-      } catch (error) {
+
+        // Create membership status map
+        const membershipMap: Record<string, string> = {};
+        memberships?.forEach(m => {
+          membershipMap[m.league_id] = 'member';
+        });
+        setMembershipStatus(membershipMap);
+
+        // Get member counts for public leagues
+        const leaguesWithMemberCounts = await Promise.all(
+          publicLeagues.map(async (league) => {
+            const { count } = await supabase
+              .from('league_members')
+              .select('*', { count: 'exact', head: true })
+              .eq('league_id', league.id);
+            
+            return {
+              ...league,
+              member_count: count || 0
+            };
+          })
+        );
+
+        // Set states
+        setAllPublicLeagues(leaguesWithMemberCounts);
+        
+        // Combine owned and joined leagues for user leagues
+        const memberLeagues = visibleLeagues.filter(league => 
+          membershipMap[league.id] === 'member' || league.owner_id === user.id
+        );
+        setUserLeagues(memberLeagues);
+
+      } catch (error: any) {
         console.error('Error in fetchLeagues:', error);
         toast.error('Failed to fetch leagues');
       } finally {
