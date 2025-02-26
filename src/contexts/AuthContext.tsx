@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -84,7 +85,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       toast.success('Successfully signed out');
       navigate('/sign-in', { replace: true });
-      window.location.reload();
     } catch (error: any) {
       toast.error(error.message);
       throw error;
@@ -105,30 +105,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteAccount = async () => {
+    if (!user?.id) {
+      toast.error('No user found to delete');
+      return;
+    }
+
     try {
-      if (!user?.id) {
-        throw new Error('No user found to delete');
+      // 1. Delete profile data first
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id);
+
+      if (profileError) {
+        console.error('Error deleting profile:', profileError);
+        throw new Error('Failed to delete profile data');
       }
 
-      const { error: deleteError } = await supabase.functions.invoke('delete-user', {
-        body: { user_id: user.id }
+      // 2. Delete auth user using special RPC function
+      const { error: deleteError } = await supabase.rpc('delete_user', {
+        user_id: user.id
       });
 
       if (deleteError) {
-        throw deleteError;
+        console.error('Error deleting user:', deleteError);
+        throw new Error('Failed to delete user account');
       }
 
+      // 3. Clear local storage and session
       localStorage.clear();
       sessionStorage.clear();
       setUser(null);
       setSession(null);
+
+      // 4. Sign out
       await supabase.auth.signOut();
+
       toast.success('Your account has been deleted successfully');
       navigate('/sign-in', { replace: true });
-      window.location.reload();
     } catch (error: any) {
-      console.error('Error deleting account:', error);
-      toast.error('Failed to delete account: ' + error.message);
+      console.error('Error in deletion process:', error);
+      toast.error(error.message || 'Failed to delete account');
       throw error;
     }
   };
