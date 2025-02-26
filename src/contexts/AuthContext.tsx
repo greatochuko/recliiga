@@ -111,34 +111,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // 1. Delete profile data first
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user.id);
-
-      if (profileError) {
-        console.error('Error deleting profile:', profileError);
-        throw new Error('Failed to delete profile data');
-      }
-
-      // 2. Delete auth user using special RPC function
+      // 1. Delete the user using the database function
       const { error: deleteError } = await supabase.rpc('delete_user', {
         user_id: user.id
-      });
+      } as { user_id: string });
 
       if (deleteError) {
         console.error('Error deleting user:', deleteError);
         throw new Error('Failed to delete user account');
       }
 
-      // 3. Clear local storage and session
+      // 2. Clear local storage and session
       localStorage.clear();
       sessionStorage.clear();
       setUser(null);
       setSession(null);
 
-      // 4. Sign out
+      // 3. Sign out locally (the auth record is already deleted)
       await supabase.auth.signOut();
 
       toast.success('Your account has been deleted successfully');
