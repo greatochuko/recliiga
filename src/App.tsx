@@ -15,15 +15,15 @@ import PlayerRegistration from "./pages/PlayerRegistration";
 import CreateLeague from "./pages/CreateLeague";
 import Profile from "./pages/Profile";
 import Leagues from "./pages/Leagues";
+import Events from "./pages/Events";
+import Results from "./pages/Results";
+import Chat from "./pages/Chat";
 
 const queryClient = new QueryClient();
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   
-  console.log('PrivateRoute - Auth State:', { user, loading });
-  console.log('User metadata:', user?.user_metadata);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -32,38 +32,27 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If not logged in, redirect to sign-in
   if (!user) {
-    console.log('No user found, redirecting to sign-in');
     return <Navigate to="/sign-in" />;
   }
 
-  // Get user metadata with default values for safety
   const userMetadata = user.user_metadata || {};
   const isPlayer = userMetadata?.role === 'player';
   const hasProfile = userMetadata?.profile_completed === true;
 
-  console.log('User Role Check:', { isPlayer, hasProfile });
-
-  // Show the children if profile is completed
   if (hasProfile) {
     return <>{children}</>;
   }
 
-  // Redirect to appropriate registration flow if profile is not complete
   if (isPlayer) {
-    console.log('Redirecting to player registration');
     return <Navigate to="/complete-registration" />;
   } else {
-    console.log('Redirecting to league creation');
     return <Navigate to="/create-league" />;
   }
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  
-  console.log('PublicRoute - Auth State:', { user, loading });
 
   if (loading) {
     return (
@@ -74,7 +63,6 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
   
   if (user) {
-    console.log('User found in public route, redirecting to home');
     return <Navigate to="/" />;
   }
 
@@ -92,6 +80,9 @@ const AppRoutes = () => (
       {/* Private routes */}
       <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
       <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
+      <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
+      <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
+      <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="/complete-registration" element={<PlayerRegistration />} />
       <Route path="/create-league" element={<CreateLeague />} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
