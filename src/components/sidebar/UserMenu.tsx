@@ -1,35 +1,21 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, ChevronDown, UserPlus, Trash2, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-
 export function UserMenu() {
-  const { user, signOut, deleteAccount } = useAuth();
+  const {
+    user,
+    signOut,
+    deleteAccount
+  } = useAuth();
   const navigate = useNavigate();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -39,13 +25,11 @@ export function UserMenu() {
       toast.error('Error logging out');
     }
   };
-
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "Delete") {
       toast.error('Please type "Delete" to confirm');
       return;
     }
-    
     try {
       await deleteAccount();
       setShowDeleteDialog(false);
@@ -54,9 +38,7 @@ export function UserMenu() {
       console.error('Error deleting account:', error);
     }
   };
-
-  return (
-    <>
+  return <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2">
@@ -106,24 +88,16 @@ export function UserMenu() {
           </AlertDialogHeader>
           <div className="my-4">
             <p className="mb-2">Type 'Delete' to confirm:</p>
-            <Input
-              value={deleteConfirmation}
-              onChange={(e) => setDeleteConfirmation(e.target.value)}
-              placeholder="Type 'Delete' here"
-            />
+            <Input value={deleteConfirmation} onChange={e => setDeleteConfirmation(e.target.value)} placeholder="Type 'Delete' here" />
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => {
-              setDeleteConfirmation("");
-              setShowDeleteDialog(false);
-            }}>
+            setDeleteConfirmation("");
+            setShowDeleteDialog(false);
+          }}>
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteAccount}
-              disabled={deleteConfirmation !== "Delete"}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-            >
+            <AlertDialogAction onClick={handleDeleteAccount} disabled={deleteConfirmation !== "Delete"} className="bg-red-600 hover:bg-red-700 focus:ring-red-600">
               Delete Account
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -133,8 +107,8 @@ export function UserMenu() {
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-center">Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
               Are you sure you want to log out of your account?
               <div className="mt-2 text-[#FF7A00]">
                 You will need to log in again to access your account.
@@ -142,16 +116,12 @@ export function UserMenu() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleLogout}
-              className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
-            >
+            <AlertDialogCancel className="border-gray-200 text-left">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout} className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90">
               Logout
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
-  );
+    </>;
 }
