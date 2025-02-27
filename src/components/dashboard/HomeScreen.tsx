@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Star, User, Calendar, MapPin, Edit } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -8,9 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StarRating } from './StarRating';
 import { PlayerStats } from './PlayerStats';
-import { useState, useEffect } from 'react';
+import { EventCard } from './EventCard';
+import { useState } from 'react';
 
-// Mock data interfaces and functions
 interface League {
   id: string;
   name: string;
@@ -25,7 +24,6 @@ interface Teammate {
   avatarUrl: string;
 }
 
-// Mock data
 const leagues: League[] = [
   { id: 'premier', name: 'Premier League', rating: 0.8 },
   { id: 'division1', name: 'Division 1', rating: 0.6 },
@@ -48,6 +46,34 @@ const mockStats = {
     name: "Premier League"
   }
 };
+
+const mockEvents = [
+  {
+    id: 1,
+    date: '20-Aug-2025',
+    time: '6:00 PM',
+    location: 'Allianz Arena',
+    team1: { name: 'Eagle Claws', avatar: '/placeholder.svg?height=64&width=64', color: '#272D31' },
+    team2: { name: 'Ravens', avatar: '/placeholder.svg?height=64&width=64', color: '#FFC700' },
+    rsvpDeadline: new Date('2025-08-19T18:00:00'),
+    status: 'attending',
+    league: 'Premier League',
+    hasResults: false
+  },
+  {
+    id: 2,
+    date: '25-Aug-2025',
+    time: '7:30 PM',
+    location: 'Stamford Bridge',
+    team1: { name: 'Blue Lions', avatar: '/placeholder.svg?height=64&width=64', color: '#034694' },
+    team2: { name: 'Red Devils', avatar: '/placeholder.svg?height=64&width=64', color: '#DA291C' },
+    rsvpDeadline: new Date('2025-08-24T19:30:00'),
+    status: null,
+    spotsLeft: 2,
+    league: 'Championship',
+    hasResults: false
+  }
+];
 
 const LeagueSelector = ({ leagues, onLeagueChange }: { leagues: League[], onLeagueChange: (leagueId: string) => void }) => {
   return (
@@ -123,6 +149,20 @@ function HomeScreenContent() {
         </div>
         <TeammatesToRate />
       </div>
+      
+      <section className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Upcoming Events</h2>
+          <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
+            View all
+          </Button>
+        </div>
+        <div className="space-y-4">
+          {mockEvents.map(event => (
+            <EventCard key={event.id} event={event} showLeagueName={true} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
