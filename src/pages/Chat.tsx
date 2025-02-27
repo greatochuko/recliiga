@@ -271,7 +271,7 @@ function ChatContent() {
                   {selectedChat.image ? <AvatarImage src={selectedChat.image} alt={selectedChat.name} /> : <AvatarFallback>{selectedChat.type === 'group' ? <Users className="h-6 w-6 text-[#FF7A00]" /> : selectedChat.initials}</AvatarFallback>}
                 </Avatar>
                 <div>
-                  <h3 className="text-lg font-bold text-[#FF7A00]">{selectedChat.name}</h3>
+                  <h3 className="text-lg font-bold text-inherit">{selectedChat.name}</h3>
                   <p className="text-sm text-[#707B81]">
                     {selectedChat.type === 'group' ? 'Group Chat' : selectedChat.role === 'organizer' ? 'League Organizer' : 'Player'}
                   </p>
