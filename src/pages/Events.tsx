@@ -292,7 +292,7 @@ function EventsContent() {
       {/* Upcoming Events Section */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="font-semibold text-xl">Upcoming Events</h2>
+          <h2 className="font-bold text-2xl">Upcoming Events</h2>
           <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
             View all
           </Button>
