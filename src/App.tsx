@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import Leagues from "./pages/Leagues";
 import LeagueDetails from "./pages/LeagueDetails";
 import EventDetails from "./pages/EventDetails";
+import EventResults from "./pages/EventResults";
 import Events from "./pages/Events";
 import Results from "./pages/Results";
 import Chat from "./pages/Chat";
@@ -85,6 +86,7 @@ const AppRoutes = () => (
       <Route path="/leagues/:id" element={<PrivateRoute><LeagueDetails /></PrivateRoute>} />
       <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
       <Route path="/events/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
+      <Route path="/events/:id/results" element={<PrivateRoute><EventResults /></PrivateRoute>} />
       <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="/complete-registration" element={<PlayerRegistration />} />

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+
 function CountdownClock({
   deadline
 }: {
@@ -40,6 +41,7 @@ function CountdownClock({
       <span>{timeLeft.minutes}m</span>
     </div>;
 }
+
 interface Event {
   id: number;
   date: string;
@@ -61,6 +63,7 @@ interface Event {
   hasResults: boolean;
   spotsLeft?: number;
 }
+
 function EventCard({
   event,
   isPastEvent = false,
@@ -74,6 +77,7 @@ function EventCard({
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
+  
   const getTeamName = (team: {
     name: string;
   }, index: number) => {
@@ -82,6 +86,7 @@ function EventCard({
     }
     return team.name;
   };
+  
   const getTeamAvatarFallback = (team: {
     name: string;
   }, index: number) => {
@@ -90,20 +95,27 @@ function EventCard({
     }
     return team.name.split(' ').map(n => n[0]).join('');
   };
+  
   const handleAttend = () => {
     setAttendanceStatus('attending');
     setIsEditing(false);
   };
+  
   const handleDecline = () => {
     setAttendanceStatus('declined');
     setIsEditing(false);
   };
+  
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
 
   const handleViewDetails = () => {
-    navigate(`/events/${event.id}`);
+    if (event.hasResults) {
+      navigate(`/events/${event.id}/results`);
+    } else {
+      navigate(`/events/${event.id}`);
+    }
   };
 
   return <Card className="mb-4">
@@ -185,6 +197,7 @@ function EventCard({
       </CardContent>
     </Card>;
 }
+
 function EventsContent() {
   const upcomingEvents = [{
     id: 1,
@@ -329,6 +342,7 @@ function EventsContent() {
       </section>
     </div>;
 }
+
 export default function Events() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">

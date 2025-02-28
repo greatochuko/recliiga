@@ -49,7 +49,11 @@ function EventCard({ event, isPastEvent = false, showLeagueName = false }: {
   };
 
   const handleViewDetails = () => {
-    navigate(`/events/${event.id}`);
+    if (event.hasResults) {
+      navigate(`/events/${event.id}/results`);
+    } else {
+      navigate(`/events/${event.id}`);
+    }
   };
 
   return (
