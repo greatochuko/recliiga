@@ -95,7 +95,9 @@ function LeaguesContent() {
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Leagues</h2>
+      <div className="pt-10 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800">Leagues</h2>
+      </div>
       
       <form onSubmit={handleSearch} className="mb-6">
         <Label htmlFor="search" className="sr-only">Search leagues</Label>

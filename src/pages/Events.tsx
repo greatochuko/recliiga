@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
 function CountdownClock({
@@ -315,6 +315,10 @@ function EventsContent() {
     hasResults: true
   }];
   return <div className="p-4 md:p-6">
+      <div className="mb-6 pt-10">
+        <h2 className="font-bold text-2xl">Events</h2>
+      </div>
+      
       {/* Upcoming Events Section */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
@@ -347,7 +351,10 @@ export default function Events() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 bg-background">
+        <main className="flex-1 bg-background relative">
+          <div className="absolute top-4 left-4 z-50">
+            <SidebarTrigger className="bg-white shadow-md" />
+          </div>
           <EventsContent />
         </main>
       </div>

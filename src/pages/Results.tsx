@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -26,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Users } from 'lucide-react'
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 
 const newNotifications = [
@@ -260,7 +261,10 @@ function ResultsContent() {
   const [selectedLeague, setSelectedLeague] = useState('premier-league')
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white p-4 md:p-6">
+      <div className="pt-10 mb-6">
+        <h2 className="text-2xl font-bold">Results</h2>
+      </div>
       <div>
         {/* League Info */}
         <Card className="w-full mb-6 bg-[#F9F9F9] rounded-lg overflow-hidden">
@@ -312,7 +316,10 @@ export default function Results() {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 bg-background p-8">
+        <main className="flex-1 bg-background relative">
+          <div className="absolute top-4 left-4 z-50">
+            <SidebarTrigger className="bg-white shadow-md" />
+          </div>
           <ResultsContent />
         </main>
       </div>
