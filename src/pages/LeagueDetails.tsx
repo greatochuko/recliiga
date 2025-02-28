@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,6 +15,7 @@ function EventCard({ event, isPastEvent = false, showLeagueName = false }: {
   isPastEvent?: boolean, 
   showLeagueName?: boolean 
 }) {
+  const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
@@ -45,6 +46,10 @@ function EventCard({ event, isPastEvent = false, showLeagueName = false }: {
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleViewDetails = () => {
+    navigate(`/events/${event.id}`);
   };
 
   return (
@@ -101,6 +106,7 @@ function EventCard({ event, isPastEvent = false, showLeagueName = false }: {
             variant="outline" 
             className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
             style={{ transform: 'scale(1.1)' }}
+            onClick={handleViewDetails}
           >
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
