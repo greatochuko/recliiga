@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react'
 import { Users, Search, MapPin, Calendar } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 
 interface League {
@@ -58,6 +59,7 @@ const demoLeagues: League[] = [
 ]
 
 function LeaguesContent() {
+  const navigate = useNavigate();
   const [leagues, setLeagues] = useState<League[]>(demoLeagues)
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -87,8 +89,8 @@ function LeaguesContent() {
   }
 
   const handleViewLeague = (leagueId: string) => {
-    console.log("Viewing league details:", leagueId)
-    // Here you would typically navigate to the league details page
+    // Navigate to the league details page
+    navigate(`/leagues/${leagueId}`);
   }
 
   return (
@@ -179,7 +181,10 @@ export default function Leagues() {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 bg-background">
+        <main className="flex-1 bg-background relative">
+          <div className="absolute top-4 left-4 z-50">
+            <SidebarTrigger className="bg-white shadow-md" />
+          </div>
           <LeaguesContent />
         </main>
       </div>

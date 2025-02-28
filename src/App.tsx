@@ -15,6 +15,7 @@ import PlayerRegistration from "./pages/PlayerRegistration";
 import CreateLeague from "./pages/CreateLeague";
 import Profile from "./pages/Profile";
 import Leagues from "./pages/Leagues";
+import LeagueDetails from "./pages/LeagueDetails";
 import Events from "./pages/Events";
 import Results from "./pages/Results";
 import Chat from "./pages/Chat";
@@ -80,6 +81,7 @@ const AppRoutes = () => (
       {/* Private routes */}
       <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
       <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
+      <Route path="/leagues/:id" element={<PrivateRoute><LeagueDetails /></PrivateRoute>} />
       <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
       <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
