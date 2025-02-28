@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,6 +23,7 @@ interface Event {
 }
 
 export function EventCard({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) {
+  const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
@@ -52,6 +54,14 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleViewDetails = () => {
+    if (event.hasResults) {
+      navigate(`/events/${event.id}/results`);
+    } else {
+      navigate(`/events/${event.id}`);
+    }
   };
 
   return (
@@ -108,6 +118,7 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             variant="outline" 
             className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
             style={{ transform: 'scale(1.1)' }}
+            onClick={handleViewDetails}
           >
             {event.hasResults ? "View Results" : "View Details"}
           </Button>

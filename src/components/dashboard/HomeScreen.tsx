@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Star, User, Calendar, MapPin, Edit } from 'lucide-react';
 import { Button } from "@/components/ui/button";
