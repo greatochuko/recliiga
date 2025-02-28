@@ -1,4 +1,6 @@
+
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -68,6 +70,7 @@ function EventCard({
   isPastEvent?: boolean;
   showLeagueName?: boolean;
 }) {
+  const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
@@ -98,6 +101,11 @@ function EventCard({
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
+
+  const handleViewDetails = () => {
+    navigate(`/events/${event.id}`);
+  };
+
   return <Card className="mb-4">
       <CardContent className="p-4 relative">
         <div className="flex justify-between items-start mb-4">
@@ -143,9 +151,14 @@ function EventCard({
             <span className="font-bold text-[#FF7A00]">{event.league}</span>
           </div>}
         <div className="flex justify-center mt-2 space-x-2">
-          <Button variant="outline" className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" style={{
-          transform: 'scale(1.1)'
-        }}>
+          <Button 
+            variant="outline" 
+            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" 
+            style={{
+              transform: 'scale(1.1)'
+            }}
+            onClick={handleViewDetails}
+          >
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
         </div>
