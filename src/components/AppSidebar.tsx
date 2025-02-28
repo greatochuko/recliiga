@@ -3,7 +3,6 @@ import { Sidebar, SidebarRail } from "@/components/ui/sidebar";
 import { NotificationsPopover } from "./sidebar/NotificationsPopover";
 import { UserMenu } from "./sidebar/UserMenu";
 import { NavigationMenu } from "./sidebar/NavigationMenu";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
   return (
@@ -14,7 +13,6 @@ export function AppSidebar() {
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h1 className="text-[#FF7A00] text-2xl font-bold">REC LiiGA</h1>
-              <SidebarTrigger />
             </div>
           </div>
 
