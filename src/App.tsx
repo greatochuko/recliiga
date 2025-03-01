@@ -22,6 +22,7 @@ import Events from "./pages/Events";
 import Results from "./pages/Results";
 import Chat from "./pages/Chat";
 import RateTeammates from "./pages/RateTeammates";
+import PlayerProfile from "./pages/PlayerProfile";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,7 @@ const AppRoutes = () => (
       <Route path="/complete-registration" element={<PlayerRegistration />} />
       <Route path="/create-league" element={<CreateLeague />} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+      <Route path="/player-profile" element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />

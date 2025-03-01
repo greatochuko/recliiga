@@ -9,13 +9,22 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
 function TeamRoster({ team, attendance }: { team: any, attendance: Record<string, boolean> }) {
+  const navigate = useNavigate();
+  
+  const handleViewProfile = () => {
+    navigate('/player-profile');
+  };
+  
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-muted-foreground">Team members</h3>
       </div>
       <div className="space-y-4">
-        <div className="flex items-center gap-4 bg-gray-100 p-2 rounded-lg">
+        <div 
+          className="flex items-center gap-4 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
+          onClick={handleViewProfile}
+        >
           <Avatar className="w-12 h-12" style={{ backgroundColor: team.color }}>
             <AvatarImage src={team.captain.avatar} alt={team.captain.name} />
             <AvatarFallback>{team.captain.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
@@ -32,7 +41,11 @@ function TeamRoster({ team, attendance }: { team: any, attendance: Record<string
           </Badge>
         </div>
         {team.players.map((player: any) => (
-          <div key={player.id} className="flex items-center gap-4">
+          <div 
+            key={player.id} 
+            className="flex items-center gap-4 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors"
+            onClick={handleViewProfile}
+          >
             <Avatar className="w-12 h-12">
               <AvatarImage src={player.avatar} alt={player.name} />
               <AvatarFallback>{player.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>

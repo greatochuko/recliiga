@@ -56,11 +56,21 @@ interface Player {
 }
 
 function AttendingList({ players }: { players: Player[] }) {
+  const navigate = useNavigate();
+  
+  const handleViewProfile = () => {
+    navigate('/player-profile');
+  };
+  
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {players.map((player) => (
-          <div key={player.id} className="flex items-center gap-2">
+          <div 
+            key={player.id} 
+            className="flex items-center gap-2 hover:bg-gray-50 p-2 rounded-md cursor-pointer transition-colors"
+            onClick={handleViewProfile}
+          >
             <Avatar className="w-10 h-10">
               <AvatarImage src={player.avatar} alt={player.name} />
               <AvatarFallback>{player.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>

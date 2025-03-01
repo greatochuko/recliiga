@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -14,20 +13,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-interface Player {
-  id: number;
-  name: string;
-  position: string;
-  avatar: string;
-}
-
-interface StarRatingProps {
-  rating: number;
-  onRatingChange: (rating: number) => void;
-}
-
-function StarRating({ rating, onRatingChange }: StarRatingProps) {
+function StarRating({ rating, onRatingChange }) {
   return (
     <div className="flex justify-center space-x-4">
       {[1, 2, 3].map((star) => (
@@ -56,30 +45,35 @@ function StarRating({ rating, onRatingChange }: StarRatingProps) {
   );
 }
 
-interface RatingDialogProps {
-  player: Player;
-  onRatingSubmit: (playerId: number) => void;
-}
-
-function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
+function RatingDialog({ player, onRatingSubmit, onViewProfile }) {
   const [rating, setRating] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleRatingChange = (newRating: number) => {
+  const handleRatingChange = (newRating) => {
     setRating(newRating);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Rating for', player.name, ':', rating);
     onRatingSubmit(player.id);
     setIsOpen(false);
   };
 
+  const handleCardClick = (e) => {
+    if (e.target.closest('.rating-btn-area')) {
+      return;
+    }
+    onViewProfile();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Card className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors">
+        <Card 
+          className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={handleCardClick}
+        >
           <CardContent className="p-2 flex items-center justify-between">
             <div className="flex items-center">
               <Avatar className="w-8 h-8">
@@ -91,7 +85,7 @@ function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
                 <p className="text-[10px] text-gray-500">{player.position}</p>
               </div>
             </div>
-            <div className="bg-[#FF7A00] px-1 py-0.5 rounded flex items-center">
+            <div className="bg-[#FF7A00] px-1 py-0.5 rounded flex items-center rating-btn-area">
               {[1, 2, 3].map((star) => <Star key={star} className="w-3 h-3 text-white" fill="white" />)}
             </div>
           </CardContent>
@@ -142,7 +136,8 @@ function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
 
 export default function RateTeammates() {
   const navigate = useNavigate();
-  const [players, setPlayers] = useState<Player[]>([
+  
+  const [players, setPlayers] = useState([
     { id: 1, name: 'John Smith', position: 'Midfielder', avatar: '/placeholder.svg?height=32&width=32' },
     { id: 2, name: 'Emma Johnson', position: 'Forward', avatar: '/placeholder.svg?height=32&width=32' },
     { id: 3, name: 'Michael Brown', position: 'Defender', avatar: '/placeholder.svg?height=32&width=32' },
@@ -153,43 +148,63 @@ export default function RateTeammates() {
     { id: 8, name: 'Jennifer Martinez', position: 'Midfielder', avatar: '/placeholder.svg?height=32&width=32' },
   ]);
 
-  const handleRatingSubmit = (playerId: number) => {
+  const handleRatingSubmit = (playerId) => {
     setPlayers(players.filter(player => player.id !== playerId));
+  };
+  
+  const handleViewProfile = () => {
+    navigate('/player-profile');
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-lg font-semibold">Rate Your Teammates</h1>
-        <Button 
-          variant="link" 
-          className="text-[#FF7A00] hover:text-[#FF7A00]/90"
-          onClick={() => navigate('/')}
-        >
-          Previous
-        </Button>
-      </div>
-      {players.length > 0 ? (
-        <>
-          <p className="text-gray-600 mb-6">Click on the player or star icons to rate your teammates' performance.</p>
-          <div className="grid grid-cols-2 gap-2">
-            {players.map((player) => (
-              <RatingDialog key={player.id} player={player} onRatingSubmit={handleRatingSubmit} />
-            ))}
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <main className="flex-1 bg-background relative pt-10">
+          <div className="absolute top-4 left-4 z-50">
+            <SidebarTrigger className="bg-white shadow-md" />
           </div>
-        </>
-      ) : (
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-[#FF7A00] mb-4">All Teammates Rated!</h2>
-          <p className="text-gray-600 mb-6">Thank you for providing feedback on all your teammates. Your input is valuable for improving team performance.</p>
-          <Button 
-            className="bg-[#FF7A00] hover:bg-[#E66C00] text-white font-bold py-3 px-6 rounded-lg text-lg"
-            onClick={() => navigate('/')}
-          >
-            Return to Dashboard
-          </Button>
-        </div>
-      )}
-    </div>
+          
+          <div className="max-w-4xl mx-auto p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h1 className="text-lg font-semibold">Rate Your Teammates</h1>
+              <Button 
+                variant="ghost" 
+                className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+                onClick={() => navigate(-1)}
+              >
+                Previous
+              </Button>
+            </div>
+            {players.length > 0 ? (
+              <>
+                <p className="text-gray-600 mb-6">Click on the player or star icons to rate your teammates' performance.</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {players.map((player) => (
+                    <RatingDialog 
+                      key={player.id} 
+                      player={player} 
+                      onRatingSubmit={handleRatingSubmit}
+                      onViewProfile={handleViewProfile}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <h2 className="text-2xl font-bold text-[#FF7A00] mb-4">All Teammates Rated!</h2>
+                <p className="text-gray-600 mb-6">Thank you for providing feedback on all your teammates. Your input is valuable for improving team performance.</p>
+                <Button 
+                  className="bg-[#FF7A00] hover:bg-[#E66C00] text-white font-bold py-3 px-6 rounded-lg text-lg"
+                  onClick={() => navigate('/')}
+                >
+                  Return to Dashboard
+                </Button>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
