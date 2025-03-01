@@ -1,6 +1,5 @@
 
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +7,15 @@ import { Button } from "@/components/ui/button";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
-function TeamRoster({ team, attendance }: { team: any, attendance: Record<string, boolean> }) {
+function TeamRoster({ team, attendance }: { 
+  team: { 
+    name: string, 
+    color: string, 
+    captain: any, 
+    players: any[] 
+  }, 
+  attendance: Record<string, boolean> 
+}) {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
@@ -31,7 +38,7 @@ function TeamRoster({ team, attendance }: { team: any, attendance: Record<string
             {attendance[team.captain.name] ? "Present" : "Absent"}
           </Badge>
         </div>
-        {team.players.map((player: any) => (
+        {team.players.map((player) => (
           <div key={player.id} className="flex items-center gap-4">
             <Avatar className="w-12 h-12">
               <AvatarImage src={player.avatar} alt={player.name} />
@@ -53,7 +60,6 @@ function TeamRoster({ team, attendance }: { team: any, attendance: Record<string
 
 function EventResultsContent() {
   const navigate = useNavigate();
-  const { id } = useParams();
   
   // Mock data for event results
   const eventData = {
@@ -123,12 +129,12 @@ function EventResultsContent() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 relative">
+    <div className="container mx-auto px-4 py-8 pt-10 relative">
       <Button 
         variant="ghost" 
         size="sm" 
-        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-        onClick={() => navigate(-1)}
+        className="mb-4 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+        onClick={() => navigate('/events')}
       >
         Previous
       </Button>
