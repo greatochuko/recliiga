@@ -103,8 +103,8 @@ const LeagueSelector = ({ leagues, onLeagueChange }: { leagues: League[], onLeag
 const TeammatesToRate = () => {
   const navigate = useNavigate();
   
-  const handleViewTeammateProfile = () => {
-    navigate('/player-profile');
+  const handleTeammateClick = () => {
+    navigate('/rate-teammates');
   };
   
   return (
@@ -124,7 +124,7 @@ const TeammatesToRate = () => {
           <div
             key={teammate.id}
             className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer hover:bg-gray-50"
-            onClick={handleViewTeammateProfile}
+            onClick={handleTeammateClick}
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
