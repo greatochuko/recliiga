@@ -21,6 +21,7 @@ import EventResults from "./pages/EventResults";
 import Events from "./pages/Events";
 import Results from "./pages/Results";
 import Chat from "./pages/Chat";
+import RateTeammates from "./pages/RateTeammates";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const AppRoutes = () => (
       <Route path="/events/:id/results" element={<PrivateRoute><EventResults /></PrivateRoute>} />
       <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
+      <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
       <Route path="/complete-registration" element={<PlayerRegistration />} />
       <Route path="/create-league" element={<CreateLeague />} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />

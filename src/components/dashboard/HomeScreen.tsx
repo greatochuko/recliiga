@@ -10,6 +10,7 @@ import { StarRating } from './StarRating';
 import { PlayerStats } from './PlayerStats';
 import { EventCard } from './EventCard';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface League {
   id: string;
@@ -100,11 +101,17 @@ const LeagueSelector = ({ leagues, onLeagueChange }: { leagues: League[], onLeag
 };
 
 const TeammatesToRate = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
-        <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
+        <Button 
+          variant="link" 
+          className="text-[#FF7A00] hover:text-[#FF7A00]/90"
+          onClick={() => navigate('/rate-teammates')}
+        >
           View all
         </Button>
       </div>
