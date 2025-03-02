@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LeagueSelector } from './LeagueSelector';
 import { StarRating } from './StarRating';
 import { PlayerRankCard } from './PlayerRankCard';
-import { League, PlayerStats, Teammate, Event as DashboardEvent } from '@/types/dashboard';
+import { League, PlayerStats, Teammate, Event, getLeagueName } from '@/types/dashboard';
 
 // Mock API functions
 async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
@@ -62,7 +62,7 @@ async function fetchTeammates(): Promise<Teammate[]> {
   ];
 }
 
-async function fetchUpcomingEvents(): Promise<any[]> {
+async function fetchUpcomingEvents(): Promise<Event[]> {
   return [
     {
       id: "1",
@@ -128,20 +128,9 @@ function PlayerDashboardContent() {
     queryFn: fetchTeammates
   });
 
-  const processEvents = (events: any[]): DashboardEvent[] => {
-    return events.map(event => ({
-      ...event,
-      rsvpDeadline: event.rsvp_deadline ? new Date(event.rsvp_deadline) : undefined,
-      id: event.id.toString() // Ensure id is string
-    }));
-  };
-
   const { data: upcomingEvents, isLoading: eventsLoading } = useQuery({
     queryKey: ['upcomingEvents'],
-    queryFn: async () => {
-      const events = await fetchUpcomingEvents();
-      return processEvents(events);
-    }
+    queryFn: fetchUpcomingEvents
   });
 
   const handleLeagueChange = (leagueId: string) => {
@@ -178,7 +167,7 @@ function PlayerDashboardContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Profile Card */}
             <PlayerRankCard league={{
-              name: stats.league,
+              name: getLeagueName(stats.league),
               playerName: stats.name,
               rank: stats.position,
               totalPlayers: stats.totalTeams,

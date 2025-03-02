@@ -8,6 +8,7 @@ import { Calendar, MapPin, Edit } from 'lucide-react';
 import { CountdownClock } from './CountdownClock';
 import { Event } from '@/types/dashboard';
 import { useNavigate } from 'react-router-dom';
+import { getLeagueName } from '@/types/dashboard';
 
 interface EventCardProps {
   event: Event;
@@ -103,7 +104,7 @@ export function EventCard({ event, showLeagueName = false, isPastEvent = false }
         </div>
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
-            <span className="font-bold text-[#FF7A00]">{event.league}</span>
+            <span className="font-bold text-[#FF7A00]">{getLeagueName(event.league)}</span>
           </div>
         )}
         <div className="flex justify-center mt-2 space-x-2">

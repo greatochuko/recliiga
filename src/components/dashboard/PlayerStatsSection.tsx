@@ -1,53 +1,43 @@
-import { useQuery } from '@tanstack/react-query';
-import { PlayerStats } from "@/types/dashboard";
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { getLeagueName } from '@/types/dashboard';
 
-async function fetchPlayerStats(): Promise<PlayerStats> {
-  return {
-    name: "John Doe",
-    position: 5,
-    totalTeams: 12,
-    league: "Premier League",
-    points: 15,
-    wins: 5,
-    losses: 2,
-    ties: 1,
-    record: { wins: 5, losses: 2, ties: 1 }
+interface PlayerStatsProps {
+  playerStats: {
+    name: string;
+    position: number;
+    totalTeams: number;
+    league: string | { name: string; id?: string };
+    points: number;
+    wins: number;
+    losses: number;
+    ties: number;
   };
 }
 
-export function PlayerStatsSection() {
-  const { data: playerStats, isLoading } = useQuery({
-    queryKey: ['playerStats'],
-    queryFn: fetchPlayerStats
-  });
-
-  if (isLoading || !playerStats) {
-    return <div>Loading player stats...</div>;
-  }
-
-  const playerStatsData: PlayerStats = {
-    name: "John Doe", // Add player name
-    position: 5, // Add position (rank)
-    totalTeams: 12, // Add total teams
-    league: "Premier League",
-    points: 15,
-    wins: 5,
-    losses: 2,
-    ties: 1,
-    record: { wins: 5, losses: 2, ties: 1 }
-  };
-
+export function PlayerStatsSection({ playerStats }: PlayerStatsProps) {
   return (
-    <div>
-      {/* Display player stats here */}
-      <p>Name: {playerStatsData.name}</p>
-      <p>Position: {playerStatsData.position}</p>
-      <p>Total Teams: {playerStatsData.totalTeams}</p>
-      <p>League: {playerStatsData.league}</p>
-      <p>Points: {playerStatsData.points}</p>
-      <p>Wins: {playerStatsData.wins}</p>
-      <p>Losses: {playerStatsData.losses}</p>
-      <p>Ties: {playerStatsData.ties}</p>
-    </div>
+    <Card className="bg-white rounded-lg shadow-md">
+      <CardContent className="p-4">
+        <h2 className="text-lg font-semibold">{getLeagueName(playerStats.league)}</h2>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <h3 className="text-md font-bold">Player Info</h3>
+            <p>Name: {playerStats.name}</p>
+            <p>Position: {playerStats.position} / {playerStats.totalTeams}</p>
+          </div>
+          <div>
+            <h3 className="text-md font-bold">Record</h3>
+            <p>Wins: {playerStats.wins}</p>
+            <p>Losses: {playerStats.losses}</p>
+            <p>Ties: {playerStats.ties}</p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <h3 className="text-md font-bold">Points</h3>
+          <p>{playerStats.points}</p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
