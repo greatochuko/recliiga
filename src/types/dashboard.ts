@@ -30,7 +30,7 @@ export interface Event {
   rsvpDeadline?: Date;
   rsvp_deadline?: Date; // For backward compatibility
   status: string | null;
-  league: string;
+  league: string | { name: string; id?: string };
   hasResults: boolean;
   spotsLeft?: number;
 }
@@ -39,7 +39,7 @@ export interface PlayerStats {
   name: string;
   position: number;
   totalTeams: number;
-  league: string;
+  league: string | { name: string; id?: string };
   points: number;
   wins: number;
   losses: number;

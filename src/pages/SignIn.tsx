@@ -1,6 +1,6 @@
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext'
 
 export default function SignInPage() {
   const { signIn } = useAuth()
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -30,9 +31,23 @@ export default function SignInPage() {
     }
   }
 
+  const handleLogoClick = () => {
+    // Reset form and errors
+    setEmail('')
+    setPassword('')
+    setError('')
+    // Refresh the page
+    window.location.reload()
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-      <h1 className="text-4xl font-bold text-[#FF7A00] mb-8">REC LiiGA</h1>
+      <h1 
+        className="text-4xl font-bold text-[#FF7A00] mb-8 cursor-pointer hover:text-[#FF9A30] transition-colors" 
+        onClick={handleLogoClick}
+      >
+        REC LiiGA
+      </h1>
       
       <Card className="w-full max-w-md">
         <form onSubmit={handleSignIn}>

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
@@ -14,13 +14,24 @@ import { NotificationsPopover } from "./sidebar/NotificationsPopover";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AppSidebar() {
+  const navigate = useNavigate();
+  
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   return (
     <Sidebar className="border-r border-gray-200 bg-white">
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h1 className="text-[#FF7A00] text-2xl font-bold">REC LiiGA</h1>
+            <h1 
+              className="text-[#FF7A00] text-2xl font-bold cursor-pointer hover:text-[#FF9A30] transition-colors" 
+              onClick={handleLogoClick}
+            >
+              REC LiiGA
+            </h1>
           </div>
         </div>
 
