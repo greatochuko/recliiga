@@ -24,6 +24,7 @@ export default function SignInPage() {
 
     try {
       await signIn(email, password)
+      navigate('/')
     } catch (error: any) {
       setError(error.message)
     } finally {
