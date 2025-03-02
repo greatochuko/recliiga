@@ -1,16 +1,11 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import { NotificationType } from "./types";
 
 type NotificationProps = {
   title: string;
-  notifications: {
-    avatar: string;
-    fallback: string;
-    alt: string;
-    message: string;
-    time: string;
-  }[];
+  notifications: NotificationType[];
 };
 
 export const NotificationSection = ({ title, notifications }: NotificationProps) => {
