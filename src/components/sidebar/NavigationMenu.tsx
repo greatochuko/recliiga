@@ -50,13 +50,13 @@ export function NavigationMenu() {
               const isActive = location.pathname === item.url;
               return (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title} isActive={isActive}>
                     <Link 
                       to={item.url} 
                       className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm ${
                         isActive 
                           ? "text-[#FF7A00] bg-orange-50 font-medium" 
-                          : "text-gray-600 hover:bg-gray-50"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
                       }`}
                     >
                       <item.icon className={`w-5 h-5 ${isActive ? "text-[#FF7A00]" : "text-gray-500"}`} />

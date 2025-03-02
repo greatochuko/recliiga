@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function LONavigationMenu() {
   const location = useLocation();
@@ -43,7 +44,11 @@ export function LONavigationMenu() {
               <div className="pl-4 mb-4">
                 {loActions.map((action) => (
                   <SidebarMenuItem key={action.id}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton 
+                      asChild 
+                      tooltip={action.label}
+                      isActive={location.pathname === action.url}
+                    >
                       <Link
                         to={action.url}
                         className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm ${
