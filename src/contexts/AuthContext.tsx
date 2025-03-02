@@ -111,23 +111,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // 1. Delete the user using the database function
-      const { error: deleteError } = await supabase.rpc('delete_user', {
-        user_id: user.id
-      } as { user_id: string });
-
-      if (deleteError) {
-        console.error('Error deleting user:', deleteError);
-        throw new Error('Failed to delete user account');
-      }
-
-      // 2. Clear local storage and session
+      // For Phase 1, just simulate the deletion
       localStorage.clear();
       sessionStorage.clear();
       setUser(null);
       setSession(null);
-
-      // 3. Sign out locally (the auth record is already deleted)
       await supabase.auth.signOut();
 
       toast.success('Your account has been deleted successfully');

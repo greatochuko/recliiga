@@ -41,19 +41,8 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/sign-in" />;
   }
 
-  const userMetadata = user.user_metadata || {};
-  const isPlayer = userMetadata?.role === 'player';
-  const hasProfile = userMetadata?.profile_completed === true;
-
-  if (hasProfile) {
-    return <>{children}</>;
-  }
-
-  if (isPlayer) {
-    return <Navigate to="/complete-registration" />;
-  } else {
-    return <Navigate to="/create-league" />;
-  }
+  // For Phase 1, we'll skip the profile check
+  return <>{children}</>;
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {

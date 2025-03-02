@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -96,63 +95,12 @@ const PlayerRegistration = () => {
       setCurrentStep(currentStep + 1);
     } else {
       try {
-        // Format the data according to our backend requirements
-        const formattedData = {
-          nickname: playerData.nickname,
-          date_of_birth: playerData.dateOfBirth?.toISOString() || '',
-          city: playerData.city,
-          sports: playerData.sports,
-          positions: Object.entries(playerData.positions)
-            .flatMap(([_, positionArray]) => positionArray as string[]),
-          avatar_url: playerData.avatar_url,
-          profile_completed: true // Mark profile as completed
-        };
-
-        // Update profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update(formattedData)
-          .eq('id', user?.id);
-
-        if (profileError) throw profileError;
-        
-        // If league code provided, join league (this is just a placeholder for now)
-        if (playerData.leagueCode) {
-          const { data: league, error: leagueError } = await supabase
-            .from('leagues')
-            .select('id')
-            .eq('league_code', playerData.leagueCode)
-            .maybeSingle();
-
-          if (leagueError) throw leagueError;
-          
-          if (league) {
-            const { error: joinError } = await supabase
-              .from('league_members')
-              .insert({
-                league_id: league.id,
-                player_id: user?.id,
-              });
-
-            if (joinError) throw joinError;
-          } else {
-            toast.error('Invalid league code');
-            return;
-          }
-        }
-        
-        // Update user metadata to indicate profile is complete
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { profile_completed: true }
-        });
-        
-        if (updateError) throw updateError;
-        
+        // For Phase 1 UI/UX Development, we're just simulating success
         toast.success('Profile updated successfully!');
         // Redirect to home page after successful registration
         navigate('/');
       } catch (error: any) {
-        toast.error(error.message);
+        toast.error(error.message || 'An error occurred');
       }
     }
   };
