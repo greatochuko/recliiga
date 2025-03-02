@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, ChevronDown, UserPlus, Trash2, LogOut } from "lucide-react";
@@ -8,7 +7,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import InvitePopup from "@/components/InvitePopup";
-
 export function UserMenu() {
   const {
     user,
@@ -20,7 +18,6 @@ export function UserMenu() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [showInvitePopup, setShowInvitePopup] = useState(false);
-  
   const handleLogout = async () => {
     try {
       await signOut();
@@ -30,7 +27,6 @@ export function UserMenu() {
       toast.error('Error logging out');
     }
   };
-  
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "Delete") {
       toast.error('Please type "Delete" to confirm');
@@ -44,7 +40,6 @@ export function UserMenu() {
       console.error('Error deleting account:', error);
     }
   };
-
   return <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -70,19 +65,17 @@ export function UserMenu() {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600">
             <Trash2 className="w-4 h-4 mr-2" />
-            <span>Delete Account</span>
+            <span className="">Delete Account</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600">
-            <LogOut className="w-4 h-4 mr-2" />
+            <LogOut className="w-4 h-4 mr-2  text-black\n" />
             <span className="text-black">Logout</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {showInvitePopup && (
-        <InvitePopup />
-      )}
+      {showInvitePopup && <InvitePopup />}
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
