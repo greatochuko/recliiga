@@ -81,28 +81,36 @@ export const EventsContent: React.FC = () => {
               Create New Event
             </Button>
           </div>
-          {filteredEvents.upcoming.map(event => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onSelectCaptains={handleSelectCaptains}
-              onEdit={handleEditEvent}
-              onDelete={handleDeleteEvent}
-              onEnterResults={handleEnterResults}
-            />
-          ))}
+          {filteredEvents.upcoming.length === 0 ? (
+            <div className="text-center py-10 text-gray-500">No upcoming events found</div>
+          ) : (
+            filteredEvents.upcoming.map(event => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onSelectCaptains={handleSelectCaptains}
+                onEdit={handleEditEvent}
+                onDelete={handleDeleteEvent}
+                onEnterResults={handleEnterResults}
+              />
+            ))
+          )}
         </TabsContent>
         <TabsContent value="past">
-          {filteredEvents.past.map(event => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onSelectCaptains={handleSelectCaptains}
-              onEdit={handleEditEvent}
-              onDelete={handleDeleteEvent}
-              onEnterResults={handleEnterResults}
-            />
-          ))}
+          {filteredEvents.past.length === 0 ? (
+            <div className="text-center py-10 text-gray-500">No past events found</div>
+          ) : (
+            filteredEvents.past.map(event => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onSelectCaptains={handleSelectCaptains}
+                onEdit={handleEditEvent}
+                onDelete={handleDeleteEvent}
+                onEnterResults={handleEnterResults}
+              />
+            ))
+          )}
         </TabsContent>
       </Tabs>
     </div>
