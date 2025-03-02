@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +30,7 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
     initialData.date_of_birth ? new Date(initialData.date_of_birth) : undefined
   );
   const [sports, setSports] = useState<string[]>(initialData.sports || []);
-  const [positions, setPositions] = useState<string[]>(initialData.positions || []);
+  const [positions, setPositions] = useState<Record<string, string[]>>(initialData.positions || {});
   const [date, setDate] = useState<Date>();
   const [calendarMonth, setCalendarMonth] = useState<Date>(dateOfBirth || new Date());
 
@@ -44,29 +43,43 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
   const handleSportToggle = (sport: string) => {
     if (sports.includes(sport)) {
       setSports(sports.filter(s => s !== sport));
-      setPositions(positions.filter(p => !AVAILABLE_POSITIONS[sport as keyof typeof AVAILABLE_POSITIONS].includes(p)));
+      const newPositions = { ...positions };
+      delete newPositions[sport];
+      setPositions(newPositions);
     } else {
       setSports([...sports, sport]);
+      setPositions({
+        ...positions,
+        [sport]: []
+      });
     }
   };
 
-  const handlePositionToggle = (position: string) => {
-    if (positions.includes(position)) {
-      setPositions(positions.filter(p => p !== position));
+  const handlePositionToggle = (sport: string, position: string) => {
+    const sportPositions = positions[sport] || [];
+    
+    if (sportPositions.includes(position)) {
+      setPositions({
+        ...positions,
+        [sport]: sportPositions.filter(p => p !== position)
+      });
     } else {
-      setPositions([...positions, position]);
+      setPositions({
+        ...positions,
+        [sport]: [...sportPositions, position]
+      });
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nickname || !city || !dateOfBirth || sports.length === 0 || positions.length === 0) {
+    if (!nickname || !city || !dateOfBirth || sports.length === 0) {
       return;
     }
     onSubmit({
       nickname,
       city,
-      date_of_birth: dateOfBirth.toISOString(),
+      dateOfBirth,
       sports,
       positions,
     });
@@ -205,9 +218,9 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
                   {AVAILABLE_POSITIONS[sport as keyof typeof AVAILABLE_POSITIONS].map((position) => (
                     <Badge
                       key={position}
-                      variant={positions.includes(position) ? "default" : "outline"}
+                      variant={positions[sport]?.includes(position) ? "default" : "outline"}
                       className="cursor-pointer"
-                      onClick={() => handlePositionToggle(position)}
+                      onClick={() => handlePositionToggle(sport, position)}
                     >
                       {position}
                     </Badge>
@@ -222,7 +235,7 @@ export default function PersonalInfoStep({ onSubmit, initialData }: PersonalInfo
       <Button 
         type="submit" 
         className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90"
-        disabled={!nickname || !city || !dateOfBirth || sports.length === 0 || positions.length === 0}
+        disabled={!nickname || !city || !dateOfBirth || sports.length === 0}
       >
         Continue
       </Button>
