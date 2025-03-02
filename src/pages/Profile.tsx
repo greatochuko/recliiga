@@ -152,28 +152,30 @@ export default function Profile() {
             <SidebarTrigger className="bg-white shadow-md" />
             <h1 className="ml-4 text-2xl font-bold">Profile</h1>
           </div>
-          <div className="flex-1 overflow-auto bg-white p-8 pt-16">
-            <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-sm border">
-              <div className="p-6">
-                <ProfileHeader
-                  isEditing={isEditing}
-                  onEdit={handleEditToggle}
-                  onClose={handleClose}
-                  loading={loading}
-                />
-                <ProfileAvatar
-                  avatarUrl={formData.avatar_url}
-                  fullName={formData.full_name}
-                  isEditing={isEditing}
-                  loading={loading}
-                  onFileChange={handleFileChange}
-                />
-                <ProfileForm
-                  formData={formData}
-                  isEditing={isEditing}
-                  loading={loading}
-                  onChange={handleFormChange}
-                />
+          <div className="pt-16">
+            <div className="flex-1 overflow-auto bg-white p-8">
+              <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-sm border">
+                <div className="p-6">
+                  <ProfileHeader
+                    isEditing={isEditing}
+                    onEdit={handleEditToggle}
+                    onClose={handleClose}
+                    loading={loading}
+                  />
+                  <ProfileAvatar
+                    avatarUrl={formData.avatar_url}
+                    fullName={formData.full_name}
+                    isEditing={isEditing}
+                    loading={loading}
+                    onFileChange={handleFileChange}
+                  />
+                  <ProfileForm
+                    formData={formData}
+                    isEditing={isEditing}
+                    loading={loading}
+                    onChange={handleFormChange}
+                  />
+                </div>
               </div>
             </div>
           </div>

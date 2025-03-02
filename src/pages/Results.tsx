@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+
 const newNotifications = [{
   avatar: '/placeholder.svg',
   fallback: 'TA',
@@ -24,6 +25,7 @@ const newNotifications = [{
   message: 'Upcoming event: Tournament Finals',
   time: '1 hour ago'
 }];
+
 const earlierNotifications = [{
   avatar: '/placeholder.svg',
   fallback: 'LG',
@@ -37,6 +39,7 @@ const earlierNotifications = [{
   message: 'New team joined the league',
   time: 'May 15, 2024'
 }];
+
 const leaguesData = {
   'premier-league': {
     name: "Premier League",
@@ -866,6 +869,7 @@ const leaguesData = {
     }]
   }
 };
+
 const columnExplanations = {
   'GP': 'Games Played',
   'W': 'Wins (3 points)',
@@ -876,6 +880,7 @@ const columnExplanations = {
   'N-ATT': 'Non-Attendance (-1 point)',
   'Pts': 'Total Points'
 };
+
 const NotificationSection = ({
   title,
   notifications
@@ -895,6 +900,7 @@ const NotificationSection = ({
         </div>
       </DropdownMenuItem>)}
   </>;
+
 const ResultsLeaderboard = ({
   leagueData
 }: {
@@ -954,13 +960,10 @@ const ResultsLeaderboard = ({
       </Card>
     </div>;
 };
+
 function ResultsContent() {
   const [selectedLeague, setSelectedLeague] = useState('premier-league');
   return <div className="min-h-screen bg-white p-4 md:p-6">
-      <div className="pt-10 mb-6">
-        <h2 className="text-2xl font-bold">
-      </h2>
-      </div>
       <div>
         {/* League Info */}
         <Card className="w-full mb-6 bg-[#F9F9F9] rounded-lg overflow-hidden">
@@ -1003,6 +1006,7 @@ function ResultsContent() {
       </div>
     </div>;
 }
+
 export default function Results() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -1012,7 +1016,9 @@ export default function Results() {
             <SidebarTrigger className="bg-white shadow-md" />
             <h1 className="ml-4 text-2xl font-bold">Results</h1>
           </div>
-          <ResultsContent />
+          <div className="pt-16">
+            <ResultsContent />
+          </div>
         </main>
       </div>
     </SidebarProvider>;

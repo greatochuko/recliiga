@@ -184,42 +184,43 @@ export default function PlayerProfile() {
             <h1 className="ml-4 text-2xl font-bold">Player Profile</h1>
           </div>
           
-          <div className="max-w-2xl mx-auto p-4 md:p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-semibold text-gray-800">Profile</h1>
-              <Button 
-                variant="ghost" 
-                className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-                onClick={() => navigate(-1)}
-              >
-                ← Previous
-              </Button>
-            </div>
-
-            <div className="mb-8 bg-gradient-to-b from-[#FF7A00]/10 to-white pt-8 pb-3 px-3 rounded-lg shadow-sm">
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-32 h-32 mb-3 relative rounded-full border-2 border-[#FF7A00] p-1 bg-white shadow-lg">
-                  <Avatar className="w-full h-full">
-                    <AvatarImage src="/placeholder.svg" alt="Profile picture" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                </div>
-              </div>
-              <div className="text-center">
-                <h2 className="text-xl font-semibold text-gray-800 mb-1">{profileData.fullName}</h2>
-                <p className="text-base text-gray-600 mb-3">{profileData.city}</p>
+          <div className="pt-16">
+            <div className="max-w-2xl mx-auto p-4 md:p-6">
+              <div className="flex justify-between items-center mb-6">
                 <Button 
-                  variant="outline" 
-                  className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors duration-200"
-                  onClick={() => console.log("Open chat with", profileData.fullName)}
+                  variant="ghost" 
+                  className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+                  onClick={() => navigate(-1)}
                 >
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Message
+                  ← Previous
                 </Button>
               </div>
-            </div>
 
-            <PlayerStats />
+              <div className="mb-8 bg-gradient-to-b from-[#FF7A00]/10 to-white pt-8 pb-3 px-3 rounded-lg shadow-sm">
+                <div className="flex flex-col items-center mb-6">
+                  <div className="w-32 h-32 mb-3 relative rounded-full border-2 border-[#FF7A00] p-1 bg-white shadow-lg">
+                    <Avatar className="w-full h-full">
+                      <AvatarImage src="/placeholder.svg" alt="Profile picture" />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-1">{profileData.fullName}</h2>
+                  <p className="text-base text-gray-600 mb-3">{profileData.city}</p>
+                  <Button 
+                    variant="outline" 
+                    className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors duration-200"
+                    onClick={() => console.log("Open chat with", profileData.fullName)}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Message
+                  </Button>
+                </div>
+              </div>
+
+              <PlayerStats />
+            </div>
           </div>
         </main>
       </div>
