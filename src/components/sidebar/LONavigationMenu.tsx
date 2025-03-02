@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Settings, Calendar, UserPlus, FolderPlus, HelpCircle, ChevronDown, PlusCircle } from "lucide-react";
+import { Settings, Calendar, UserPlus, FolderPlus, HelpCircle, ChevronDown } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -11,15 +11,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function LONavigationMenu() {
   const location = useLocation();
   const [isLODropdownOpen, setIsLODropdownOpen] = useState(true);
 
   const loActions = [
-    { id: 'manage-events', label: 'Manage Events', icon: Calendar, url: "/events" },
-    { id: 'add-event', label: 'Add Event', icon: PlusCircle, url: "/add-event" },
+    { id: 'manage-events', label: 'Manage Events', icon: Calendar, url: "/manage-events" },
     { id: 'invite-players', label: 'Invite Players', icon: UserPlus, url: "/invite-players" },
     { id: 'create-league', label: 'Create a New League', icon: FolderPlus, url: "/create-league" },
     { id: 'help-support', label: 'Help & Support', icon: HelpCircle, url: "/help" },
