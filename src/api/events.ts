@@ -60,12 +60,14 @@ const mockEvents: Event[] = [
 // API functions
 export const fetchEvents = async (): Promise<Event[]> => {
   // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 500));
+  console.log('Fetching events:', mockEvents);
   return mockEvents;
 };
 
 export const fetchLeagues = async (): Promise<League[]> => {
   // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(resolve => setTimeout(resolve, 300));
+  console.log('Fetching leagues:', mockLeagues);
   return mockLeagues;
 };

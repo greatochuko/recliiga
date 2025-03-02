@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,27 +7,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { EventCard } from './EventCard';
 import { Event, League } from '@/types/events';
 import { fetchEvents, fetchLeagues } from '@/api/events';
+import { useToast } from '@/components/ui/use-toast';
 
 export const EventsContent: React.FC = () => {
+  const { toast } = useToast();
   const [selectedLeague, setSelectedLeague] = useState<number | null>(null);
+  
   const { data: leagues, isLoading: isLoadingLeagues } = useQuery({
     queryKey: ['leagues'],
     queryFn: fetchLeagues
   });
+  
   const { data: events, isLoading: isLoadingEvents } = useQuery({
     queryKey: ['events'],
     queryFn: fetchEvents
   });
 
+  useEffect(() => {
+    console.log('Events data loaded:', events);
+    console.log('Leagues data loaded:', leagues);
+  }, [events, leagues]);
+
   const filteredEvents = useMemo(() => {
     if (!events) return { upcoming: [], past: [] };
+    
+    console.log('Filtering events with selectedLeague:', selectedLeague);
     const filtered = selectedLeague
       ? events.filter(event => event.leagueId === selectedLeague)
       : events;
-    return {
-      upcoming: filtered.filter(event => event.status === 'upcoming'),
-      past: filtered.filter(event => event.status === 'past')
-    };
+    
+    const upcoming = filtered.filter(event => event.status === 'upcoming');
+    const past = filtered.filter(event => event.status === 'past');
+    
+    console.log('Filtered events:', { upcoming, past });
+    return { upcoming, past };
   }, [events, selectedLeague]);
 
   if (isLoadingLeagues || isLoadingEvents) {
@@ -36,22 +49,42 @@ export const EventsContent: React.FC = () => {
 
   const handleSelectCaptains = (eventId: number) => {
     console.log(`Select captains for event ${eventId}`);
+    toast({
+      title: "Action initiated",
+      description: `Selecting captains for event ${eventId}`,
+    });
   };
 
   const handleEditEvent = (eventId: number) => {
     console.log(`Edit event ${eventId}`);
+    toast({
+      title: "Action initiated",
+      description: `Editing event ${eventId}`,
+    });
   };
 
   const handleDeleteEvent = (eventId: number) => {
     console.log(`Delete event ${eventId}`);
+    toast({
+      title: "Action initiated",
+      description: `Deleting event ${eventId}`,
+    });
   };
 
   const handleEnterResults = (eventId: number) => {
     console.log(`Enter/Edit results for event ${eventId}`);
+    toast({
+      title: "Action initiated",
+      description: `Entering results for event ${eventId}`,
+    });
   };
 
   const handleCreateNewEvent = () => {
     console.log('Create new event');
+    toast({
+      title: "Action initiated",
+      description: "Creating a new event",
+    });
   };
 
   return (

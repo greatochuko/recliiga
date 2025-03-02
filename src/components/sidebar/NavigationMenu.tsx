@@ -27,6 +27,11 @@ const menuItems = [
     url: "/events",
   },
   {
+    title: "Manage Events",
+    icon: Calendar,
+    url: "/manage-events",
+  },
+  {
     title: "Results",
     icon: BarChart,
     url: "/results",
