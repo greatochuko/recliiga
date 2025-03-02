@@ -117,7 +117,6 @@ const individualMessages = [{
   time: "9:10 PM",
   initials: "CT"
 }];
-
 function ChatContent() {
   const [activeConversation, setActiveConversation] = useState(conversations[0]);
   const [messageInput, setMessageInput] = useState("");
@@ -126,7 +125,6 @@ function ChatContent() {
   const [newChatName, setNewChatName] = useState('');
   const [newChatType, setNewChatType] = useState('individual');
   const [chats, setChats] = useState(conversations);
-
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (messageInput.trim()) {
@@ -134,12 +132,10 @@ function ChatContent() {
       setMessageInput("");
     }
   };
-
   const handleChatSelect = (chat: any) => {
     setActiveConversation(chat);
     setIsProfileVisible(false);
   };
-
   const handleDeleteChat = (chatId: number) => {
     const updatedChats = chats.filter(chat => chat.id !== chatId);
     setChats(updatedChats);
@@ -147,7 +143,6 @@ function ChatContent() {
       setActiveConversation(updatedChats[0] || null);
     }
   };
-
   const handleCreateNewChat = () => {
     const newChat = {
       id: chats.length + 1,
@@ -165,11 +160,9 @@ function ChatContent() {
     setIsNewChatDialogOpen(false);
     setActiveConversation(newChat);
   };
-
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
-
   const getMessageData = (conversation: any) => {
     if (conversation.type === 'group') {
       return groupMessages;
@@ -187,12 +180,8 @@ function ChatContent() {
       });
     }
   };
-
   return <div className="p-4 md:p-6">
-      <div className="pt-10 mb-6">
-        <h2 className="text-2xl font-bold">
-      </h2>
-      </div>
+      
       
       <div className="flex h-[calc(100vh-180px)] border rounded-lg overflow-hidden">
         {/* Conversations sidebar */}
@@ -375,7 +364,6 @@ function ChatContent() {
       </div>
     </div>;
 }
-
 export default function Chat() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">
