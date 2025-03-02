@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Edit } from 'lucide-react';
@@ -11,7 +12,9 @@ import { Event } from "@/types/dashboard";
 export function EventCard({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) {
   const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
-  const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
+  // Prefer rsvpDeadline but fallback to rsvp_deadline
+  const deadline = event.rsvpDeadline || event.rsvp_deadline;
+  const isRsvpOpen = deadline && new Date() < deadline;
   const [isEditing, setIsEditing] = useState(false);
 
   const getTeamName = (team: { name: string }, index: number) => {
@@ -77,6 +80,7 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             </span>
           )}
         </div>
+        
         <div className="grid grid-cols-3 items-center justify-items-center mb-4">
           <div className="flex flex-col items-center">
             <Avatar className="w-16 h-16" style={{ backgroundColor: event.team1.color }}>
@@ -94,11 +98,13 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             <span className="text-sm font-semibold mt-2">{getTeamName(event.team2, 1)}</span>
           </div>
         </div>
+        
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
             <span className="font-bold text-[#FF7A00]">{event.league}</span>
           </div>
         )}
+        
         <div className="flex justify-center mt-2 space-x-2">
           <Button 
             variant="outline" 
@@ -109,6 +115,7 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
         </div>
+        
         {isRsvpOpen && (
           <>
             <div className="flex justify-center mt-2 space-x-2">
@@ -142,7 +149,7 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             <div className="flex justify-end items-center mt-2">
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-500">RSVP in:</span>
-                <CountdownClock deadline={event.rsvpDeadline} />
+                <CountdownClock deadline={deadline} />
               </div>
             </div>
           </>

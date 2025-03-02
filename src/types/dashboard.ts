@@ -1,4 +1,3 @@
-
 export interface PlayerStats {
   wins: number;
   losses: number;
@@ -45,5 +44,5 @@ export interface Event {
   league: string;
   hasResults: boolean;
   spotsLeft?: number;
-  rsvp_deadline?: Date; // Added for backward compatibility with existing code
+  rsvp_deadline?: Date;
 }
