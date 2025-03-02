@@ -94,11 +94,7 @@ function LeaguesContent() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-3xl">
-      <div className="pt-10 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Leagues</h2>
-      </div>
-      
+    <div className="container mx-auto p-6 max-w-3xl pt-16">
       <form onSubmit={handleSearch} className="mb-6">
         <Label htmlFor="search" className="sr-only">Search leagues</Label>
         <div className="relative">
@@ -184,8 +180,9 @@ export default function Leagues() {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50">
+          <div className="absolute top-4 left-4 z-50 flex items-center">
             <SidebarTrigger className="bg-white shadow-md" />
+            <h1 className="ml-4 text-2xl font-bold">Leagues</h1>
           </div>
           <LeaguesContent />
         </main>

@@ -138,7 +138,7 @@ function EventDetailsContent() {
       >
         Previous
       </Button>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-16">
         <Card className="max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">Upcoming Match</CardTitle>
@@ -182,8 +182,9 @@ export default function EventDetails() {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50">
+          <div className="absolute top-4 left-4 z-50 flex items-center">
             <SidebarTrigger className="bg-white shadow-md" />
+            <h1 className="ml-4 text-2xl font-bold">Event Details</h1>
           </div>
           <EventDetailsContent />
         </main>

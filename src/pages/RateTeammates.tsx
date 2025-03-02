@@ -29,14 +29,14 @@ export default function RateTeammates() {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 bg-background relative pt-10">
-          <div className="absolute top-4 left-4 z-50">
+        <main className="flex-1 bg-background relative">
+          <div className="absolute top-4 left-4 z-50 flex items-center">
             <SidebarTrigger className="bg-white shadow-md" />
+            <h1 className="ml-4 text-2xl font-bold">Rate Teammates</h1>
           </div>
           
-          <div className="max-w-4xl mx-auto p-4">
+          <div className="max-w-4xl mx-auto p-4 pt-16">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="text-lg font-semibold">Rate Your Teammates</h1>
               <Button 
                 variant="ghost" 
                 className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
