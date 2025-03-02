@@ -85,13 +85,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      // Clear local storage and session storage
       localStorage.clear();
       sessionStorage.clear();
+      
+      // Sign out from Supabase
       await supabase.auth.signOut();
+      
+      // Clear state
       setUser(null);
       setSession(null);
+      
       toast.success('Successfully signed out');
-      navigate('/sign-in', { replace: true });
+      
+      // Navigate with window.location to force a full page refresh
+      window.location.href = '/sign-in';
     } catch (error: any) {
       toast.error(error.message);
       throw error;
@@ -126,7 +134,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(null);
 
       toast.success('Your account has been deleted successfully');
-      navigate('/sign-in', { replace: true });
+      
+      // Use window.location for a full page refresh
+      window.location.href = '/sign-in';
     } catch (error: any) {
       console.error('Error in deletion process:', error);
       toast.error(error.message || 'Failed to delete account');

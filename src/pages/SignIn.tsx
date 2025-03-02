@@ -37,8 +37,8 @@ export default function SignInPage() {
     setEmail('')
     setPassword('')
     setError('')
-    // Refresh the page
-    window.location.reload()
+    // Force a complete page refresh to reset all state
+    window.location.href = window.location.pathname
   }
 
   return (
