@@ -1,12 +1,13 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, ChevronDown, Trash2, LogOut } from "lucide-react";
+import { User, ChevronDown, UserPlus, Trash2, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import InvitePopup from "@/components/InvitePopup";
 
 export function UserMenu() {
   const {
@@ -18,6 +19,7 @@ export function UserMenu() {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [showInvitePopup, setShowInvitePopup] = useState(false);
   
   const handleLogout = async () => {
     try {
@@ -62,6 +64,10 @@ export function UserMenu() {
               <span>Profile</span>
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setShowInvitePopup(true)} className="flex items-center gap-2 cursor-pointer">
+            <UserPlus className="w-4 h-4" />
+            <span>Invite Players</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600">
             <Trash2 className="w-4 h-4 mr-2" />
             <span>Delete Account</span>
@@ -73,6 +79,10 @@ export function UserMenu() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {showInvitePopup && (
+        <InvitePopup />
+      )}
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
