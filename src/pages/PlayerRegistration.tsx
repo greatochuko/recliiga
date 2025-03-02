@@ -19,6 +19,18 @@ import {
 } from "@/components/ui/select";
 import { supabase } from '@/integrations/supabase/client';
 
+// Export the PlayerProfile type for use in other components
+export interface PlayerProfile {
+  nickname: string;
+  dateOfBirth?: Date;
+  date_of_birth?: string;
+  city: string;
+  sports: string[];
+  positions: Record<string, string[]>;
+  leagueCode?: string;
+  avatar_url?: string;
+}
+
 const steps = [
   { id: 1, name: 'Personal Information' },
   { id: 2, name: 'Sports & Positions' },
@@ -60,9 +72,9 @@ const positions = {
 
 const PlayerRegistration = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [playerData, setPlayerData] = useState({
+  const [playerData, setPlayerData] = useState<PlayerProfile>({
     nickname: '',
-    dateOfBirth: undefined as Date | undefined,
+    dateOfBirth: undefined,
     city: '',
     sports: [] as string[],
     positions: {} as Record<string, string[]>,
@@ -90,7 +102,8 @@ const PlayerRegistration = () => {
           date_of_birth: playerData.dateOfBirth?.toISOString() || '',
           city: playerData.city,
           sports: playerData.sports,
-          positions: Object.values(playerData.positions).flat(),
+          positions: Object.entries(playerData.positions)
+            .flatMap(([_, positionArray]) => positionArray as string[]),
           avatar_url: playerData.avatar_url,
           profile_completed: true // Mark profile as completed
         };
@@ -150,7 +163,7 @@ const PlayerRegistration = () => {
     }
   };
 
-  const updatePlayerData = (newData: Partial<typeof playerData>) => {
+  const updatePlayerData = (newData: Partial<PlayerProfile>) => {
     setPlayerData(prevData => ({ ...prevData, ...newData }));
   };
 
@@ -236,8 +249,8 @@ const PlayerRegistration = () => {
 };
 
 interface PersonalInfoProps {
-  playerData: typeof PlayerRegistration.prototype.state.playerData;
-  updatePlayerData: (data: Partial<typeof PlayerRegistration.prototype.state.playerData>) => void;
+  playerData: PlayerProfile;
+  updatePlayerData: (data: Partial<PlayerProfile>) => void;
 }
 
 function PersonalInformation({ playerData, updatePlayerData }: PersonalInfoProps) {
@@ -377,8 +390,8 @@ function PersonalInformation({ playerData, updatePlayerData }: PersonalInfoProps
 }
 
 interface SportsAndPositionsProps {
-  playerData: typeof PlayerRegistration.prototype.state.playerData;
-  updatePlayerData: (data: Partial<typeof PlayerRegistration.prototype.state.playerData>) => void;
+  playerData: PlayerProfile;
+  updatePlayerData: (data: Partial<PlayerProfile>) => void;
   sports: string[];
   positions: Record<string, string[]>;
 }
@@ -470,8 +483,8 @@ function SportsAndPositions({ playerData, updatePlayerData, sports, positions }:
 }
 
 interface ConfirmationAndLeagueCodeProps {
-  playerData: typeof PlayerRegistration.prototype.state.playerData;
-  updatePlayerData: (data: Partial<typeof PlayerRegistration.prototype.state.playerData>) => void;
+  playerData: PlayerProfile;
+  updatePlayerData: (data: Partial<PlayerProfile>) => void;
 }
 
 function ConfirmationAndLeagueCode({ playerData, updatePlayerData }: ConfirmationAndLeagueCodeProps) {
@@ -501,15 +514,15 @@ function ConfirmationAndLeagueCode({ playerData, updatePlayerData }: Confirmatio
                 <span className="font-medium">City:</span> {playerData?.city || 'Not provided'}
               </div>
               <div>
-                <span className="font-medium">Sports:</span> {playerData?.sports?.join(', ') || 'None selected'}
+                <span className="font-medium">Sports:</span> {playerData?.sports?.length > 0 ? playerData.sports.join(', ') : 'None selected'}
               </div>
               <div>
                 <span className="font-medium">Positions:</span>
                 {playerData?.positions && Object.keys(playerData.positions).length > 0 ? (
                   <ul className="list-disc list-inside pl-4">
-                    {Object.entries(playerData.positions).map(([sport, positions]) => (
+                    {Object.entries(playerData.positions).map(([sport, sportPositions]) => (
                       <li key={sport}>
-                        {sport}: {positions.join(', ')}
+                        {sport}: {sportPositions.length > 0 ? sportPositions.join(', ') : 'None selected'}
                       </li>
                     ))}
                   </ul>

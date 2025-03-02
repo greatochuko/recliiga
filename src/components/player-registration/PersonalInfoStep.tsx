@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import type { PlayerProfile } from '@/pages/PlayerRegistration';
+import { PlayerProfile } from '@/pages/PlayerRegistration';
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
