@@ -26,7 +26,7 @@ export interface League {
 }
 
 export interface Event {
-  id: string | number; // Updated to accept both string and number
+  id: string | number;
   date: string;
   time: string;
   location: string;
@@ -45,4 +45,5 @@ export interface Event {
   league: string;
   hasResults: boolean;
   spotsLeft?: number;
+  rsvp_deadline?: Date; // Added for backward compatibility with existing code
 }
