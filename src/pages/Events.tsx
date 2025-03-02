@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-
 function CountdownClock({
   deadline
 }: {
@@ -41,7 +39,6 @@ function CountdownClock({
       <span>{timeLeft.minutes}m</span>
     </div>;
 }
-
 interface Event {
   id: number;
   date: string;
@@ -63,7 +60,6 @@ interface Event {
   hasResults: boolean;
   spotsLeft?: number;
 }
-
 function EventCard({
   event,
   isPastEvent = false,
@@ -77,7 +73,6 @@ function EventCard({
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
-  
   const getTeamName = (team: {
     name: string;
   }, index: number) => {
@@ -86,7 +81,6 @@ function EventCard({
     }
     return team.name;
   };
-  
   const getTeamAvatarFallback = (team: {
     name: string;
   }, index: number) => {
@@ -95,21 +89,17 @@ function EventCard({
     }
     return team.name.split(' ').map(n => n[0]).join('');
   };
-  
   const handleAttend = () => {
     setAttendanceStatus('attending');
     setIsEditing(false);
   };
-  
   const handleDecline = () => {
     setAttendanceStatus('declined');
     setIsEditing(false);
   };
-  
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
-
   const handleViewDetails = () => {
     if (event.hasResults) {
       navigate(`/events/${event.id}/results`);
@@ -117,7 +107,6 @@ function EventCard({
       navigate(`/events/${event.id}`);
     }
   };
-
   return <Card className="mb-4">
       <CardContent className="p-4 relative">
         <div className="flex justify-between items-start mb-4">
@@ -163,14 +152,9 @@ function EventCard({
             <span className="font-bold text-[#FF7A00]">{event.league}</span>
           </div>}
         <div className="flex justify-center mt-2 space-x-2">
-          <Button 
-            variant="outline" 
-            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" 
-            style={{
-              transform: 'scale(1.1)'
-            }}
-            onClick={handleViewDetails}
-          >
+          <Button variant="outline" className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" style={{
+          transform: 'scale(1.1)'
+        }} onClick={handleViewDetails}>
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
         </div>
@@ -197,7 +181,6 @@ function EventCard({
       </CardContent>
     </Card>;
 }
-
 function EventsContent() {
   const upcomingEvents = [{
     id: 1,
@@ -316,7 +299,8 @@ function EventsContent() {
   }];
   return <div className="p-4 md:p-6">
       <div className="mb-6 pt-10">
-        <h2 className="font-bold text-2xl">Events</h2>
+        <h2 className="font-bold text-2xl">
+      </h2>
       </div>
       
       {/* Upcoming Events Section */}
@@ -346,10 +330,8 @@ function EventsContent() {
       </section>
     </div>;
 }
-
 export default function Events() {
-  return (
-    <SidebarProvider>
+  return <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <main className="flex-1 bg-background relative">
@@ -360,6 +342,5 @@ export default function Events() {
           <EventsContent />
         </main>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 }
