@@ -61,14 +61,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: { data: metadata }
       });
       if (error) throw error;
-      toast.success('Registration successful! Please check your email to verify your account.');
-      navigate('/sign-in');
+      
+      // For Phase 1, handle different registrations based on role
+      if (metadata.role === 'organizer') {
+        toast.success('Registration successful! Please complete your league setup.');
+        // If we're in Phase 1, we'll let them sign in first and then redirect
+        navigate('/sign-in');
+      } else {
+        toast.success('Registration successful! Please check your email to verify your account.');
+        navigate('/sign-in');
+      }
     } catch (error: any) {
       toast.error(error.message);
       throw error;

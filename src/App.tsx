@@ -13,6 +13,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import PlayerRegistration from "./pages/PlayerRegistration";
 import CreateLeague from "./pages/CreateLeague";
+import LeagueSetupPage from "./pages/LeagueSetupPage";
 import Profile from "./pages/Profile";
 import Leagues from "./pages/Leagues";
 import LeagueDetails from "./pages/LeagueDetails";
@@ -83,6 +84,7 @@ const AppRoutes = () => (
       <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
       <Route path="/complete-registration" element={<PlayerRegistration />} />
       <Route path="/create-league" element={<CreateLeague />} />
+      <Route path="/league-setup" element={<LeagueSetupPage />} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
       <Route path="/player-profile" element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
       
