@@ -13,7 +13,7 @@ export interface League {
 }
 
 export interface Event {
-  id: string;
+  id: string | number;
   date: string;
   time: string;
   location: string;
@@ -27,7 +27,7 @@ export interface Event {
     avatar: string;
     color: string;
   };
-  rsvpDeadline: Date;
+  rsvpDeadline?: Date;
   rsvp_deadline?: Date; // For backward compatibility
   status: string | null;
   league: string;

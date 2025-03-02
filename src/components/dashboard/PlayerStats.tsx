@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, User } from "lucide-react";
@@ -63,40 +62,38 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-export const PlayerStatsDisplay = ({ stats, userName }: PlayerStatsProps) => {
+export function PlayerStats({ playerStats }: { playerStats: PlayerStats }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <PlayerRankCard
-        league={{
-          name: stats.league?.name || 'League',
-          playerName: userName,
-          rank: 8,
-          totalPlayers: 15,
-          rating: 2.5,
-        }}
-      />
-
+      <PlayerRankCard league={{
+        name: typeof playerStats.league === 'string' ? playerStats.league : playerStats.league.name,
+        playerName: playerStats.name,
+        rank: playerStats.position,
+        totalPlayers: playerStats.totalTeams,
+        rating: 2.5
+      }} />
+      
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
         <h3 className="text-lg font-bold mb-4">Record</h3>
         <div className="space-y-4">
           <div className="flex justify-center mb-4">
             <div className="text-center">
-              <span className="text-3xl font-bold">{stats.points}</span>
+              <span className="text-3xl font-bold">{playerStats.points}</span>
               <span className="text-gray-500 block">PTS</span>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="bg-emerald-100 rounded p-2">
-              <div className="text-emerald-700 font-bold text-lg">{stats.wins}</div>
+              <div className="text-emerald-700 font-bold text-lg">{playerStats.wins}</div>
               <div className="text-emerald-600 text-xs">Won</div>
             </div>
             <div className="bg-red-100 rounded p-2">
-              <div className="text-red-700 font-bold text-lg">{stats.losses}</div>
+              <div className="text-red-700 font-bold text-lg">{playerStats.losses}</div>
               <div className="text-red-600 text-xs">Loss</div>
             </div>
             <div className="bg-orange-100 rounded p-2">
-              <div className="text-orange-700 font-bold text-lg">{stats.ties}</div>
+              <div className="text-orange-700 font-bold text-lg">{playerStats.ties}</div>
               <div className="text-orange-600 text-xs">Tied</div>
             </div>
           </div>
@@ -104,7 +101,6 @@ export const PlayerStatsDisplay = ({ stats, userName }: PlayerStatsProps) => {
       </div>
     </div>
   );
-};
+}
 
-// Re-export with the original name for backward compatibility
-export { PlayerStatsDisplay as PlayerStats };
+export { PlayerStats as PlayerStatsDisplay };

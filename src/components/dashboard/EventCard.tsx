@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { CountdownClock } from './CountdownClock';
 import { Event } from '@/types/dashboard';
+import { useNavigate } from 'react-router-dom';
 
 interface EventCardProps {
   event: Event;
@@ -16,6 +16,7 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, showLeagueName = false, isPastEvent = false }: EventCardProps) {
+  const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +47,14 @@ export function EventCard({ event, showLeagueName = false, isPastEvent = false }
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleViewDetails = () => {
+    if (event.hasResults) {
+      navigate(`/events/${event.id}/results`);
+    } else {
+      navigate(`/events/${event.id}`);
+    }
   };
 
   return (
@@ -102,8 +111,7 @@ export function EventCard({ event, showLeagueName = false, isPastEvent = false }
             variant="outline" 
             className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
             style={{ transform: 'scale(1.1)' }}
-            as={Link}
-            to={`/events/${event.id}${event.hasResults ? '/results' : ''}`}
+            onClick={handleViewDetails}
           >
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
