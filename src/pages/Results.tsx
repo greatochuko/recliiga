@@ -887,8 +887,8 @@ const NotificationSection = ({
 }: {
   title: string;
   notifications: any[];
-}) => <>
-    <DropdownMenuLabel className="font-bold">{title}</DropdownMenuLabel>
+}) => {
+  return <DropdownMenuLabel className="font-bold">{title}</DropdownMenuLabel>
     {notifications.map((notification, index) => <DropdownMenuItem key={index} className="flex items-center py-2">
         <Avatar className="h-8 w-8 mr-2">
           <AvatarImage src={notification.avatar} alt={notification.alt} />
@@ -900,6 +900,7 @@ const NotificationSection = ({
         </div>
       </DropdownMenuItem>)}
   </>;
+};
 
 const ResultsLeaderboard = ({
   leagueData
@@ -965,44 +966,40 @@ function ResultsContent() {
   const [selectedLeague, setSelectedLeague] = useState('premier-league');
   return <div className="min-h-screen bg-white p-4 md:p-6">
       <div>
-        {/* League Info with selector moved to top right */}
-        <div className="flex justify-between items-center mb-6">
-          <Card className="flex-grow max-w-3xl bg-[#F9F9F9] rounded-lg overflow-hidden">
-            <CardContent className="p-4">
-              <div className="flex items-start">
-                <Avatar className="w-16 h-16 mr-4">
-                  <AvatarImage src={leaguesData[selectedLeague].logo} alt={leaguesData[selectedLeague].name} />
-                  <AvatarFallback>{leaguesData[selectedLeague].name[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-grow">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-semibold text-[rgba(0,0,0,0.8)]">{leaguesData[selectedLeague].name}</h3>
-                    <span className="text-sm text-[rgba(0,0,0,0.51)]">{leaguesData[selectedLeague].date}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-[#F79602] mt-1">
-                    <Users className="w-4 h-4 mr-1" />
-                    {leaguesData[selectedLeague].players} Players
-                  </div>
-                  <div className="text-sm text-gray-500 mt-1">
-                    Total Games: {leaguesData[selectedLeague].totalGames}
-                  </div>
+        <div className="flex justify-end mb-4">
+          <Select onValueChange={setSelectedLeague} defaultValue={selectedLeague}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a league" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(leaguesData).map(([key, league]) => <SelectItem key={key} value={key}>{league.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <Card className="w-full mb-6 bg-[#F9F9F9] rounded-lg overflow-hidden">
+          <CardContent className="p-4">
+            <div className="flex items-start">
+              <Avatar className="w-16 h-16 mr-4">
+                <AvatarImage src={leaguesData[selectedLeague].logo} alt={leaguesData[selectedLeague].name} />
+                <AvatarFallback>{leaguesData[selectedLeague].name[0]}</AvatarFallback>
+              </Avatar>
+              <div className="flex-grow">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg font-semibold text-[rgba(0,0,0,0.8)]">{leaguesData[selectedLeague].name}</h3>
+                  <span className="text-sm text-[rgba(0,0,0,0.51)]">{leaguesData[selectedLeague].date}</span>
+                </div>
+                <div className="flex items-center text-sm text-[#F79602] mt-1">
+                  <Users className="w-4 h-4 mr-1" />
+                  {leaguesData[selectedLeague].players} Players
+                </div>
+                <div className="text-sm text-gray-500 mt-1">
+                  Total Games: {leaguesData[selectedLeague].totalGames}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          
-          {/* League Selector moved to top right */}
-          <div>
-            <Select onValueChange={setSelectedLeague} defaultValue={selectedLeague}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select a league" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(leaguesData).map(([key, league]) => <SelectItem key={key} value={key}>{league.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <ResultsLeaderboard leagueData={leaguesData[selectedLeague]} />
       </div>
