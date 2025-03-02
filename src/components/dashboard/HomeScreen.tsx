@@ -10,11 +10,13 @@ import { PlayerStats } from './PlayerStats';
 import { EventCard } from './EventCard';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 interface League {
   id: string;
   name: string;
   rating: number;
 }
+
 interface Teammate {
   id: string;
   name: string;
@@ -22,6 +24,7 @@ interface Teammate {
   rating: number;
   avatarUrl: string;
 }
+
 const leagues: League[] = [{
   id: 'premier',
   name: 'Premier League',
@@ -35,6 +38,7 @@ const leagues: League[] = [{
   name: 'Casual League',
   rating: 0.3
 }];
+
 const mockTeammates: Teammate[] = [{
   id: '1',
   name: 'John Smith',
@@ -60,6 +64,7 @@ const mockTeammates: Teammate[] = [{
   rating: 3,
   avatarUrl: ''
 }];
+
 const mockStats = {
   wins: 4,
   losses: 2,
@@ -69,6 +74,7 @@ const mockStats = {
     name: "Premier League"
   }
 };
+
 const mockEvents = [{
   id: 1,
   date: '20-Aug-2025',
@@ -109,6 +115,7 @@ const mockEvents = [{
   league: 'Championship',
   hasResults: false
 }];
+
 const LeagueSelector = ({
   leagues,
   onLeagueChange
@@ -130,6 +137,7 @@ const LeagueSelector = ({
       </Select>
     </div>;
 };
+
 const TeammatesToRate = () => {
   const navigate = useNavigate();
   const handleTeammateClick = () => {
@@ -158,13 +166,14 @@ const TeammatesToRate = () => {
       </div>
     </div>;
 };
+
 function HomeScreenContent() {
   const [selectedLeagueId, setSelectedLeagueId] = useState('premier');
   const navigate = useNavigate();
   const handleLeagueChange = (leagueId: string) => {
     setSelectedLeagueId(leagueId);
   };
-  return <div className="space-y-8 p-4 md:p-6">
+  return <div className="space-y-8 p-4 md:p-6 pt-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <div className="flex justify-between items-center mb-6">
@@ -190,7 +199,9 @@ function HomeScreenContent() {
       </section>
     </div>;
 }
+
 const queryClient = new QueryClient();
+
 export function HomeScreen() {
   return <QueryClientProvider client={queryClient}>
       <HomeScreenContent />

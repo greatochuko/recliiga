@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -179,9 +178,10 @@ export default function PlayerProfile() {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
-        <main className="flex-1 bg-gray-50 relative pt-10">
-          <div className="absolute top-4 left-4 z-50">
+        <main className="flex-1 bg-background relative">
+          <div className="absolute top-4 left-4 z-50 flex items-center">
             <SidebarTrigger className="bg-white shadow-md" />
+            <h1 className="ml-4 text-2xl font-bold">Player Profile</h1>
           </div>
           
           <div className="max-w-2xl mx-auto p-4 md:p-6">
@@ -219,7 +219,6 @@ export default function PlayerProfile() {
               </div>
             </div>
 
-            {/* Player Statistics */}
             <PlayerStats />
           </div>
         </main>
