@@ -188,7 +188,7 @@ function ChatContent() {
         <div className="w-80 border-r border-gray-200 flex flex-col">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-[#FF7A00]">Messages</h2>
+              <h2 className="font-bold text-inherit text-xl">Messages</h2>
               <Dialog open={isNewChatDialogOpen} onOpenChange={setIsNewChatDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-[#FF7A00] hover:text-white hover:bg-[#FF7A00]">
