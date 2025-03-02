@@ -4,12 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface PlayerRankCardProps {
-  league: {
-    name: string;
-    playerName: string;
-    rank: number;
-    totalPlayers: number;
-    rating: number;
+  league: { 
+    name: string, 
+    playerName: string, 
+    rank: number, 
+    totalPlayers: number, 
+    rating: number 
   };
 }
 

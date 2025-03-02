@@ -1,8 +1,16 @@
-
-import { Sidebar, SidebarRail } from "@/components/ui/sidebar";
-import { NotificationsPopover } from "./sidebar/NotificationsPopover";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+} from "@/components/ui/sidebar";
+import { ConditionalNavigationMenu } from "./sidebar/ConditionalNavigationMenu";
 import { UserMenu } from "./sidebar/UserMenu";
-import { NavigationMenu } from "./sidebar/NavigationMenu";
+import { NotificationsPopover } from "./sidebar/NotificationsPopover";
+import { useMobile } from "@/hooks/use-mobile";
 
 export function AppSidebar() {
   return (
@@ -25,7 +33,7 @@ export function AppSidebar() {
           </div>
 
           {/* Navigation Menu */}
-          <NavigationMenu />
+          <ConditionalNavigationMenu />
 
           {/* Footer */}
           <div className="p-4 border-t border-gray-200 text-sm text-gray-500">

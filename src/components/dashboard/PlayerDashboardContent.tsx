@@ -1,23 +1,27 @@
 
-import { useState } from "react";
-import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Star, User } from "lucide-react";
-import { PlayerRankCard } from "./PlayerRankCard";
-import { LeagueSelector } from "./LeagueSelector";
-import { UpcomingEvents } from "./UpcomingEvents";
-import { StarRating } from "./StarRating";
-import { League, PlayerStats, Teammate, Event } from "@/types/dashboard";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { User, Star } from 'lucide-react';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
+import { LeagueSelector } from './LeagueSelector';
+import { StarRating } from './StarRating';
+import { PlayerRankCard } from './PlayerRankCard';
+import { League, PlayerStats, Teammate, Event } from '@/types/dashboard';
 
 // Mock API functions
 async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
   // Simulating different stats for different leagues
-  const leagueStats = {
+  const leagueStats: Record<string, PlayerStats> = {
     premier: {
       name: "John Doe",
       position: 8,
       totalTeams: 15,
       league: "Premier League",
       points: 15,
+      wins: 4,
+      losses: 2,
+      ties: 2,
       record: { wins: 4, losses: 2, ties: 2 }
     },
     division1: {
@@ -26,6 +30,9 @@ async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
       totalTeams: 12,
       league: "Division 1",
       points: 22,
+      wins: 7,
+      losses: 1,
+      ties: 1,
       record: { wins: 7, losses: 1, ties: 1 }
     },
     casual: {
@@ -34,29 +41,32 @@ async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
       totalTeams: 8,
       league: "Casual League",
       points: 18,
+      wins: 6,
+      losses: 0,
+      ties: 0,
       record: { wins: 6, losses: 0, ties: 0 }
     }
   };
-  return leagueStats[leagueId as keyof typeof leagueStats] || leagueStats.premier;
+  return leagueStats[leagueId] || leagueStats.premier;
 }
 
 async function fetchTeammates(): Promise<Teammate[]> {
   return [
-    { id: '1', name: 'John Smith', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '2', name: 'Emma Johnson', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '3', name: 'Michael Brown', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '4', name: 'Sarah Davis', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '5', name: 'David Wilson', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '6', name: 'Lisa Anderson', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '7', name: 'Robert Taylor', position: 'Midfielder', rating: 3, avatarUrl: '' },
-    { id: '8', name: 'Jennifer Martin', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '1', name: 'John Smith', position: 'Midfielder', rating: 3 },
+    { id: '2', name: 'Emma Johnson', position: 'Midfielder', rating: 3 },
+    { id: '3', name: 'Michael Brown', position: 'Midfielder', rating: 3 },
+    { id: '4', name: 'Sarah Davis', position: 'Midfielder', rating: 3 },
+    { id: '5', name: 'David Wilson', position: 'Midfielder', rating: 3 },
+    { id: '6', name: 'Lisa Anderson', position: 'Midfielder', rating: 3 },
+    { id: '7', name: 'Robert Taylor', position: 'Midfielder', rating: 3 },
+    { id: '8', name: 'Jennifer Martin', position: 'Midfielder', rating: 3 },
   ];
 }
 
 async function fetchUpcomingEvents(): Promise<Event[]> {
   return [
     {
-      id: 1,
+      id: "1",
       date: '20-Aug-2025',
       time: '6:00 PM',
       location: 'Allianz Arena',
@@ -68,7 +78,7 @@ async function fetchUpcomingEvents(): Promise<Event[]> {
       hasResults: false
     },
     {
-      id: 2,
+      id: "2",
       date: '25-Aug-2025',
       time: '7:30 PM',
       location: 'Stamford Bridge',
@@ -81,7 +91,7 @@ async function fetchUpcomingEvents(): Promise<Event[]> {
       hasResults: false
     },
     {
-      id: 3,
+      id: "3",
       date: '01-Sep-2025',
       time: '5:00 PM',
       location: 'Camp Nou',
@@ -140,10 +150,12 @@ function PlayerDashboardContent() {
     );
   }
 
-  const totalGames = stats?.record?.wins + stats?.record?.losses + stats?.record?.ties || 0;
-  const winFraction = (stats?.record?.wins / totalGames) || 0;
-  const lossFraction = (stats?.record?.losses / totalGames) || 0;
-  const tieFraction = (stats?.record?.ties / totalGames) || 0;
+  if (!stats) return null;
+
+  const totalGames = stats.wins + stats.losses + stats.ties;
+  const winFraction = (stats.wins / totalGames) || 0;
+  const lossFraction = (stats.losses / totalGames) || 0;
+  const tieFraction = (stats.ties / totalGames) || 0;
 
   return (
     <div className="space-y-8 p-4 md:p-6">
@@ -156,11 +168,11 @@ function PlayerDashboardContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Profile Card */}
             <PlayerRankCard league={{
-              name: stats?.league || '',
-              playerName: stats?.name || '',
-              rank: stats?.position || 0,
-              totalPlayers: stats?.totalTeams || 0,
-              rating: Math.max(0.50, Math.min(3.00, selectedLeague.rating ? selectedLeague.rating * 3 : 1.5))
+              name: stats.league,
+              playerName: stats.name,
+              rank: stats.position,
+              totalPlayers: stats.totalTeams,
+              rating: Math.max(0.50, Math.min(3.00, (selectedLeague.rating || 0) * 3))
             }} />
 
             {/* Record Card */}
@@ -214,7 +226,7 @@ function PlayerDashboardContent() {
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-bold">{stats?.points}</span>
+                      <span className="text-3xl font-bold">{stats.points}</span>
                       <span className="text-gray-500">PTS</span>
                     </div>
                   </div>
@@ -223,15 +235,15 @@ function PlayerDashboardContent() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="bg-emerald-100 rounded p-2">
-                    <div className="text-emerald-700 font-bold text-lg">{stats?.record?.wins}</div>
+                    <div className="text-emerald-700 font-bold text-lg">{stats.wins}</div>
                     <div className="text-emerald-600 text-xs">Won</div>
                   </div>
                   <div className="bg-red-100 rounded p-2">
-                    <div className="text-red-700 font-bold text-lg">{stats?.record?.losses}</div>
+                    <div className="text-red-700 font-bold text-lg">{stats.losses}</div>
                     <div className="text-red-600 text-xs">Loss</div>
                   </div>
                   <div className="bg-orange-100 rounded p-2">
-                    <div className="text-orange-700 font-bold text-lg">{stats?.record?.ties}</div>
+                    <div className="text-orange-700 font-bold text-lg">{stats.ties}</div>
                     <div className="text-orange-600 text-xs">Tied</div>
                   </div>
                 </div>
@@ -244,9 +256,9 @@ function PlayerDashboardContent() {
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
-            <a href="/teammates" className="text-[#FF5533] hover:underline">
+            <Link to="/rate-teammates" className="text-[#FF5533] hover:underline">
               View all
-            </a>
+            </Link>
           </div>
           <div className="grid grid-cols-2 gap-4 flex-grow">
             {teammates && teammates.slice(0, 8).map((teammate) => (
@@ -271,9 +283,17 @@ function PlayerDashboardContent() {
       </div>
 
       {/* Upcoming Events Section */}
-      {upcomingEvents && (
-        <UpcomingEvents />
-      )}
+      <section className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Upcoming Events</h2>
+          <Link to="/events" className="text-[#FF7A00] hover:underline text-sm">View all</Link>
+        </div>
+        <div className="space-y-4">
+          {upcomingEvents && upcomingEvents.map(event => (
+            <EventCard key={event.id} event={event} showLeagueName={true} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

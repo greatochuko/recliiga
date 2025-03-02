@@ -1,19 +1,23 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Edit } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Calendar, MapPin, Edit } from 'lucide-react';
 import { CountdownClock } from './CountdownClock';
-import { Event } from "@/types/dashboard";
+import { Event } from '@/types/dashboard';
 
-export function EventCard({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) {
-  const navigate = useNavigate();
+interface EventCardProps {
+  event: Event;
+  showLeagueName?: boolean;
+  isPastEvent?: boolean;
+}
+
+export function EventCard({ event, showLeagueName = false, isPastEvent = false }: EventCardProps) {
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
-  const deadline = event.rsvpDeadline || event.rsvp_deadline;
-  const isRsvpOpen = deadline && new Date() < deadline;
+  const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
 
   const getTeamName = (team: { name: string }, index: number) => {
@@ -44,14 +48,6 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
     setIsEditing(!isEditing);
   };
 
-  const handleViewDetails = () => {
-    if (event.hasResults) {
-      navigate(`/events/${event.id}/results`);
-    } else {
-      navigate(`/events/${event.id}`);
-    }
-  };
-
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
@@ -73,13 +69,12 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
               Declined
             </Badge>
           )}
-          {event.spotsLeft && !attendanceStatus && (
+          {!isPastEvent && event.spotsLeft && !attendanceStatus && (
             <span className="text-[#E43226] text-xs font-semibold">
               {event.spotsLeft === 1 ? '1 Spot Left' : `${event.spotsLeft} Spots Left`}
             </span>
           )}
         </div>
-        
         <div className="grid grid-cols-3 items-center justify-items-center mb-4">
           <div className="flex flex-col items-center">
             <Avatar className="w-16 h-16" style={{ backgroundColor: event.team1.color }}>
@@ -97,61 +92,59 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             <span className="text-sm font-semibold mt-2">{getTeamName(event.team2, 1)}</span>
           </div>
         </div>
-        
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
             <span className="font-bold text-[#FF7A00]">{event.league}</span>
           </div>
         )}
-        
         <div className="flex justify-center mt-2 space-x-2">
           <Button 
             variant="outline" 
             className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
             style={{ transform: 'scale(1.1)' }}
-            onClick={handleViewDetails}
+            as={Link}
+            to={`/events/${event.id}${event.hasResults ? '/results' : ''}`}
           >
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
         </div>
-        
-        {isRsvpOpen && (
-          <>
-            <div className="flex justify-center mt-2 space-x-2">
-              {(isEditing || !attendanceStatus) && (
-                <>
-                  <Button 
-                    className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
-                    onClick={handleAttend}
-                  >
-                    Attend
-                  </Button>
-                  <Button 
-                    className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
-                    onClick={handleDecline}
-                  >
-                    Decline
-                  </Button>
-                </>
-              )}
-              {attendanceStatus && !isEditing && (
-                <Button
-                  variant="outline"
-                  className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
-                  onClick={toggleEdit}
+        {!isPastEvent && isRsvpOpen && (
+          <div className="flex justify-center mt-2 space-x-2">
+            {(isEditing || !attendanceStatus) && (
+              <>
+                <Button 
+                  className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
+                  onClick={handleAttend}
                 >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit RSVP
+                  Attend
                 </Button>
-              )}
+                <Button 
+                  className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
+                  onClick={handleDecline}
+                >
+                  Decline
+                </Button>
+              </>
+            )}
+            {attendanceStatus && !isEditing && (
+              <Button
+                variant="outline"
+                className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
+                onClick={toggleEdit}
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit RSVP
+              </Button>
+            )}
+          </div>
+        )}
+        {isRsvpOpen && (
+          <div className="flex justify-end items-center mt-2">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-gray-500">RSVP in:</span>
+              <CountdownClock deadline={event.rsvpDeadline} />
             </div>
-            <div className="flex justify-end items-center mt-2">
-              <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500">RSVP in:</span>
-                {deadline && <CountdownClock deadline={deadline} />}
-              </div>
-            </div>
-          </>
+          </div>
         )}
       </CardContent>
     </Card>

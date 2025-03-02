@@ -1,6 +1,4 @@
 
-import { Star } from "lucide-react";
-
 export const StarRating = ({ rating }: { rating: number }) => {
   return (
     <div className="flex">
