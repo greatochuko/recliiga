@@ -183,7 +183,7 @@ function ChatContent() {
   return <div className="p-4 md:p-6">
       
       
-      <div className="flex h-[calc(100vh-180px)] border rounded-lg overflow-hidden">
+      <div className="flex h-[calc(100vh-120px)] border rounded-lg overflow-hidden">
         {/* Conversations sidebar */}
         <div className="w-80 border-r border-gray-200 flex flex-col">
           <div className="p-4">
