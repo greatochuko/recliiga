@@ -126,10 +126,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // For Phase 1, just simulate the deletion
+      // Show a loading toast
+      toast.loading('Deleting your account...');
+
+      // Call the Supabase Edge Function to delete user data
+      const { error: deleteFunctionError } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: user.id }
+      });
+
+      if (deleteFunctionError) {
+        throw new Error(deleteFunctionError.message || 'Failed to delete account data');
+      }
+
+      // Clear local storage and session storage
       localStorage.clear();
       sessionStorage.clear();
+      
+      // Sign out from Supabase
       await supabase.auth.signOut();
+      
+      // Clear state
       setUser(null);
       setSession(null);
 
