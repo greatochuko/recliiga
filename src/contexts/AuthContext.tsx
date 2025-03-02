@@ -68,15 +68,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) throw error;
       
-      // For Phase 1, handle different registrations based on role
+      // Handle different registrations based on role
       if (metadata.role === 'organizer') {
-        toast.success('Registration successful! Please complete your league setup.');
-        // If we're in Phase 1, we'll let them sign in first and then redirect
-        navigate('/sign-in');
+        toast.success('Registration successful! Please sign in to complete your league setup.');
       } else {
-        toast.success('Registration successful! Please check your email to verify your account.');
-        navigate('/sign-in');
+        toast.success('Registration successful! Please sign in to complete your player profile.');
       }
+      
+      // Redirect to sign-in so they can authenticate first
+      navigate('/sign-in');
     } catch (error: any) {
       toast.error(error.message);
       throw error;

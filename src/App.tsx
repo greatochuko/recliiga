@@ -24,13 +24,58 @@ import Results from "./pages/Results";
 import Chat from "./pages/Chat";
 import RateTeammates from "./pages/RateTeammates";
 import PlayerProfile from "./pages/PlayerProfile";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
+  const [checkingProfile, setCheckingProfile] = useState(true);
   
-  if (loading) {
+  useEffect(() => {
+    async function checkProfileCompletion() {
+      if (!user) return;
+      
+      try {
+        // Check if the user has completed registration based on their role
+        if (user.user_metadata?.role === 'organizer') {
+          // Check if league organizer has created a league
+          const { data: leagues, error } = await supabase
+            .from('leagues')
+            .select('id')
+            .eq('owner_id', user.id)
+            .limit(1);
+          
+          setIsProfileComplete(leagues && leagues.length > 0);
+        } else {
+          // Check if player has completed profile setup
+          const { data: profile, error } = await supabase
+            .from('player_profiles')
+            .select('id')
+            .eq('user_id', user.id)
+            .limit(1);
+          
+          setIsProfileComplete(profile && profile.length > 0);
+        }
+      } catch (error) {
+        console.error('Error checking profile completion:', error);
+        // Default to false if there's an error
+        setIsProfileComplete(false);
+      } finally {
+        setCheckingProfile(false);
+      }
+    }
+    
+    if (user) {
+      checkProfileCompletion();
+    } else {
+      setCheckingProfile(false);
+    }
+  }, [user]);
+  
+  if (loading || checkingProfile) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-xl">Loading...</div>
@@ -42,7 +87,15 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/sign-in" />;
   }
 
-  // For Phase 1, we'll skip the profile check
+  // If the user hasn't completed their profile, redirect to the appropriate registration page
+  if (isProfileComplete === false) {
+    if (user.user_metadata?.role === 'organizer') {
+      return <Navigate to="/create-league" />;
+    } else {
+      return <Navigate to="/complete-registration" />;
+    }
+  }
+
   return <>{children}</>;
 }
 
@@ -72,7 +125,12 @@ const AppRoutes = () => (
       <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
       <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
       
-      {/* Private routes */}
+      {/* Registration flows (protected but not requiring a complete profile) */}
+      <Route path="/complete-registration" element={<PlayerRegistration />} />
+      <Route path="/create-league" element={<CreateLeague />} />
+      <Route path="/league-setup" element={<LeagueSetupPage />} />
+      
+      {/* Private routes requiring complete profiles */}
       <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
       <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
       <Route path="/leagues/:id" element={<PrivateRoute><LeagueDetails /></PrivateRoute>} />
@@ -82,9 +140,6 @@ const AppRoutes = () => (
       <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
-      <Route path="/complete-registration" element={<PlayerRegistration />} />
-      <Route path="/create-league" element={<CreateLeague />} />
-      <Route path="/league-setup" element={<LeagueSetupPage />} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
       <Route path="/player-profile" element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
       

@@ -28,6 +28,7 @@ export interface PlayerProfile {
   positions: Record<string, string[]>;
   leagueCode?: string;
   avatar_url?: string;
+  user_id?: string;
 }
 
 const steps = [
@@ -95,12 +96,34 @@ const PlayerRegistration = () => {
       setCurrentStep(currentStep + 1);
     } else {
       try {
-        // For Phase 1 UI/UX Development, we're just simulating success
+        const profileData = {
+          ...playerData,
+          user_id: user!.id,
+          date_of_birth: playerData.dateOfBirth ? playerData.dateOfBirth.toISOString() : null,
+        };
+
+        const { error } = await supabase
+          .from('player_profiles')
+          .upsert({
+            user_id: user!.id,
+            nickname: profileData.nickname,
+            date_of_birth: profileData.date_of_birth,
+            city: profileData.city,
+            sports: profileData.sports,
+            positions: profileData.positions,
+            league_code: profileData.leagueCode,
+            avatar_url: profileData.avatar_url
+          });
+
+        if (error) {
+          throw error;
+        }
+
         toast.success('Profile updated successfully!');
-        // Redirect to home page after successful registration
+        
         navigate('/');
       } catch (error: any) {
-        toast.error(error.message || 'An error occurred');
+        toast.error(error.message || 'An error occurred while saving your profile');
       }
     }
   };
