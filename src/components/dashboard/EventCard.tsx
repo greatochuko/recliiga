@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Edit } from 'lucide-react';
@@ -7,20 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { CountdownClock } from './CountdownClock';
-
-interface Event {
-  id: number;
-  date: string;
-  time: string;
-  location: string;
-  team1: { name: string; avatar: string; color: string };
-  team2: { name: string; avatar: string; color: string };
-  rsvpDeadline: Date;
-  status: string | null;
-  league: string;
-  hasResults: boolean;
-  spotsLeft?: number;
-}
+import { Event } from "@/types/dashboard";
 
 export function EventCard({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) {
   const navigate = useNavigate();
