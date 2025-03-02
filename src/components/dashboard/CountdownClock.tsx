@@ -1,12 +1,16 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface CountdownClockProps {
   deadline: Date;
 }
 
 export function CountdownClock({ deadline }: CountdownClockProps) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {

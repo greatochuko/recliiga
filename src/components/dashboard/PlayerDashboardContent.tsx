@@ -290,7 +290,34 @@ function PlayerDashboardContent() {
         </div>
         <div className="space-y-4">
           {upcomingEvents && upcomingEvents.map(event => (
-            <EventCard key={event.id} event={event} showLeagueName={true} />
+            <div key={event.id} className="mb-4"> 
+              {/* We'll create a separate EventCard component */}
+              <div className="card p-4 bg-white rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center mb-2">
+                  <div>
+                    <p className="font-semibold">{event.date} - {event.time}</p>
+                    <p className="text-sm text-gray-500">{event.location}</p>
+                  </div>
+                  {event.status === 'attending' && (
+                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Attending</span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between mt-3">
+                  <div className="flex items-center">
+                    <div className="mr-4 text-center">
+                      <div className="font-semibold">{event.team1.name}</div>
+                    </div>
+                    <div className="text-xl font-bold">vs</div>
+                    <div className="ml-4 text-center">
+                      <div className="font-semibold">{event.team2.name}</div>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="text-[#FF7A00] border-[#FF7A00]">
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </section>
