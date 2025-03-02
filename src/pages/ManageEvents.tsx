@@ -1,6 +1,6 @@
 
-import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,28 +13,28 @@ import { AppSidebar } from "@/components/AppSidebar";
 
 // Types
 interface Team {
-  name: string;
-  avatar: string;
-  color: string;
+  name: string
+  avatar: string
+  color: string
 }
 
 interface Event {
-  id: number;
-  leagueId: number;
-  date: string;
-  time: string;
-  location: string;
-  team1: Team;
-  team2: Team;
-  rsvpDeadline?: Date;
-  status?: 'upcoming' | 'past';
-  spotsLeft?: number;
-  resultsEntered?: boolean;
+  id: number
+  leagueId: number
+  date: string
+  time: string
+  location: string
+  team1: Team
+  team2: Team
+  rsvpDeadline?: Date
+  status?: 'upcoming' | 'past'
+  spotsLeft?: number
+  resultsEntered?: boolean
 }
 
 interface League {
-  id: number;
-  name: string;
+  id: number
+  name: string
 }
 
 // Mock data
@@ -42,7 +42,7 @@ const mockLeagues: League[] = [
   { id: 1, name: "Premier League" },
   { id: 2, name: "Championship" },
   { id: 3, name: "League One" },
-];
+]
 
 const mockEvents: Event[] = [
   {
@@ -91,29 +91,35 @@ const mockEvents: Event[] = [
     status: 'past',
     resultsEntered: false
   },
-];
+]
 
 // API functions
 const fetchEvents = async (): Promise<Event[]> => {
   // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return mockEvents;
-};
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  return mockEvents
+}
 
 const fetchLeagues = async (): Promise<League[]> => {
   // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return mockLeagues;
-};
+  await new Promise(resolve => setTimeout(resolve, 500))
+  return mockLeagues
+}
 
 // Sub-components
-const EventCard: React.FC<{ 
+const EventCard = ({ 
+  event, 
+  onSelectCaptains, 
+  onEdit, 
+  onDelete, 
+  onEnterResults 
+}: { 
   event: Event; 
   onSelectCaptains: () => void; 
   onEdit: () => void; 
   onDelete: () => void; 
   onEnterResults: () => void 
-}> = ({ event, onSelectCaptains, onEdit, onDelete, onEnterResults }) => {
+}) => {
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
@@ -176,18 +182,16 @@ const EventCard: React.FC<{
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-// Main content component
-const EventsContent: React.FC = () => {
+// Main component contents
+const EventsContent = () => {
   const [selectedLeague, setSelectedLeague] = useState<number | null>(null);
-  
   const { data: leagues, isLoading: isLoadingLeagues } = useQuery({
     queryKey: ['leagues'],
     queryFn: fetchLeagues
   });
-  
   const { data: events, isLoading: isLoadingEvents } = useQuery({
     queryKey: ['events'],
     queryFn: fetchEvents
@@ -231,7 +235,7 @@ const EventsContent: React.FC = () => {
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       <div className="mb-6">
-        <Select onValueChange={(value) => setSelectedLeague(value === "all" ? null : Number(value))}>
+        <Select onValueChange={(value) => setSelectedLeague(value === 'all' ? null : Number(value))}>
           <SelectTrigger className="w-full md:w-[300px]">
             <SelectValue placeholder="Select a league" />
           </SelectTrigger>
@@ -255,62 +259,55 @@ const EventsContent: React.FC = () => {
               Create New Event
             </Button>
           </div>
-          {filteredEvents.upcoming.length > 0 ? (
-            filteredEvents.upcoming.map(event => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onSelectCaptains={() => handleSelectCaptains(event.id)}
-                onEdit={() => handleEditEvent(event.id)}
-                onDelete={() => handleDeleteEvent(event.id)}
-                onEnterResults={() => handleEnterResults(event.id)}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              No upcoming events found
-            </div>
-          )}
+          {filteredEvents.upcoming.map(event => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onSelectCaptains={() => handleSelectCaptains(event.id)}
+              onEdit={() => handleEditEvent(event.id)}
+              onDelete={() => handleDeleteEvent(event.id)}
+              onEnterResults={() => handleEnterResults(event.id)}
+            />
+          ))}
         </TabsContent>
         <TabsContent value="past">
-          {filteredEvents.past.length > 0 ? (
-            filteredEvents.past.map(event => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onSelectCaptains={() => handleSelectCaptains(event.id)}
-                onEdit={() => handleEditEvent(event.id)}
-                onDelete={() => handleDeleteEvent(event.id)}
-                onEnterResults={() => handleEnterResults(event.id)}
-              />
-            ))
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              No past events found
-            </div>
-          )}
+          {filteredEvents.past.map(event => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onSelectCaptains={() => handleSelectCaptains(event.id)}
+              onEdit={() => handleEditEvent(event.id)}
+              onDelete={() => handleDeleteEvent(event.id)}
+              onEnterResults={() => handleEnterResults(event.id)}
+            />
+          ))}
         </TabsContent>
       </Tabs>
     </div>
   );
 };
 
-// Main page component
+// Create a queryClient for the entire page
+const queryClient = new QueryClient();
+
+// Export the page with the necessary sidebar and layout structure
 export default function ManageEvents() {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Manage Events</h1>
-          </div>
-          <div className="pt-16">
-            <EventsContent />
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+    <QueryClientProvider client={queryClient}>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <AppSidebar />
+          <main className="flex-1 bg-background relative">
+            <div className="absolute top-4 left-4 z-50 flex items-center">
+              <SidebarTrigger className="bg-white shadow-md" />
+              <h1 className="ml-4 text-2xl font-bold">Manage Events</h1>
+            </div>
+            <div className="pt-16">
+              <EventsContent />
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    </QueryClientProvider>
   );
 }
