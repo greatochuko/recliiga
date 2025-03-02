@@ -91,7 +91,8 @@ const PlayerRegistration = () => {
           city: playerData.city,
           sports: playerData.sports,
           positions: Object.values(playerData.positions).flat(),
-          avatar_url: playerData.avatar_url
+          avatar_url: playerData.avatar_url,
+          profile_completed: true // Mark profile as completed
         };
 
         // Update profile
@@ -102,7 +103,7 @@ const PlayerRegistration = () => {
 
         if (profileError) throw profileError;
         
-        // If league code provided, join league
+        // If league code provided, join league (this is just a placeholder for now)
         if (playerData.leagueCode) {
           const { data: league, error: leagueError } = await supabase
             .from('leagues')
@@ -127,8 +128,16 @@ const PlayerRegistration = () => {
           }
         }
         
+        // Update user metadata to indicate profile is complete
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { profile_completed: true }
+        });
+        
+        if (updateError) throw updateError;
+        
         toast.success('Profile updated successfully!');
-        navigate('/dashboard');
+        // Redirect to home page after successful registration
+        navigate('/');
       } catch (error: any) {
         toast.error(error.message);
       }
