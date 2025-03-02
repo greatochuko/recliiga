@@ -145,6 +145,7 @@ const TeammatesToRate = () => {
 
 function HomeScreenContent() {
   const [selectedLeagueId, setSelectedLeagueId] = useState('premier');
+  const navigate = useNavigate();
 
   const handleLeagueChange = (leagueId: string) => {
     setSelectedLeagueId(leagueId);
@@ -166,7 +167,11 @@ function HomeScreenContent() {
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Upcoming Events</h2>
-          <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
+          <Button 
+            variant="link" 
+            className="text-[#FF7A00] hover:text-[#FF7A00]/90"
+            onClick={() => navigate('/events')}
+          >
             View all
           </Button>
         </div>
