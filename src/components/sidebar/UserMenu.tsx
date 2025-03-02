@@ -69,7 +69,7 @@ export function UserMenu() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600">
-            <LogOut className="w-4 h-4 mr-2  text-green\\n" />
+            <LogOut className="w-4 h-4 mr-2 " />
             <span className="text-black">Logout</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
