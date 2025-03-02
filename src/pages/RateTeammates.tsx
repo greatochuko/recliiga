@@ -45,7 +45,7 @@ function StarRating({ rating, onRatingChange }) {
   );
 }
 
-function RatingDialog({ player, onRatingSubmit, onViewProfile }) {
+function RatingDialog({ player, onRatingSubmit }) {
   const [rating, setRating] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,19 +60,12 @@ function RatingDialog({ player, onRatingSubmit, onViewProfile }) {
     setIsOpen(false);
   };
 
-  const handleCardClick = (e) => {
-    if (e.target.closest('.rating-btn-area')) {
-      return;
-    }
-    onViewProfile();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Card 
           className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors"
-          onClick={handleCardClick}
+          onClick={() => setIsOpen(true)}
         >
           <CardContent className="p-2 flex items-center justify-between">
             <div className="flex items-center">
@@ -151,10 +144,6 @@ export default function RateTeammates() {
   const handleRatingSubmit = (playerId) => {
     setPlayers(players.filter(player => player.id !== playerId));
   };
-  
-  const handleViewProfile = () => {
-    navigate('/player-profile');
-  };
 
   return (
     <SidebarProvider>
@@ -185,7 +174,6 @@ export default function RateTeammates() {
                       key={player.id} 
                       player={player} 
                       onRatingSubmit={handleRatingSubmit}
-                      onViewProfile={handleViewProfile}
                     />
                   ))}
                 </div>
