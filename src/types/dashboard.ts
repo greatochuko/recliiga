@@ -58,3 +58,8 @@ export interface Teammate {
   rating: number;
   avatarUrl?: string;
 }
+
+// Helper function to get league name regardless of format
+export function getLeagueName(league: string | { name: string; id?: string }): string {
+  return typeof league === 'string' ? league : league.name;
+}
