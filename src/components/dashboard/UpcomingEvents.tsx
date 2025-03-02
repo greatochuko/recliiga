@@ -1,8 +1,9 @@
 
 import { EventCard } from "./EventCard";
+import { Event } from "@/types/dashboard";
 
 export function UpcomingEvents() {
-  const events = [
+  const events: Event[] = [
     {
       id: "1",
       date: "2023-06-20",
@@ -18,8 +19,7 @@ export function UpcomingEvents() {
         avatar: "",
         color: "bg-blue-500",
       },
-      rsvp_deadline: new Date("2023-06-19T10:00:00"),
-      rsvpDeadline: new Date("2023-06-19T10:00:00"), // Added the properly named property
+      rsvpDeadline: new Date("2023-06-19T10:00:00"),
       status: null,
       league: "Soccer League",
       hasResults: false,
@@ -40,8 +40,7 @@ export function UpcomingEvents() {
         avatar: "",
         color: "bg-yellow-500",
       },
-      rsvp_deadline: new Date("2023-06-21T15:00:00"),
-      rsvpDeadline: new Date("2023-06-21T15:00:00"), // Added the properly named property
+      rsvpDeadline: new Date("2023-06-21T15:00:00"),
       status: null,
       league: "Basketball League",
       hasResults: false,

@@ -26,7 +26,7 @@ export interface League {
 }
 
 export interface Event {
-  id: string;
+  id: string | number; // Updated to accept both string and number
   date: string;
   time: string;
   location: string;
@@ -40,7 +40,7 @@ export interface Event {
     avatar: string;
     color: string;
   };
-  rsvp_deadline: Date;
+  rsvpDeadline: Date;
   status: string | null;
   league: string;
   hasResults: boolean;
