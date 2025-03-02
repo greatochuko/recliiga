@@ -274,7 +274,7 @@ function ChatContent() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="text-lg font-bold text-[#FF7A00]">{activeConversation.name}</h3>
+                    <h3 className="text-lg font-bold text-inherit">{activeConversation.name}</h3>
                     <p className="text-sm text-[#707B81]">
                       {activeConversation.type === 'group' ? 'Group Chat' : activeConversation.role === 'organizer' ? 'League Organizer' : 'Player'}
                     </p>
