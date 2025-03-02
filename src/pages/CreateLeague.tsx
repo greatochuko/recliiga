@@ -17,13 +17,11 @@ export default function CreateLeague() {
         .insert({
           name: leagueData.leagueName,
           sport: leagueData.sport,
-          privacy_setting: leagueData.privacySetting,
-          season_start: leagueData.seasonStartDate,
-          season_end: leagueData.seasonEndDate,
-          registration_deadline: leagueData.registrationDeadline,
-          owner_id: user!.id,
-          stat_points: leagueData.statPoints,
-          stats: leagueData.stats
+          is_private: leagueData.privacySetting === 'private',
+          start_date: leagueData.seasonStartDate,
+          city: 'Default City', // Required field that wasn't in the form
+          location: 'Default Location', // Required field that wasn't in the form
+          owner_id: user!.id
         });
 
       if (error) {

@@ -52,12 +52,12 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
         } else {
           // Check if player has completed profile setup
           const { data: profile, error } = await supabase
-            .from('player_profiles')
-            .select('id')
-            .eq('user_id', user.id)
+            .from('profiles')
+            .select('id, nickname')
+            .eq('id', user.id)
             .limit(1);
           
-          setIsProfileComplete(profile && profile.length > 0);
+          setIsProfileComplete(profile && profile.length > 0 && profile[0].nickname !== null);
         }
       } catch (error) {
         console.error('Error checking profile completion:', error);

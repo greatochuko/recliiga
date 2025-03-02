@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { supabase } from '@/integrations/supabase/client';
 
-// Export the PlayerProfile type for use in other components
 export interface PlayerProfile {
   nickname: string;
   dateOfBirth?: Date;
@@ -96,6 +95,10 @@ const PlayerRegistration = () => {
       setCurrentStep(currentStep + 1);
     } else {
       try {
+        const profilePositions = playerData.sports.map(sport => 
+          playerData.positions[sport] ? playerData.positions[sport].join(',') : ''
+        );
+
         const profileData = {
           ...playerData,
           user_id: user!.id,
@@ -103,17 +106,16 @@ const PlayerRegistration = () => {
         };
 
         const { error } = await supabase
-          .from('player_profiles')
-          .upsert({
-            user_id: user!.id,
+          .from('profiles')
+          .update({
             nickname: profileData.nickname,
             date_of_birth: profileData.date_of_birth,
             city: profileData.city,
             sports: profileData.sports,
-            positions: profileData.positions,
-            league_code: profileData.leagueCode,
+            positions: profilePositions,
             avatar_url: profileData.avatar_url
-          });
+          })
+          .eq('id', user!.id);
 
         if (error) {
           throw error;

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ const steps = [
 ];
 
 interface LeagueSetupProps {
-  onComplete: () => void;
+  onComplete: (leagueData: any) => void;
 }
 
 export function LeagueSetup({ onComplete }: LeagueSetupProps) {
@@ -54,7 +53,7 @@ export function LeagueSetup({ onComplete }: LeagueSetupProps) {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      onComplete();
+      onComplete(leagueData);
     }
   };
 
