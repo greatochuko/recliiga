@@ -19,6 +19,7 @@ export function UpcomingEvents() {
         color: "bg-blue-500",
       },
       rsvp_deadline: new Date("2023-06-19T10:00:00"),
+      rsvpDeadline: new Date("2023-06-19T10:00:00"), // Added the properly named property
       status: null,
       league: "Soccer League",
       hasResults: false,
@@ -40,6 +41,7 @@ export function UpcomingEvents() {
         color: "bg-yellow-500",
       },
       rsvp_deadline: new Date("2023-06-21T15:00:00"),
+      rsvpDeadline: new Date("2023-06-21T15:00:00"), // Added the properly named property
       status: null,
       league: "Basketball League",
       hasResults: false,

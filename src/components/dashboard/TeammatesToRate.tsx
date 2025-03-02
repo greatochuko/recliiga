@@ -14,7 +14,7 @@ export function TeammatesToRate() {
               <p className="text-xs text-gray-500">Soccer League - 06/12/2023</p>
             </div>
           </div>
-          <StarRating />
+          <StarRating rating={0} />
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -24,7 +24,7 @@ export function TeammatesToRate() {
               <p className="text-xs text-gray-500">Volleyball League - 06/10/2023</p>
             </div>
           </div>
-          <StarRating />
+          <StarRating rating={0} />
         </div>
       </div>
     </div>
