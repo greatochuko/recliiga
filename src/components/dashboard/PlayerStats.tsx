@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, User } from "lucide-react";
@@ -62,7 +63,7 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-export function PlayerStats({ playerStats }: { playerStats: PlayerStats }) {
+export function PlayerStats({ playerStats }: { playerStats: PlayerStatsType }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <PlayerRankCard league={{
