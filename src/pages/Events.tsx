@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-
 function CountdownClock({
   deadline
 }: {
@@ -40,7 +39,6 @@ function CountdownClock({
       <span>{timeLeft.minutes}m</span>
     </div>;
 }
-
 interface Event {
   id: number;
   date: string;
@@ -62,7 +60,6 @@ interface Event {
   hasResults: boolean;
   spotsLeft?: number;
 }
-
 function EventCard({
   event,
   isPastEvent = false,
@@ -76,7 +73,6 @@ function EventCard({
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
-
   const getTeamName = (team: {
     name: string;
   }, index: number) => {
@@ -85,7 +81,6 @@ function EventCard({
     }
     return team.name;
   };
-
   const getTeamAvatarFallback = (team: {
     name: string;
   }, index: number) => {
@@ -94,21 +89,17 @@ function EventCard({
     }
     return team.name.split(' ').map(n => n[0]).join('');
   };
-
   const handleAttend = () => {
     setAttendanceStatus('attending');
     setIsEditing(false);
   };
-
   const handleDecline = () => {
     setAttendanceStatus('declined');
     setIsEditing(false);
   };
-
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
-
   const handleViewDetails = () => {
     if (event.hasResults) {
       navigate(`/events/${event.id}/results`);
@@ -116,7 +107,6 @@ function EventCard({
       navigate(`/events/${event.id}`);
     }
   };
-
   return <Card className="mb-4">
       <CardContent className="p-4 relative">
         <div className="flex justify-between items-start mb-4">
@@ -191,138 +181,124 @@ function EventCard({
       </CardContent>
     </Card>;
 }
-
 function EventsContent() {
-  const upcomingEvents = [
-    {
-      id: 1,
-      date: '20-Aug-2025',
-      time: '6:00 PM',
-      location: 'Allianz Arena',
-      team1: {
-        name: 'Eagle Claws',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#272D31'
-      },
-      team2: {
-        name: 'Ravens',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#FFC700'
-      },
-      rsvpDeadline: new Date('2025-08-19T18:00:00'),
-      status: 'attending',
-      league: 'Premier League',
-      hasResults: false
+  const upcomingEvents = [{
+    id: 1,
+    date: '20-Aug-2025',
+    time: '6:00 PM',
+    location: 'Allianz Arena',
+    team1: {
+      name: 'Eagle Claws',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#272D31'
     },
-    {
-      id: 2,
-      date: '25-Aug-2025',
-      time: '7:30 PM',
-      location: 'Stamford Bridge',
-      team1: {
-        name: 'Blue Lions',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#034694'
-      },
-      team2: {
-        name: 'Red Devils',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#DA291C'
-      },
-      rsvpDeadline: new Date('2025-08-24T19:30:00'),
-      status: null,
-      spotsLeft: 2,
-      league: 'Championship',
-      hasResults: false
+    team2: {
+      name: 'Ravens',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#FFC700'
     },
-    {
-      id: 3,
-      date: '01-Sep-2025',
-      time: '5:00 PM',
-      location: 'Camp Nou',
-      team1: {
-        name: 'Catalonia FC',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#A50044'
-      },
-      team2: {
-        name: 'White Angels',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#FFFFFF'
-      },
-      rsvpDeadline: new Date('2025-08-31T17:00:00'),
-      status: null,
-      spotsLeft: 1,
-      league: 'La Liga',
-      hasResults: false
-    }
-  ];
-
-  const pastEvents = [
-    {
-      id: 4,
-      date: '15-Jul-2025',
-      time: '8:00 PM',
-      location: 'Old Trafford',
-      team1: {
-        name: 'Red Devils',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#DA291C'
-      },
-      team2: {
-        name: 'Sky Blues',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#6CABDD'
-      },
-      status: 'past',
-      league: 'Premier League',
-      hasResults: true
+    rsvpDeadline: new Date('2025-08-19T18:00:00'),
+    status: 'attending',
+    league: 'Premier League',
+    hasResults: false
+  }, {
+    id: 2,
+    date: '25-Aug-2025',
+    time: '7:30 PM',
+    location: 'Stamford Bridge',
+    team1: {
+      name: 'Blue Lions',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#034694'
     },
-    {
-      id: 5,
-      date: '10-Jul-2025',
-      time: '7:00 PM',
-      location: 'Anfield',
-      team1: {
-        name: 'The Reds',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#C8102E'
-      },
-      team2: {
-        name: 'Spurs',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#132257'
-      },
-      status: 'past',
-      league: 'Premier League',
-      hasResults: true
+    team2: {
+      name: 'Red Devils',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#DA291C'
     },
-    {
-      id: 6,
-      date: '05-Jul-2025',
-      time: '6:30 PM',
-      location: 'Emirates Stadium',
-      team1: {
-        name: 'Gunners',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#EF0107'
-      },
-      team2: {
-        name: 'Hammers',
-        avatar: '/placeholder.svg?height=64&width=64',
-        color: '#7A263A'
-      },
-      status: 'past',
-      league: 'Premier League',
-      hasResults: true
-    }
-  ];
-
+    rsvpDeadline: new Date('2025-08-24T19:30:00'),
+    status: null,
+    spotsLeft: 2,
+    league: 'Championship',
+    hasResults: false
+  }, {
+    id: 3,
+    date: '01-Sep-2025',
+    time: '5:00 PM',
+    location: 'Camp Nou',
+    team1: {
+      name: 'Catalonia FC',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#A50044'
+    },
+    team2: {
+      name: 'White Angels',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#FFFFFF'
+    },
+    rsvpDeadline: new Date('2025-08-31T17:00:00'),
+    status: null,
+    spotsLeft: 1,
+    league: 'La Liga',
+    hasResults: false
+  }];
+  const pastEvents = [{
+    id: 4,
+    date: '15-Jul-2025',
+    time: '8:00 PM',
+    location: 'Old Trafford',
+    team1: {
+      name: 'Red Devils',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#DA291C'
+    },
+    team2: {
+      name: 'Sky Blues',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#6CABDD'
+    },
+    status: 'past',
+    league: 'Premier League',
+    hasResults: true
+  }, {
+    id: 5,
+    date: '10-Jul-2025',
+    time: '7:00 PM',
+    location: 'Anfield',
+    team1: {
+      name: 'The Reds',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#C8102E'
+    },
+    team2: {
+      name: 'Spurs',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#132257'
+    },
+    status: 'past',
+    league: 'Premier League',
+    hasResults: true
+  }, {
+    id: 6,
+    date: '05-Jul-2025',
+    time: '6:30 PM',
+    location: 'Emirates Stadium',
+    team1: {
+      name: 'Gunners',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#EF0107'
+    },
+    team2: {
+      name: 'Hammers',
+      avatar: '/placeholder.svg?height=64&width=64',
+      color: '#7A263A'
+    },
+    status: 'past',
+    league: 'Premier League',
+    hasResults: true
+  }];
   return <div className="p-4 md:p-6">
-      <div className="mb-6 pt-10">
-        <h2 className="font-bold text-2xl">
-      </h2>
-      </div>
+      
       
       {/* Upcoming Events Section */}
       <section className="mb-8">
@@ -351,7 +327,6 @@ function EventsContent() {
       </section>
     </div>;
 }
-
 export default function Events() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">
