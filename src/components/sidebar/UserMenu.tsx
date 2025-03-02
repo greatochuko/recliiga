@@ -1,11 +1,13 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, ChevronDown, UserPlus, Trash2, LogOut } from "lucide-react";
+import { User, ChevronDown, Trash2, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+
 export function UserMenu() {
   const {
     user,
@@ -16,6 +18,7 @@ export function UserMenu() {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  
   const handleLogout = async () => {
     try {
       await signOut();
@@ -25,6 +28,7 @@ export function UserMenu() {
       toast.error('Error logging out');
     }
   };
+  
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "Delete") {
       toast.error('Please type "Delete" to confirm');
@@ -38,6 +42,7 @@ export function UserMenu() {
       console.error('Error deleting account:', error);
     }
   };
+
   return <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -55,12 +60,6 @@ export function UserMenu() {
             <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
               <User className="w-4 h-4" />
               <span>Profile</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/invite-players" className="flex items-center gap-2 cursor-pointer">
-              <UserPlus className="w-4 h-4" />
-              <span>Invite Players</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-red-600">
