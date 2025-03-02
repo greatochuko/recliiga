@@ -1,3 +1,4 @@
+
 export interface PlayerStats {
   wins: number;
   losses: number;
@@ -6,22 +7,31 @@ export interface PlayerStats {
   league?: {
     name: string;
   };
+  name?: string;
+  position?: number;
+  totalTeams?: number;
+  record?: {
+    wins: number;
+    losses: number;
+    ties: number;
+  };
 }
 
 export interface League {
   id: string;
   name: string;
-  sport: string;
-  city: string;
-  location: string;
-  description: string | null;
-  logo_url: string | null;
-  is_private: boolean;
-  requires_approval: boolean;
-  league_code: string | null;
+  sport?: string;
+  city?: string;
+  location?: string;
+  description?: string | null;
+  logo_url?: string | null;
+  is_private?: boolean;
+  requires_approval?: boolean;
+  league_code?: string | null;
   member_count?: number;
-  created_at: string;
-  start_date: string;
+  created_at?: string;
+  start_date?: string;
+  rating?: number;
 }
 
 export interface Event {
@@ -39,10 +49,18 @@ export interface Event {
     avatar: string;
     color: string;
   };
-  rsvpDeadline: Date;
+  rsvpDeadline?: Date;
   status: string | null;
   league: string;
   hasResults: boolean;
   spotsLeft?: number;
   rsvp_deadline?: Date;
+}
+
+export interface Teammate {
+  id: string;
+  name: string;
+  position: string;
+  rating: number;
+  avatarUrl: string;
 }

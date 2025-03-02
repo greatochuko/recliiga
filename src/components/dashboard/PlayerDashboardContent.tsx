@@ -1,0 +1,289 @@
+
+import { useState } from "react";
+import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Star, User } from "lucide-react";
+import { PlayerRankCard } from "./PlayerRankCard";
+import { LeagueSelector } from "./LeagueSelector";
+import { UpcomingEvents } from "./UpcomingEvents";
+import { StarRating } from "./StarRating";
+import { League, PlayerStats, Teammate, Event } from "@/types/dashboard";
+
+// Mock API functions
+async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
+  // Simulating different stats for different leagues
+  const leagueStats = {
+    premier: {
+      name: "John Doe",
+      position: 8,
+      totalTeams: 15,
+      league: "Premier League",
+      points: 15,
+      record: { wins: 4, losses: 2, ties: 2 }
+    },
+    division1: {
+      name: "John Doe",
+      position: 3,
+      totalTeams: 12,
+      league: "Division 1",
+      points: 22,
+      record: { wins: 7, losses: 1, ties: 1 }
+    },
+    casual: {
+      name: "John Doe",
+      position: 1,
+      totalTeams: 8,
+      league: "Casual League",
+      points: 18,
+      record: { wins: 6, losses: 0, ties: 0 }
+    }
+  };
+  return leagueStats[leagueId as keyof typeof leagueStats] || leagueStats.premier;
+}
+
+async function fetchTeammates(): Promise<Teammate[]> {
+  return [
+    { id: '1', name: 'John Smith', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '2', name: 'Emma Johnson', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '3', name: 'Michael Brown', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '4', name: 'Sarah Davis', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '5', name: 'David Wilson', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '6', name: 'Lisa Anderson', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '7', name: 'Robert Taylor', position: 'Midfielder', rating: 3, avatarUrl: '' },
+    { id: '8', name: 'Jennifer Martin', position: 'Midfielder', rating: 3, avatarUrl: '' },
+  ];
+}
+
+async function fetchUpcomingEvents(): Promise<Event[]> {
+  return [
+    {
+      id: 1,
+      date: '20-Aug-2025',
+      time: '6:00 PM',
+      location: 'Allianz Arena',
+      team1: { name: 'Eagle Claws', avatar: '/placeholder.svg?height=64&width=64', color: '#272D31' },
+      team2: { name: 'Ravens', avatar: '/placeholder.svg?height=64&width=64', color: '#FFC700' },
+      rsvpDeadline: new Date('2025-08-19T18:00:00'),
+      status: 'attending',
+      league: 'Premier League',
+      hasResults: false
+    },
+    {
+      id: 2,
+      date: '25-Aug-2025',
+      time: '7:30 PM',
+      location: 'Stamford Bridge',
+      team1: { name: 'Blue Lions', avatar: '/placeholder.svg?height=64&width=64', color: '#034694' },
+      team2: { name: 'Red Devils', avatar: '/placeholder.svg?height=64&width=64', color: '#DA291C' },
+      rsvpDeadline: new Date('2025-08-24T19:30:00'),
+      status: null,
+      spotsLeft: 2,
+      league: 'Championship',
+      hasResults: false
+    },
+    {
+      id: 3,
+      date: '01-Sep-2025',
+      time: '5:00 PM',
+      location: 'Camp Nou',
+      team1: { name: 'Catalonia FC', avatar: '/placeholder.svg?height=64&width=64', color: '#A50044' },
+      team2: { name: 'White Angels', avatar: '/placeholder.svg?height=64&width=64', color: '#FFFFFF' },
+      rsvpDeadline: new Date('2025-08-31T17:00:00'),
+      status: null,
+      spotsLeft: 1,
+      league: 'La Liga',
+      hasResults: false
+    }
+  ];
+}
+
+function PlayerDashboardContent() {
+  const leagues: League[] = [
+    { id: 'premier', name: 'Premier League', rating: 0.8 },
+    { id: 'division1', name: 'Division 1', rating: 0.6 },
+    { id: 'casual', name: 'Casual League', rating: 0.3 },
+  ];
+  const [selectedLeagueId, setSelectedLeagueId] = useState('premier');
+  const [selectedLeague, setSelectedLeague] = useState<League>({
+    id: 'premier',
+    name: 'Premier League',
+    rating: 0.8
+  });
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['playerStats', selectedLeagueId],
+    queryFn: () => fetchPlayerStats(selectedLeagueId)
+  });
+
+  const { data: teammates, isLoading: teammatesLoading } = useQuery({
+    queryKey: ['teammates'],
+    queryFn: fetchTeammates
+  });
+
+  const { data: upcomingEvents, isLoading: eventsLoading } = useQuery({
+    queryKey: ['upcomingEvents'],
+    queryFn: fetchUpcomingEvents
+  });
+
+  const handleLeagueChange = (leagueId: string) => {
+    setSelectedLeagueId(leagueId);
+    const newLeague = leagues.find(league => league.id === leagueId) || leagues[0];
+    setSelectedLeague(newLeague);
+  };
+
+  if (statsLoading || teammatesLoading || eventsLoading) {
+    return (
+      <div className="animate-pulse space-y-8">
+        <div className="h-64 rounded-lg bg-muted" />
+        <div className="h-64 rounded-lg bg-muted" />
+        <div className="h-64 rounded-lg bg-muted" />
+      </div>
+    );
+  }
+
+  const totalGames = stats?.record?.wins + stats?.record?.losses + stats?.record?.ties || 0;
+  const winFraction = (stats?.record?.wins / totalGames) || 0;
+  const lossFraction = (stats?.record?.losses / totalGames) || 0;
+  const tieFraction = (stats?.record?.ties / totalGames) || 0;
+
+  return (
+    <div className="space-y-8 p-4 md:p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Your Stats</h2>
+            <LeagueSelector leagues={leagues} onLeagueChange={handleLeagueChange} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Profile Card */}
+            <PlayerRankCard league={{
+              name: stats?.league || '',
+              playerName: stats?.name || '',
+              rank: stats?.position || 0,
+              totalPlayers: stats?.totalTeams || 0,
+              rating: Math.max(0.50, Math.min(3.00, selectedLeague.rating ? selectedLeague.rating * 3 : 1.5))
+            }} />
+
+            {/* Record Card */}
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-bold mb-4">Record</h3>
+              <div className="space-y-4">
+                {/* Points Circle */}
+                <div className="flex justify-center">
+                  <div className="relative w-24 h-24">
+                    <svg className="w-full h-full" viewBox="0 0 100 100">
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke="#E5E7EB"
+                        strokeWidth="10"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke="#22C55E"
+                        strokeWidth="10"
+                        strokeDasharray={`${winFraction * 283} ${283 - winFraction * 283}`}
+                        strokeDashoffset="0"
+                        transform="rotate(-90 50 50)"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke="#EF4444"
+                        strokeWidth="10"
+                        strokeDasharray={`${lossFraction * 283} ${283 - lossFraction * 283}`}
+                        strokeDashoffset={`${-winFraction * 283}`}
+                        transform="rotate(-90 50 50)"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke="#F97316"
+                        strokeWidth="10"
+                        strokeDasharray={`${tieFraction * 283} ${283 - tieFraction * 283}`}
+                        strokeDashoffset={`${-(winFraction + lossFraction) * 283}`}
+                        transform="rotate(-90 50 50)"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-3xl font-bold">{stats?.points}</span>
+                      <span className="text-gray-500">PTS</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-emerald-100 rounded p-2">
+                    <div className="text-emerald-700 font-bold text-lg">{stats?.record?.wins}</div>
+                    <div className="text-emerald-600 text-xs">Won</div>
+                  </div>
+                  <div className="bg-red-100 rounded p-2">
+                    <div className="text-red-700 font-bold text-lg">{stats?.record?.losses}</div>
+                    <div className="text-red-600 text-xs">Loss</div>
+                  </div>
+                  <div className="bg-orange-100 rounded p-2">
+                    <div className="text-orange-700 font-bold text-lg">{stats?.record?.ties}</div>
+                    <div className="text-orange-600 text-xs">Tied</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Teammates Section */}
+        <div className="flex flex-col h-full">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
+            <a href="/teammates" className="text-[#FF5533] hover:underline">
+              View all
+            </a>
+          </div>
+          <div className="grid grid-cols-2 gap-4 flex-grow">
+            {teammates && teammates.slice(0, 8).map((teammate) => (
+              <div
+                key={teammate.id}
+                className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">{teammate.name}</h3>
+                    <p className="text-gray-500 text-xs">{teammate.position}</p>
+                  </div>
+                </div>
+                <StarRating rating={teammate.rating} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Upcoming Events Section */}
+      {upcomingEvents && (
+        <UpcomingEvents />
+      )}
+    </div>
+  );
+}
+
+const queryClient = new QueryClient();
+
+export default function PlayerDashboard() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PlayerDashboardContent />
+    </QueryClientProvider>
+  );
+}

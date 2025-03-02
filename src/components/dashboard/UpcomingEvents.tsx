@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import { EventCard } from "./EventCard";
 import { Event } from "@/types/dashboard";
 
@@ -6,56 +7,58 @@ export function UpcomingEvents() {
   const events: Event[] = [
     {
       id: "1",
-      date: "2023-06-20",
-      time: "10:00 AM",
-      location: "Main Field",
+      date: "20-Aug-2025",
+      time: "6:00 PM",
+      location: "Allianz Arena",
       team1: {
-        name: "Red Dragons",
-        avatar: "",
-        color: "bg-red-500",
+        name: "Eagle Claws",
+        avatar: "/placeholder.svg?height=64&width=64",
+        color: "#272D31",
       },
       team2: {
-        name: "Blue Tigers",
-        avatar: "",
-        color: "bg-blue-500",
+        name: "Ravens",
+        avatar: "/placeholder.svg?height=64&width=64",
+        color: "#FFC700",
       },
-      rsvpDeadline: new Date("2023-06-19T10:00:00"),
-      status: null,
-      league: "Soccer League",
+      rsvpDeadline: new Date("2025-08-19T18:00:00"),
+      status: "attending",
+      league: "Premier League",
       hasResults: false,
-      spotsLeft: 2,
     },
     {
       id: "2",
-      date: "2023-06-22",
-      time: "3:00 PM",
-      location: "Courts",
+      date: "25-Aug-2025",
+      time: "7:30 PM",
+      location: "Stamford Bridge",
       team1: {
-        name: "Green Goblins",
-        avatar: "",
-        color: "bg-green-500",
+        name: "Blue Lions",
+        avatar: "/placeholder.svg?height=64&width=64",
+        color: "#034694",
       },
       team2: {
-        name: "Yellow Jackets",
-        avatar: "",
-        color: "bg-yellow-500",
+        name: "Red Devils",
+        avatar: "/placeholder.svg?height=64&width=64",
+        color: "#DA291C",
       },
-      rsvpDeadline: new Date("2023-06-21T15:00:00"),
+      rsvpDeadline: new Date("2025-08-24T19:30:00"),
       status: null,
-      league: "Basketball League",
+      league: "Championship",
       hasResults: false,
-      spotsLeft: 1,
+      spotsLeft: 2,
     },
   ];
 
   return (
-    <div className="mb-8">
-      <h2 className="text-xl font-bold mb-4">Upcoming Events</h2>
+    <section className="mb-8">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Upcoming Events</h2>
+        <Link to="/events" className="text-[#FF7A00] hover:underline text-sm">View all</Link>
+      </div>
       <div className="space-y-4">
         {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard key={event.id} event={event} showLeagueName={true} />
         ))}
       </div>
-    </div>
+    </section>
   );
 }

@@ -12,7 +12,6 @@ import { Event } from "@/types/dashboard";
 export function EventCard({ event, showLeagueName = false }: { event: Event; showLeagueName?: boolean }) {
   const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
-  // Prefer rsvpDeadline but fallback to rsvp_deadline
   const deadline = event.rsvpDeadline || event.rsvp_deadline;
   const isRsvpOpen = deadline && new Date() < deadline;
   const [isEditing, setIsEditing] = useState(false);
@@ -149,7 +148,7 @@ export function EventCard({ event, showLeagueName = false }: { event: Event; sho
             <div className="flex justify-end items-center mt-2">
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-500">RSVP in:</span>
-                <CountdownClock deadline={deadline} />
+                {deadline && <CountdownClock deadline={deadline} />}
               </div>
             </div>
           </>
