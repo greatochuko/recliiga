@@ -16,6 +16,10 @@ import ManageEvents from './pages/ManageEvents';
 import AddEvent from './pages/AddEvent';
 import EventResults from './pages/EventResults';
 import EditResults from './pages/EditResults';
+import Events from './pages/Events';
+import Leagues from './pages/Leagues';
+import Results from './pages/Results';
+import Chat from './pages/Chat';
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -37,6 +41,10 @@ function App() {
           <Route path="/add-event" element={<AddEvent />} />
           <Route path="/events/:id/results" element={<EventResults />} />
           <Route path="/events/:id/edit-results" element={<EditResults />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/leagues" element={<Leagues />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
