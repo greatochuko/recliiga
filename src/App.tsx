@@ -19,6 +19,7 @@ import Leagues from "./pages/Leagues";
 import LeagueDetails from "./pages/LeagueDetails";
 import EventDetails from "./pages/EventDetails";
 import EventResults from "./pages/EventResults";
+import EditResults from "./pages/EditResults";
 import Events from "./pages/Events";
 import Results from "./pages/Results";
 import Chat from "./pages/Chat";
