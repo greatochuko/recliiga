@@ -20,6 +20,7 @@ import Events from './pages/Events';
 import Leagues from './pages/Leagues';
 import Results from './pages/Results';
 import Chat from './pages/Chat';
+import Help from './pages/Help';
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/leagues" element={<Leagues />} />
           <Route path="/results" element={<Results />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/help" element={<Help />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
