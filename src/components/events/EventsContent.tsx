@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,6 +12,7 @@ import { Plus } from "lucide-react";
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [selectedLeague, setSelectedLeague] = useState<number | null>(null);
   
   const { data: leagues, isLoading: isLoadingLeagues } = useQuery({
@@ -49,10 +51,7 @@ export const EventsContent: React.FC = () => {
 
   const handleSelectCaptains = (eventId: number) => {
     console.log(`Select captains for event ${eventId}`);
-    toast({
-      title: "Action initiated",
-      description: `Selecting captains for event ${eventId}`,
-    });
+    navigate(`/select-captains/${eventId}`);
   };
 
   const handleEditEvent = (eventId: number) => {
