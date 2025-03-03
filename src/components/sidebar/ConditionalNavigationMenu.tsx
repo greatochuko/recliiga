@@ -9,8 +9,8 @@ export function ConditionalNavigationMenu() {
 
   return (
     <>
-      {isLeagueOrganizer && <LONavigationMenu />}
       <NavigationMenu />
+      {isLeagueOrganizer && <LONavigationMenu />}
     </>
   );
 }
