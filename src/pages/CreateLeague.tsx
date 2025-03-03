@@ -35,12 +35,16 @@ export default function CreateLeague() {
     }
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen bg-white p-4">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-[#FF7A00] text-center mb-8">Create Your League</h1>
         
-        <LeagueSetup onComplete={handleComplete} />
+        <LeagueSetup onComplete={handleComplete} onPrevious={handleGoBack} />
       </div>
     </div>
   );

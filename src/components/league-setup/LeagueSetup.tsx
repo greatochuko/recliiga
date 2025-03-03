@@ -15,9 +15,10 @@ const steps = [
 
 interface LeagueSetupProps {
   onComplete: (leagueData: any) => void;
+  onPrevious?: () => void;
 }
 
-export function LeagueSetup({ onComplete }: LeagueSetupProps) {
+export function LeagueSetup({ onComplete, onPrevious }: LeagueSetupProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [leagueData, setLeagueData] = useState({
     leagueName: '',
@@ -60,6 +61,8 @@ export function LeagueSetup({ onComplete }: LeagueSetupProps) {
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    } else if (onPrevious) {
+      onPrevious();
     }
   };
 
@@ -114,7 +117,7 @@ export function LeagueSetup({ onComplete }: LeagueSetupProps) {
           <Button 
             variant="outline" 
             onClick={handlePrevious}
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 && !onPrevious}
           >
             Previous
           </Button>
