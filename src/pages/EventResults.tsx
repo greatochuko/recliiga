@@ -1,30 +1,49 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Crown, AlertCircle, Calendar, MapPin } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
-function TeamRoster({ team, attendance }: { team: any, attendance: Record<string, boolean> }) {
-  const navigate = useNavigate();
-  
-  const handleViewProfile = () => {
-    navigate('/player-profile');
+function TeamRoster({ team, attendance, onAttendanceChange }) {
+  const allChecked = team.players.every(player => attendance[player.name]) && attendance[team.captain.name];
+
+  const handleSelectAll = (checked) => {
+    const newAttendance = {};
+    newAttendance[team.captain.name] = checked;
+    team.players.forEach(player => {
+      newAttendance[player.name] = checked;
+    });
+    onAttendanceChange(newAttendance);
   };
-  
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-muted-foreground">Team members</h3>
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor={`select-all-${team.name}`}
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Select All
+          </label>
+          <Checkbox
+            id={`select-all-${team.name}`}
+            checked={allChecked}
+            onCheckedChange={handleSelectAll}
+            aria-label={`Select all players for ${team.name}`}
+          />
+        </div>
       </div>
       <div className="space-y-4">
-        <div 
-          className="flex items-center gap-4 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
-          onClick={handleViewProfile}
-        >
+        <div className="flex items-center gap-4 bg-gray-100 p-2 rounded-lg">
           <Avatar className="w-12 h-12" style={{ backgroundColor: team.color }}>
             <AvatarImage src={team.captain.avatar} alt={team.captain.name} />
             <AvatarFallback>{team.captain.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
@@ -32,20 +51,18 @@ function TeamRoster({ team, attendance }: { team: any, attendance: Record<string
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="font-semibold">{team.captain.name}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#FF7A00]"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+              <Crown className="w-4 h-4 text-[#FF7A00]" />
             </div>
             <span className="text-sm text-muted-foreground">{team.captain.position}</span>
           </div>
-          <Badge variant={attendance[team.captain.name] ? "default" : "secondary"}>
-            {attendance[team.captain.name] ? "Present" : "Absent"}
-          </Badge>
+          <Checkbox
+            checked={attendance[team.captain.name] || false}
+            onCheckedChange={(checked) => onAttendanceChange({ ...attendance, [team.captain.name]: checked })}
+            aria-label={`Mark ${team.captain.name} as present`}
+          />
         </div>
-        {team.players.map((player: any) => (
-          <div 
-            key={player.id} 
-            className="flex items-center gap-4 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors"
-            onClick={handleViewProfile}
-          >
+        {team.players.map((player) => (
+          <div key={player.id} className="flex items-center gap-4">
             <Avatar className="w-12 h-12">
               <AvatarImage src={player.avatar} alt={player.name} />
               <AvatarFallback>{player.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
@@ -54,9 +71,11 @@ function TeamRoster({ team, attendance }: { team: any, attendance: Record<string
               <span className="font-semibold">{player.name}</span>
               <p className="text-sm text-muted-foreground">{player.position}</p>
             </div>
-            <Badge variant={attendance[player.name] ? "default" : "secondary"}>
-              {attendance[player.name] ? "Present" : "Absent"}
-            </Badge>
+            <Checkbox
+              checked={attendance[player.name] || false}
+              onCheckedChange={(checked) => onAttendanceChange({ ...attendance, [player.name]: checked })}
+              aria-label={`Mark ${player.name} as present`}
+            />
           </div>
         ))}
       </div>
@@ -67,18 +86,17 @@ function TeamRoster({ team, attendance }: { team: any, attendance: Record<string
 function EventResultsContent() {
   const navigate = useNavigate();
   const { id } = useParams();
-  
-  // Mock data for event results
-  const eventData = {
-    date: '15-Jul-2024',
-    time: '8:00 PM',
-    location: 'Old Trafford',
-    league: 'Premier League',
+  const [team1Score, setTeam1Score] = useState('');
+  const [team2Score, setTeam2Score] = useState('');
+  const [attendance, setAttendance] = useState({});
+  const [alertMessage, setAlertMessage] = useState('');
+
+  // Mock data for team rosters
+  const mockTeamData = {
     team1: {
       name: 'Red Devils',
       avatar: '/placeholder.svg?height=64&width=64',
       color: '#DA291C',
-      score: 3,
       captain: {
         name: 'John Smith',
         avatar: '/placeholder.svg?height=48&width=48',
@@ -95,7 +113,6 @@ function EventResultsContent() {
       name: 'Sky Blues',
       avatar: '/placeholder.svg?height=64&width=64',
       color: '#6CABDD',
-      score: 2,
       captain: {
         name: 'Mike Davis',
         avatar: '/placeholder.svg?height=48&width=48',
@@ -110,33 +127,130 @@ function EventResultsContent() {
     }
   };
 
-  // Mock attendance data
-  const attendanceData = {
-    'John Smith': true,
-    'Alex Johnson': true,
-    'Sam Williams': true,
-    'Chris Brown': false,
-    'Pat Taylor': true,
-    'Mike Davis': true,
-    'Tom Wilson': true,
-    'Jamie Lee': false,
-    'Casey Morgan': true,
-    'Jordan Riley': true
+  const mockEvent = {
+    date: '15-Jul-2024',
+    time: '8:00 PM',
+    location: 'Old Trafford',
+    league: 'Premier League'
   };
 
-  const renderTeamScore = (team: any) => (
-    <div className="flex flex-col items-center space-y-2">
-      <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
-        <AvatarImage src={team.avatar} alt={team.name} />
-        <AvatarFallback>{team.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-      </Avatar>
-      <span className="text-sm font-semibold">{team.name}</span>
-      <span className="text-4xl font-bold">{team.score}</span>
-    </div>
-  );
+  const handleAttendanceChange = (newAttendance) => {
+    setAttendance(prev => ({
+      ...prev,
+      ...newAttendance
+    }));
+  };
+
+  const updateScores = (team1Score: string, team2Score: string) => {
+    const team1ScoreNum = parseInt(team1Score);
+    const team2ScoreNum = parseInt(team2Score);
+
+    if (team1ScoreNum && team2ScoreNum) {
+      if (team1ScoreNum > team2ScoreNum) {
+        setAlertMessage(`${mockTeamData.team1.name} beat ${mockTeamData.team2.name} ${team1Score}-${team2Score}`);
+      } else if (team2ScoreNum > team1ScoreNum) {
+        setAlertMessage(`${mockTeamData.team2.name} beat ${mockTeamData.team1.name} ${team2Score}-${team1Score}`);
+      } else {
+        setAlertMessage(`${mockTeamData.team1.name} and ${mockTeamData.team2.name} tied ${team1Score}-${team2Score}`);
+      }
+    } else {
+      setAlertMessage('');
+    }
+  };
+
+  const handleTeam1ScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newScore = e.target.value;
+    setTeam1Score(newScore);
+    updateScores(newScore, team2Score);
+  };
+
+  const handleTeam2ScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newScore = e.target.value;
+    setTeam2Score(newScore);
+    updateScores(team1Score, newScore);
+  };
+
+  const handleAddScore = (team: 'team1' | 'team2', amount: number) => {
+    if (team === 'team1') {
+      const newScore = (parseInt(team1Score) || 0) + amount;
+      setTeam1Score(newScore.toString());
+      updateScores(newScore.toString(), team2Score);
+    } else {
+      const newScore = (parseInt(team2Score) || 0) + amount;
+      setTeam2Score(newScore.toString());
+      updateScores(team1Score, newScore.toString());
+    }
+  };
+
+  const handleNumberInput = (team: 'team1' | 'team2', number: string) => {
+    if (team === 'team1') {
+      const newScore = team1Score + number;
+      setTeam1Score(newScore);
+      updateScores(newScore, team2Score);
+    } else {
+      const newScore = team2Score + number;
+      setTeam2Score(newScore);
+      updateScores(team1Score, newScore);
+    }
+  };
+
+  const handleClear = (team: 'team1' | 'team2') => {
+    if (team === 'team1') {
+      setTeam1Score('');
+      updateScores('', team2Score);
+    } else {
+      setTeam2Score('');
+      updateScores(team1Score, '');
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Submitting scores:', { team1Score, team2Score });
+    console.log('Attendance:', attendance);
+  };
+
+  const renderScoreInput = (team: 'team1' | 'team2') => {
+    const score = team === 'team1' ? team1Score : team2Score;
+    const teamData = team === 'team1' ? mockTeamData.team1 : mockTeamData.team2;
+
+    return (
+      <div className="flex flex-col items-center space-y-2">
+        <Avatar className="w-16 h-16" style={{ backgroundColor: teamData.color }}>
+          <AvatarImage src={teamData.avatar} alt={teamData.name} />
+          <AvatarFallback>{teamData.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+        </Avatar>
+        <span className="text-sm font-semibold">{teamData.name}</span>
+        <Input
+          type="number"
+          value={score}
+          onChange={team === 'team1' ? handleTeam1ScoreChange : handleTeam2ScoreChange}
+          className="w-24 text-center"
+          min="0"
+          required
+        />
+        <div className="flex space-x-2">
+          <Button type="button" onClick={() => handleAddScore(team, 2)} size="sm" variant="outline">+2</Button>
+          <Button type="button" onClick={() => handleAddScore(team, 3)} size="sm" variant="outline">+3</Button>
+          <Button type="button" onClick={() => handleAddScore(team, 10)} size="sm" variant="outline">+10</Button>
+        </div>
+        <div className="grid grid-cols-5 gap-1">
+          {['1', '2', '3', '4', '5'].map((num) => (
+            <Button key={num} type="button" onClick={() => handleNumberInput(team, num)} size="sm" variant="outline">{num}</Button>
+          ))}
+        </div>
+        <div className="grid grid-cols-5 gap-1">
+          {['6', '7', '8', '9', '0'].map((num) => (
+            <Button key={num} type="button" onClick={() => handleNumberInput(team, num)} size="sm" variant="outline">{num}</Button>
+          ))}
+        </div>
+        <Button type="button" onClick={() => handleClear(team)} size="sm" variant="outline" className="w-full">Clear</Button>
+      </div>
+    );
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8 relative">
+    <div className="container mx-auto px-4 py-8">
       <Button 
         variant="ghost" 
         size="sm" 
@@ -147,50 +261,59 @@ function EventResultsContent() {
       </Button>
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Match Result</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Input Match Result</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="flex items-center justify-center gap-8 mb-8">
-              {renderTeamScore(eventData.team1)}
+              {renderScoreInput('team1')}
               <div className="flex flex-col items-center justify-center">
-                <div className="flex flex-col items-center mb-4 text-center">
-                  <span className="text-xs text-gray-500">{eventData.date}</span>
-                  <span className="text-xs text-gray-500">{eventData.location}</span>
-                  <span className="text-xs text-gray-500">{eventData.time}</span>
-                  <span className="text-xs font-bold text-[#FF7A00]">{eventData.league}</span>
+                <div className="flex items-center mb-1">
+                  <Calendar className="w-4 h-4 text-gray-500 mr-2" />
+                  <span className="text-xs text-gray-500 mr-2">{mockEvent.date}</span>
+                  <span className="text-xs text-gray-500">{mockEvent.time}</span>
                 </div>
+                <div className="flex items-center mb-1">
+                  <MapPin className="w-4 h-4 text-gray-500 mr-2" />
+                  <span className="text-xs text-gray-500">{mockEvent.location}</span>
+                </div>
+                <span className="text-xs font-bold text-[#FF7A00] mb-2">{mockEvent.league}</span>
                 <span className="text-2xl font-bold">vs</span>
               </div>
-              {renderTeamScore(eventData.team2)}
+              {renderScoreInput('team2')}
             </div>
 
-            <div className="text-center">
-              <h2 className="text-xl font-bold mb-2">Final Result</h2>
-              <p className="text-lg">
-                {eventData.team1.name} {eventData.team1.score} - {eventData.team2.score} {eventData.team2.name}
-              </p>
-              <p className="text-md mt-2">
-                {eventData.team1.score > eventData.team2.score
-                  ? `${eventData.team1.name} win!`
-                  : eventData.team2.score > eventData.team1.score
-                  ? `${eventData.team2.name} win!`
-                  : 'It\'s a draw!'}
-              </p>
-            </div>
+            {alertMessage && (
+              <div className="flex justify-center">
+                <Alert variant="destructive" className="max-w-sm w-full text-center">
+                  <div className="flex items-center justify-center w-full">
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    <AlertDescription>{alertMessage}</AlertDescription>
+                  </div>
+                </Alert>
+              </div>
+            )}
 
             <h2 className="text-2xl font-bold mb-4">Attendance</h2>
             <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
               <TeamRoster 
-                team={eventData.team1}
-                attendance={attendanceData}
+                team={mockTeamData.team1}
+                attendance={attendance}
+                onAttendanceChange={handleAttendanceChange}
               />
               <TeamRoster 
-                team={eventData.team2}
-                attendance={attendanceData}
+                team={mockTeamData.team2}
+                attendance={attendance}
+                onAttendanceChange={handleAttendanceChange}
               />
             </div>
-          </div>
+
+            <div className="flex justify-center pt-4">
+              <Button type="submit" className="bg-[#FF7A00] hover:bg-[#E66900] text-white">
+                Submit Result
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

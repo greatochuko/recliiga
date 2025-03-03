@@ -72,10 +72,7 @@ export const EventsContent: React.FC = () => {
 
   const handleEnterResults = (eventId: number) => {
     console.log(`Enter/Edit results for event ${eventId}`);
-    toast({
-      title: "Action initiated",
-      description: `Entering results for event ${eventId}`,
-    });
+    navigate(`/event-results/${eventId}`);
   };
 
   return (
