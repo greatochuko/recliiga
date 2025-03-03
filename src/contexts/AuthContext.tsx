@@ -5,6 +5,11 @@ interface User {
   id: string;
   email: string;
   name?: string;
+  user_metadata?: {
+    full_name?: string;
+    role?: string;
+    phone?: string;
+  };
 }
 
 interface AuthData {
@@ -20,6 +25,12 @@ interface AuthContextType {
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
+  // Add the missing methods to match usage in other components
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<void>;
+  signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 // Create context with default values
@@ -31,6 +42,12 @@ const AuthContext = createContext<AuthContextType>({
   register: async () => {},
   logout: async () => {},
   loading: true,
+  // Add missing method implementations
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  deleteAccount: async () => {},
+  resetPassword: async () => {},
 });
 
 // Custom hook to use the auth context
@@ -57,6 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: '12345',
         email,
         name: 'Mock User',
+        user_metadata: {
+          full_name: 'Mock User',
+          role: 'player',
+        },
       };
       
       const mockToken = 'mock-jwt-token';
@@ -87,6 +108,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: '12345',
         email,
         name,
+        user_metadata: {
+          full_name: name,
+          role: 'player',
+        },
       };
       
       const mockToken = 'mock-jwt-token';
@@ -125,6 +150,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Implement the missing methods
+  const signIn = async (email: string, password: string) => {
+    // Reuse the login function
+    return login(email, password);
+  };
+
+  const signUp = async (email: string, password: string, metadata?: any) => {
+    try {
+      const name = metadata?.full_name || 'New User';
+      return register(email, password, name);
+    } catch (error) {
+      console.error('SignUp error:', error);
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    // Reuse the logout function
+    return logout();
+  };
+
+  const deleteAccount = async () => {
+    try {
+      // Clear state
+      setUser(null);
+      setSession(null);
+      setAuthData(null);
+      
+      // Remove from localStorage
+      localStorage.removeItem('authData');
+      
+      console.log('Account deleted');
+    } catch (error) {
+      console.error('Delete account error:', error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      console.log('Password reset email sent to:', email);
+    } catch (error) {
+      console.error('Reset password error:', error);
+      throw error;
+    }
+  };
+
   // Load auth data from localStorage on initial render
   useEffect(() => {
     const loadAuthData = () => {
@@ -154,6 +226,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     register,
     logout,
     loading,
+    // Add the missing methods to the context value
+    signIn,
+    signUp,
+    signOut,
+    deleteAccount,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
