@@ -42,7 +42,7 @@ export function NavigationMenu() {
   const location = useLocation();
 
   return (
-    <SidebarContent className="flex-1">
+    <SidebarContent className="flex-none">
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>

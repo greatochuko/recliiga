@@ -8,9 +8,15 @@ export function ConditionalNavigationMenu() {
   const isLeagueOrganizer = user?.user_metadata?.role === 'organizer';
 
   return (
-    <>
-      <NavigationMenu />
-      {isLeagueOrganizer && <LONavigationMenu />}
-    </>
+    <div className="flex flex-col h-full">
+      <div className="flex-none">
+        <NavigationMenu />
+      </div>
+      {isLeagueOrganizer && (
+        <div className="flex-1">
+          <LONavigationMenu />
+        </div>
+      )}
+    </div>
   );
 }
