@@ -7,8 +7,25 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Label } from "@/components/ui/label";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Help() {
+  const { toast } = useToast();
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    toast({
+      title: "Message Sent",
+      description: "Thank you for reaching out. We'll get back to you soon!",
+      duration: 5000,
+    });
+    
+    // Reset form
+    const form = e.target as HTMLFormElement;
+    form.reset();
+  };
+  
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -31,7 +48,7 @@ export default function Help() {
                     <CardDescription className="text-center text-[#707B81] text-sm">Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <form className="space-y-4">
+                    <form className="space-y-4" onSubmit={handleSubmit}>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="first-name" className="text-sm font-medium text-gray-700">First Name</Label>
