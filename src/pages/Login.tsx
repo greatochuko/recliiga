@@ -1,51 +1,87 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
 
 const Login: React.FC = () => {
-  const { signIn } = useAuth();
-  
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    
+    setIsLoading(true);
+
     try {
-      await signIn(email, password);
+      await login(email, password);
+      toast({
+        title: 'Successfully logged in',
+        description: 'Welcome back to League Nexus!',
+      });
     } catch (error) {
-      console.error('Login error:', error);
+      toast({
+        title: 'Login failed',
+        description: 'Invalid email or password',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">Email</label>
-              <Input id="email" name="email" type="email" required />
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium">Password</label>
-              <Input id="password" name="password" type="password" required />
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
-            <Button type="submit" className="w-full">Login</Button>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Logging in...' : 'Login'}
+            </Button>
           </form>
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
-              Don't have an account? <Link to="/register" className="font-medium text-[#FF7A00]">Register</Link>
-            </p>
-          </div>
         </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-center text-gray-500">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-medium text-primary hover:underline">
+              Register
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );

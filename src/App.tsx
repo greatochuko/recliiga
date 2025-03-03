@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuth } from './contexts/AuthContext';
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -21,7 +21,7 @@ import InputResult from './pages/InputResult';
 const queryClient = new QueryClient();
 
 function App() {
-  const { user, session, authData } = useAuth();
+  const { authData } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {

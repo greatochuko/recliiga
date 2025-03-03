@@ -1,211 +1,160 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
 
 interface AuthData {
   token: string;
-  user: any;
+  user: User;
 }
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
-  authData: AuthData | null; // Add this property to the interface
-  signUp: (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
-  deleteAccount: () => Promise<void>;
+  session: any | null;
+  authData: AuthData | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
+  logout: () => Promise<void>;
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create context with default values
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  session: null,
+  authData: null,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
+  loading: true,
+});
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [authData, setAuthData] = useState<AuthData | null>(null); // Add state for authData
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Set authData based on session
-        if (session) {
-          setAuthData({
-            token: session.access_token,
-            user: session.user
-          });
-        }
-      } catch (error) {
-        console.error('Error checking auth session:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      // Update authData on auth state change
-      if (session) {
-        setAuthData({
-          token: session.access_token,
-          user: session.user
-        });
-      } else {
-        setAuthData(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      navigate('/');
-      toast.success('Successfully signed in!');
-    } catch (error: any) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const signUp = async (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => {
-    try {
-      const { error, data } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: metadata }
-      });
-      if (error) throw error;
-      
-      // Handle different registrations based on role
-      if (metadata.role === 'organizer') {
-        toast.success('Registration successful! Please sign in to complete your league setup.');
-      } else {
-        toast.success('Registration successful! Please sign in to complete your player profile.');
-      }
-      
-      // Redirect to sign-in so they can authenticate first
-      navigate('/sign-in');
-    } catch (error: any) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      // Clear local storage and session storage
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Sign out from Supabase
-      await supabase.auth.signOut();
-      
-      // Clear state
-      setUser(null);
-      setSession(null);
-      
-      toast.success('Successfully signed out');
-      
-      // Navigate with window.location to force a full page refresh
-      window.location.href = '/sign-in';
-    } catch (error: any) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const resetPassword = async (email: string) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) throw error;
-      toast.success('Password reset instructions have been sent to your email.');
-    } catch (error: any) {
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
-  const deleteAccount = async () => {
-    if (!user?.id) {
-      toast.error('No user found to delete');
-      return;
-    }
-
-    try {
-      // Show a loading toast
-      toast.loading('Deleting your account...');
-
-      // Call the Supabase Edge Function to delete user data
-      const { error: deleteFunctionError } = await supabase.functions.invoke('delete-user', {
-        body: { user_id: user.id }
-      });
-
-      if (deleteFunctionError) {
-        throw new Error(deleteFunctionError.message || 'Failed to delete account data');
-      }
-
-      // Clear local storage and session storage
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Sign out from Supabase
-      await supabase.auth.signOut();
-      
-      // Clear state
-      setUser(null);
-      setSession(null);
-
-      toast.success('Your account has been deleted successfully');
-      
-      // Use window.location for a full page refresh
-      window.location.href = '/sign-in';
-    } catch (error: any) {
-      console.error('Error in deletion process:', error);
-      toast.error(error.message || 'Failed to delete account');
-      throw error;
-    }
-  };
-
-  return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session,
-      authData, // Include authData in the context value
-      signUp, 
-      signIn, 
-      signOut, 
-      resetPassword,
-      deleteAccount, 
-      loading 
-    }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
+// Custom hook to use the auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+// AuthProvider component
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<any | null>(null);
+  const [authData, setAuthData] = useState<AuthData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Mock login function
+  const login = async (email: string, password: string) => {
+    try {
+      // In a real app, you would call your authentication API
+      const mockUser = {
+        id: '12345',
+        email,
+        name: 'Mock User',
+      };
+      
+      const mockToken = 'mock-jwt-token';
+      
+      setUser(mockUser);
+      setAuthData({
+        token: mockToken,
+        user: mockUser,
+      });
+      
+      // Store in localStorage for persistence
+      localStorage.setItem('authData', JSON.stringify({
+        token: mockToken,
+        user: mockUser,
+      }));
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  };
+
+  // Mock register function
+  const register = async (email: string, password: string, name: string) => {
+    try {
+      // In a real app, you would call your registration API
+      const mockUser = {
+        id: '12345',
+        email,
+        name,
+      };
+      
+      const mockToken = 'mock-jwt-token';
+      
+      setUser(mockUser);
+      setAuthData({
+        token: mockToken,
+        user: mockUser,
+      });
+      
+      // Store in localStorage for persistence
+      localStorage.setItem('authData', JSON.stringify({
+        token: mockToken,
+        user: mockUser,
+      }));
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
+
+  // Mock logout function
+  const logout = async () => {
+    try {
+      // Clear state
+      setUser(null);
+      setSession(null);
+      setAuthData(null);
+      
+      // Remove from localStorage
+      localStorage.removeItem('authData');
+      
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  // Load auth data from localStorage on initial render
+  useEffect(() => {
+    const loadAuthData = () => {
+      try {
+        const storedAuthData = localStorage.getItem('authData');
+        
+        if (storedAuthData) {
+          const parsedAuthData = JSON.parse(storedAuthData);
+          setUser(parsedAuthData.user);
+          setAuthData(parsedAuthData);
+        }
+      } catch (error) {
+        console.error('Error loading auth data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadAuthData();
+  }, []);
+
+  const value = {
+    user,
+    session,
+    authData,
+    login,
+    register,
+    logout,
+    loading,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -1,40 +1,20 @@
 
-import { useState } from 'react'
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Crown, AlertCircle, Calendar, MapPin } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Crown, AlertCircle, Calendar, MapPin } from 'lucide-react';
+import { AppSidebar } from "@/components/AppSidebar";
 
-interface Player {
-  id: number;
-  name: string;
-  avatar: string;
-  position: string;
-}
-
-interface TeamData {
-  name: string;
-  avatar: string;
-  color: string;
-  captain: Player;
-  players: Player[];
-}
-
-interface TeamRosterProps {
-  team: TeamData;
-  attendance: Record<string, boolean>;
-  onAttendanceChange: (newAttendance: Record<string, boolean>) => void;
-}
-
-function TeamRoster({ team, attendance, onAttendanceChange }: TeamRosterProps) {
+function TeamRoster({ team, attendance, onAttendanceChange }) {
   const allChecked = team.players.every(player => attendance[player.name]) && attendance[team.captain.name];
 
-  const handleSelectAll = (checked: boolean) => {
-    const newAttendance: Record<string, boolean> = {};
+  const handleSelectAll = (checked) => {
+    const newAttendance = {};
     newAttendance[team.captain.name] = checked;
     team.players.forEach(player => {
       newAttendance[player.name] = checked;
@@ -56,7 +36,7 @@ function TeamRoster({ team, attendance, onAttendanceChange }: TeamRosterProps) {
           <Checkbox
             id={`select-all-${team.name}`}
             checked={allChecked}
-            onCheckedChange={(checked) => handleSelectAll(!!checked)}
+            onCheckedChange={handleSelectAll}
             aria-label={`Select all players for ${team.name}`}
           />
         </div>
@@ -76,7 +56,7 @@ function TeamRoster({ team, attendance, onAttendanceChange }: TeamRosterProps) {
           </div>
           <Checkbox
             checked={attendance[team.captain.name] || false}
-            onCheckedChange={(checked) => onAttendanceChange({ ...attendance, [team.captain.name]: !!checked })}
+            onCheckedChange={(checked) => onAttendanceChange({ ...attendance, [team.captain.name]: checked })}
             aria-label={`Mark ${team.captain.name} as present`}
           />
         </div>
@@ -92,22 +72,22 @@ function TeamRoster({ team, attendance, onAttendanceChange }: TeamRosterProps) {
             </div>
             <Checkbox
               checked={attendance[player.name] || false}
-              onCheckedChange={(checked) => onAttendanceChange({ ...attendance, [player.name]: !!checked })}
+              onCheckedChange={(checked) => onAttendanceChange({ ...attendance, [player.name]: checked })}
               aria-label={`Mark ${player.name} as present`}
             />
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default function InputResult() {
-  const { eventId } = useParams<{ eventId: string }>();
-  const [team1Score, setTeam1Score] = useState('')
-  const [team2Score, setTeam2Score] = useState('')
-  const [attendance, setAttendance] = useState<Record<string, boolean>>({})
-  const [alertMessage, setAlertMessage] = useState('')
+  const { eventId } = useParams();
+  const [team1Score, setTeam1Score] = useState('');
+  const [team2Score, setTeam2Score] = useState('');
+  const [attendance, setAttendance] = useState({});
+  const [alertMessage, setAlertMessage] = useState('');
 
   // Mock data for team rosters
   const mockTeamData = {
@@ -118,8 +98,7 @@ export default function InputResult() {
       captain: {
         name: 'John Smith',
         avatar: '/placeholder.svg?height=48&width=48',
-        position: 'Captain',
-        id: 1
+        position: 'Captain'
       },
       players: [
         { id: 1, name: 'Alex Johnson', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder' },
@@ -135,8 +114,7 @@ export default function InputResult() {
       captain: {
         name: 'Mike Davis',
         avatar: '/placeholder.svg?height=48&width=48',
-        position: 'Captain',
-        id: 5
+        position: 'Captain'
       },
       players: [
         { id: 5, name: 'Tom Wilson', avatar: '/placeholder.svg?height=48&width=48', position: 'Defender' },
@@ -145,94 +123,94 @@ export default function InputResult() {
         { id: 8, name: 'Jordan Riley', avatar: '/placeholder.svg?height=48&width=48', position: 'Goalkeeper' }
       ]
     }
-  }
+  };
 
   const mockEvent = {
     date: '15-Jul-2024',
     time: '8:00 PM',
     location: 'Old Trafford',
     league: 'Premier League'
-  }
+  };
 
-  const handleAttendanceChange = (newAttendance: Record<string, boolean>) => {
+  const handleAttendanceChange = (newAttendance) => {
     setAttendance(prev => ({
       ...prev,
       ...newAttendance
-    }))
-  }
+    }));
+  };
 
   const updateScores = (team1Score: string, team2Score: string) => {
-    const team1ScoreNum = parseInt(team1Score)
-    const team2ScoreNum = parseInt(team2Score)
+    const team1ScoreNum = parseInt(team1Score);
+    const team2ScoreNum = parseInt(team2Score);
 
     if (team1ScoreNum && team2ScoreNum) {
       if (team1ScoreNum > team2ScoreNum) {
-        setAlertMessage(`${mockTeamData.team1.name} beat ${mockTeamData.team2.name} ${team1Score}-${team2Score}`)
+        setAlertMessage(`${mockTeamData.team1.name} beat ${mockTeamData.team2.name} ${team1Score}-${team2Score}`);
       } else if (team2ScoreNum > team1ScoreNum) {
-        setAlertMessage(`${mockTeamData.team2.name} beat ${mockTeamData.team1.name} ${team2Score}-${team1Score}`)
+        setAlertMessage(`${mockTeamData.team2.name} beat ${mockTeamData.team1.name} ${team2Score}-${team1Score}`);
       } else {
-        setAlertMessage(`${mockTeamData.team1.name} and ${mockTeamData.team2.name} tied ${team1Score}-${team2Score}`)
+        setAlertMessage(`${mockTeamData.team1.name} and ${mockTeamData.team2.name} tied ${team1Score}-${team2Score}`);
       }
     } else {
-      setAlertMessage('')
+      setAlertMessage('');
     }
-  }
+  };
 
   const handleTeam1ScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newScore = e.target.value
-    setTeam1Score(newScore)
-    updateScores(newScore, team2Score)
-  }
+    const newScore = e.target.value;
+    setTeam1Score(newScore);
+    updateScores(newScore, team2Score);
+  };
 
   const handleTeam2ScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newScore = e.target.value
-    setTeam2Score(newScore)
-    updateScores(team1Score, newScore)
-  }
+    const newScore = e.target.value;
+    setTeam2Score(newScore);
+    updateScores(team1Score, newScore);
+  };
 
   const handleAddScore = (team: 'team1' | 'team2', amount: number) => {
     if (team === 'team1') {
-      const newScore = (parseInt(team1Score) || 0) + amount
-      setTeam1Score(newScore.toString())
-      updateScores(newScore.toString(), team2Score)
+      const newScore = (parseInt(team1Score) || 0) + amount;
+      setTeam1Score(newScore.toString());
+      updateScores(newScore.toString(), team2Score);
     } else {
-      const newScore = (parseInt(team2Score) || 0) + amount
-      setTeam2Score(newScore.toString())
-      updateScores(team1Score, newScore.toString())
+      const newScore = (parseInt(team2Score) || 0) + amount;
+      setTeam2Score(newScore.toString());
+      updateScores(team1Score, newScore.toString());
     }
-  }
+  };
 
   const handleNumberInput = (team: 'team1' | 'team2', number: string) => {
     if (team === 'team1') {
-      const newScore = team1Score + number
-      setTeam1Score(newScore)
-      updateScores(newScore, team2Score)
+      const newScore = team1Score + number;
+      setTeam1Score(newScore);
+      updateScores(newScore, team2Score);
     } else {
-      const newScore = team2Score + number
-      setTeam2Score(newScore)
-      updateScores(team1Score, newScore)
+      const newScore = team2Score + number;
+      setTeam2Score(newScore);
+      updateScores(team1Score, newScore);
     }
-  }
+  };
 
   const handleClear = (team: 'team1' | 'team2') => {
     if (team === 'team1') {
-      setTeam1Score('')
-      updateScores('', team2Score)
+      setTeam1Score('');
+      updateScores('', team2Score);
     } else {
-      setTeam2Score('')
-      updateScores(team1Score, '')
+      setTeam2Score('');
+      updateScores(team1Score, '');
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Submitting scores:', { team1Score, team2Score })
-    console.log('Attendance:', attendance)
-  }
+    e.preventDefault();
+    console.log('Submitting scores:', { team1Score, team2Score });
+    console.log('Attendance:', attendance);
+  };
 
   const renderScoreInput = (team: 'team1' | 'team2') => {
-    const score = team === 'team1' ? team1Score : team2Score
-    const teamData = team === 'team1' ? mockTeamData.team1 : mockTeamData.team2
+    const score = team === 'team1' ? team1Score : team2Score;
+    const teamData = team === 'team1' ? mockTeamData.team1 : mockTeamData.team2;
 
     return (
       <div className="flex flex-col items-center space-y-2">
@@ -266,68 +244,73 @@ export default function InputResult() {
         </div>
         <Button type="button" onClick={() => handleClear(team)} size="sm" variant="outline" className="w-full">Clear</Button>
       </div>
-    )
-  }
+    );
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Input Match Result</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="flex items-center justify-center gap-8 mb-8">
-              {renderScoreInput('team1')}
-              <div className="flex flex-col items-center justify-center">
-                <div className="flex items-center mb-1">
-                  <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-                  <span className="text-xs text-gray-500 mr-2">{mockEvent.date}</span>
-                  <span className="text-xs text-gray-500">{mockEvent.time}</span>
-                </div>
-                <div className="flex items-center mb-1">
-                  <MapPin className="w-4 h-4 text-gray-500 mr-2" />
-                  <span className="text-xs text-gray-500">{mockEvent.location}</span>
-                </div>
-                <span className="text-xs font-bold text-[#FF7A00] mb-2">{mockEvent.league}</span>
-                <span className="text-2xl font-bold">vs</span>
-              </div>
-              {renderScoreInput('team2')}
-            </div>
-
-            {alertMessage && (
-              <div className="flex justify-center">
-                <Alert variant="destructive" className="max-w-sm w-full text-center">
-                  <div className="flex items-center justify-center w-full">
-                    <AlertCircle className="h-4 w-4 mr-2" />
-                    <AlertDescription>{alertMessage}</AlertDescription>
+    <div className="flex h-screen">
+      <AppSidebar />
+      <div className="flex-1 overflow-auto">
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-3xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-center">Input Match Result</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="flex items-center justify-center gap-8 mb-8">
+                  {renderScoreInput('team1')}
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="flex items-center mb-1">
+                      <Calendar className="w-4 h-4 text-gray-500 mr-2" />
+                      <span className="text-xs text-gray-500 mr-2">{mockEvent.date}</span>
+                      <span className="text-xs text-gray-500">{mockEvent.time}</span>
+                    </div>
+                    <div className="flex items-center mb-1">
+                      <MapPin className="w-4 h-4 text-gray-500 mr-2" />
+                      <span className="text-xs text-gray-500">{mockEvent.location}</span>
+                    </div>
+                    <span className="text-xs font-bold text-[#FF7A00] mb-2">{mockEvent.league}</span>
+                    <span className="text-2xl font-bold">vs</span>
                   </div>
-                </Alert>
-              </div>
-            )}
+                  {renderScoreInput('team2')}
+                </div>
 
-            <h2 className="text-2xl font-bold mb-4">Attendance</h2>
-            <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
-              <TeamRoster 
-                team={mockTeamData.team1}
-                attendance={attendance}
-                onAttendanceChange={handleAttendanceChange}
-              />
-              <TeamRoster 
-                team={mockTeamData.team2}
-                attendance={attendance}
-                onAttendanceChange={handleAttendanceChange}
-              />
-            </div>
+                {alertMessage && (
+                  <div className="flex justify-center">
+                    <Alert variant="destructive" className="max-w-sm w-full text-center">
+                      <div className="flex items-center justify-center w-full">
+                        <AlertCircle className="h-4 w-4 mr-2" />
+                        <AlertDescription>{alertMessage}</AlertDescription>
+                      </div>
+                    </Alert>
+                  </div>
+                )}
 
-            <div className="flex justify-center pt-4">
-              <Button type="submit" className="bg-[#FF7A00] hover:bg-[#E66900] text-white">
-                Submit Result
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+                <h2 className="text-2xl font-bold mb-4">Attendance</h2>
+                <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
+                  <TeamRoster 
+                    team={mockTeamData.team1}
+                    attendance={attendance}
+                    onAttendanceChange={handleAttendanceChange}
+                  />
+                  <TeamRoster 
+                    team={mockTeamData.team2}
+                    attendance={attendance}
+                    onAttendanceChange={handleAttendanceChange}
+                  />
+                </div>
+
+                <div className="flex justify-center pt-4">
+                  <Button type="submit" className="bg-[#FF7A00] hover:bg-[#E66900] text-white">
+                    Submit Result
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
