@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,18 +21,6 @@ export const EventCard: React.FC<EventCardProps> = ({
   onDelete, 
   onEnterResults 
 }) => {
-  const navigate = useNavigate();
-  
-  const handleSelectCaptains = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate(`/select-captains/${event.id}`);
-  };
-
-  const handleEnterResults = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate(`/events/${event.id}/edit-results`);
-  };
-
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
@@ -73,7 +60,7 @@ export const EventCard: React.FC<EventCardProps> = ({
         <div className="flex justify-center mt-4 space-x-2">
           {event.status === 'upcoming' && (
             <>
-              <Button onClick={handleSelectCaptains} variant="outline" size="sm" className="flex items-center">
+              <Button onClick={() => onSelectCaptains(event.id)} variant="outline" size="sm" className="flex items-center">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Select Captains
               </Button>
@@ -88,7 +75,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             </>
           )}
           {event.status === 'past' && (
-            <Button onClick={handleEnterResults} variant="outline" size="sm" className="flex items-center">
+            <Button onClick={() => onEnterResults(event.id)} variant="outline" size="sm" className="flex items-center">
               <Trophy className="w-4 h-4 mr-2" />
               {event.resultsEntered ? 'Edit Results' : 'Enter Results'}
             </Button>
