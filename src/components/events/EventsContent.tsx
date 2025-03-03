@@ -1,11 +1,9 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EventCard } from './EventCard';
-import { Event, League } from '@/types/events';
 import { fetchEvents, fetchLeagues } from '@/api/events';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -79,14 +77,6 @@ export const EventsContent: React.FC = () => {
     });
   };
 
-  const handleCreateNewEvent = () => {
-    console.log('Create new event');
-    toast({
-      title: "Action initiated",
-      description: "Creating a new event",
-    });
-  };
-
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       <div className="mb-6">
@@ -109,11 +99,6 @@ export const EventsContent: React.FC = () => {
           <TabsTrigger value="past">Past Events</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming">
-          <div className="mb-4 flex justify-end">
-            <Button onClick={handleCreateNewEvent} className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white">
-              Create New Event
-            </Button>
-          </div>
           {filteredEvents.upcoming.length === 0 ? (
             <div className="text-center py-10 text-gray-500">No upcoming events found</div>
           ) : (
