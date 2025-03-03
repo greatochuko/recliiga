@@ -11,14 +11,16 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import InvitePopup from "@/components/InvitePopup";
 
 export function LONavigationMenu() {
   const location = useLocation();
   const [isLODropdownOpen, setIsLODropdownOpen] = useState(true);
+  const [showInvitePopup, setShowInvitePopup] = useState(false);
 
   const loActions = [
     { id: 'manage-events', label: 'Manage Events', icon: Calendar, url: "/manage-events" },
-    { id: 'invite-players', label: 'Invite Players', icon: UserPlus, url: "/invite-players" },
+    { id: 'invite-players', label: 'Invite Players', icon: UserPlus, url: "#", action: () => setShowInvitePopup(true) },
     { id: 'create-league', label: 'Create a New League', icon: FolderPlus, url: "/create-league" },
     { id: 'help-support', label: 'Help & Support', icon: HelpCircle, url: "/help" },
   ];
@@ -48,17 +50,31 @@ export function LONavigationMenu() {
                       tooltip={action.label}
                       isActive={location.pathname === action.url}
                     >
-                      <Link
-                        to={action.url}
-                        className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm ${
-                          location.pathname === action.url
-                            ? "text-[#FF7A00] bg-orange-50 font-medium"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
-                        }`}
-                      >
-                        <action.icon className={`w-4 h-4 ${location.pathname === action.url ? "text-[#FF7A00]" : "text-gray-500"}`} />
-                        <span>{action.label}</span>
-                      </Link>
+                      {action.action ? (
+                        <button
+                          onClick={action.action}
+                          className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm w-full text-left ${
+                            location.pathname === action.url
+                              ? "text-[#FF7A00] bg-orange-50 font-medium"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
+                          }`}
+                        >
+                          <action.icon className={`w-4 h-4 ${location.pathname === action.url ? "text-[#FF7A00]" : "text-gray-500"}`} />
+                          <span>{action.label}</span>
+                        </button>
+                      ) : (
+                        <Link
+                          to={action.url}
+                          className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm ${
+                            location.pathname === action.url
+                              ? "text-[#FF7A00] bg-orange-50 font-medium"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
+                          }`}
+                        >
+                          <action.icon className={`w-4 h-4 ${location.pathname === action.url ? "text-[#FF7A00]" : "text-gray-500"}`} />
+                          <span>{action.label}</span>
+                        </Link>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -67,6 +83,8 @@ export function LONavigationMenu() {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
+      
+      {showInvitePopup && <InvitePopup />}
     </SidebarContent>
   );
 }
