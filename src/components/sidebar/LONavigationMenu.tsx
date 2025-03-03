@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Settings, Calendar, UserPlus, FolderPlus, HelpCircle, ChevronDown } from "lucide-react";
@@ -18,7 +19,7 @@ export function LONavigationMenu() {
   const [showInvitePopup, setShowInvitePopup] = useState(false);
 
   useEffect(() => {
-    const loPathsPattern = /^\/(manage-events|create-league|help)/;
+    const loPathsPattern = /^\/(manage-events|create-league|help|add-event)/;
     if (loPathsPattern.test(location.pathname)) {
       setIsLODropdownOpen(true);
     }
