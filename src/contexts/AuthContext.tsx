@@ -5,9 +5,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+interface AuthData {
+  token: string;
+  user: any;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  authData: AuthData | null; // Add this property to the interface
   signUp: (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -21,6 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [authData, setAuthData] = useState<AuthData | null>(null); // Add state for authData
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -30,6 +37,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Set authData based on session
+        if (session) {
+          setAuthData({
+            token: session.access_token,
+            user: session.user
+          });
+        }
       } catch (error) {
         console.error('Error checking auth session:', error);
       } finally {
@@ -42,6 +57,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Update authData on auth state change
+      if (session) {
+        setAuthData({
+          token: session.access_token,
+          user: session.user
+        });
+      } else {
+        setAuthData(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -163,7 +188,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={{ 
       user, 
-      session, 
+      session,
+      authData, // Include authData in the context value
       signUp, 
       signIn, 
       signOut, 

@@ -1,23 +1,17 @@
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import React from 'react';
 import { AppSidebar } from "@/components/AppSidebar";
-import { ResultsContent } from "@/components/results/ResultsContent";
 
-export default function Results() {
+const Results: React.FC = () => {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Results</h1>
-          </div>
-          <div className="pt-16">
-            <ResultsContent />
-          </div>
-        </main>
+    <div className="flex h-screen">
+      <AppSidebar />
+      <div className="flex-1 p-8">
+        <h1 className="text-2xl font-bold mb-4">Results</h1>
+        <p>View past match results here.</p>
       </div>
-    </SidebarProvider>
+    </div>
   );
-}
+};
+
+export default Results;

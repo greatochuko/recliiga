@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,11 +15,13 @@ import AddEvent from './pages/AddEvent';
 import NotFound from './pages/NotFound';
 import EventResults from "./pages/EventResults";
 import Results from './pages/Results';
+import SelectCaptains from './pages/SelectCaptains';
+import InputResult from './pages/InputResult';
 
 const queryClient = new QueryClient();
 
 function App() {
-  const { authData } = useAuth();
+  const { user, session, authData } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -44,6 +47,8 @@ function App() {
           <Route path="/add-event" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
           <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
           <Route path="/event-results/:id" element={<PrivateRoute><EventResults /></PrivateRoute>} />
+          <Route path="/select-captains/:eventId" element={<PrivateRoute><SelectCaptains /></PrivateRoute>} />
+          <Route path="/input-result/:eventId" element={<PrivateRoute><InputResult /></PrivateRoute>} />
           
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
