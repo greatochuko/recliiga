@@ -28,13 +28,25 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Index />} />
+          {/* Public Routes */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          
+          {/* Protected Routes */}
+          <Route path="/" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/player-profile/:id" element={<PlayerProfile />} />
           <Route path="/player-registration" element={<PlayerRegistration />} />
+          
+          {/* Feature Routes */}
+          <Route path="/events" element={<Events />} />
+          <Route path="/leagues" element={<Leagues />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/help" element={<Help />} />
+          
+          {/* League Organizer Routes */}
           <Route path="/create-league" element={<CreateLeague />} />
           <Route path="/league-setup" element={<LeagueSetupPage />} />
           <Route path="/select-captains/:eventId" element={<SelectCaptains />} />
@@ -42,11 +54,8 @@ function App() {
           <Route path="/add-event" element={<AddEvent />} />
           <Route path="/events/:id/results" element={<EventResults />} />
           <Route path="/events/:id/edit-results" element={<EditResults />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/leagues" element={<Leagues />} />
-          <Route path="/results" element={<Results />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/help" element={<Help />} />
+          
+          {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
