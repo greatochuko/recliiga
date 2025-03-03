@@ -59,9 +59,11 @@ export const EventCard: React.FC<EventCardProps> = ({
               <p className="font-semibold">{event.date} - {event.time}</p>
               <p className="text-sm text-gray-500">{event.location}</p>
             </div>
-            {event.status === 'attending' && (
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Attending</span>
-            )}
+            {/* Using a different property or check to display attendance status */}
+            {/* This was causing the TypeScript error since 'attending' is not in 'upcoming' | 'past' */}
+            <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+              {event.status === 'upcoming' ? 'Upcoming' : 'Past'}
+            </span>
           </div>
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center">
@@ -152,3 +154,4 @@ export const EventCard: React.FC<EventCardProps> = ({
     </Card>
   );
 };
+
