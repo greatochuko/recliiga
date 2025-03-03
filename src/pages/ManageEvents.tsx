@@ -1,11 +1,8 @@
 
-import { Link } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { EventsContent } from "@/components/events/EventsContent";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 
 // Create a queryClient for the entire page
 const queryClient = new QueryClient();
@@ -23,16 +20,6 @@ export default function ManageEvents() {
               <h1 className="ml-4 text-2xl font-bold">Manage Events</h1>
             </div>
             <div className="pt-16 px-6">
-              <div className="flex justify-end mb-6">
-                <Button 
-                  className="bg-[#FF7A00] hover:bg-[#E66900] text-white" 
-                  asChild
-                >
-                  <Link to="/add-event">
-                    <Plus className="mr-2 h-4 w-4" /> Create New Event
-                  </Link>
-                </Button>
-              </div>
               <EventsContent />
             </div>
           </main>
