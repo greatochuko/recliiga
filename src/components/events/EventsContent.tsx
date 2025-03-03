@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -72,7 +73,7 @@ export const EventsContent: React.FC = () => {
 
   const handleEnterResults = (eventId: number) => {
     console.log(`Enter/Edit results for event ${eventId}`);
-    navigate(`/events/${eventId}/results`);
+    navigate(`/events/${eventId}/edit-results`);
   };
 
   return (

@@ -9,8 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Crown, AlertCircle, Calendar, MapPin } from 'lucide-react'
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
 
 function TeamRoster({ team, attendance, onAttendanceChange }) {
   const allChecked = team.players.every(player => attendance[player.name]) && attendance[team.captain.name];
@@ -84,7 +82,7 @@ function TeamRoster({ team, attendance, onAttendanceChange }) {
   )
 }
 
-function InputResultContent() {
+export default function InputResult() {
   const [team1Score, setTeam1Score] = useState('')
   const [team2Score, setTeam2Score] = useState('')
   const [attendance, setAttendance] = useState({})
@@ -276,7 +274,7 @@ function InputResultContent() {
 
             {alertMessage && (
               <div className="flex justify-center">
-                <Alert variant="destructive" className="max-w-sm w-full text-center">
+                <Alert className="max-w-sm w-full text-center">
                   <div className="flex items-center justify-center w-full">
                     <AlertCircle className="h-4 w-4 mr-2" />
                     <AlertDescription>{alertMessage}</AlertDescription>
@@ -309,23 +307,4 @@ function InputResultContent() {
       </Card>
     </div>
   )
-}
-
-export default function EditResults() {
-  return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Edit Results</h1>
-          </div>
-          <div className="pt-16 px-6">
-            <InputResultContent />
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
-  );
 }

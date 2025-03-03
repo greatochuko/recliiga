@@ -31,7 +31,7 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   const handleEnterResults = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/events/${event.id}/results`);
+    navigate(`/events/${event.id}/edit-results`);
   };
 
   return (
