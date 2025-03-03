@@ -29,11 +29,6 @@ export const EventCard: React.FC<EventCardProps> = ({
     navigate(`/select-captains/${event.id}`);
   };
 
-  const handleEnterResults = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate(`/event-results/${event.id}`);
-  };
-
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
@@ -88,7 +83,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             </>
           )}
           {event.status === 'past' && (
-            <Button onClick={handleEnterResults} variant="outline" size="sm" className="flex items-center">
+            <Button onClick={() => onEnterResults(event.id)} variant="outline" size="sm" className="flex items-center">
               <Trophy className="w-4 h-4 mr-2" />
               {event.resultsEntered ? 'Edit Results' : 'Enter Results'}
             </Button>
