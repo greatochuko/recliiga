@@ -56,7 +56,7 @@ export function UserMenu() {
           <DropdownMenuItem asChild>
             <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
               <User className="w-4 h-4" />
-              <span>Profile</span>
+              <span>Edit Profile</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowInvitePopup(true)} className="flex items-center gap-2 cursor-pointer">
