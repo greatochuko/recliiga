@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +28,7 @@ import HelpAndSupport from "./pages/HelpAndSupport";
 import AddEvent from "./pages/AddEvent";
 import SelectCaptains from "./pages/SelectCaptains";
 import EditResults from "./pages/EditResults";
+import TeamDraftPage from './pages/TeamDraftPage';
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -152,6 +152,7 @@ const AppRoutes = () => (
       <Route path="/help" element={<PrivateRoute><HelpAndSupport /></PrivateRoute>} />
       <Route path="/select-captains/:eventId" element={<PrivateRoute><SelectCaptains /></PrivateRoute>} />
       <Route path="/edit-results/:eventId" element={<PrivateRoute><EditResults /></PrivateRoute>} />
+      <Route path="/team-draft/:eventId" element={<TeamDraftPage />} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />

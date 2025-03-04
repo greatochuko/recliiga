@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -25,9 +24,7 @@ export function EventStatus({ event }: EventStatusProps) {
   };
   
   const handleBeginDraft = () => {
-    // Will be implemented in future
-    console.log("Begin draft for event", event.id);
-    // navigate(`/begin-draft/${event.id}`);
+    navigate(`/team-draft/${event.id}`);
   };
   
   // Case 1: RSVP is still open - show countdown
