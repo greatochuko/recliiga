@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Edit } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
@@ -168,16 +168,6 @@ function EventCard({
                  onClick={handleViewDetails}>
             {isPastEvent ? "View Results" : "View Details"}
           </Button>
-          
-          {isPastEvent && !event.resultsEntered && (
-            <Button 
-              className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 flex items-center"
-              onClick={() => navigate(`/events/${event.id}/edit-results`)}
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Input Results
-            </Button>
-          )}
         </div>
         {!isPastEvent && isRsvpOpen && <div className="flex justify-center mt-2 space-x-2">
             {(isEditing || !attendanceStatus) && <>

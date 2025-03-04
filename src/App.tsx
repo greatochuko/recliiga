@@ -141,14 +141,16 @@ const AppRoutes = () => (
       <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
       <Route path="/events/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
       <Route path="/events/:id/results" element={<PrivateRoute><EventResults /></PrivateRoute>} />
-      <Route path="/events/:id/edit-results" element={<PrivateRoute><EditResults /></PrivateRoute>} />
       <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
       <Route path="/player-profile" element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
+      
+      {/* League Organizer routes */}
       <Route path="/manage-events" element={<PrivateRoute><ManageEvents /></PrivateRoute>} />
       <Route path="/add-event" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
+      <Route path="/events/:id/edit-results" element={<PrivateRoute><EditResults /></PrivateRoute>} />
       <Route path="/help" element={<PrivateRoute><HelpAndSupport /></PrivateRoute>} />
       
       {/* Catch-all route */}

@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,11 +7,12 @@ import { EventCard } from './EventCard';
 import { fetchEvents, fetchLeagues } from '@/api/events';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, Edit } from "lucide-react";
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [selectedLeague, setSelectedLeague] = useState<number | null>(null);
   
   const { data: leagues, isLoading: isLoadingLeagues } = useQuery({
@@ -72,11 +74,7 @@ export const EventsContent: React.FC = () => {
   };
 
   const handleEnterResults = (eventId: number) => {
-    console.log(`Enter/Edit results for event ${eventId}`);
-    toast({
-      title: "Action initiated",
-      description: `Entering results for event ${eventId}`,
-    });
+    navigate(`/events/${eventId}/edit-results`);
   };
 
   return (
@@ -138,6 +136,7 @@ export const EventsContent: React.FC = () => {
                 onEdit={handleEditEvent}
                 onDelete={handleDeleteEvent}
                 onEnterResults={handleEnterResults}
+                isPast={true}
               />
             ))
           )}
