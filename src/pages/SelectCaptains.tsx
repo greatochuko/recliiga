@@ -5,10 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "@/components/ui/use-toast";
-import { Crown, Star } from 'lucide-react';
+import { toast } from "sonner";
+import { Crown, Star, Loader2 } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { selectEventCaptains } from '@/api/captains';
+import { fetchEventById } from '@/api/events';
+import { getAttendingPlayers } from '@/api/events';
+import { useAuth } from '@/contexts/AuthContext';
+
+interface Player {
+  id: string;
+  name: string;
+  avatar: string;
+  position: string;
+  rating: number;
+  isCaptain: boolean;
+}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -24,9 +37,9 @@ function AttendingList({
   selectableCaptains, 
   onCaptainSelect 
 }: { 
-  players: any[], 
+  players: Player[], 
   selectableCaptains: boolean, 
-  onCaptainSelect: (playerId: number, checked: boolean) => void 
+  onCaptainSelect: (playerId: string, checked: boolean) => void 
 }) {
   return (
     <div className="w-full">
@@ -62,74 +75,81 @@ function AttendingList({
 export default function SelectCaptains() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectingCaptains, setSelectingCaptains] = useState(false);
-  const [players, setPlayers] = useState([
-    { id: 1, name: 'John Smith', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward', isCaptain: false, rating: 2.75 },
-    { id: 2, name: 'Alex Johnson', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder', isCaptain: false, rating: 3.0 },
-    { id: 5, name: 'Pat Taylor', avatar: '/placeholder.svg?height=48&width=48', position: 'Goalkeeper', isCaptain: false, rating: 2.5 },
-    { id: 6, name: 'Mike Davis', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder', isCaptain: false, rating: 1.5 },
-    { id: 7, name: 'Tom Wilson', avatar: '/placeholder.svg?height=48&width=48', position: 'Defender', isCaptain: false, rating: 2.0 },
-    { id: 9, name: 'Casey Morgan', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward', isCaptain: false, rating: 2.25 },
-    { id: 10, name: 'Jordan Riley', avatar: '/placeholder.svg?height=48&width=48', position: 'Goalkeeper', isCaptain: false, rating: 1.75 }
-  ]);
-
-  // Mock data for upcoming event
-  const eventData = {
-    date: '15-Aug-2023',
-    time: '8:00 PM',
-    location: 'Old Trafford',
-    league: 'Premier League',
-    team1: {
-      avatar: '/placeholder.svg?height=64&width=64',
-      color: '#DA291C',
-    },
-    team2: {
-      avatar: '/placeholder.svg?height=64&width=64',
-      color: '#6CABDD',
-    },
-  };
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [event, setEvent] = useState<any>(null);
 
   useEffect(() => {
-    // In a real app, you would fetch the event and attending players data here
-    setSelectingCaptains(true);
+    const loadEventData = async () => {
+      if (!eventId) return;
+
+      setIsLoading(true);
+      try {
+        // Fetch event details
+        const eventData = await fetchEventById(eventId);
+        if (eventData) {
+          setEvent(eventData);
+        }
+
+        // Fetch attending players
+        const attendingPlayersData = await getAttendingPlayers(eventId);
+        setPlayers(attendingPlayersData);
+
+        setSelectingCaptains(true);
+      } catch (error) {
+        console.error("Error loading event data:", error);
+        toast.error("Failed to load event data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadEventData();
   }, [eventId]);
 
-  const handleCaptainSelect = (playerId: number, isSelected: boolean) => {
+  const handleCaptainSelect = (playerId: string, isSelected: boolean) => {
     const captainCount = players.filter(p => p.isCaptain).length;
+    
     if (isSelected && captainCount >= 2) {
-      toast({
-        title: "Captain selection limit reached",
-        description: "You can only select two captains.",
-        variant: "destructive",
-      });
+      toast.error("You can only select two captains");
       return;
     }
+    
     setPlayers(players.map(player => 
       player.id === playerId ? { ...player, isCaptain: isSelected } : player
     ));
   };
 
-  const handleConfirmCaptains = () => {
+  const handleConfirmCaptains = async () => {
     const selectedCaptains = players.filter(p => p.isCaptain);
-    if (selectedCaptains.length === 2) {
-      setSelectingCaptains(false);
-      
-      // In a real app, you would save the captains to the database here
-      // For now, we're simulating success
-      
-      toast({
-        title: "Captains selected",
-        description: "The captains have been successfully selected.",
-      });
-      
-      // Navigate back to the events page
-      navigate('/events');
-    } else {
-      toast({
-        title: "Invalid captain selection",
-        description: "Please select exactly two captains.",
-        variant: "destructive",
-      });
+    
+    if (selectedCaptains.length !== 2) {
+      toast.error("Please select exactly two captains");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const success = await selectEventCaptains(
+        eventId!,
+        selectedCaptains[0].id, 
+        selectedCaptains[1].id
+      );
+
+      if (success) {
+        toast.success("Captains selected successfully");
+        navigate(`/events/${eventId}`);
+      } else {
+        toast.error("Failed to select captains");
+      }
+    } catch (error) {
+      console.error("Error selecting captains:", error);
+      toast.error("An error occurred while selecting captains");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -139,9 +159,17 @@ export default function SelectCaptains() {
         <AvatarImage src={team.avatar} alt={`Team ${teamNumber}`} />
         <AvatarFallback>{`T${teamNumber}`}</AvatarFallback>
       </Avatar>
-      <span className="text-sm font-semibold">{`Team ${teamNumber}`}</span>
+      <span className="text-sm font-semibold">{team.name || `Team ${teamNumber}`}</span>
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 text-[#FF7A00] animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -166,19 +194,21 @@ export default function SelectCaptains() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-8">
-                  <div className="flex items-center justify-center gap-8 mb-8">
-                    {renderTeamInfo(eventData.team1, 1)}
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="flex flex-col items-center mb-4 text-center">
-                        <span className="text-xs text-gray-500">{eventData.date}</span>
-                        <span className="text-xs text-gray-500">{eventData.location}</span>
-                        <span className="text-xs text-gray-500">{eventData.time}</span>
-                        <span className="text-xs font-bold text-[#FF7A00]">{eventData.league}</span>
+                  {event && (
+                    <div className="flex items-center justify-center gap-8 mb-8">
+                      {renderTeamInfo(event.team1, 1)}
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="flex flex-col items-center mb-4 text-center">
+                          <span className="text-xs text-gray-500">{event.date}</span>
+                          <span className="text-xs text-gray-500">{event.location}</span>
+                          <span className="text-xs text-gray-500">{event.time}</span>
+                          <span className="text-xs font-bold text-[#FF7A00]">{event.league}</span>
+                        </div>
+                        <span className="text-2xl font-bold">vs</span>
                       </div>
-                      <span className="text-2xl font-bold">vs</span>
+                      {renderTeamInfo(event.team2, 2)}
                     </div>
-                    {renderTeamInfo(eventData.team2, 2)}
-                  </div>
+                  )}
 
                   <div className="flex flex-col items-center space-y-4">
                     {!selectingCaptains ? (
@@ -186,8 +216,19 @@ export default function SelectCaptains() {
                         Select Captains
                       </Button>
                     ) : (
-                      <Button onClick={handleConfirmCaptains}>
-                        Confirm Captains
+                      <Button 
+                        onClick={handleConfirmCaptains} 
+                        disabled={isSubmitting}
+                        className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Confirming...
+                          </>
+                        ) : (
+                          "Confirm Captains"
+                        )}
                       </Button>
                     )}
                   </div>

@@ -9,6 +9,76 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      draft_picks: {
+        Row: {
+          created_at: string
+          draft_session_id: string
+          id: string
+          pick_number: number
+          player_id: string
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          draft_session_id: string
+          id?: string
+          pick_number: number
+          player_id: string
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          draft_session_id?: string
+          id?: string
+          pick_number?: number
+          player_id?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "draft_picks_draft_session_id_fkey"
+            columns: ["draft_session_id"]
+            isOneToOne: false
+            referencedRelation: "draft_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      draft_sessions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "draft_sessions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_dates: {
         Row: {
           created_at: string
@@ -82,6 +152,7 @@ export type Database = {
       events: {
         Row: {
           created_at: string
+          draft_status: string | null
           id: string
           league_id: string
           location: string
@@ -97,6 +168,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          draft_status?: string | null
           id?: string
           league_id: string
           location: string
@@ -112,6 +184,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          draft_status?: string | null
           id?: string
           league_id?: string
           location?: string
@@ -318,6 +391,73 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      team_captains: {
+        Row: {
+          captain_id: string
+          created_at: string
+          event_id: string
+          id: string
+          team_id: string
+        }
+        Insert: {
+          captain_id: string
+          created_at?: string
+          event_id: string
+          id?: string
+          team_id: string
+        }
+        Update: {
+          captain_id?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_captains_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_rosters: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          is_captain: boolean
+          player_id: string
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          is_captain?: boolean
+          player_id: string
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          is_captain?: boolean
+          player_id?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_rosters_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       teammate_ratings: {
         Row: {
