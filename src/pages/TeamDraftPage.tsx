@@ -10,7 +10,8 @@ import { toast } from "@/components/ui/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Edit2, Star, Undo2 } from 'lucide-react'
 import { ScrollArea } from "@radix-ui/react-scroll-area"
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import { DraftCompletionDialog } from '@/components/draft/DraftCompletionDialog'
 
 const JerseyIcon = ({ color, size = 24 }: { color: string; size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg">
@@ -46,6 +47,7 @@ interface Team {
   players: Player[];
   isEditing: boolean;
   captain: string | null;
+  confirmed?: boolean;
 }
 
 interface DraftHistoryItem {
@@ -81,6 +83,7 @@ const mockPlayers: Player[] = [
 
 export default function TeamDraftPage() {
   const { eventId } = useParams<{ eventId: string }>();
+  const navigate = useNavigate();
   const [teams, setTeams] = useState<Team[]>([
     { id: 1, name: '', color: '#FFFFFF', players: [], isEditing: true, captain: null },
     { id: 2, name: '', color: '#000000', players: [], isEditing: true, captain: null },
@@ -94,6 +97,7 @@ export default function TeamDraftPage() {
   const [draftHistory, setDraftHistory] = useState<DraftHistoryItem[]>([])
   const teamColumnRef = useRef<HTMLDivElement>(null)
   const [teamColumnHeight, setTeamColumnHeight] = useState(0)
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false)
 
   useEffect(() => {
     const captains = ['John Smith', 'Mike Davis']
@@ -122,6 +126,16 @@ export default function TeamDraftPage() {
       window.removeEventListener('resize', updateTeamColumnHeight)
     }
   }, [])
+
+  // Check if all players have been drafted
+  useEffect(() => {
+    if (draftStarted && availablePlayers.length === 0 && !showCompletionDialog) {
+      // Show completion dialog after a short delay
+      setTimeout(() => {
+        setShowCompletionDialog(true)
+      }, 500)
+    }
+  }, [availablePlayers.length, draftStarted, showCompletionDialog])
 
   const handleTeamNameChange = (teamId: number, name: string) => {
     setTeams(teams.map(team => team.id === teamId ? { ...team, name } : team))
@@ -211,6 +225,33 @@ export default function TeamDraftPage() {
     setTeams(teams.map(team => 
       team.id === teamId ? { ...team, isEditing: !team.isEditing } : team
     ))
+  }
+
+  const handleConfirmTeam = (teamId: number) => {
+    setTeams(teams.map(team => 
+      team.id === teamId ? { ...team, confirmed: true } : team
+    ))
+    
+    toast({
+      title: "Team Confirmed",
+      description: `Team ${teams.find(t => t.id === teamId)?.name} roster has been confirmed!`,
+      variant: "default",
+    })
+  }
+  
+  const handleFinalizeDraft = () => {
+    toast({
+      title: "Draft Finalized",
+      description: "All teams have been confirmed and the draft is now complete!",
+      variant: "default",
+    })
+    
+    // Here you would typically save the draft results to your backend
+    // For now, we'll just redirect back to the event page
+    setTimeout(() => {
+      setShowCompletionDialog(false)
+      navigate(`/events/${eventId}`)
+    }, 1500)
   }
 
   const isTeamSetupComplete = teams.every(team => team.name && team.color)
@@ -391,7 +432,7 @@ export default function TeamDraftPage() {
                   <CardTitle>Available Players ({availablePlayers.length})</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-hidden">
-                  <ScrollArea className="h-full">
+                  <ScrollArea className="h-full w-full">
                     {availablePlayers.map((player) => (
                       <div key={player.id} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
                         <div className="flex items-center space-x-2">
@@ -423,6 +464,15 @@ export default function TeamDraftPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Draft Completion Dialog */}
+      <DraftCompletionDialog
+        open={showCompletionDialog}
+        teams={teams}
+        onOpenChange={setShowCompletionDialog}
+        onConfirmTeam={handleConfirmTeam}
+        onFinalizeDraft={handleFinalizeDraft}
+      />
     </div>
   )
 }
