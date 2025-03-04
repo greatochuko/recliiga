@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
+import { ChevronLeft } from "lucide-react";
 
 function CountdownClock({ deadline }: { deadline: Date }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
@@ -137,6 +138,11 @@ function EventDetailsContent() {
     rsvpDeadline: new Date('2024-08-14T20:00:00')
   };
 
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(-1); // This ensures we go back to the previous page in history
+  };
+
   const renderTeamInfo = (team: any) => (
     <div className="flex flex-col items-center space-y-2">
       <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
@@ -155,9 +161,10 @@ function EventDetailsContent() {
       <Button
         variant="ghost"
         size="sm"
-        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-        onClick={() => navigate(-1)}
+        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline flex items-center"
+        onClick={handleBackClick}
       >
+        <ChevronLeft className="mr-1 h-4 w-4" />
         Previous
       </Button>
       <div className="container mx-auto px-4 py-8 pt-16">
