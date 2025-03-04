@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export function EventStatus({ event }: EventStatusProps) {
     );
   }
   
-  // Case 3: Captains selected - show avatars and Begin Draft button
+  // Case 3: Captains selected - show avatars and Begin Draft button or Draft Complete
   if (event.captains) {
     // Check if there are any captains assigned
     const hasCaptains = Object.values(event.captains).filter(Boolean).length > 0;
@@ -64,24 +65,45 @@ export function EventStatus({ event }: EventStatusProps) {
     return (
       <div className="flex justify-end items-center mt-2">
         {hasCaptains && (
-          <Button
-            onClick={handleBeginDraft}
-            variant="outline"
-            size="sm"
-            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
-          >
-            {/* Display all captain avatars inside the button */}
-            {Object.entries(event.captains).map(([teamKey, captain]) => {
-              if (!captain) return null;
-              return (
-                <Avatar key={teamKey} className="w-6 h-6 border-2 border-[#FF7A00] mr-1">
-                  <AvatarImage src={captain.avatar} alt={captain.name} />
-                  <AvatarFallback>{captain.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-              );
-            })}
-            Begin Draft
-          </Button>
+          event.draftStatus === 'completed' ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-gray-500 border-gray-500 cursor-not-allowed"
+              disabled={true}
+            >
+              {/* Display all captain avatars inside the button */}
+              {Object.entries(event.captains).map(([teamKey, captain]) => {
+                if (!captain) return null;
+                return (
+                  <Avatar key={teamKey} className="w-6 h-6 border-2 border-gray-500 mr-1">
+                    <AvatarImage src={captain.avatar} alt={captain.name} />
+                    <AvatarFallback>{captain.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                );
+              })}
+              Draft Complete
+            </Button>
+          ) : (
+            <Button
+              onClick={handleBeginDraft}
+              variant="outline"
+              size="sm"
+              className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
+            >
+              {/* Display all captain avatars inside the button */}
+              {Object.entries(event.captains).map(([teamKey, captain]) => {
+                if (!captain) return null;
+                return (
+                  <Avatar key={teamKey} className="w-6 h-6 border-2 border-[#FF7A00] mr-1">
+                    <AvatarImage src={captain.avatar} alt={captain.name} />
+                    <AvatarFallback>{captain.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                );
+              })}
+              Begin Draft
+            </Button>
+          )
         )}
       </div>
     );

@@ -31,7 +31,12 @@ const mockEvents: Event[] = [
     team2: { name: 'Red Devils', avatar: '/placeholder.svg?height=64&width=64', color: '#DA291C' },
     rsvpDeadline: new Date('2024-08-24T19:30:00'),
     status: 'upcoming',
-    spotsLeft: 1
+    spotsLeft: 1,
+    captains: {
+      team1: { id: '1', name: 'John Smith', avatar: '/placeholder.svg?height=48&width=48' },
+      team2: { id: '2', name: 'Mike Davis', avatar: '/placeholder.svg?height=48&width=48' }
+    },
+    draftStatus: 'completed'
   },
   {
     id: 3,
@@ -42,7 +47,8 @@ const mockEvents: Event[] = [
     team1: { name: 'Red Devils', avatar: '/placeholder.svg?height=64&width=64', color: '#DA291C' },
     team2: { name: 'Sky Blues', avatar: '/placeholder.svg?height=64&width=64', color: '#6CABDD' },
     status: 'past',
-    resultsEntered: true
+    resultsEntered: true,
+    draftStatus: 'completed'
   },
   {
     id: 4,
@@ -53,7 +59,8 @@ const mockEvents: Event[] = [
     team1: { name: 'The Reds', avatar: '/placeholder.svg?height=64&width=64', color: '#C8102E' },
     team2: { name: 'Spurs', avatar: '/placeholder.svg?height=64&width=64', color: '#132257' },
     status: 'past',
-    resultsEntered: false
+    resultsEntered: false,
+    draftStatus: 'completed'
   },
 ];
 
