@@ -115,35 +115,56 @@ export const EventsContent: React.FC = () => {
           {filteredEvents.upcoming.length === 0 ? (
             <div className="text-center py-10 text-gray-500">No upcoming events found</div>
           ) : (
-            filteredEvents.upcoming.map(event => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onSelectCaptains={handleSelectCaptains}
-                onEdit={handleEditEvent}
-                onDelete={handleDeleteEvent}
-                onEnterResults={handleEnterResults}
-              />
-            ))
+            filteredEvents.upcoming.map(event => {
+              // Transform event to match the expected type
+              const transformedEvent = {
+                ...event,
+                league: getLeagueName(leagues, event.leagueId)
+              };
+              return (
+                <EventCard
+                  key={event.id}
+                  event={transformedEvent}
+                  onSelectCaptains={handleSelectCaptains}
+                  onEdit={handleEditEvent}
+                  onDelete={handleDeleteEvent}
+                  onEnterResults={handleEnterResults}
+                />
+              );
+            })
           )}
         </TabsContent>
         <TabsContent value="past">
           {filteredEvents.past.length === 0 ? (
             <div className="text-center py-10 text-gray-500">No past events found</div>
           ) : (
-            filteredEvents.past.map(event => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onSelectCaptains={handleSelectCaptains}
-                onEdit={handleEditEvent}
-                onDelete={handleDeleteEvent}
-                onEnterResults={handleEnterResults}
-              />
-            ))
+            filteredEvents.past.map(event => {
+              // Transform event to match the expected type
+              const transformedEvent = {
+                ...event,
+                league: getLeagueName(leagues, event.leagueId)
+              };
+              return (
+                <EventCard
+                  key={event.id}
+                  event={transformedEvent}
+                  onSelectCaptains={handleSelectCaptains}
+                  onEdit={handleEditEvent}
+                  onDelete={handleDeleteEvent}
+                  onEnterResults={handleEnterResults}
+                />
+              );
+            })
           )}
         </TabsContent>
       </Tabs>
     </div>
   );
 };
+
+// Helper function to get league name from league ID
+function getLeagueName(leagues: any[] | undefined, leagueId: number): string {
+  if (!leagues) return 'Unknown League';
+  const league = leagues.find(l => l.id === leagueId);
+  return league ? league.name : 'Unknown League';
+}
