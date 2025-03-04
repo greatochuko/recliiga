@@ -508,20 +508,6 @@ export type Database = {
         }
         Returns: undefined
       }
-      is_league_member: {
-        Args: {
-          league_id: string
-          user_id?: string
-        }
-        Returns: boolean
-      }
-      is_league_owner: {
-        Args: {
-          league_id: string
-          user_id?: string
-        }
-        Returns: boolean
-      }
     }
     Enums: {
       [_ in never]: never

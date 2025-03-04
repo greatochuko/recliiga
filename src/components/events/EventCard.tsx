@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,8 +33,6 @@ export const EventCard: React.FC<EventCardProps> = ({
     navigate(`/edit-results/${event.id}`);
   };
 
-  const isPastEvent = event.status === 'past';
-
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
@@ -48,11 +45,8 @@ export const EventCard: React.FC<EventCardProps> = ({
               <MapPin className="w-4 h-4 text-gray-500 mr-2" aria-hidden="true" />
               <span className="text-xs text-gray-500">{event.location}</span>
             </div>
-            {event.league && (
-              <span className="text-xs text-[#FF7A00] font-medium">{event.league}</span>
-            )}
           </div>
-          {!isPastEvent && event.spotsLeft && (
+          {event.status === 'upcoming' && event.spotsLeft && (
             <span className="text-[#E43226] text-xs font-semibold">
               {event.spotsLeft === 1 ? '1 Spot Left' : `${event.spotsLeft} Spots Left`}
             </span>
@@ -76,7 +70,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
         <div className="flex justify-center mt-4 space-x-2">
-          {!isPastEvent ? (
+          {event.status === 'upcoming' && (
             <>
               <Button onClick={handleSelectCaptains} variant="outline" size="sm" className="flex items-center">
                 <UserPlus className="w-4 h-4 mr-2" />
@@ -91,7 +85,8 @@ export const EventCard: React.FC<EventCardProps> = ({
                 Delete
               </Button>
             </>
-          ) : (
+          )}
+          {event.status === 'past' && (
             <Button onClick={handleEnterResults} variant="outline" size="sm" className="flex items-center">
               <Trophy className="w-4 h-4 mr-2" />
               {event.resultsEntered ? 'Edit Results' : 'Enter Results'}

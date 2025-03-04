@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,9 +8,11 @@ import { Event } from '@/types/events';
 import { CountdownClock } from "@/components/dashboard/CountdownClock";
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchEventCaptains } from '@/api/captains';
+
 interface EventStatusProps {
   event: Event;
 }
+
 export function EventStatus({
   event
 }: EventStatusProps) {
@@ -36,14 +39,17 @@ export function EventStatus({
         }
       }
     };
+
     loadCaptains();
   }, [event.id, event.captains]);
 
   // Check if RSVP deadline is still active
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
+  
   const handleSelectCaptains = () => {
     navigate(`/select-captains/${event.id}`);
   };
+  
   const handleBeginDraft = () => {
     navigate(`/team-draft/${event.id}`);
   };
@@ -68,11 +74,21 @@ export function EventStatus({
           </Button>
         </div>;
     }
+    
     if (isOrganizer) {
       return <div className="flex justify-end items-center mt-2">
-          
+          <Button 
+            onClick={handleSelectCaptains} 
+            variant="outline" 
+            size="sm" 
+            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            Select Captains
+          </Button>
         </div>;
     }
+    
     return null;
   }
 

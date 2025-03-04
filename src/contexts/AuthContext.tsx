@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,11 +30,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
-
-        // Check if user is authenticated but profile is incomplete
-        if (session?.user) {
-          redirectBasedOnProfile(session.user);
-        }
       } catch (error) {
         console.error('Error checking auth session:', error);
       } finally {
@@ -46,55 +42,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
-      // If user just signed in, check their profile
-      if (session?.user) {
-        redirectBasedOnProfile(session.user);
-      }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  // Helper function to check profile completion and redirect accordingly
-  const redirectBasedOnProfile = async (user: User) => {
-    try {
-      if (user.user_metadata?.role === 'organizer') {
-        // Check if league organizer has created a league
-        const { data: leagues, error } = await supabase
-          .from('leagues')
-          .select('id')
-          .eq('owner_id', user.id)
-          .limit(1);
-        
-        if (!leagues || leagues.length === 0) {
-          // Organizer hasn't created a league yet, redirect to league creation
-          navigate('/create-league');
-        }
-      } else if (user.user_metadata?.role === 'player') {
-        // Check if player has completed profile setup
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('id, nickname')
-          .eq('id', user.id)
-          .limit(1);
-        
-        if (!profile || profile.length === 0 || !profile[0].nickname) {
-          // Player hasn't completed their profile, redirect to registration
-          navigate('/complete-registration');
-        }
-      }
-    } catch (error) {
-      console.error('Error checking profile completion:', error);
-    }
-  };
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      
-      // Auth state change will handle redirection based on profile completion
+      navigate('/');
       toast.success('Successfully signed in!');
     } catch (error: any) {
       toast.error(error.message);
@@ -111,17 +68,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) throw error;
       
-      // After successful signup, automatically sign them in
-      if (data.user) {
-        await signIn(email, password);
-        
-        // redirectBasedOnProfile is called by the auth state change listener
-        // which will direct them to the appropriate registration flow
+      // Handle different registrations based on role
+      if (metadata.role === 'organizer') {
+        toast.success('Registration successful! Please sign in to complete your league setup.');
       } else {
-        // If email confirmation is required
-        toast.success('Registration successful! Please check your email to verify your account.');
-        navigate('/sign-in');
+        toast.success('Registration successful! Please sign in to complete your player profile.');
       }
+      
+      // Redirect to sign-in so they can authenticate first
+      navigate('/sign-in');
     } catch (error: any) {
       toast.error(error.message);
       throw error;
