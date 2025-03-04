@@ -5,6 +5,12 @@ export interface Team {
   color: string;
 }
 
+export interface Captain {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
 export interface Event {
   id: number;
   leagueId: number;
@@ -17,6 +23,13 @@ export interface Event {
   status?: 'upcoming' | 'past';
   spotsLeft?: number;
   resultsEntered?: boolean;
+  league?: string;
+  hasResults?: boolean;
+  captains?: {
+    team1?: Captain;
+    team2?: Captain;
+  };
+  draftStatus?: 'not_started' | 'in_progress' | 'completed';
 }
 
 export interface League {

@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { EventStatus } from "@/components/events/EventStatus";
+
 function CountdownClock({
   deadline
 }: {
@@ -39,6 +41,7 @@ function CountdownClock({
       <span>{timeLeft.minutes}m</span>
     </div>;
 }
+
 interface Event {
   id: number;
   date: string;
@@ -59,7 +62,21 @@ interface Event {
   league: string;
   hasResults: boolean;
   spotsLeft?: number;
+  captains?: {
+    team1?: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+    team2?: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+  };
+  draftStatus?: 'not_started' | 'in_progress' | 'completed';
 }
+
 function EventCard({
   event,
   isPastEvent = false,
@@ -73,6 +90,7 @@ function EventCard({
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
+
   const getTeamName = (team: {
     name: string;
   }, index: number) => {
@@ -81,6 +99,7 @@ function EventCard({
     }
     return team.name;
   };
+
   const getTeamAvatarFallback = (team: {
     name: string;
   }, index: number) => {
@@ -89,17 +108,21 @@ function EventCard({
     }
     return team.name.split(' ').map(n => n[0]).join('');
   };
+
   const handleAttend = () => {
     setAttendanceStatus('attending');
     setIsEditing(false);
   };
+
   const handleDecline = () => {
     setAttendanceStatus('declined');
     setIsEditing(false);
   };
+
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
+
   const handleViewDetails = () => {
     if (event.hasResults) {
       navigate(`/events/${event.id}/results`);
@@ -107,6 +130,7 @@ function EventCard({
       navigate(`/events/${event.id}`);
     }
   };
+
   return <Card className="mb-4">
       <CardContent className="p-4 relative">
         <div className="flex justify-between items-start mb-4">
@@ -172,15 +196,11 @@ function EventCard({
                 Edit RSVP
               </Button>}
           </div>}
-        {isRsvpOpen && <div className="flex justify-end items-center mt-2">
-            <div className="flex items-center space-x-2">
-              <span className="text-xs text-gray-500">RSVP in:</span>
-              <CountdownClock deadline={event.rsvpDeadline!} />
-            </div>
-          </div>}
+        {!isPastEvent && <EventStatus event={event} />}
       </CardContent>
     </Card>;
 }
+
 function EventsContent() {
   const upcomingEvents = [{
     id: 1,
@@ -216,11 +236,24 @@ function EventsContent() {
       avatar: '/placeholder.svg?height=64&width=64',
       color: '#DA291C'
     },
-    rsvpDeadline: new Date('2025-08-24T19:30:00'),
+    rsvpDeadline: new Date(Date.now() - 86400000),
     status: null,
     spotsLeft: 2,
     league: 'Championship',
-    hasResults: false
+    hasResults: false,
+    captains: {
+      team1: {
+        id: '1',
+        name: 'John Smith',
+        avatar: '/placeholder.svg?height=32&width=32'
+      },
+      team2: {
+        id: '2',
+        name: 'Alex Johnson',
+        avatar: '/placeholder.svg?height=32&width=32'
+      }
+    },
+    draftStatus: 'not_started'
   }, {
     id: 3,
     date: '01-Sep-2025',
@@ -236,12 +269,13 @@ function EventsContent() {
       avatar: '/placeholder.svg?height=64&width=64',
       color: '#FFFFFF'
     },
-    rsvpDeadline: new Date('2025-08-31T17:00:00'),
+    rsvpDeadline: new Date(Date.now() - 43200000),
     status: null,
     spotsLeft: 1,
     league: 'La Liga',
     hasResults: false
   }];
+
   const pastEvents = [{
     id: 4,
     date: '15-Jul-2025',
@@ -297,6 +331,7 @@ function EventsContent() {
     league: 'Premier League',
     hasResults: true
   }];
+
   return <div className="p-4 md:p-6">
       
       
@@ -325,6 +360,7 @@ function EventsContent() {
       </section>
     </div>;
 }
+
 export default function Events() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">

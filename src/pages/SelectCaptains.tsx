@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,8 @@ function AttendingList({
 }
 
 export default function SelectCaptains() {
+  const { eventId } = useParams<{ eventId: string }>();
+  const navigate = useNavigate();
   const [selectingCaptains, setSelectingCaptains] = useState(false);
   const [players, setPlayers] = useState([
     { id: 1, name: 'John Smith', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward', isCaptain: false, rating: 2.75 },
@@ -86,6 +89,11 @@ export default function SelectCaptains() {
     },
   };
 
+  useEffect(() => {
+    // In a real app, you would fetch the event and attending players data here
+    setSelectingCaptains(true);
+  }, [eventId]);
+
   const handleCaptainSelect = (playerId: number, isSelected: boolean) => {
     const captainCount = players.filter(p => p.isCaptain).length;
     if (isSelected && captainCount >= 2) {
@@ -105,10 +113,17 @@ export default function SelectCaptains() {
     const selectedCaptains = players.filter(p => p.isCaptain);
     if (selectedCaptains.length === 2) {
       setSelectingCaptains(false);
+      
+      // In a real app, you would save the captains to the database here
+      // For now, we're simulating success
+      
       toast({
         title: "Captains selected",
         description: "The captains have been successfully selected.",
       });
+      
+      // Navigate back to the events page
+      navigate('/events');
     } else {
       toast({
         title: "Invalid captain selection",
@@ -140,9 +155,9 @@ export default function SelectCaptains() {
             variant="ghost"
             size="sm"
             className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/events')}
           >
-            Previous
+            Back to Events
           </Button>
           <div className="container mx-auto px-4 py-8 pt-16">
             <Card className="max-w-3xl mx-auto">
