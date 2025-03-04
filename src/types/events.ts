@@ -14,7 +14,7 @@ export interface Event {
   team1: Team;
   team2: Team;
   rsvpDeadline?: Date;
-  status?: 'upcoming' | 'past';
+  status?: 'upcoming' | 'past';  // Restricted to these two values
   spotsLeft?: number;
   resultsEntered?: boolean;
 }

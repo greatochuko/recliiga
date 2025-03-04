@@ -1,11 +1,11 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Edit, Trash2, Trophy } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Edit, Trash2, UserPlus, Trophy } from 'lucide-react';
 import { Event } from '@/types/events';
-import { Link } from 'react-router-dom';
 
 interface EventCardProps {
   event: Event;
@@ -13,7 +13,6 @@ interface EventCardProps {
   onEdit: (eventId: number) => void;
   onDelete: (eventId: number) => void;
   onEnterResults: (eventId: number) => void;
-  isPast?: boolean;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ 
@@ -21,99 +20,79 @@ export const EventCard: React.FC<EventCardProps> = ({
   onSelectCaptains, 
   onEdit, 
   onDelete, 
-  onEnterResults,
-  isPast = false
+  onEnterResults 
 }) => {
-  const isUpcoming = event.status === 'upcoming';
+  const navigate = useNavigate();
+  
+  const handleSelectCaptains = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/select-captains/${event.id}`);
+  };
+
+  const handleEnterResults = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/events/${event.id}/edit-results`);
+  };
 
   return (
     <Card className="mb-4">
-      <CardContent className="p-4">
-        <div className="flex flex-col md:flex-row gap-4 justify-between">
-          {/* Event Info */}
-          <div className="md:w-1/3">
-            <div className="flex items-center text-sm text-gray-500 mb-2">
-              <Calendar className="w-4 h-4 mr-2" />
-              <span>{event.date} • {event.time}</span>
-            </div>
-            <div className="flex items-center text-sm text-gray-500 mb-4">
-              <MapPin className="w-4 h-4 mr-2" />
-              <span>{event.location}</span>
-            </div>
-            <div className="flex items-center">
-              <Avatar className="w-10 h-10 mr-2" style={{ backgroundColor: event.team1.color }}>
-                <AvatarImage src={event.team1.avatar} alt={event.team1.name} />
-                <AvatarFallback>{event.team1.name.substring(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="font-medium mx-2">vs</span>
-              <Avatar className="w-10 h-10" style={{ backgroundColor: event.team2.color }}>
-                <AvatarImage src={event.team2.avatar} alt={event.team2.name} />
-                <AvatarFallback>{event.team2.name.substring(0, 2)}</AvatarFallback>
-              </Avatar>
+      <CardContent className="p-4 relative">
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex flex-col">
+            <div className="flex items-center mb-1">
+              <Calendar className="w-4 h-4 text-gray-500 mr-2" aria-hidden="true" />
+              <span className="text-xs text-gray-500 mr-4">{event.date}</span>
+              <span className="text-xs text-gray-500 mr-4">{event.time}</span>
+              <MapPin className="w-4 h-4 text-gray-500 mr-2" aria-hidden="true" />
+              <span className="text-xs text-gray-500">{event.location}</span>
             </div>
           </div>
-          
-          {/* Actions */}
-          <div className="md:w-2/3 flex flex-wrap gap-2 justify-end items-start">
-            {isPast ? (
-              <>
-                {!event.resultsEntered ? (
-                  <Button 
-                    className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 flex items-center"
-                    onClick={() => onEnterResults(event.id)}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Input Results
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
-                    asChild
-                  >
-                    <Link to={`/events/${event.id}/results`}>
-                      <Trophy className="w-4 h-4 mr-2" />
-                      View Results
-                    </Link>
-                  </Button>
-                )}
-                <Button 
-                  variant="outline" 
-                  className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                  onClick={() => onDelete(event.id)}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  variant="outline" 
-                  className="border-[#FF7A00] text-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
-                  onClick={() => onSelectCaptains(event.id)}
-                >
-                  <Users className="w-4 h-4 mr-2" />
-                  Select Captains
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => onEdit(event.id)}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                  onClick={() => onDelete(event.id)}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </Button>
-              </>
-            )}
+          {event.status === 'upcoming' && event.spotsLeft && (
+            <span className="text-[#E43226] text-xs font-semibold">
+              {event.spotsLeft === 1 ? '1 Spot Left' : `${event.spotsLeft} Spots Left`}
+            </span>
+          )}
+        </div>
+        <div className="grid grid-cols-3 items-center justify-items-center">
+          <div className="flex flex-col items-center">
+            <Avatar className="w-16 h-16" style={{ backgroundColor: event.team1.color }}>
+              <AvatarImage src={event.team1.avatar} alt={`${event.team1.name} logo`} />
+              <AvatarFallback>{event.team1.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-semibold mt-2">{event.team1.name}</span>
           </div>
+          <span className="text-lg font-semibold">vs</span>
+          <div className="flex flex-col items-center">
+            <Avatar className="w-16 h-16" style={{ backgroundColor: event.team2.color }}>
+              <AvatarImage src={event.team2.avatar} alt={`${event.team2.name} logo`} />
+              <AvatarFallback>{event.team2.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-semibold mt-2">{event.team2.name}</span>
+          </div>
+        </div>
+        <div className="flex justify-center mt-4 space-x-2">
+          {event.status === 'upcoming' && (
+            <>
+              <Button onClick={handleSelectCaptains} variant="outline" size="sm" className="flex items-center">
+                <UserPlus className="w-4 h-4 mr-2" />
+                Select Captains
+              </Button>
+              <Button onClick={() => onEdit(event.id)} variant="outline" size="sm" className="flex items-center">
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+              <Button onClick={() => onDelete(event.id)} variant="outline" size="sm" className="flex items-center text-red-500 hover:text-red-700">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </>
+          )}
+          {event.status === 'past' && (
+            <Button onClick={handleEnterResults} variant="outline" size="sm" className="flex items-center">
+              <Trophy className="w-4 h-4 mr-2" />
+              {event.resultsEntered ? 'Edit Results' : 'Enter Results'}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

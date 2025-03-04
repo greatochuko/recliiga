@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,8 +8,8 @@ import { EventCard } from './EventCard';
 import { fetchEvents, fetchLeagues } from '@/api/events';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
-import { Plus, Edit } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
@@ -51,10 +52,7 @@ export const EventsContent: React.FC = () => {
 
   const handleSelectCaptains = (eventId: number) => {
     console.log(`Select captains for event ${eventId}`);
-    toast({
-      title: "Action initiated",
-      description: `Selecting captains for event ${eventId}`,
-    });
+    navigate(`/select-captains/${eventId}`);
   };
 
   const handleEditEvent = (eventId: number) => {
@@ -74,6 +72,7 @@ export const EventsContent: React.FC = () => {
   };
 
   const handleEnterResults = (eventId: number) => {
+    console.log(`Enter/Edit results for event ${eventId}`);
     navigate(`/events/${eventId}/edit-results`);
   };
 
@@ -136,7 +135,6 @@ export const EventsContent: React.FC = () => {
                 onEdit={handleEditEvent}
                 onDelete={handleDeleteEvent}
                 onEnterResults={handleEnterResults}
-                isPast={true}
               />
             ))
           )}

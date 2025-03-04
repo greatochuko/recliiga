@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Edit, Trophy } from 'lucide-react';
 
 function TeamRoster({ team, attendance }: { team: any, attendance: Record<string, boolean> }) {
   const navigate = useNavigate();
@@ -125,10 +124,6 @@ function EventResultsContent() {
     'Jordan Riley': true
   };
 
-  const handleEditResults = () => {
-    navigate(`/events/${id}/edit-results`);
-  };
-
   const renderTeamScore = (team: any) => (
     <div className="flex flex-col items-center space-y-2">
       <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
@@ -142,23 +137,14 @@ function EventResultsContent() {
 
   return (
     <div className="container mx-auto px-4 py-8 relative">
-      <div className="flex justify-between mb-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-          onClick={() => navigate(-1)}
-        >
-          Previous
-        </Button>
-        <Button 
-          className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 flex items-center"
-          onClick={handleEditResults}
-        >
-          <Edit className="w-4 h-4 mr-2" />
-          Edit Results
-        </Button>
-      </div>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+        onClick={() => navigate(-1)}
+      >
+        Previous
+      </Button>
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Match Result</CardTitle>
