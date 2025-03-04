@@ -10,10 +10,10 @@ import { routes } from '@/utils/routes';
 
 interface EventCardProps {
   event: Event;
-  onSelectCaptains: (eventId: number) => void;
-  onEdit: (eventId: number) => void;
-  onDelete: (eventId: number) => void;
-  onEnterResults: (eventId: number) => void;
+  onSelectCaptains: (eventId: number | string) => void;
+  onEdit: (eventId: number | string) => void;
+  onDelete: (eventId: number | string) => void;
+  onEnterResults: (eventId: number | string) => void;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ 
@@ -27,12 +27,12 @@ export const EventCard: React.FC<EventCardProps> = ({
   
   const handleSelectCaptains = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(routes.events.selectCaptains(event.id));
+    navigate(routes.events.selectCaptains(event.id.toString()));
   };
 
   const handleEnterResults = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(routes.events.editResults(event.id));
+    navigate(routes.events.editResults(event.id.toString()));
   };
 
   return (
@@ -78,11 +78,11 @@ export const EventCard: React.FC<EventCardProps> = ({
                 <UserPlus className="w-4 h-4 mr-2" />
                 Select Captains
               </Button>
-              <Button onClick={() => onEdit(Number(event.id))} variant="outline" size="sm" className="flex items-center">
+              <Button onClick={() => onEdit(event.id)} variant="outline" size="sm" className="flex items-center">
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
-              <Button onClick={() => onDelete(Number(event.id))} variant="outline" size="sm" className="flex items-center text-red-500 hover:text-red-700">
+              <Button onClick={() => onDelete(event.id)} variant="outline" size="sm" className="flex items-center text-red-500 hover:text-red-700">
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete
               </Button>

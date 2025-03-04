@@ -51,12 +51,12 @@ export const EventsContent: React.FC = () => {
     return <div className="flex justify-center items-center h-full">Loading...</div>;
   }
 
-  const handleSelectCaptains = (eventId: number) => {
+  const handleSelectCaptains = (eventId: number | string) => {
     console.log(`Select captains for event ${eventId}`);
     navigate(routes.events.selectCaptains(eventId.toString()));
   };
 
-  const handleEditEvent = (eventId: number) => {
+  const handleEditEvent = (eventId: number | string) => {
     console.log(`Edit event ${eventId}`);
     toast({
       title: "Action initiated",
@@ -64,7 +64,7 @@ export const EventsContent: React.FC = () => {
     });
   };
 
-  const handleDeleteEvent = (eventId: number) => {
+  const handleDeleteEvent = (eventId: number | string) => {
     console.log(`Delete event ${eventId}`);
     toast({
       title: "Action initiated",
@@ -72,7 +72,7 @@ export const EventsContent: React.FC = () => {
     });
   };
 
-  const handleEnterResults = (eventId: number) => {
+  const handleEnterResults = (eventId: number | string) => {
     console.log(`Enter/Edit results for event ${eventId}`);
     toast({
       title: "Action initiated",
@@ -119,6 +119,7 @@ export const EventsContent: React.FC = () => {
               // Transform event to match the expected type
               const transformedEvent = {
                 ...event,
+                id: event.id.toString(), // Convert id to string
                 league: getLeagueName(leagues, event.leagueId)
               };
               return (
@@ -142,6 +143,7 @@ export const EventsContent: React.FC = () => {
               // Transform event to match the expected type
               const transformedEvent = {
                 ...event,
+                id: event.id.toString(), // Convert id to string
                 league: getLeagueName(leagues, event.leagueId)
               };
               return (
