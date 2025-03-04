@@ -20,7 +20,7 @@ export interface Event {
   team1: Team;
   team2: Team;
   rsvpDeadline?: Date;
-  status?: 'upcoming' | 'past';
+  status?: 'upcoming' | 'past' | 'attending' | 'declined';
   spotsLeft?: number;
   resultsEntered?: boolean;
   league?: string;

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -53,7 +54,11 @@ function EventCard({
   showLeagueName?: boolean;
 }) {
   const navigate = useNavigate();
-  const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
+  const [attendanceStatus, setAttendanceStatus] = useState<'attending' | 'declined' | null>(
+    event.status === 'attending' || event.status === 'declined' 
+      ? event.status 
+      : null
+  );
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
 
