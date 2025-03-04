@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
+import { Event } from '@/types/events';
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
