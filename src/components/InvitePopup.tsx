@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Copy, Send, AlertCircle, CheckCircle, Info } from 'lucide-react'
 import { Label } from "@/components/ui/label"
+import { DialogClose } from "@/components/ui/dialog"
 
 interface InvitePopupProps {
   onClose?: () => void;
@@ -37,7 +38,7 @@ export default function InvitePopup({ onClose }: InvitePopupProps) {
   }
 
   return (
-    <div className="sm:max-w-md">
+    <div className="sm:max-w-md p-6">
       <div className="space-y-4">
         <div className="flex justify-center">
           <span className="text-4xl font-bold text-[#FF7A00]">REC LiiGA</span>
@@ -108,6 +109,18 @@ export default function InvitePopup({ onClose }: InvitePopupProps) {
             </ul>
           </div>
         )}
+
+        <div className="flex justify-end mt-6">
+          <DialogClose asChild>
+            <Button 
+              variant="outline" 
+              onClick={onClose}
+              className="mr-2"
+            >
+              Close
+            </Button>
+          </DialogClose>
+        </div>
       </div>
     </div>
   )

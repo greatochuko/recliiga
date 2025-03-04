@@ -46,7 +46,17 @@ export function UserMenu() {
     }
   };
 
-  return <>
+  const closeInvitePopup = () => {
+    setShowInvitePopup(false);
+  };
+
+  const resetDeleteDialog = () => {
+    setDeleteConfirmation("");
+    setShowDeleteDialog(false);
+  };
+
+  return (
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2">
@@ -90,15 +100,14 @@ export function UserMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Use Dialog component for InvitePopup */}
-      {showInvitePopup && (
-        <Dialog open={showInvitePopup} onOpenChange={setShowInvitePopup}>
-          <DialogContent className="p-0">
-            <InvitePopup onClose={() => setShowInvitePopup(false)} />
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Invite Dialog */}
+      <Dialog open={showInvitePopup} onOpenChange={setShowInvitePopup}>
+        <DialogContent className="p-0">
+          <InvitePopup onClose={closeInvitePopup} />
+        </DialogContent>
+      </Dialog>
 
+      {/* Delete Account Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -116,12 +125,7 @@ export function UserMenu() {
             />
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel 
-              onClick={() => {
-                setDeleteConfirmation("");
-                setShowDeleteDialog(false);
-              }}
-            >
+            <AlertDialogCancel onClick={resetDeleteDialog}>
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
@@ -135,6 +139,7 @@ export function UserMenu() {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Logout Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -154,5 +159,6 @@ export function UserMenu() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>;
+    </>
+  );
 }
