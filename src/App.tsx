@@ -1,163 +1,90 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import ForgotPassword from "./pages/ForgotPassword";
-import PlayerRegistration from "./pages/PlayerRegistration";
-import CreateLeague from "./pages/CreateLeague";
-import LeagueSetupPage from "./pages/LeagueSetupPage";
-import Profile from "./pages/Profile";
-import Leagues from "./pages/Leagues";
-import LeagueDetails from "./pages/LeagueDetails";
-import EventDetails from "./pages/EventDetails";
-import EventResults from "./pages/EventResults";
-import Events from "./pages/Events";
-import Results from "./pages/Results";
-import Chat from "./pages/Chat";
-import RateTeammates from "./pages/RateTeammates";
-import PlayerProfile from "./pages/PlayerProfile";
-import ManageEvents from "./pages/ManageEvents";
-import HelpAndSupport from "./pages/HelpAndSupport";
-import AddEvent from "./pages/AddEvent";
-import SelectCaptains from "./pages/SelectCaptains";
-import EditResults from "./pages/EditResults";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { AuthProvider } from "@/features/auth/context/AuthContext";
+import { usePrivateRoute, usePublicRoute } from "@/hooks/useRouteGuard";
+import { routes } from "@/utils/routes";
+
+// Auth pages
+import SignIn from "@/features/auth/pages/SignIn";
+import SignUp from "@/pages/SignUp";
+import ForgotPassword from "@/features/auth/pages/ForgotPassword";
+import PlayerRegistration from "@/pages/PlayerRegistration";
+
+// League pages
+import CreateLeague from "@/features/leagues/pages/CreateLeague";
+import LeagueSetupPage from "@/features/leagues/pages/LeagueSetupPage";
+import Leagues from "@/features/leagues/pages/Leagues";
+import LeagueDetails from "@/pages/LeagueDetails";
+
+// Event pages
+import Events from "@/pages/Events";
+import EventDetails from "@/pages/EventDetails";
+import EventResults from "@/pages/EventResults";
+import ManageEvents from "@/features/events/pages/ManageEvents";
+import AddEvent from "@/pages/AddEvent";
+import SelectCaptains from "@/pages/SelectCaptains";
+import EditResults from "@/pages/EditResults";
+
+// Results pages
+import Results from "@/features/results/pages/Results";
+
+// Player pages
+import Profile from "@/features/players/pages/Profile";
+import PlayerProfile from "@/pages/PlayerProfile";
+import RateTeammates from "@/pages/RateTeammates";
+
+// Other pages
+import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
+import Chat from "@/pages/Chat";
+import HelpAndSupport from "@/pages/HelpAndSupport";
 
 const queryClient = new QueryClient();
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
-  const [checkingProfile, setCheckingProfile] = useState(true);
-  
-  useEffect(() => {
-    async function checkProfileCompletion() {
-      if (!user) return;
-      
-      try {
-        // Check if the user has completed registration based on their role
-        if (user.user_metadata?.role === 'organizer') {
-          // Check if league organizer has created a league
-          const { data: leagues, error } = await supabase
-            .from('leagues')
-            .select('id')
-            .eq('owner_id', user.id)
-            .limit(1);
-          
-          setIsProfileComplete(leagues && leagues.length > 0);
-        } else {
-          // Check if player has completed profile setup
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('id, nickname')
-            .eq('id', user.id)
-            .limit(1);
-          
-          setIsProfileComplete(profile && profile.length > 0 && profile[0].nickname !== null);
-        }
-      } catch (error) {
-        console.error('Error checking profile completion:', error);
-        // Default to false if there's an error
-        setIsProfileComplete(false);
-      } finally {
-        setCheckingProfile(false);
-      }
-    }
-    
-    if (user) {
-      checkProfileCompletion();
-    } else {
-      setCheckingProfile(false);
-    }
-  }, [user]);
-  
-  if (loading || checkingProfile) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
+const AppRoutes = () => {
+  const PrivateRoute = usePrivateRoute();
+  const PublicRoute = usePublicRoute();
 
-  if (!user) {
-    return <Navigate to="/sign-in" />;
-  }
-
-  // If the user hasn't completed their profile, redirect to the appropriate registration page
-  if (isProfileComplete === false) {
-    if (user.user_metadata?.role === 'organizer') {
-      return <Navigate to="/create-league" />;
-    } else {
-      return <Navigate to="/complete-registration" />;
-    }
-  }
-
-  return <>{children}</>;
-}
-
-function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-  
-  if (user) {
-    return <Navigate to="/" />;
-  }
-
-  return <>{children}</>;
-}
-
-const AppRoutes = () => (
-  <div className="min-h-screen w-full">
-    <Routes>
-      {/* Public routes */}
-      <Route path="/sign-in" element={<PublicRoute><SignIn /></PublicRoute>} />
-      <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
-      <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-      
-      {/* Registration flows (protected but not requiring a complete profile) */}
-      <Route path="/complete-registration" element={<PlayerRegistration />} />
-      <Route path="/create-league" element={<CreateLeague />} />
-      <Route path="/league-setup" element={<LeagueSetupPage />} />
-      
-      {/* Private routes requiring complete profiles */}
-      <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
-      <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
-      <Route path="/leagues/:id" element={<PrivateRoute><LeagueDetails /></PrivateRoute>} />
-      <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
-      <Route path="/events/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
-      <Route path="/events/:id/results" element={<PrivateRoute><EventResults /></PrivateRoute>} />
-      <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
-      <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
-      <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
-      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-      <Route path="/player-profile" element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
-      <Route path="/manage-events" element={<PrivateRoute><ManageEvents /></PrivateRoute>} />
-      <Route path="/add-event" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
-      <Route path="/help" element={<PrivateRoute><HelpAndSupport /></PrivateRoute>} />
-      <Route path="/select-captains/:eventId" element={<PrivateRoute><SelectCaptains /></PrivateRoute>} />
-      <Route path="/edit-results/:eventId" element={<PrivateRoute><EditResults /></PrivateRoute>} />
-      
-      {/* Catch-all route */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </div>
-);
+  return (
+    <div className="min-h-screen w-full">
+      <Routes>
+        {/* Public routes */}
+        <Route path={routes.auth.signIn} element={<PublicRoute><SignIn /></PublicRoute>} />
+        <Route path={routes.auth.signUp} element={<PublicRoute><SignUp /></PublicRoute>} />
+        <Route path={routes.auth.forgotPassword} element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        
+        {/* Registration flows (protected but not requiring a complete profile) */}
+        <Route path={routes.auth.completeRegistration} element={<PlayerRegistration />} />
+        <Route path={routes.leagues.create} element={<CreateLeague />} />
+        <Route path={routes.leagues.setup} element={<LeagueSetupPage />} />
+        
+        {/* Private routes requiring complete profiles */}
+        <Route path={routes.home} element={<PrivateRoute><Index /></PrivateRoute>} />
+        <Route path={routes.leagues.list} element={<PrivateRoute><Leagues /></PrivateRoute>} />
+        <Route path={`${routes.leagues.list}/:id`} element={<PrivateRoute><LeagueDetails /></PrivateRoute>} />
+        <Route path={routes.events.list} element={<PrivateRoute><Events /></PrivateRoute>} />
+        <Route path={`${routes.events.list}/:id`} element={<PrivateRoute><EventDetails /></PrivateRoute>} />
+        <Route path={`${routes.events.list}/:id/results`} element={<PrivateRoute><EventResults /></PrivateRoute>} />
+        <Route path={routes.results} element={<PrivateRoute><Results /></PrivateRoute>} />
+        <Route path={routes.chat} element={<PrivateRoute><Chat /></PrivateRoute>} />
+        <Route path={routes.players.rateTeammates} element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
+        <Route path={routes.players.profile} element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path={routes.players.playerProfile} element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
+        <Route path={routes.events.manage} element={<PrivateRoute><ManageEvents /></PrivateRoute>} />
+        <Route path={routes.events.add} element={<PrivateRoute><AddEvent /></PrivateRoute>} />
+        <Route path={routes.help} element={<PrivateRoute><HelpAndSupport /></PrivateRoute>} />
+        <Route path={`${routes.events.selectCaptains}/:eventId`} element={<PrivateRoute><SelectCaptains /></PrivateRoute>} />
+        <Route path={`${routes.events.editResults}/:eventId`} element={<PrivateRoute><EditResults /></PrivateRoute>} />
+        
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -166,9 +93,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <SidebarProvider>
-            <AppRoutes />
-          </SidebarProvider>
+          <AppRoutes />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
