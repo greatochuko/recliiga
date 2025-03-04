@@ -64,33 +64,31 @@ export function EventStatus({ event }: EventStatusProps) {
     const hasBothCaptains = event.captains.team1 && event.captains.team2;
     
     return (
-      <div className="flex justify-between items-center mt-2">
-        <div className="flex items-center space-x-2">
-          {event.captains.team1 && (
-            <Avatar className="w-6 h-6 border-2 border-[#FF7A00]">
-              <AvatarImage src={event.captains.team1.avatar} alt={event.captains.team1.name} />
-              <AvatarFallback>{event.captains.team1.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-          )}
-          {event.captains.team2 && (
-            <Avatar className="w-6 h-6 border-2 border-[#FF7A00]">
-              <AvatarImage src={event.captains.team2.avatar} alt={event.captains.team2.name} />
-              <AvatarFallback>{event.captains.team2.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-          )}
-          <span className="text-xs text-gray-500">Captains</span>
-        </div>
-        
-        <Button
-          onClick={handleBeginDraft}
-          variant="outline"
-          size="sm"
-          disabled={!hasBothCaptains}
-          className={`${hasBothCaptains ? "text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white" : "text-gray-400 border-gray-300"}`}
-        >
-          <Trophy className="w-4 h-4 mr-2" />
-          Begin Draft
-        </Button>
+      <div className="flex justify-end items-center mt-2">
+        {hasBothCaptains && (
+          <Button
+            onClick={handleBeginDraft}
+            variant="outline"
+            size="sm"
+            className={`${hasBothCaptains ? "text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white" : "text-gray-400 border-gray-300"}`}
+          >
+            {/* Captain avatars inside the button */}
+            {event.captains.team1 && (
+              <Avatar className="w-6 h-6 border-2 border-[#FF7A00] mr-1">
+                <AvatarImage src={event.captains.team1.avatar} alt={event.captains.team1.name} />
+                <AvatarFallback>{event.captains.team1.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+            )}
+            {event.captains.team2 && (
+              <Avatar className="w-6 h-6 border-2 border-[#FF7A00] mr-2">
+                <AvatarImage src={event.captains.team2.avatar} alt={event.captains.team2.name} />
+                <AvatarFallback>{event.captains.team2.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+            )}
+            <Trophy className="w-4 h-4 mr-2" />
+            Begin Draft
+          </Button>
+        )}
       </div>
     );
   }
