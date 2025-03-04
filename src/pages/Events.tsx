@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Edit } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+
 function CountdownClock({
   deadline
 }: {
@@ -39,6 +40,7 @@ function CountdownClock({
       <span>{timeLeft.minutes}m</span>
     </div>;
 }
+
 interface Event {
   id: number;
   date: string;
@@ -60,6 +62,7 @@ interface Event {
   hasResults: boolean;
   spotsLeft?: number;
 }
+
 function EventCard({
   event,
   isPastEvent = false,
@@ -73,6 +76,7 @@ function EventCard({
   const [attendanceStatus, setAttendanceStatus] = useState(event.status || null);
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
+
   const getTeamName = (team: {
     name: string;
   }, index: number) => {
@@ -81,6 +85,7 @@ function EventCard({
     }
     return team.name;
   };
+
   const getTeamAvatarFallback = (team: {
     name: string;
   }, index: number) => {
@@ -89,24 +94,29 @@ function EventCard({
     }
     return team.name.split(' ').map(n => n[0]).join('');
   };
+
   const handleAttend = () => {
     setAttendanceStatus('attending');
     setIsEditing(false);
   };
+
   const handleDecline = () => {
     setAttendanceStatus('declined');
     setIsEditing(false);
   };
+
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
+
   const handleViewDetails = () => {
-    if (event.hasResults) {
+    if (isPastEvent) {
       navigate(`/events/${event.id}/results`);
     } else {
       navigate(`/events/${event.id}`);
     }
   };
+
   return <Card className="mb-4">
       <CardContent className="p-4 relative">
         <div className="flex justify-between items-start mb-4">
@@ -152,11 +162,22 @@ function EventCard({
             <span className="font-bold text-[#FF7A00]">{event.league}</span>
           </div>}
         <div className="flex justify-center mt-2 space-x-2">
-          <Button variant="outline" className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" style={{
-          transform: 'scale(1.1)'
-        }} onClick={handleViewDetails}>
-            {event.hasResults ? "View Results" : "View Details"}
+          <Button variant="outline" 
+                 className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" 
+                 style={{transform: 'scale(1.1)'}} 
+                 onClick={handleViewDetails}>
+            {isPastEvent ? "View Results" : "View Details"}
           </Button>
+          
+          {isPastEvent && !event.resultsEntered && (
+            <Button 
+              className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 flex items-center"
+              onClick={() => navigate(`/events/${event.id}/edit-results`)}
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Input Results
+            </Button>
+          )}
         </div>
         {!isPastEvent && isRsvpOpen && <div className="flex justify-center mt-2 space-x-2">
             {(isEditing || !attendanceStatus) && <>
@@ -181,6 +202,7 @@ function EventCard({
       </CardContent>
     </Card>;
 }
+
 function EventsContent() {
   const upcomingEvents = [{
     id: 1,
@@ -242,6 +264,7 @@ function EventsContent() {
     league: 'La Liga',
     hasResults: false
   }];
+
   const pastEvents = [{
     id: 4,
     date: '15-Jul-2025',
@@ -259,7 +282,8 @@ function EventsContent() {
     },
     status: 'past',
     league: 'Premier League',
-    hasResults: true
+    hasResults: true,
+    resultsEntered: true
   }, {
     id: 5,
     date: '10-Jul-2025',
@@ -277,7 +301,8 @@ function EventsContent() {
     },
     status: 'past',
     league: 'Premier League',
-    hasResults: true
+    hasResults: true,
+    resultsEntered: true
   }, {
     id: 6,
     date: '05-Jul-2025',
@@ -295,16 +320,19 @@ function EventsContent() {
     },
     status: 'past',
     league: 'Premier League',
-    hasResults: true
+    hasResults: true,
+    resultsEntered: false
   }];
+
   return <div className="p-4 md:p-6">
-      
       
       {/* Upcoming Events Section */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          
-          
+          <h2 className="text-lg font-semibold">Upcoming Events</h2>
+          <Button variant="link" className="text-[#FF7A00] hover:text-[#FF7A00]/90">
+            View all
+          </Button>
         </div>
         <div className="space-y-4">
           {upcomingEvents.map(event => <EventCard key={event.id} event={event} showLeagueName={true} />)}
@@ -325,6 +353,7 @@ function EventsContent() {
       </section>
     </div>;
 }
+
 export default function Events() {
   return <SidebarProvider>
       <div className="min-h-screen flex w-full">

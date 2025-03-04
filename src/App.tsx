@@ -27,6 +27,7 @@ import PlayerProfile from "./pages/PlayerProfile";
 import ManageEvents from "./pages/ManageEvents";
 import HelpAndSupport from "./pages/HelpAndSupport";
 import AddEvent from "./pages/AddEvent";
+import EditResults from "./pages/EditResults";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -140,6 +141,7 @@ const AppRoutes = () => (
       <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
       <Route path="/events/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
       <Route path="/events/:id/results" element={<PrivateRoute><EventResults /></PrivateRoute>} />
+      <Route path="/events/:id/edit-results" element={<PrivateRoute><EditResults /></PrivateRoute>} />
       <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
