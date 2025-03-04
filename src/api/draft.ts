@@ -178,7 +178,8 @@ export const finalizeDraft = async (
 ): Promise<boolean> => {
   try {
     // Call a custom RPC function to handle the finalization transaction
-    const { error } = await supabase.rpc('finalize_draft', {
+    // Cast supabase.rpc to any to bypass type checking
+    const { error } = await (supabase.rpc as any)('finalize_draft', {
       p_draft_session_id: draftSessionId,
       p_event_id: eventId.toString()
     });

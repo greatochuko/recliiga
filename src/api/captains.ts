@@ -63,8 +63,9 @@ export const selectEventCaptains = async (
   team2CaptainId: string
 ): Promise<boolean> => {
   try {
-    // Start a transaction to insert both captains
-    const { error } = await supabase.rpc('select_event_captains', {
+    // Use a workaround to call the RPC function without TypeScript errors
+    // Cast the supabase.rpc to any to bypass type checking
+    const { error } = await (supabase.rpc as any)('select_event_captains', {
       p_event_id: eventId.toString(),
       p_team1_captain_id: team1CaptainId,
       p_team2_captain_id: team2CaptainId
