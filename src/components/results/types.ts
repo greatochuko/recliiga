@@ -1,38 +1,33 @@
 
-export type PlayerData = {
-  rank: number;
-  name: string;
-  gamesPlayed: number;
-  win: number;
-  loss: number;
-  tie: number;
-  captainWin: number;
-  attendance: number;
-  nonAttendance: number;
-  points: number;
-};
+export interface Player {
+  id: number
+  name: string
+  avatar: string
+  position: string
+}
 
-export type LeagueData = {
-  name: string;
-  date: string;
-  players: number;
-  totalGames: number;
-  logo: string;
-  leaderboardData: PlayerData[];
-};
+export interface Captain {
+  name: string
+  avatar: string
+  position: string
+}
 
-export type LeaguesData = {
-  [key: string]: LeagueData;
-};
+export interface Team {
+  name: string
+  avatar: string
+  color: string
+  captain: Captain
+  players: Player[]
+}
 
-export type ColumnExplanations = {
-  [key: string]: string;
-};
+export interface TeamData {
+  team1: Team
+  team2: Team
+}
 
-export type NotificationType = {
-  avatar: string;
-  fallback: string;
-  alt: string;
-  message: string;
-  time: string;
-};
+export interface Event {
+  date: string
+  time: string
+  location: string
+  league: string
+}
