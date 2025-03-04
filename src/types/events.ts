@@ -26,6 +26,7 @@ export interface Event {
   league?: string;
   hasResults?: boolean;
   captains?: {
+    [key: string]: Captain | undefined;
     team1?: Captain;
     team2?: Captain;
   };
