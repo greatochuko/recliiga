@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,10 +6,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Label } from "@/components/ui/label";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-
 export default function HelpAndSupport() {
-  return (
-    <SidebarProvider>
+  return <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <main className="flex-1 bg-background relative">
@@ -20,7 +17,7 @@ export default function HelpAndSupport() {
           </div>
           <div className="pt-16">
             <div className="container mx-auto px-4 py-8">
-              <h1 className="text-4xl font-bold mb-6 text-[#FF7A00]">Help & Support</h1>
+              
               <p className="text-lg mb-6 text-gray-600">
                 Have questions about REC LiiGA or need assistance? We're here to help! Fill out the form below, and our team will get back to you as soon as possible.
               </p>
@@ -59,6 +56,5 @@ export default function HelpAndSupport() {
           </div>
         </main>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 }
