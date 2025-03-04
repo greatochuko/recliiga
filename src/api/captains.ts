@@ -28,7 +28,7 @@ export const fetchEventCaptains = async (eventId: string | number): Promise<{[ke
           avatar_url
         )
       `)
-      .eq('event_id', eventId);
+      .eq('event_id', eventId.toString());
 
     if (captainsError) {
       console.error('Error fetching team captains:', captainsError);

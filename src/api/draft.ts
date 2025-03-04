@@ -29,7 +29,7 @@ export const getOrCreateDraftSession = async (eventId: string | number): Promise
     const { data: existingSessions, error: fetchError } = await supabase
       .from('draft_sessions')
       .select('*')
-      .eq('event_id', eventId)
+      .eq('event_id', eventId.toString())
       .limit(1);
 
     if (fetchError) {
@@ -46,7 +46,7 @@ export const getOrCreateDraftSession = async (eventId: string | number): Promise
     const { data: newSession, error: createError } = await supabase
       .from('draft_sessions')
       .insert({
-        event_id: eventId,
+        event_id: eventId.toString(),
         status: 'not_started',
         created_by: (await supabase.auth.getUser()).data.user?.id
       })
@@ -153,7 +153,7 @@ export const getDraftPicks = async (draftSessionId: string): Promise<DraftPick[]
       return {
         ...pick,
         player: {
-          id: parseInt(profile.id),
+          id: profile.id,
           name: profile.full_name,
           avatar: profile.avatar_url || '/placeholder.svg?height=48&width=48',
           position: Array.isArray(profile.positions) && profile.positions.length > 0 

@@ -58,8 +58,8 @@ export const fetchEvents = async (): Promise<Event[]> => {
       const spotsLeft = 10 - (event.event_rsvps?.filter(rsvp => rsvp.status === 'attending')?.length || 0);
 
       return {
-        id: event.id,
-        leagueId: event.league_id,
+        id: Number(event.id), // Convert string to number
+        leagueId: Number(event.league_id), // Convert string to number
         date: eventDate,
         time: eventTime,
         location: event.location,
@@ -107,7 +107,7 @@ export const fetchEventById = async (eventId: string | number): Promise<Event | 
         leagues:league_id(name),
         event_rsvps(status, player_id)
       `)
-      .eq('id', eventId)
+      .eq('id', eventId.toString())
       .single();
 
     if (error) {
@@ -152,7 +152,7 @@ export const fetchEventById = async (eventId: string | number): Promise<Event | 
           avatar_url
         )
       `)
-      .eq('event_id', eventId);
+      .eq('event_id', eventId.toString());
 
     if (captainsError) {
       console.error('Error fetching team captains:', captainsError);
@@ -172,8 +172,8 @@ export const fetchEventById = async (eventId: string | number): Promise<Event | 
     }
 
     return {
-      id: event.id,
-      leagueId: event.league_id,
+      id: Number(event.id), // Convert string to number
+      leagueId: Number(event.league_id), // Convert string to number
       date: eventDate,
       time: eventTime,
       location: event.location,
@@ -215,7 +215,10 @@ export const fetchLeagues = async (): Promise<League[]> => {
       return [];
     }
 
-    return leagues;
+    return leagues.map(league => ({
+      id: Number(league.id),
+      name: league.name
+    }));
   } catch (error) {
     console.error('Error in fetchLeagues:', error);
     return [];
@@ -240,7 +243,7 @@ export const rsvpToEvent = async (
     const { data: existingRsvp, error: checkError } = await supabase
       .from('event_rsvps')
       .select('id')
-      .eq('event_id', eventId)
+      .eq('event_id', eventId.toString())
       .eq('player_id', user.id)
       .maybeSingle();
 
@@ -265,7 +268,7 @@ export const rsvpToEvent = async (
       const { error: insertError } = await supabase
         .from('event_rsvps')
         .insert({
-          event_id: eventId,
+          event_id: eventId.toString(),
           player_id: user.id,
           status
         });
@@ -300,7 +303,7 @@ export const getAttendingPlayers = async (eventId: string | number) => {
         ),
         team_captains!inner(team_id)
       `)
-      .eq('event_id', eventId)
+      .eq('event_id', eventId.toString())
       .eq('status', 'attending');
 
     if (error) {
