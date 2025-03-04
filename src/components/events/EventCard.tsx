@@ -34,8 +34,7 @@ export const EventCard: React.FC<EventCardProps> = ({
     navigate(`/edit-results/${event.id}`);
   };
 
-  // Determine if this is a past event (works for both real and mock events)
-  const isPastEvent = 'isPastEvent' in event ? event.isPastEvent : event.status === 'past';
+  const isPastEvent = event.status === 'past';
 
   return (
     <Card className="mb-4">

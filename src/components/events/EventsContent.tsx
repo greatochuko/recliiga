@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -10,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { Event } from '@/types/events';
-import { upcomingEvents, pastEvents } from '@/components/events/MockEventData';
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
@@ -32,36 +32,22 @@ export const EventsContent: React.FC = () => {
     console.log('Leagues data loaded:', leagues);
   }, [events, leagues]);
 
-  const mockLeagues = [
-    { id: 1, name: 'Basketball League' },
-    { id: 2, name: 'Soccer League' },
-  ];
-
   const filteredEvents = useMemo(() => {
-    if (events && events.length > 0) {
-      console.log('Using real events data');
-      const filtered = selectedLeague
-        ? events.filter(event => event.leagueId === selectedLeague)
-        : events;
-      
-      const upcoming = filtered.filter(event => event.status === 'upcoming');
-      const past = filtered.filter(event => event.status === 'past');
-      
-      return { upcoming, past };
-    }
+    if (!events) return { upcoming: [], past: [] };
     
-    console.log('Using mock events data');
+    console.log('Filtering events with selectedLeague:', selectedLeague);
     const filtered = selectedLeague
-      ? [...upcomingEvents, ...pastEvents].filter(event => event.leagueId === selectedLeague)
-      : [...upcomingEvents, ...pastEvents];
+      ? events.filter(event => event.leagueId === selectedLeague)
+      : events;
     
-    const upcoming = filtered.filter(event => !event.isPastEvent);
-    const past = filtered.filter(event => event.isPastEvent);
+    const upcoming = filtered.filter(event => event.status === 'upcoming');
+    const past = filtered.filter(event => event.status === 'past');
     
+    console.log('Filtered events:', { upcoming, past });
     return { upcoming, past };
-  }, [events, selectedLeague, upcomingEvents, pastEvents]);
+  }, [events, selectedLeague]);
 
-  if (isLoadingLeagues && isLoadingEvents) {
+  if (isLoadingLeagues || isLoadingEvents) {
     return <div className="flex justify-center items-center h-full">Loading...</div>;
   }
 
@@ -103,14 +89,9 @@ export const EventsContent: React.FC = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Leagues</SelectItem>
-            {leagues && leagues.length > 0 ? 
-              leagues.map((league) => (
-                <SelectItem key={league.id} value={league.id.toString()}>{league.name}</SelectItem>
-              )) :
-              mockLeagues.map((league) => (
-                <SelectItem key={league.id} value={league.id.toString()}>{league.name}</SelectItem>
-              ))
-            }
+            {leagues?.map((league) => (
+              <SelectItem key={league.id} value={league.id.toString()}>{league.name}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
