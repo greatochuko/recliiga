@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
@@ -80,13 +79,12 @@ export default function SignUpPage() {
       setIsLoading(true)
       await signUp(email, password, {
         full_name: fullName,
-        role: role,
+        role: role!,
         phone: finalPhone,
       });
 
-      // After successful signup, we'll show them the success message and automatically redirect them to sign in.
-      // Once they sign in, they'll be redirected to the appropriate registration flow based on their role
-      // through the private route protection in App.tsx
+      // The redirections are now handled automatically in the AuthContext
+      // After signup, user will be signed in and redirected to the appropriate flow
     } catch (error: any) {
       setError(error.message)
     } finally {
