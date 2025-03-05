@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -152,7 +153,7 @@ const AppRoutes = () => (
       <Route path="/help" element={<PrivateRoute><HelpAndSupport /></PrivateRoute>} />
       <Route path="/select-captains/:eventId" element={<PrivateRoute><SelectCaptains /></PrivateRoute>} />
       <Route path="/edit-results/:eventId" element={<PrivateRoute><EditResults /></PrivateRoute>} />
-      <Route path="/team-draft/:eventId" element={<TeamDraftPage />} />
+      <Route path="/team-draft/:eventId" element={<PrivateRoute><TeamDraftPage /></PrivateRoute>} />
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />

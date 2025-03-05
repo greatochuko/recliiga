@@ -51,6 +51,7 @@ export function EventStatus({
   };
   
   const handleBeginDraft = () => {
+    console.log(`Navigating to team draft page for event ${event.id}`);
     navigate(`/team-draft/${event.id}`);
   };
 
