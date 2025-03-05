@@ -1,34 +1,36 @@
 
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Undo2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Undo2 } from 'lucide-react';
+import { DraftHistoryItem } from './types';
 
 interface DraftControlsProps {
   draftType: string;
-  setDraftType: (value: string) => void;
+  setDraftType: (type: string) => void;
   draftStarted: boolean;
   draftRound: number;
   handleUndo: () => void;
-  draftHistory: any[];
+  draftHistory: DraftHistoryItem[];
 }
 
-export function DraftControls({
+export const DraftControls: React.FC<DraftControlsProps> = ({
   draftType,
   setDraftType,
   draftStarted,
   draftRound,
   handleUndo,
-  draftHistory
-}: DraftControlsProps) {
+  draftHistory,
+}) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
       <div className="flex-1 min-w-[200px]">
         <Card className="border-2 border-[#FF7A00] w-fit">
           <CardContent className="py-3 px-4">
             <div className="flex items-center space-x-4">
-              <CardTitle className="text-base font-semibold text-black">Draft Type</CardTitle>
+              <div className="text-base font-semibold text-black">Draft Type</div>
               <RadioGroup
                 value={draftType}
                 onValueChange={(value) => setDraftType(value)}
@@ -66,4 +68,4 @@ export function DraftControls({
       )}
     </div>
   );
-}
+};

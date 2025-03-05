@@ -1,8 +1,8 @@
 
-import { useRef, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Team } from './types';
+import React from 'react';
 import { TeamColumn } from './TeamColumn';
+import { Team } from './types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TeamsSectionProps {
   teams: Team[];
@@ -11,35 +11,18 @@ interface TeamsSectionProps {
   handleTeamColorChange: (teamId: number, color: string) => void;
 }
 
-export function TeamsSection({ 
-  teams, 
-  toggleEditMode, 
-  handleTeamNameChange, 
-  handleTeamColorChange 
-}: TeamsSectionProps) {
-  const teamColumnRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    const updateTeamColumnHeight = () => {
-      if (teamColumnRef.current) {
-        // We're not setting state here anymore as we don't need to track the height globally
-      }
-    };
-
-    updateTeamColumnHeight();
-    window.addEventListener('resize', updateTeamColumnHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateTeamColumnHeight);
-    };
-  }, []);
-
+export const TeamsSection: React.FC<TeamsSectionProps> = ({
+  teams,
+  toggleEditMode,
+  handleTeamNameChange,
+  handleTeamColorChange,
+}) => {
   return (
     <>
-      {/* Team columns for larger screens */}
-      <div className="hidden lg:block" ref={teamColumnRef}>
-        <TeamColumn 
-          team={teams[0]} 
+      {/* Desktop view (side by side) */}
+      <div className="hidden lg:block">
+        <TeamColumn
+          team={teams[0]}
           index={0}
           toggleEditMode={toggleEditMode}
           handleTeamNameChange={handleTeamNameChange}
@@ -47,8 +30,8 @@ export function TeamsSection({
         />
       </div>
       <div className="hidden lg:block">
-        <TeamColumn 
-          team={teams[1]} 
+        <TeamColumn
+          team={teams[1]}
           index={1}
           toggleEditMode={toggleEditMode}
           handleTeamNameChange={handleTeamNameChange}
@@ -56,16 +39,16 @@ export function TeamsSection({
         />
       </div>
 
-      {/* Tabs for team views on smaller screens */}
-      <div className="lg:hidden mb-6">
+      {/* Mobile view (tabs) */}
+      <div className="lg:hidden col-span-2">
         <Tabs defaultValue="team1">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="team1">Team 1</TabsTrigger>
             <TabsTrigger value="team2">Team 2</TabsTrigger>
           </TabsList>
           <TabsContent value="team1">
-            <TeamColumn 
-              team={teams[0]} 
+            <TeamColumn
+              team={teams[0]}
               index={0}
               toggleEditMode={toggleEditMode}
               handleTeamNameChange={handleTeamNameChange}
@@ -73,8 +56,8 @@ export function TeamsSection({
             />
           </TabsContent>
           <TabsContent value="team2">
-            <TeamColumn 
-              team={teams[1]} 
+            <TeamColumn
+              team={teams[1]}
               index={1}
               toggleEditMode={toggleEditMode}
               handleTeamNameChange={handleTeamNameChange}
@@ -85,4 +68,4 @@ export function TeamsSection({
       </div>
     </>
   );
-}
+};
