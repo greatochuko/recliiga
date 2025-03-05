@@ -1,5 +1,5 @@
 
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from 'lucide-react';
 import { useTeamDraft } from '@/hooks/use-team-draft';
@@ -8,9 +8,23 @@ import { TeamsSection } from '@/components/draft/TeamsSection';
 import { DraftControls } from '@/components/draft/DraftControls';
 import { PlayersList } from '@/components/draft/PlayersList';
 import { DraftCompletionDialog } from '@/components/draft/DraftCompletionDialog';
+import { toast } from "sonner";
+import { useEffect } from 'react';
 
 export default function TeamDraftPage() {
+  const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
+  const location = useLocation();
+  const eventData = location.state?.eventData;
+  
+  // Effect to validate we have an event ID
+  useEffect(() => {
+    if (!eventId) {
+      toast.error("No event ID provided");
+      navigate('/events');
+    }
+  }, [eventId, navigate]);
+  
   const {
     isLoading,
     teams,
@@ -32,7 +46,7 @@ export default function TeamDraftPage() {
     handleConfirmTeam,
     handleFinalizeDraft,
     setShowCompletionDialog
-  } = useTeamDraft(eventId);
+  } = useTeamDraft(eventId, eventData);
 
   if (isLoading) {
     return (

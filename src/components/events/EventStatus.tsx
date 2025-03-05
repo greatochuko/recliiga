@@ -52,7 +52,10 @@ export function EventStatus({
   
   const handleBeginDraft = () => {
     console.log(`Navigating to team draft page for event ${event.id}`);
-    navigate(`/team-draft/${event.id}`);
+    // Pass the event data as state to avoid refetching
+    navigate(`/team-draft/${event.id}`, { 
+      state: { eventData: event } 
+    });
   };
 
   // Case 1: RSVP is still open - show countdown

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
@@ -17,7 +16,7 @@ import {
 import { fetchEventById, getAttendingPlayers } from '@/api/events';
 import { supabase } from '@/integrations/supabase/client';
 
-export function useTeamDraft(eventId: string | undefined) {
+export function useTeamDraft(eventId: string | undefined, eventData?: any) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [teams, setTeams] = useState<Team[]>([
@@ -32,7 +31,7 @@ export function useTeamDraft(eventId: string | undefined) {
   const [totalPicks, setTotalPicks] = useState(0);
   const [draftHistory, setDraftHistory] = useState<DraftHistoryItem[]>([]);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<any>(eventData);
   const [draftSession, setDraftSession] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,14 +42,17 @@ export function useTeamDraft(eventId: string | undefined) {
 
       setIsLoading(true);
       try {
-        // Fetch event details
-        const eventData = await fetchEventById(eventId);
+        // Use passed event data if available, otherwise fetch it
+        let eventData = event;
         if (!eventData) {
-          toast.error("Event not found");
-          navigate('/events');
-          return;
+          eventData = await fetchEventById(eventId);
+          if (!eventData) {
+            toast.error("Event not found");
+            navigate('/events');
+            return;
+          }
+          setEvent(eventData);
         }
-        setEvent(eventData);
 
         // Set up teams based on event data
         const updatedTeams = [
@@ -151,7 +153,7 @@ export function useTeamDraft(eventId: string | undefined) {
     };
 
     loadDraftData();
-  }, [eventId, navigate, draftHistory, draftType]);
+  }, [eventId, navigate, draftHistory, draftType, event]);
 
   // Set up realtime subscription to draft picks
   useEffect(() => {
