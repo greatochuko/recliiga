@@ -79,6 +79,7 @@ export function EventStatus({
         </div>;
     }
     
+    // Only show the Select Captains button for organizers
     if (isOrganizer) {
       return <div className="flex justify-end items-center mt-2">
           <Button 
