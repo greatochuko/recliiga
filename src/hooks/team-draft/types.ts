@@ -38,9 +38,28 @@ export interface DraftState {
   draftStarted: boolean;
   totalPicks: number;
   draftHistory: DraftHistoryItem[];
-  draftSession: any;
+  draftSession: DraftSession | null;
   isLoading: boolean;
   event: any;
   showCompletionDialog: boolean;
   isSubmitting: boolean;
+}
+
+export interface DraftSession {
+  id: string;
+  event_id: string;
+  status: 'not_started' | 'in_progress' | 'completed';
+  created_at: string;
+  updated_at: string;
+  created_by?: string | null;
+}
+
+export interface DraftPick {
+  id: string;
+  draft_session_id: string;
+  team_id: string; // 'team1' or 'team2'
+  player_id: string;
+  pick_number: number;
+  created_at: string;
+  player?: Player;
 }

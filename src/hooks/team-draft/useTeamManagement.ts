@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Team } from '@/components/draft/types';
 import { validateTeamColorChange } from './utils';
+import { toast } from "sonner";
 
 export const useTeamManagement = (
   teams: Team[],

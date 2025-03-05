@@ -1,24 +1,6 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Player } from '@/components/draft/types';
-
-export interface DraftSession {
-  id: string;
-  event_id: string;
-  status: 'not_started' | 'in_progress' | 'completed';
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DraftPick {
-  id: string;
-  draft_session_id: string;
-  team_id: string;
-  player_id: string;
-  pick_number: number;
-  created_at: string;
-  player?: Player;
-}
+import { DraftSession, DraftPick } from '@/hooks/team-draft/types';
 
 /**
  * Fetch or create draft session for an event

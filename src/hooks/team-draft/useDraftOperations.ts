@@ -5,9 +5,10 @@ import { toast } from "sonner";
 import { Player, Team, DraftHistoryItem } from '@/components/draft/types';
 import { draftPlayer, updateDraftSessionStatus, finalizeDraft } from '@/api/draft';
 import { getNextTeamInAlternatingDraft, getNextTeamInSnakeDraft, getPreviousTeamInAlternatingDraft, getPreviousTeamInSnakeDraft } from './utils';
+import { DraftSession } from './types';
 
 export const useDraftOperations = (
-  draftSession: any,
+  draftSession: DraftSession | null,
   teams: Team[],
   setTeams: React.Dispatch<React.SetStateAction<Team[]>>,
   availablePlayers: Player[],
