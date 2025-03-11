@@ -1,14 +1,17 @@
-
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { createContext, useContext, useEffect, useState } from "react";
+import { Session, User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signUp: (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    metadata: { full_name: string; role: string; phone: string }
+  ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -27,11 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
-        console.error('Error checking auth session:', error);
+        console.error("Error checking auth session:", error);
       } finally {
         setLoading(false);
       }
@@ -39,7 +44,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
     });
@@ -49,35 +56,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       if (error) throw error;
-      navigate('/');
-      toast.success('Successfully signed in!');
-    } catch (error: any) {
+      navigate("/");
+      toast.success("Successfully signed in!");
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
   };
 
-  const signUp = async (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    metadata: { full_name: string; role: string; phone: string }
+  ) => {
     try {
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: metadata }
+        options: { data: metadata },
       });
       if (error) throw error;
-      
+
       // Handle different registrations based on role
-      if (metadata.role === 'organizer') {
-        toast.success('Registration successful! Please sign in to complete your league setup.');
+      if (metadata.role === "organizer") {
+        toast.success(
+          "Registration successful! Please sign in to complete your league setup."
+        );
       } else {
-        toast.success('Registration successful! Please sign in to complete your player profile.');
+        toast.success(
+          "Registration successful! Please sign in to complete your player profile."
+        );
       }
-      
+
       // Redirect to sign-in so they can authenticate first
-      navigate('/sign-in');
-    } catch (error: any) {
+      navigate("/sign-in");
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
@@ -88,19 +108,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear local storage and session storage
       localStorage.clear();
       sessionStorage.clear();
-      
+
       // Sign out from Supabase
       await supabase.auth.signOut();
-      
+
       // Clear state
       setUser(null);
       setSession(null);
-      
-      toast.success('Successfully signed out');
-      
+
+      toast.success("Successfully signed out");
+
       // Navigate with window.location to force a full page refresh
-      window.location.href = '/sign-in';
-    } catch (error: any) {
+      // window.location.href = "/sign-in";
+      navigate("/sign-in");
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
@@ -112,65 +134,79 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
-      toast.success('Password reset instructions have been sent to your email.');
-    } catch (error: any) {
+      toast.success(
+        "Password reset instructions have been sent to your email."
+      );
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
   };
 
   const deleteAccount = async () => {
-    if (!user?.id) {
-      toast.error('No user found to delete');
+    const { data: user, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      toast.error("No user found to delete");
       return;
     }
+    const userId = user.user.id;
 
     try {
       // Show a loading toast
-      toast.loading('Deleting your account...');
+      toast.loading("Deleting your account...");
 
       // Call the Supabase Edge Function to delete user data
-      const { error: deleteFunctionError } = await supabase.functions.invoke('delete-user', {
-        body: { user_id: user.id }
-      });
+      const { error: deleteUserError } = await supabase.functions.invoke(
+        "delete-user",
+        {
+          body: { user_id: userId },
+        }
+      );
 
-      if (deleteFunctionError) {
-        throw new Error(deleteFunctionError.message || 'Failed to delete account data');
+      if (deleteUserError) {
+        throw new Error(
+          deleteUserError.message || "Failed to delete account data"
+        );
       }
 
       // Clear local storage and session storage
       localStorage.clear();
       sessionStorage.clear();
-      
+
       // Sign out from Supabase
       await supabase.auth.signOut();
-      
+
       // Clear state
       setUser(null);
       setSession(null);
 
-      toast.success('Your account has been deleted successfully');
-      
+      toast.success("Your account has been deleted successfully");
+
       // Use window.location for a full page refresh
-      window.location.href = '/sign-in';
-    } catch (error: any) {
-      console.error('Error in deletion process:', error);
-      toast.error(error.message || 'Failed to delete account');
+      // window.location.href = "/sign-in";
+      navigate("/sign-in");
+    } catch (err) {
+      const error = err as Error;
+      console.error("Error in deletion process:", error);
+      toast.error(error.message || "Failed to delete account");
       throw error;
     }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session, 
-      signUp, 
-      signIn, 
-      signOut, 
-      resetPassword,
-      deleteAccount, 
-      loading 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        signUp,
+        signIn,
+        signOut,
+        resetPassword,
+        deleteAccount,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -179,7 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
