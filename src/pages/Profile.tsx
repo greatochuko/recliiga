@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -34,9 +33,9 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user?.id)
+          .from("profiles")
+          .select("*")
+          .eq("id", user?.id)
           .single();
 
         if (error) throw error;
@@ -51,7 +50,7 @@ export default function Profile() {
           });
         }
       } catch (error) {
-        toast.error('Error loading profile');
+        toast.error("Error loading profile");
       } finally {
         setLoading(false);
       }
@@ -71,19 +70,19 @@ export default function Profile() {
       try {
         setLoading(true);
         const { error } = await supabase
-          .from('profiles')
+          .from("profiles")
           .update({
             full_name: formData.full_name,
             city: formData.city,
             phone: formData.phone,
             avatar_url: formData.avatar_url,
           })
-          .eq('id', user?.id);
+          .eq("id", user?.id);
 
         if (error) throw error;
-        toast.success('Profile updated successfully');
+        toast.success("Profile updated successfully");
       } catch (error) {
-        toast.error('Error updating profile');
+        toast.error("Error updating profile");
         return;
       } finally {
         setLoading(false);
@@ -92,36 +91,38 @@ export default function Profile() {
     setIsEditing(!isEditing);
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
     try {
       setLoading(true);
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const filePath = `${user.id}/avatar.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from("avatars")
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
-      setFormData(prev => ({ ...prev, avatar_url: publicUrl }));
-      toast.success('Profile picture updated');
+      setFormData((prev) => ({ ...prev, avatar_url: publicUrl }));
+      toast.success("Profile picture updated");
     } catch (error) {
-      toast.error('Error uploading image');
+      toast.error("Error uploading image");
     } finally {
       setLoading(false);
     }
   };
 
   const handleFormChange = (key: keyof ProfileFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
   if (loading) {
@@ -134,7 +135,7 @@ export default function Profile() {
               <SidebarTrigger className="bg-white shadow-md" />
               <h1 className="ml-4 text-2xl font-bold">Profile</h1>
             </div>
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center h-full justify-center">
               <div className="animate-pulse">Loading...</div>
             </div>
           </main>
