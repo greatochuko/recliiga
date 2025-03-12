@@ -1,12 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Session, User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   signUp: (
     email: string,
     password: string,
@@ -23,7 +22,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -33,7 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const {
           data: { session },
         } = await supabase.auth.getSession();
-        setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
         console.error("Error checking auth session:", error);
@@ -43,25 +40,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initializeAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const {
+        error,
+        data: { user },
+      } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       if (error) throw error;
-      navigate("/");
+      setUser(user);
       toast.success("Successfully signed in!");
     } catch (err) {
       const error = err as Error;
@@ -94,8 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
       }
 
-      // Redirect to sign-in so they can authenticate first
-      navigate("/sign-in");
+      setUser(user);
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -114,13 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Clear state
       setUser(null);
-      setSession(null);
 
       toast.success("Successfully signed out");
-
-      // Navigate with window.location to force a full page refresh
-      // window.location.href = "/sign-in";
-      navigate("/sign-in");
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -179,7 +164,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Clear state
       setUser(null);
-      setSession(null);
 
       toast.success("Your account has been deleted successfully");
 
@@ -198,7 +182,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        session,
         signUp,
         signIn,
         signOut,
