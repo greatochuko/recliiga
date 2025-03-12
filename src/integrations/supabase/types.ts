@@ -4,535 +4,536 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export type Database = {
   public: {
     Tables: {
       draft_picks: {
         Row: {
-          created_at: string
-          draft_session_id: string
-          id: string
-          pick_number: number
-          player_id: string
-          team_id: string
-        }
+          created_at: string;
+          draft_session_id: string;
+          id: string;
+          pick_number: number;
+          player_id: string;
+          team_id: string;
+        };
         Insert: {
-          created_at?: string
-          draft_session_id: string
-          id?: string
-          pick_number: number
-          player_id: string
-          team_id: string
-        }
+          created_at?: string;
+          draft_session_id: string;
+          id?: string;
+          pick_number: number;
+          player_id: string;
+          team_id: string;
+        };
         Update: {
-          created_at?: string
-          draft_session_id?: string
-          id?: string
-          pick_number?: number
-          player_id?: string
-          team_id?: string
-        }
+          created_at?: string;
+          draft_session_id?: string;
+          id?: string;
+          pick_number?: number;
+          player_id?: string;
+          team_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "draft_picks_draft_session_id_fkey"
-            columns: ["draft_session_id"]
-            isOneToOne: false
-            referencedRelation: "draft_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "draft_picks_draft_session_id_fkey";
+            columns: ["draft_session_id"];
+            isOneToOne: false;
+            referencedRelation: "draft_sessions";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       draft_sessions: {
         Row: {
-          created_at: string
-          created_by: string | null
-          event_id: string
-          id: string
-          status: string
-          updated_at: string
-        }
+          created_at: string;
+          created_by: string | null;
+          event_id: string;
+          id: string;
+          status: string;
+          updated_at: string;
+        };
         Insert: {
-          created_at?: string
-          created_by?: string | null
-          event_id: string
-          id?: string
-          status?: string
-          updated_at?: string
-        }
+          created_at?: string;
+          created_by?: string | null;
+          event_id: string;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+        };
         Update: {
-          created_at?: string
-          created_by?: string | null
-          event_id?: string
-          id?: string
-          status?: string
-          updated_at?: string
-        }
+          created_at?: string;
+          created_by?: string | null;
+          event_id?: string;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "draft_sessions_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "draft_sessions_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       event_dates: {
         Row: {
-          created_at: string
-          date: string
-          end_time: string
-          event_id: string
-          id: string
-          start_time: string
-        }
+          created_at: string;
+          date: string;
+          end_time: string;
+          event_id: string;
+          id: string;
+          start_time: string;
+        };
         Insert: {
-          created_at?: string
-          date: string
-          end_time: string
-          event_id: string
-          id?: string
-          start_time: string
-        }
+          created_at?: string;
+          date: string;
+          end_time: string;
+          event_id: string;
+          id?: string;
+          start_time: string;
+        };
         Update: {
-          created_at?: string
-          date?: string
-          end_time?: string
-          event_id?: string
-          id?: string
-          start_time?: string
-        }
+          created_at?: string;
+          date?: string;
+          end_time?: string;
+          event_id?: string;
+          id?: string;
+          start_time?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "event_dates_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "event_dates_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       event_rsvps: {
         Row: {
-          created_at: string
-          event_id: string | null
-          id: string
-          player_id: string | null
-          status: string
-          updated_at: string
-        }
+          created_at: string;
+          event_id: string | null;
+          id: string;
+          player_id: string | null;
+          status: string;
+          updated_at: string;
+        };
         Insert: {
-          created_at?: string
-          event_id?: string | null
-          id?: string
-          player_id?: string | null
-          status: string
-          updated_at?: string
-        }
+          created_at?: string;
+          event_id?: string | null;
+          id?: string;
+          player_id?: string | null;
+          status: string;
+          updated_at?: string;
+        };
         Update: {
-          created_at?: string
-          event_id?: string | null
-          id?: string
-          player_id?: string | null
-          status?: string
-          updated_at?: string
-        }
+          created_at?: string;
+          event_id?: string | null;
+          id?: string;
+          player_id?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "event_rsvps_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "event_rsvps_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       events: {
         Row: {
-          created_at: string
-          draft_status: string | null
-          id: string
-          league_id: string
-          location: string
-          num_teams: number
-          roster_spots: number
-          rsvp_deadline_hours: number
-          team1_color: string | null
-          team1_name: string | null
-          team2_color: string | null
-          team2_name: string | null
-          title: string
-          updated_at: string
-        }
+          created_at: string;
+          draft_status: string | null;
+          id: string;
+          league_id: string;
+          location: string;
+          num_teams: number;
+          roster_spots: number;
+          rsvp_deadline_hours: number;
+          team1_color: string | null;
+          team1_name: string | null;
+          team2_color: string | null;
+          team2_name: string | null;
+          title: string;
+          updated_at: string;
+        };
         Insert: {
-          created_at?: string
-          draft_status?: string | null
-          id?: string
-          league_id: string
-          location: string
-          num_teams: number
-          roster_spots: number
-          rsvp_deadline_hours: number
-          team1_color?: string | null
-          team1_name?: string | null
-          team2_color?: string | null
-          team2_name?: string | null
-          title: string
-          updated_at?: string
-        }
+          created_at?: string;
+          draft_status?: string | null;
+          id?: string;
+          league_id: string;
+          location: string;
+          num_teams: number;
+          roster_spots: number;
+          rsvp_deadline_hours: number;
+          team1_color?: string | null;
+          team1_name?: string | null;
+          team2_color?: string | null;
+          team2_name?: string | null;
+          title: string;
+          updated_at?: string;
+        };
         Update: {
-          created_at?: string
-          draft_status?: string | null
-          id?: string
-          league_id?: string
-          location?: string
-          num_teams?: number
-          roster_spots?: number
-          rsvp_deadline_hours?: number
-          team1_color?: string | null
-          team1_name?: string | null
-          team2_color?: string | null
-          team2_name?: string | null
-          title?: string
-          updated_at?: string
-        }
+          created_at?: string;
+          draft_status?: string | null;
+          id?: string;
+          league_id?: string;
+          location?: string;
+          num_teams?: number;
+          roster_spots?: number;
+          rsvp_deadline_hours?: number;
+          team1_color?: string | null;
+          team1_name?: string | null;
+          team2_color?: string | null;
+          team2_name?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "events_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "leagues"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "events_league_id_fkey";
+            columns: ["league_id"];
+            isOneToOne: false;
+            referencedRelation: "leagues";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       league_members: {
         Row: {
-          id: string
-          joined_at: string | null
-          league_id: string | null
-          player_id: string | null
-        }
+          id: string;
+          joined_at: string | null;
+          league_id: string | null;
+          player_id: string | null;
+        };
         Insert: {
-          id?: string
-          joined_at?: string | null
-          league_id?: string | null
-          player_id?: string | null
-        }
+          id?: string;
+          joined_at?: string | null;
+          league_id?: string | null;
+          player_id?: string | null;
+        };
         Update: {
-          id?: string
-          joined_at?: string | null
-          league_id?: string | null
-          player_id?: string | null
-        }
+          id?: string;
+          joined_at?: string | null;
+          league_id?: string | null;
+          player_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "league_members_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "leagues"
-            referencedColumns: ["id"]
+            foreignKeyName: "league_members_league_id_fkey";
+            columns: ["league_id"];
+            isOneToOne: false;
+            referencedRelation: "leagues";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "league_members_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "league_members_player_id_fkey";
+            columns: ["player_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       leagues: {
         Row: {
-          city: string
-          created_at: string
-          description: string | null
-          id: string
-          is_private: boolean
-          league_code: string | null
-          location: string
-          logo_url: string | null
-          name: string
-          owner_id: string
-          requires_approval: boolean
-          sport: string
-          start_date: string
-          updated_at: string
-        }
+          city: string;
+          created_at: string;
+          description: string | null;
+          id: string;
+          is_private: boolean;
+          league_code: string | null;
+          location: string;
+          logo_url: string | null;
+          name: string;
+          owner_id: string;
+          requires_approval: boolean;
+          sport: string;
+          start_date: string;
+          updated_at: string;
+        };
         Insert: {
-          city: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_private?: boolean
-          league_code?: string | null
-          location: string
-          logo_url?: string | null
-          name: string
-          owner_id: string
-          requires_approval?: boolean
-          sport: string
-          start_date?: string
-          updated_at?: string
-        }
+          city: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_private?: boolean;
+          league_code?: string | null;
+          location: string;
+          logo_url?: string | null;
+          name: string;
+          owner_id: string;
+          requires_approval?: boolean;
+          sport: string;
+          start_date?: string;
+          updated_at?: string;
+        };
         Update: {
-          city?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_private?: boolean
-          league_code?: string | null
-          location?: string
-          logo_url?: string | null
-          name?: string
-          owner_id?: string
-          requires_approval?: boolean
-          sport?: string
-          start_date?: string
-          updated_at?: string
-        }
+          city?: string;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_private?: boolean;
+          league_code?: string | null;
+          location?: string;
+          logo_url?: string | null;
+          name?: string;
+          owner_id?: string;
+          requires_approval?: boolean;
+          sport?: string;
+          start_date?: string;
+          updated_at?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "leagues_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "leagues_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       player_stats: {
         Row: {
-          created_at: string
-          id: string
-          league_id: string | null
-          losses: number | null
-          player_id: string | null
-          points: number | null
-          ties: number | null
-          updated_at: string
-          wins: number | null
-        }
+          created_at: string;
+          id: string;
+          league_id: string | null;
+          losses: number | null;
+          player_id: string | null;
+          points: number | null;
+          ties: number | null;
+          updated_at: string;
+          wins: number | null;
+        };
         Insert: {
-          created_at?: string
-          id?: string
-          league_id?: string | null
-          losses?: number | null
-          player_id?: string | null
-          points?: number | null
-          ties?: number | null
-          updated_at?: string
-          wins?: number | null
-        }
+          created_at?: string;
+          id?: string;
+          league_id?: string | null;
+          losses?: number | null;
+          player_id?: string | null;
+          points?: number | null;
+          ties?: number | null;
+          updated_at?: string;
+          wins?: number | null;
+        };
         Update: {
-          created_at?: string
-          id?: string
-          league_id?: string | null
-          losses?: number | null
-          player_id?: string | null
-          points?: number | null
-          ties?: number | null
-          updated_at?: string
-          wins?: number | null
-        }
+          created_at?: string;
+          id?: string;
+          league_id?: string | null;
+          losses?: number | null;
+          player_id?: string | null;
+          points?: number | null;
+          ties?: number | null;
+          updated_at?: string;
+          wins?: number | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "player_stats_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "leagues"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "player_stats_league_id_fkey";
+            columns: ["league_id"];
+            isOneToOne: false;
+            referencedRelation: "leagues";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       profiles: {
         Row: {
-          avatar_url: string | null
-          city: string | null
-          created_at: string
-          date_of_birth: string | null
-          full_name: string | null
-          id: string
-          nickname: string | null
-          phone: string | null
-          positions: string[] | null
-          role: string | null
-          sports: string[] | null
-          updated_at: string
-        }
+          avatar_url: string | null;
+          city: string | null;
+          created_at: string;
+          date_of_birth: string | null;
+          email: string | null;
+          full_name: string | null;
+          id: string;
+          nickname: string | null;
+          phone: string | null;
+          positions: string[] | null;
+          role: string | null;
+          sports: string[] | null;
+          updated_at: string;
+        };
         Insert: {
-          avatar_url?: string | null
-          city?: string | null
-          created_at?: string
-          date_of_birth?: string | null
-          full_name?: string | null
-          id: string
-          nickname?: string | null
-          phone?: string | null
-          positions?: string[] | null
-          role?: string | null
-          sports?: string[] | null
-          updated_at?: string
-        }
+          avatar_url?: string | null;
+          city?: string | null;
+          created_at?: string;
+          date_of_birth?: string | null;
+          full_name?: string | null;
+          id: string;
+          nickname?: string | null;
+          phone?: string | null;
+          positions?: string[] | null;
+          role?: string | null;
+          sports?: string[] | null;
+          updated_at?: string;
+        };
         Update: {
-          avatar_url?: string | null
-          city?: string | null
-          created_at?: string
-          date_of_birth?: string | null
-          full_name?: string | null
-          id?: string
-          nickname?: string | null
-          phone?: string | null
-          positions?: string[] | null
-          role?: string | null
-          sports?: string[] | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
+          avatar_url?: string | null;
+          city?: string | null;
+          created_at?: string;
+          date_of_birth?: string | null;
+          full_name?: string | null;
+          id?: string;
+          nickname?: string | null;
+          phone?: string | null;
+          positions?: string[] | null;
+          role?: string | null;
+          sports?: string[] | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       team_captains: {
         Row: {
-          captain_id: string
-          created_at: string
-          event_id: string
-          id: string
-          team_id: string
-        }
+          captain_id: string;
+          created_at: string;
+          event_id: string;
+          id: string;
+          team_id: string;
+        };
         Insert: {
-          captain_id: string
-          created_at?: string
-          event_id: string
-          id?: string
-          team_id: string
-        }
+          captain_id: string;
+          created_at?: string;
+          event_id: string;
+          id?: string;
+          team_id: string;
+        };
         Update: {
-          captain_id?: string
-          created_at?: string
-          event_id?: string
-          id?: string
-          team_id?: string
-        }
+          captain_id?: string;
+          created_at?: string;
+          event_id?: string;
+          id?: string;
+          team_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "team_captains_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "team_captains_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       team_rosters: {
         Row: {
-          created_at: string
-          event_id: string
-          id: string
-          is_captain: boolean
-          player_id: string
-          team_id: string
-        }
+          created_at: string;
+          event_id: string;
+          id: string;
+          is_captain: boolean;
+          player_id: string;
+          team_id: string;
+        };
         Insert: {
-          created_at?: string
-          event_id: string
-          id?: string
-          is_captain?: boolean
-          player_id: string
-          team_id: string
-        }
+          created_at?: string;
+          event_id: string;
+          id?: string;
+          is_captain?: boolean;
+          player_id: string;
+          team_id: string;
+        };
         Update: {
-          created_at?: string
-          event_id?: string
-          id?: string
-          is_captain?: boolean
-          player_id?: string
-          team_id?: string
-        }
+          created_at?: string;
+          event_id?: string;
+          id?: string;
+          is_captain?: boolean;
+          player_id?: string;
+          team_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "team_rosters_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "team_rosters_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       teammate_ratings: {
         Row: {
-          created_at: string
-          id: string
-          league_id: string | null
-          rated_id: string | null
-          rater_id: string | null
-          rating: number | null
-          updated_at: string
-        }
+          created_at: string;
+          id: string;
+          league_id: string | null;
+          rated_id: string | null;
+          rater_id: string | null;
+          rating: number | null;
+          updated_at: string;
+        };
         Insert: {
-          created_at?: string
-          id?: string
-          league_id?: string | null
-          rated_id?: string | null
-          rater_id?: string | null
-          rating?: number | null
-          updated_at?: string
-        }
+          created_at?: string;
+          id?: string;
+          league_id?: string | null;
+          rated_id?: string | null;
+          rater_id?: string | null;
+          rating?: number | null;
+          updated_at?: string;
+        };
         Update: {
-          created_at?: string
-          id?: string
-          league_id?: string | null
-          rated_id?: string | null
-          rater_id?: string | null
-          rating?: number | null
-          updated_at?: string
-        }
+          created_at?: string;
+          id?: string;
+          league_id?: string | null;
+          rated_id?: string | null;
+          rater_id?: string | null;
+          rating?: number | null;
+          updated_at?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "teammate_ratings_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "leagues"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-    }
+            foreignKeyName: "teammate_ratings_league_id_fkey";
+            columns: ["league_id"];
+            isOneToOne: false;
+            referencedRelation: "leagues";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+    };
     Views: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     Functions: {
       delete_user: {
         Args: {
-          user_id: string
-        }
-        Returns: undefined
-      }
+          user_id: string;
+        };
+        Returns: undefined;
+      };
       is_league_member: {
         Args: {
-          league_id: string
-          user_id?: string
-        }
-        Returns: boolean
-      }
+          league_id: string;
+          user_id?: string;
+        };
+        Returns: boolean;
+      };
       is_league_owner: {
         Args: {
-          league_id: string
-          user_id?: string
-        }
-        Returns: boolean
-      }
-    }
+          league_id: string;
+          user_id?: string;
+        };
+        Returns: boolean;
+      };
+    };
     Enums: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type PublicSchema = Database[Extract<keyof Database, "public">];
 
 export type Tables<
   PublicTableNameOrOptions extends
@@ -541,23 +542,23 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never = never
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
+      Row: infer R;
     }
     ? R
     : never
   : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+      PublicSchema["Views"])
+  ? (PublicSchema["Tables"] &
+      PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R;
+    }
+    ? R
     : never
+  : never;
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
@@ -565,20 +566,20 @@ export type TablesInsert<
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never = never
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
+      Insert: infer I;
     }
     ? I
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+      Insert: infer I;
+    }
+    ? I
     : never
+  : never;
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
@@ -586,20 +587,20 @@ export type TablesUpdate<
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never = never
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
+      Update: infer U;
     }
     ? U
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+      Update: infer U;
+    }
+    ? U
     : never
+  : never;
 
 export type Enums<
   PublicEnumNameOrOptions extends
@@ -607,24 +608,24 @@ export type Enums<
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never = never
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
+  ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+  : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof PublicSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof Database;
   }
     ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never = never
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never;

@@ -47,6 +47,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loading = loadingSession || isProfileComplete == null;
 
+  console.log(user);
+
   useEffect(() => {
     const initializeAuth = async () => {
       try {

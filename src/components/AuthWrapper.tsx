@@ -31,7 +31,7 @@ export default function AuthWrapper() {
       return (
         <Navigate
           to={
-            user.user_metadata?.role === "organizer"
+            user?.role === "organizer"
               ? "/create-league"
               : "/complete-registration"
           }

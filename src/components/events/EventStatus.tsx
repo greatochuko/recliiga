@@ -19,7 +19,7 @@ export function EventStatus({ event }: EventStatusProps) {
     event.captains || {}
   );
   const { user } = useAuth();
-  const isOrganizer = user?.user_metadata?.role === "organizer";
+  const isOrganizer = user?.role === "organizer";
 
   // Fetch team captains if not provided
   useEffect(() => {

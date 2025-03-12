@@ -6,7 +6,7 @@ export async function checkProfileCompletion(user: User) {
 
   try {
     // Check if the user has completed registration based on their role
-    if (user.user_metadata?.role === "organizer") {
+    if (user?.role === "organizer") {
       // Check if league organizer has created a league
       const { data: leagues } = await supabase
         .from("leagues")
