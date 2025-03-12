@@ -54,15 +54,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session },
         } = await supabase.auth.getSession();
 
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select()
-          .eq("id", session?.user.id)
-          .single();
+        if (session.user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select()
+            .eq("id", session?.user.id)
+            .single();
 
-        setUser(profile);
+          setUser(profile);
+        }
 
-        const profileComplete = await checkProfileCompletion(session.user);
+        const profileComplete = await checkProfileCompletion(session?.user);
         setIsProfileComplete(profileComplete);
       } catch (err) {
         const error = err as Error;
