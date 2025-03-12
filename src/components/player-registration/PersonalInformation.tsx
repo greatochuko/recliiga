@@ -1,5 +1,5 @@
 import { PlayerProfile } from "@/pages/PlayerRegistration";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Upload } from "lucide-react";
@@ -20,19 +20,19 @@ export default function PersonalInformation({
   const [dobDay, setDobDay] = useState("");
   const [dobYear, setDobYear] = useState("");
 
-  // useEffect(() => {
-  //   const updateDateOfBirth = () => {
-  //     if (dobMonth && dobDay && dobYear) {
-  //       const date = new Date(
-  //         parseInt(dobYear),
-  //         parseInt(dobMonth) - 1,
-  //         parseInt(dobDay)
-  //       );
-  //       updatePlayerData({ dateOfBirth: date });
-  //     }
-  //   };
-  //   updateDateOfBirth();
-  // }, [dobMonth, dobDay, dobYear, updatePlayerData]);
+  useEffect(() => {
+    const updateDateOfBirth = () => {
+      if (dobMonth && dobDay && dobYear) {
+        const date = new Date(
+          parseInt(dobYear),
+          parseInt(dobMonth) - 1,
+          parseInt(dobDay)
+        );
+        updatePlayerData({ dateOfBirth: date });
+      }
+    };
+    updateDateOfBirth();
+  }, [dobMonth, dobDay, dobYear, updatePlayerData]);
 
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
@@ -136,7 +136,7 @@ export default function PersonalInformation({
                   id="dobMonth"
                   value={dobMonth}
                   onChange={(e) => setDobMonth(e.target.value)}
-                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full"
+                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full cursor-pointer"
                 >
                   <option hidden>Month</option>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
@@ -172,7 +172,7 @@ export default function PersonalInformation({
                   id="dobDay"
                   value={dobDay}
                   onChange={(e) => setDobDay(e.target.value)}
-                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full"
+                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full cursor-pointer"
                 >
                   <option hidden>Day</option>
                   {generateDayOptions().map((day) => (
@@ -203,7 +203,7 @@ export default function PersonalInformation({
                   id="dobYear"
                   value={dobYear}
                   onChange={(e) => setDobYear(e.target.value)}
-                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full"
+                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full cursor-pointer"
                 >
                   <option hidden>Year</option>
                   {generateYearOptions().map((year) => (

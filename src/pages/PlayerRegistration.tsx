@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -107,9 +107,23 @@ export default function PlayerRegistration() {
     }
   };
 
-  const updatePlayerData = (newData: Partial<PlayerProfile>) => {
+  const updatePlayerData = useCallback((newData: Partial<PlayerProfile>) => {
     setPlayerData((prevData) => ({ ...prevData, ...newData }));
-  };
+  }, []);
+
+  const cannotProceed =
+    currentStep === 1
+      ? !playerData.nickname.trim() ||
+        !playerData.dateOfBirth ||
+        !playerData.city.trim()
+      : currentStep === 2
+      ? playerData.sports.length < 1 ||
+        playerData.sports.some(
+          (sport) =>
+            !playerData.positions[sport] ||
+            playerData.positions[sport].length < 1
+        )
+      : false;
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -198,6 +212,7 @@ export default function PlayerRegistration() {
               <Button
                 className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
                 onClick={handleNext}
+                disabled={cannotProceed}
               >
                 {currentStep === steps.length
                   ? "Complete Registration"
