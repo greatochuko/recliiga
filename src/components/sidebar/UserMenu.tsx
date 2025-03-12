@@ -58,7 +58,7 @@ export function UserMenu() {
           <button className="flex items-center gap-2">
             <User className="w-5 h-5 text-gray-500" />
             <span className="text-sm font-medium">
-              {user?.user_metadata?.full_name || "User"}
+              {user?.full_name || "User"}
             </span>
             <ChevronDown className="w-4 h-4 text-gray-500" />
           </button>

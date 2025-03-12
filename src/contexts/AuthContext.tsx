@@ -1,12 +1,27 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { checkProfileCompletion } from "@/api/user";
 
+type UserType = {
+  avatar_url: string | null;
+  city: string | null;
+  created_at: string;
+  date_of_birth: string | null;
+  full_name: string | null;
+  id: string;
+  nickname: string | null;
+  phone: string | null;
+  positions: string[] | null;
+  role: string | null;
+  sports: string[] | null;
+  updated_at: string;
+  email: string;
+};
+
 interface AuthContextType {
-  user: User | null;
+  user: UserType | null;
   signUp: (
     email: string,
     password: string,
@@ -23,7 +38,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [loadingSession, setLoading] = useState(true);
   const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(
     null
@@ -38,7 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const {
           data: { session },
         } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select()
+          .eq("id", session?.user.id)
+          .single();
+
+        setUser(profile);
+
         const profileComplete = await checkProfileCompletion(session.user);
         setIsProfileComplete(profileComplete);
       } catch (err) {
@@ -62,7 +85,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
       });
       if (error) throw error;
-      setUser(user);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select()
+        .eq("id", user.id)
+        .single();
+
+      setUser(profile);
       toast.success("Successfully signed in!");
     } catch (err) {
       const error = err as Error;

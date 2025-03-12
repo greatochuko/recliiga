@@ -40,6 +40,8 @@ export default function Profile() {
 
         if (error) throw error;
 
+        console.log({ data });
+
         if (data) {
           setFormData({
             full_name: data.full_name || "",
