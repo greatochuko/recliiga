@@ -54,11 +54,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session },
         } = await supabase.auth.getSession();
 
-        if (session.user) {
+        if (session) {
           const { data: profile } = await supabase
             .from("profiles")
             .select()
-            .eq("id", session?.user.id)
+            .eq("id", session.user.id)
             .single();
 
           setUser(profile);
