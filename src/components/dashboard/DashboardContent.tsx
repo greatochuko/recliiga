@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Star } from "lucide-react";
+import { User } from "lucide-react";
 import {
   QueryClient,
   QueryClientProvider,
@@ -207,7 +207,6 @@ function PlayerDashboardContent() {
             <PlayerRankCard
               league={{
                 name: getLeagueName(stats.league),
-                playerName: stats.name,
                 rank: stats.position,
                 totalPlayers: stats.totalTeams,
                 rating: Math.max(
