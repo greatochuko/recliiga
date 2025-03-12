@@ -3,6 +3,7 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { checkProfileCompletion } from "@/api/user";
 
 interface AuthContextType {
   user: User | null;
@@ -16,14 +17,20 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
   loading: boolean;
+  isProfileComplete: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingSession, setLoading] = useState(true);
+  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(
+    null
+  );
   const navigate = useNavigate();
+
+  const loading = loadingSession || isProfileComplete == null;
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -32,8 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session },
         } = await supabase.auth.getSession();
         setUser(session?.user ?? null);
-      } catch (error) {
-        console.error("Error checking auth session:", error);
+        const profileComplete = await checkProfileCompletion(session.user);
+        setIsProfileComplete(profileComplete);
+      } catch (err) {
+        const error = err as Error;
+        console.error("Error checking auth session:", error.message);
       } finally {
         setLoading(false);
       }
@@ -172,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       navigate("/sign-in");
     } catch (err) {
       const error = err as Error;
-      console.error("Error in deletion process:", error);
+      console.error("Error in deletion process:", error.message);
       toast.error(error.message || "Failed to delete account");
       throw error;
     }
@@ -188,6 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         resetPassword,
         deleteAccount,
         loading,
+        isProfileComplete,
       }}
     >
       {children}

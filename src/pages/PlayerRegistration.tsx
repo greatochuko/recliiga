@@ -39,6 +39,7 @@ const initialPlayerData = {
 };
 
 export default function PlayerRegistration() {
+  const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [playerData, setPlayerData] =
     useState<PlayerProfile>(initialPlayerData);
@@ -61,6 +62,7 @@ export default function PlayerRegistration() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const profilePositions = playerData.sports.map((sport) =>
         playerData.positions[sport] ? playerData.positions[sport].join(",") : ""
@@ -98,6 +100,7 @@ export default function PlayerRegistration() {
       toast.error(
         error.message || "An error occurred while saving your profile"
       );
+      setLoading(false);
     }
   };
 
@@ -212,7 +215,7 @@ export default function PlayerRegistration() {
               <Button
                 className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
                 onClick={handleNext}
-                disabled={cannotProceed}
+                disabled={loading || cannotProceed}
               >
                 {currentStep === steps.length
                   ? "Complete Registration"
