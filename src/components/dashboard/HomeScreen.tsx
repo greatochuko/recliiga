@@ -1,12 +1,8 @@
-
-import { useAuth } from '@/contexts/AuthContext';
-import PlayerDashboard from './PlayerDashboardContent';
+import PlayerDashboard from "./PlayerDashboardContent";
 
 export function HomeScreen() {
-  const { user } = useAuth();
-  
   return (
-    <div className="pt-20 p-4 max-w-6xl mx-auto">
+    <div className="pt-20 p-4 md:p-6 max-w-6xl mx-auto">
       <PlayerDashboard />
     </div>
   );
