@@ -1,12 +1,12 @@
+import { UserType } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
 
-export async function checkProfileCompletion(user: User) {
+export async function checkProfileCompletion(user: UserType) {
   if (!user) return false;
 
   try {
     // Check if the user has completed registration based on their role
-    if (user?.role === "organizer") {
+    if (user.role === "organizer") {
       // Check if league organizer has created a league
       const { data: leagues } = await supabase
         .from("leagues")
@@ -14,7 +14,7 @@ export async function checkProfileCompletion(user: User) {
         .eq("owner_id", user.id)
         .limit(1);
 
-      return leagues && leagues.length > 0;
+      return Boolean(leagues && leagues.length > 0);
     } else {
       // Check if player has completed profile setup
       const { data: profile } = await supabase

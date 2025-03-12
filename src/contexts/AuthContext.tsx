@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { checkProfileCompletion } from "@/api/user";
 
-type UserType = {
+export type UserType = {
   avatar_url: string | null;
   city: string | null;
   created_at: string;
@@ -54,17 +54,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session },
         } = await supabase.auth.getSession();
 
-        if (session) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select()
-            .eq("id", session.user.id)
-            .single();
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select()
+          .eq("id", session.user.id)
+          .single();
 
-          setUser(profile);
-        }
+        setUser(profile);
 
-        const profileComplete = await checkProfileCompletion(session?.user);
+        const profileComplete = await checkProfileCompletion(profile);
         setIsProfileComplete(profileComplete);
       } catch (err) {
         const error = err as Error;
