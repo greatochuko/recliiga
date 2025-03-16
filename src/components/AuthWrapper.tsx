@@ -9,8 +9,6 @@ export default function AuthWrapper() {
   const { user, loading, isProfileComplete } = useAuth();
   const { pathname } = useLocation();
 
-  console.log({ isProfileComplete });
-
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
   const isCompleteProfileRoute = completeProfileRoutes.some((route) =>
     pathname.startsWith(route)

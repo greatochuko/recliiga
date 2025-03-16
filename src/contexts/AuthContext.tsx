@@ -68,6 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const error = err as Error;
         console.error("Error checking auth session:", error.message);
       } finally {
+        setIsProfileComplete(false);
         setLoading(false);
       }
     };
