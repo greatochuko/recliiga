@@ -78,7 +78,7 @@ export default function RateTeammates() {
 
           <div className="pt-16">
             <div className="max-w-4xl mx-auto p-4">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-4 ml-auto w-fit px-2">
                 <Button
                   variant="ghost"
                   className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
