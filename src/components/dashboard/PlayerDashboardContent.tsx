@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Star } from "lucide-react";
+import { User } from "lucide-react";
 import {
   QueryClient,
   QueryClientProvider,
@@ -207,7 +207,6 @@ function PlayerDashboardContent() {
             <PlayerRankCard
               league={{
                 name: getLeagueName(stats.league),
-                playerName: stats.name,
                 rank: stats.position,
                 totalPlayers: stats.totalTeams,
                 rating: Math.max(
@@ -322,9 +321,10 @@ function PlayerDashboardContent() {
           <div className="grid sm:grid-cols-2 gap-4 flex-grow">
             {teammates &&
               teammates.slice(0, 8).map((teammate) => (
-                <div
+                <Link
+                  to="/rate-teammates"
                   key={teammate.id}
-                  className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between"
+                  className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between hover:bg-gray-50 duration-200"
                 >
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
@@ -338,7 +338,7 @@ function PlayerDashboardContent() {
                     </div>
                   </div>
                   <StarRating rating={teammate.rating} />
-                </div>
+                </Link>
               ))}
           </div>
         </div>

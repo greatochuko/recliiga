@@ -1,4 +1,3 @@
-
 export interface Team {
   id: string;
   name: string;
@@ -56,10 +55,12 @@ export interface Teammate {
   name: string;
   position: string;
   rating: number;
-  avatarUrl?: string;
+  avatar?: string;
 }
 
 // Helper function to get league name regardless of format
-export function getLeagueName(league: string | { name: string; id?: string }): string {
-  return typeof league === 'string' ? league : league.name;
+export function getLeagueName(
+  league: string | { name: string; id?: string }
+): string {
+  return typeof league === "string" ? league : league.name;
 }
