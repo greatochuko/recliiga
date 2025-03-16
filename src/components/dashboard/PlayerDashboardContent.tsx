@@ -6,7 +6,6 @@ import {
   QueryClientProvider,
   useQuery,
 } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { LeagueSelector } from "./LeagueSelector";
 import { StarRating } from "./StarRating";
 import { PlayerRankCard } from "./PlayerRankCard";
@@ -14,9 +13,11 @@ import {
   League,
   PlayerStats,
   Teammate,
-  Event,
   getLeagueName,
 } from "@/types/dashboard";
+import { Event } from "@/types/events";
+import { EventsCard } from "../events/EventsCard";
+import { upcomingEvents } from "../events/MockEventData";
 
 // Mock API functions
 async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
@@ -73,70 +74,71 @@ async function fetchTeammates(): Promise<Teammate[]> {
 }
 
 async function fetchUpcomingEvents(): Promise<Event[]> {
-  return [
-    {
-      id: "1",
-      date: "20-Aug-2025",
-      time: "6:00 PM",
-      location: "Allianz Arena",
-      team1: {
-        name: "Eagle Claws",
-        avatar: "/placeholder.svg?height=64&width=64",
-        color: "#272D31",
-      },
-      team2: {
-        name: "Ravens",
-        avatar: "/placeholder.svg?height=64&width=64",
-        color: "#FFC700",
-      },
-      rsvpDeadline: new Date("2025-08-19T18:00:00"),
-      status: "attending",
-      league: "Premier League",
-      hasResults: false,
-    },
-    {
-      id: "2",
-      date: "25-Aug-2025",
-      time: "7:30 PM",
-      location: "Stamford Bridge",
-      team1: {
-        name: "Blue Lions",
-        avatar: "/placeholder.svg?height=64&width=64",
-        color: "#034694",
-      },
-      team2: {
-        name: "Red Devils",
-        avatar: "/placeholder.svg?height=64&width=64",
-        color: "#DA291C",
-      },
-      rsvpDeadline: new Date("2025-08-24T19:30:00"),
-      status: null,
-      spotsLeft: 2,
-      league: "Championship",
-      hasResults: false,
-    },
-    {
-      id: "3",
-      date: "01-Sep-2025",
-      time: "5:00 PM",
-      location: "Camp Nou",
-      team1: {
-        name: "Catalonia FC",
-        avatar: "/placeholder.svg?height=64&width=64",
-        color: "#A50044",
-      },
-      team2: {
-        name: "White Angels",
-        avatar: "/placeholder.svg?height=64&width=64",
-        color: "#FFFFFF",
-      },
-      rsvpDeadline: new Date("2025-08-31T17:00:00"),
-      status: null,
-      spotsLeft: 1,
-      league: "La Liga",
-      hasResults: false,
-    },
-  ];
+  return upcomingEvents;
+  // return [
+  //   {
+  //     id: 1,
+  //     date: "20-Aug-2025",
+  //     time: "6:00 PM",
+  //     location: "Allianz Arena",
+  //     team1: {
+  //       name: "Eagle Claws",
+  //       avatar: "/placeholder.svg?height=64&width=64",
+  //       color: "#272D31",
+  //     },
+  //     team2: {
+  //       name: "Ravens",
+  //       avatar: "/placeholder.svg?height=64&width=64",
+  //       color: "#FFC700",
+  //     },
+  //     rsvpDeadline: new Date("2025-08-19T18:00:00"),
+  //     status: "attending",
+  //     league: "Premier League",
+  //     hasResults: false,
+  //   },
+  //   {
+  //     id: 2,
+  //     date: "25-Aug-2025",
+  //     time: "7:30 PM",
+  //     location: "Stamford Bridge",
+  //     team1: {
+  //       name: "Blue Lions",
+  //       avatar: "/placeholder.svg?height=64&width=64",
+  //       color: "#034694",
+  //     },
+  //     team2: {
+  //       name: "Red Devils",
+  //       avatar: "/placeholder.svg?height=64&width=64",
+  //       color: "#DA291C",
+  //     },
+  //     rsvpDeadline: new Date("2025-08-24T19:30:00"),
+  //     status: null,
+  //     spotsLeft: 2,
+  //     league: "Championship",
+  //     hasResults: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     date: "01-Sep-2025",
+  //     time: "5:00 PM",
+  //     location: "Camp Nou",
+  //     team1: {
+  //       name: "Catalonia FC",
+  //       avatar: "/placeholder.svg?height=64&width=64",
+  //       color: "#A50044",
+  //     },
+  //     team2: {
+  //       name: "White Angels",
+  //       avatar: "/placeholder.svg?height=64&width=64",
+  //       color: "#FFFFFF",
+  //     },
+  //     rsvpDeadline: new Date("2025-08-31T17:00:00"),
+  //     status: null,
+  //     spotsLeft: 1,
+  //     league: "La Liga",
+  //     hasResults: false,
+  //   },
+  // ];
 }
 
 function PlayerDashboardContent() {
@@ -355,41 +357,42 @@ function PlayerDashboardContent() {
         <div className="space-y-4">
           {upcomingEvents &&
             upcomingEvents.map((event) => (
-              <div key={event.id} className="mb-4">
-                {/* We'll create a separate EventCard component */}
-                <div className="card p-4 bg-white rounded-lg border border-gray-100">
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <p className="font-semibold">
-                        {event.date} - {event.time}
-                      </p>
-                      <p className="text-sm text-gray-500">{event.location}</p>
-                    </div>
-                    {event.status === "attending" && (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
-                        Attending
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between mt-3">
-                    <div className="flex items-center">
-                      <div className="mr-4 text-center">
-                        <div className="font-semibold">{event.team1.name}</div>
-                      </div>
-                      <div className="text-xl font-bold">vs</div>
-                      <div className="ml-4 text-center">
-                        <div className="font-semibold">{event.team2.name}</div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      className="text-[#FF7A00] border-[#FF7A00]"
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              <EventsCard key={event.id} event={event} showLeagueName={true} />
+              // <div key={event.id} className="mb-4">
+              //   {/* We'll create a separate EventCard component */}
+              //   <div className="card p-4 bg-white rounded-lg border border-gray-100">
+              //     <div className="flex justify-between items-center mb-2">
+              //       <div>
+              //         <p className="font-semibold">
+              //           {event.date} - {event.time}
+              //         </p>
+              //         <p className="text-sm text-gray-500">{event.location}</p>
+              //       </div>
+              //       {event.status === "attending" && (
+              //         <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+              //           Attending
+              //         </span>
+              //       )}
+              //     </div>
+              //     <div className="flex items-center justify-between mt-3">
+              //       <div className="flex items-center">
+              //         <div className="mr-4 text-center">
+              //           <div className="font-semibold">{event.team1.name}</div>
+              //         </div>
+              //         <div className="text-xl font-bold">vs</div>
+              //         <div className="ml-4 text-center">
+              //           <div className="font-semibold">{event.team2.name}</div>
+              //         </div>
+              //       </div>
+              //       <Button
+              //         variant="outline"
+              //         className="text-[#FF7A00] border-[#FF7A00]"
+              //       >
+              //         View Details
+              //       </Button>
+              //     </div>
+              //   </div>
+              // </div>
             ))}
         </div>
       </section>
