@@ -84,7 +84,7 @@ export default function RateTeammates() {
                   className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
                   onClick={() => navigate(-1)}
                 >
-                  Back
+                  Previous
                 </Button>
               </div>
               {players.length > 0 ? (
