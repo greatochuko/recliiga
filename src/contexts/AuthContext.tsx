@@ -39,13 +39,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
-  const [loadingSession, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(
     null
   );
   const navigate = useNavigate();
-
-  const loading = loadingSession || isProfileComplete == null;
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -64,11 +62,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const profileComplete = await checkProfileCompletion(profile);
         setIsProfileComplete(profileComplete);
-      } catch (err) {
-        const error = err as Error;
-        console.error("Error checking auth session:", error.message);
-      } finally {
+      } catch {
         setIsProfileComplete(false);
+      } finally {
         setLoading(false);
       }
     };
@@ -93,6 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq("id", user.id)
         .single();
 
+      const profileComplete = await checkProfileCompletion(profile);
+      setIsProfileComplete(profileComplete);
       setUser(profile);
       toast.success("Successfully signed in!");
     } catch (err) {
