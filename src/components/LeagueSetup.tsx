@@ -1,16 +1,14 @@
-
-import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft } from "lucide-react";
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
-import { BasicInfoStep } from './league-setup/BasicInfoStep';
-import { LogoStep } from './league-setup/LogoStep';
-import { EventsStep } from './league-setup/EventsStep';
-import { ReviewStep } from './league-setup/ReviewStep';
-import { useLeagueSetup } from '@/hooks/use-league-setup';
-import { createLeague } from './league-setup/LeagueCreation';
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { BasicInfoStep } from "./league-setup/BasicInfoStep";
+import { LogoStep } from "./league-setup/LogoStep";
+import { EventsStep } from "./league-setup/EventsStep";
+import { ReviewStep } from "./league-setup/ReviewStep";
+import { useLeagueSetup } from "@/hooks/use-league-setup";
+import { createLeague } from "./league-setup/LeagueCreation";
 
 export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
   const { user } = useAuth();
@@ -34,15 +32,15 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
   const handleCreateLeague = async () => {
     try {
       if (!user) {
-        toast.error('You must be logged in to create a league');
+        toast.error("You must be logged in to create a league");
         return;
       }
 
       await createLeague(leagueData, user.id);
-      toast.success('League created successfully!');
+      toast.success("League created successfully!");
       onCancel();
     } catch (error: any) {
-      console.error('Error creating league:', error);
+      console.error("Error creating league:", error);
       toast.error(error.message);
     }
   };
@@ -52,18 +50,14 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
       <Progress value={(step / 4) * 100} className="mb-4" />
 
       {step === 1 && (
-        <BasicInfoStep 
+        <BasicInfoStep
           leagueData={leagueData}
           onDataChange={handleInputChange}
         />
       )}
-      {step === 2 && (
-        <LogoStep 
-          onLogoChange={handleLogoChange}
-        />
-      )}
+      {step === 2 && <LogoStep onLogoChange={handleLogoChange} />}
       {step === 3 && (
-        <EventsStep 
+        <EventsStep
           leagueData={leagueData}
           onEventChange={handleEventChange}
           onRsvpDeadlineChange={handleRsvpDeadlineChange}
@@ -75,11 +69,7 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
           onAddEvent={handleAddEvent}
         />
       )}
-      {step === 4 && (
-        <ReviewStep 
-          leagueData={leagueData}
-        />
-      )}
+      {step === 4 && <ReviewStep leagueData={leagueData} />}
 
       <div className="mt-8 flex justify-between">
         {step > 1 && (
@@ -93,7 +83,10 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
           </Button>
         )}
         {step === 4 && (
-          <Button onClick={handleCreateLeague} className="ml-auto bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white">
+          <Button
+            onClick={handleCreateLeague}
+            className="ml-auto bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+          >
             Create League
           </Button>
         )}

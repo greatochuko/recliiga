@@ -258,7 +258,7 @@ export type Database = {
           owner_id: string;
           requires_approval: boolean;
           sport: string;
-          start_date: string;
+          // start_date: string;
           updated_at: string;
         };
         Insert: {
@@ -274,7 +274,7 @@ export type Database = {
           owner_id: string;
           requires_approval?: boolean;
           sport: string;
-          start_date?: string;
+          // start_date?: string;
           updated_at?: string;
         };
         Update: {

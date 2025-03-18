@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { checkProfileCompletion } from "@/api/user";
+import { getSession, login } from "@/api/auth";
 
 export type UserType = {
   avatar_url: string | null;
@@ -48,15 +49,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        // const {
+        //   data: { session },
+        // } = await supabase.auth.getSession();
 
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select()
-          .eq("id", session.user.id)
-          .single();
+        // const { data: profile } = await supabase
+        //   .from("profiles")
+        //   .select()
+        //   .eq("id", session.user.id)
+        //   .single();
+
+        const profile = await getSession();
 
         setUser(profile);
 
@@ -74,23 +77,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const {
-        error,
-        data: { user },
-      } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
+      // const {
+      //   error,
+      //   data: { user },
+      // } = await supabase.auth.signInWithPassword({
+      //   email,
+      //   password,
+      // });
+      // if (error) throw error;
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select()
-        .eq("id", user.id)
-        .single();
+      // const { data: profile } = await supabase
+      //   .from("profiles")
+      //   .select()
+      //   .eq("id", user.id)
+      //   .single();
 
-      const profileComplete = await checkProfileCompletion(profile);
-      setIsProfileComplete(profileComplete);
+      const { data: profile, error } = await login(email, password);
+
+      if (error !== null) {
+        throw new Error(error);
+      }
+      // const profileComplete = await checkProfileCompletion(profile);
+
+      // setIsProfileComplete(profileComplete);
       setUser(profile);
       toast.success("Successfully signed in!");
     } catch (err) {

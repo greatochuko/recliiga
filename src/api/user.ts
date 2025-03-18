@@ -8,11 +8,16 @@ export async function checkProfileCompletion(user: UserType) {
     // Check if the user has completed registration based on their role
     if (user.role === "organizer") {
       // Check if league organizer has created a league
-      const { data: leagues } = await supabase
-        .from("leagues")
-        .select("id")
-        .eq("owner_id", user.id)
-        .limit(1);
+      console.log({ id: user.id });
+      // const { data: leagues } = await supabase
+      //   .from("leagues")
+      //   .select("id")
+      //   .eq("owner_id", user.id)
+      //   .limit(1);
+
+      const { data: leagues } = await supabase.from("leagues").select("*");
+
+      console.log(leagues);
 
       return Boolean(leagues && leagues.length > 0);
     } else {
