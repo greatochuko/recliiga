@@ -48,7 +48,6 @@ export function UserMenu() {
     try {
       await deleteAccount();
       setShowDeleteDialog(false);
-      navigate("/sign-in");
     } catch (error) {
       console.error("Error deleting account:", error);
     }

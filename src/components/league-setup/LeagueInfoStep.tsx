@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LeagueDataType } from "@/api/league";
 
 const sports = [
   "American Football",
@@ -31,7 +32,13 @@ const sports = [
   "Water Polo",
 ];
 
-export function LeagueInfoStep({ leagueData, updateLeagueData }) {
+export function LeagueInfoStep({
+  leagueData,
+  updateLeagueData,
+}: {
+  leagueData: LeagueDataType;
+  updateLeagueData: (newData: Partial<LeagueDataType>) => void;
+}) {
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -65,8 +72,8 @@ export function LeagueInfoStep({ leagueData, updateLeagueData }) {
             </Label>
             <Input
               id="leagueName"
-              value={leagueData.leagueName}
-              onChange={(e) => updateLeagueData({ leagueName: e.target.value })}
+              value={leagueData.name}
+              onChange={(e) => updateLeagueData({ name: e.target.value })}
               placeholder="Enter league name"
               className="mt-1"
             />
@@ -110,9 +117,9 @@ export function LeagueInfoStep({ leagueData, updateLeagueData }) {
           <div>
             <Label className="text-gray-800">Privacy Setting</Label>
             <RadioGroup
-              value={leagueData.privacySetting}
+              value={leagueData.is_private ? "private" : "public"}
               onValueChange={(value) =>
-                updateLeagueData({ privacySetting: value })
+                updateLeagueData({ is_private: value === "private" })
               }
               className="mt-2"
             >

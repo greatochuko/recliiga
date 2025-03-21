@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { redirect, Link as RouterLink } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle } from "lucide-react";
@@ -45,13 +45,6 @@ export default function PlayerRegistration() {
     useState<PlayerProfile>(initialPlayerData);
 
   const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/sign-in");
-    }
-  }, [user, navigate]);
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
@@ -92,7 +85,7 @@ export default function PlayerRegistration() {
 
     toast.success("Profile updated successfully!");
 
-    navigate("/");
+    redirect("/");
   };
 
   const handlePrevious = () => {

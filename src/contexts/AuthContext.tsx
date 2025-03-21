@@ -1,9 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { checkProfileCompletion } from "@/api/user";
-import { getSession, login, logout, registerUser } from "@/api/auth";
+import {
+  deleteUser,
+  getSession,
+  login,
+  logout,
+  registerUser,
+} from "@/api/auth";
 
 export type UserType = {
   avatar_url: string | null;
@@ -38,6 +44,7 @@ interface AuthContextType {
   deleteAccount: () => Promise<void>;
   loading: boolean;
   isProfileComplete: boolean;
+  setIsProfileComplete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -91,13 +98,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (signupData: SignupDataType) => {
     try {
-      const { data: profile, error } = await registerUser(signupData);
+      const { error } = await registerUser(signupData);
 
       if (error !== null) {
         throw new Error(error);
       }
-
-      setUser(profile);
 
       // Handle different registrations based on role
       if (signupData.role === "organizer") {
@@ -110,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
       }
 
-      redirect("/sign-in");
+      navigate("/sign-in");
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -120,11 +125,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Clear local storage and session storage
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Sign out from Supabase
       const logoutSuccess = await logout();
       if (!logoutSuccess) {
         throw new Error("Something went wrong");
@@ -157,46 +157,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteAccount = async () => {
-    const { data: user, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      toast.error("No user found to delete");
-      return;
-    }
-    const userId = user.user.id;
-
     try {
       // Show a loading toast
       toast.loading("Deleting your account...");
 
-      // Call the Supabase Edge Function to delete user data
-      const { error: deleteUserError } = await supabase.functions.invoke(
-        "delete-user",
-        {
-          body: { user_id: userId },
-        }
-      );
+      const { error } = await deleteUser();
 
-      if (deleteUserError) {
-        throw new Error(
-          deleteUserError.message || "Failed to delete account data"
-        );
+      if (error) {
+        throw new Error(error || "Failed to delete account data");
       }
 
-      // Clear local storage and session storage
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Sign out from Supabase
-      await supabase.auth.signOut();
+      await logout();
 
       // Clear state
       setUser(null);
 
       toast.success("Your account has been deleted successfully");
+      toast.dismiss();
 
-      // Use window.location for a full page refresh
-      // window.location.href = "/sign-in";
-      navigate("/sign-in");
+      // redirect("/sign-in");
     } catch (err) {
       const error = err as Error;
       console.error("Error in deletion process:", error.message);
@@ -216,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         deleteAccount,
         loading,
         isProfileComplete,
+        setIsProfileComplete,
       }}
     >
       {children}

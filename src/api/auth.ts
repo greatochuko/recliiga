@@ -32,3 +32,11 @@ export async function logout() {
   });
   return data;
 }
+
+export async function deleteUser() {
+  const data = await fetchApi<boolean>("/user", {
+    method: "DELETE",
+    body: undefined,
+  });
+  return data;
+}

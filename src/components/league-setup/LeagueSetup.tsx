@@ -5,6 +5,9 @@ import { LeagueInfoStep } from "./LeagueInfoStep";
 import { LeaderboardStep } from "./LeaderboardStep";
 // import { TeamSetupStep } from "./TeamSetupStep";
 import { ConfirmationStep } from "./ConfirmationStep";
+import { toast } from "sonner";
+import { createLeague, LeagueDataType } from "@/api/league";
+import { useAuth } from "@/contexts/AuthContext";
 
 const steps = [
   { id: 1, name: "League Info" },
@@ -13,40 +16,25 @@ const steps = [
   { id: 3, name: "Confirmation" },
 ];
 
-interface LeagueSetupProps {
-  onComplete: (leagueData: any) => Promise<void>;
-}
-
-export function LeagueSetup({ onComplete }: LeagueSetupProps) {
+export function LeagueSetup() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [leagueData, setLeagueData] = useState({
-    leagueName: "",
+  const [leagueData, setLeagueData] = useState<LeagueDataType>({
+    name: "",
     sport: "",
-    privacySetting: "public",
-    seasonStartDate: null,
-    seasonEndDate: null,
-    registrationDeadline: null,
-    events: [],
-    statPoints: {
-      Win: 3,
-      Loss: 0,
-      Tie: 1.5,
-      "Captain Win": 5,
-      Attendance: 1,
-      "Non-Attendance": -1,
-    },
+    is_private: false,
     stats: [
-      { name: "Win", abbr: "W", isEditing: false },
-      { name: "Loss", abbr: "L", isEditing: false },
-      { name: "Tie", abbr: "T", isEditing: false },
-      { name: "Captain Win", abbr: "CW", isEditing: false },
-      { name: "Attendance", abbr: "ATT", isEditing: false },
-      { name: "Non-Attendance", abbr: "N-ATT", isEditing: false },
+      { name: "Win", abbr: "W", isEditing: false, points: 3 },
+      { name: "Loss", abbr: "L", isEditing: false, points: 0 },
+      { name: "Tie", abbr: "T", isEditing: false, points: 1.5 },
+      { name: "Captain Win", abbr: "CW", isEditing: false, points: 5 },
+      { name: "Attendance", abbr: "ATT", isEditing: false, points: 1 },
+      { name: "Non-Attendance", abbr: "N-ATT", isEditing: false, points: -1 },
     ],
   });
+  const { setIsProfileComplete } = useAuth();
 
-  const updateLeagueData = (newData) => {
+  const updateLeagueData = (newData: Partial<LeagueDataType>) => {
     setLeagueData((prevData) => ({ ...prevData, ...newData }));
   };
 
@@ -56,10 +44,22 @@ export function LeagueSetup({ onComplete }: LeagueSetupProps) {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (leagueData: LeagueDataType) => {
     setLoading(true);
-    await onComplete(leagueData);
-    setLoading(false);
+    try {
+      const { error } = await createLeague(leagueData);
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      toast.success("League created successfully!");
+      setIsProfileComplete(true);
+    } catch (error: any) {
+      toast.error("Failed to create league: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePrevious = () => {
@@ -69,9 +69,7 @@ export function LeagueSetup({ onComplete }: LeagueSetupProps) {
   };
 
   const cannotProceed =
-    currentStep === 1
-      ? !leagueData.leagueName.trim() || !leagueData.sport
-      : false;
+    currentStep === 1 ? !leagueData.name.trim() || !leagueData.sport : false;
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
@@ -148,7 +146,7 @@ export function LeagueSetup({ onComplete }: LeagueSetupProps) {
           ) : (
             <Button
               className="bg-[#FF7A00] ml-auto hover:bg-[#FF7A00]/90 text-white"
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(leagueData)}
               disabled={loading || cannotProceed}
             >
               {loading && <LoaderIcon className="w-4 h-4 animate-spin" />}

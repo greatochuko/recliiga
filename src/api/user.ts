@@ -1,8 +1,7 @@
 import { UserType } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { fetchApi } from "@/lib/utils";
 
-type UpdateProfileData = {
+export type UpdateProfileData = {
   nickname: string;
   date_of_birth: string;
   city: string;
@@ -12,7 +11,6 @@ type UpdateProfileData = {
 };
 
 export async function updateProfile(updateProfileData: UpdateProfileData) {
-  console.log(updateProfileData);
   const data = await fetchApi<UserType>("/user", {
     body: updateProfileData,
     method: "PATCH",
@@ -23,40 +21,4 @@ export async function updateProfile(updateProfileData: UpdateProfileData) {
 export async function checkProfileCompletion() {
   const data = await fetchApi<boolean>("/user/profile-complete");
   return data.data;
-}
-
-export async function checkProfileCompletion2(user: UserType) {
-  if (!user) return false;
-
-  try {
-    // Check if the user has completed registration based on their role
-    if (user.role === "organizer") {
-      // Check if league organizer has created a league
-      console.log({ id: user.id });
-      // const { data: leagues } = await supabase
-      //   .from("leagues")
-      //   .select("id")
-      //   .eq("owner_id", user.id)
-      //   .limit(1);
-
-      const { data: leagues } = await supabase.from("leagues").select("*");
-
-      console.log(leagues);
-
-      return Boolean(leagues && leagues.length > 0);
-    } else {
-      // Check if player has completed profile setup
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("id, nickname")
-        .eq("id", user.id)
-        .limit(1);
-
-      return profile && profile.length > 0 && profile[0].nickname !== null;
-    }
-  } catch (error) {
-    console.error("Error checking profile completion:", error);
-    // Default to false if there's an error
-    return false;
-  }
 }

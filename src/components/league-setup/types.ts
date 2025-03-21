@@ -1,4 +1,3 @@
-
 export interface EventDate {
   date: Date | null;
   startHour: string;

@@ -1,73 +1,79 @@
-
-import { useState } from 'react';
-import { Plus, Minus, Edit, Save, Trash2 } from 'lucide-react';
+import { useState } from "react";
+import { Plus, Minus, Edit, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LeagueDataType } from "@/api/league";
 
-export function LeaderboardStep({ leagueData, updateLeagueData }) {
+export function LeaderboardStep({
+  leagueData,
+  updateLeagueData,
+}: {
+  leagueData: LeagueDataType;
+  updateLeagueData: (newData: Partial<LeagueDataType>) => void;
+}) {
   const [tieLinkedToWin, setTieLinkedToWin] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handlePointChange = (stat: string, value: number) => {
-    const newStatPoints = {
-      ...leagueData.statPoints,
-      [stat]: Math.max(value, -999) // Allow negative values, but set a lower limit
-    };
-    
-    updateLeagueData({ statPoints: newStatPoints });
-    
-    if (stat === 'Tie') {
+  const handlePointChange = (statName: string, value: number) => {
+    updateLeagueData({
+      stats: leagueData.stats.map((stat) =>
+        stat.name === statName ? { ...stat, points: Number(value) || 0 } : stat
+      ),
+    });
+
+    if (statName === "Tie") {
       setTieLinkedToWin(false);
     }
   };
 
   const handleStatNameChange = (index: number, newName: string) => {
-    const newStats = [...leagueData.stats];
-    const oldName = newStats[index].name;
-    newStats[index] = { ...newStats[index], name: newName };
-    
-    const { [oldName]: points, ...rest } = leagueData.statPoints;
+    const updatedStats = leagueData.stats.map((stat, i) =>
+      i === index ? { ...stat, name: newName } : stat
+    );
+
     updateLeagueData({
-      stats: newStats,
-      statPoints: { ...rest, [newName]: points }
+      stats: updatedStats,
     });
   };
 
   const handleStatAbbrChange = (index: number, newAbbr: string) => {
-    const newStats = leagueData.stats.map((stat, i) => 
+    const newStats = leagueData.stats.map((stat, i) =>
       i === index ? { ...stat, abbr: newAbbr } : stat
     );
     updateLeagueData({ stats: newStats });
   };
 
   const handleDeleteStat = (index: number) => {
-    const statToDelete = leagueData.stats[index].name;
-    const newStats = leagueData.stats.filter((_, i) => i !== index);
-    const { [statToDelete]: _, ...newStatPoints } = leagueData.statPoints;
+    const updatedStats = leagueData.stats.filter((_, i) => i !== index);
+
     updateLeagueData({
-      stats: newStats,
-      statPoints: newStatPoints
+      stats: updatedStats,
     });
   };
 
   const handleAddStat = () => {
     const newStatName = `New Stat ${leagueData.stats.length + 1}`;
     updateLeagueData({
-      stats: [...leagueData.stats, { name: newStatName, abbr: 'NS', isEditing: true }],
-      statPoints: { ...leagueData.statPoints, [newStatName]: 0 }
+      stats: [
+        ...leagueData.stats,
+        { name: newStatName, abbr: "NS", isEditing: true, points: 0 },
+      ],
     });
     setIsEditing(true);
   };
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
-    const newStats = leagueData.stats.map(stat => ({ ...stat, isEditing: !isEditing }));
+    const newStats = leagueData.stats.map((stat) => ({
+      ...stat,
+      isEditing: !isEditing,
+    }));
     updateLeagueData({ stats: newStats });
   };
 
   const toggleStatEditing = (index: number) => {
-    const newStats = leagueData.stats.map((stat, i) => 
+    const newStats = leagueData.stats.map((stat, i) =>
       i === index ? { ...stat, isEditing: !stat.isEditing } : stat
     );
     updateLeagueData({ stats: newStats });
@@ -76,7 +82,9 @@ export function LeaderboardStep({ leagueData, updateLeagueData }) {
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">Leaderboard Statistics</CardTitle>
+        <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+          Leaderboard Statistics
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex justify-end">
@@ -84,8 +92,12 @@ export function LeaderboardStep({ leagueData, updateLeagueData }) {
             onClick={toggleEditing}
             className="bg-white text-[#FF7A00] border border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
           >
-            {isEditing ? <Save className="mr-2 h-4 w-4" /> : <Edit className="mr-2 h-4 w-4" />}
-            {isEditing ? 'Save Changes' : 'Manual Edit'}
+            {isEditing ? (
+              <Save className="mr-2 h-4 w-4" />
+            ) : (
+              <Edit className="mr-2 h-4 w-4" />
+            )}
+            {isEditing ? "Save Changes" : "Manual Edit"}
           </Button>
         </div>
         <div className="grid grid-cols-4 gap-4 mb-4 text-sm font-semibold text-gray-600">
@@ -94,11 +106,13 @@ export function LeaderboardStep({ leagueData, updateLeagueData }) {
           <div className="text-center">Points</div>
           <div className="text-center">Actions</div>
         </div>
-        
+
         {leagueData.stats.map((stat, index) => (
           <div
             key={stat.name}
-            className={`grid grid-cols-4 gap-4 py-2 ${index !== leagueData.stats.length - 1 ? 'border-b' : ''}`}
+            className={`grid grid-cols-4 gap-4 py-2 ${
+              index !== leagueData.stats.length - 1 ? "border-b" : ""
+            }`}
           >
             <div className="font-semibold text-center">
               {stat.isEditing ? (
@@ -126,12 +140,26 @@ export function LeaderboardStep({ leagueData, updateLeagueData }) {
               {stat.isEditing ? (
                 <Input
                   type="number"
-                  value={stat.name === 'Tie' && tieLinkedToWin ? (leagueData.statPoints['Win'] / 2).toFixed(1) : leagueData.statPoints[stat.name]}
-                  onChange={(e) => handlePointChange(stat.name, parseFloat(e.target.value))}
+                  value={
+                    stat.name === "Tie" && tieLinkedToWin
+                      ? (
+                          leagueData.stats.find((stat) => stat.name === "Win")
+                            .points / 2
+                        ).toFixed(1)
+                      : stat.points
+                  }
+                  onChange={(e) =>
+                    handlePointChange(stat.name, parseFloat(e.target.value))
+                  }
                   className="w-16 mx-auto text-center"
                 />
+              ) : stat.name === "Tie" && tieLinkedToWin ? (
+                (
+                  leagueData.stats.find((stat) => stat.name === "Win").points /
+                  2
+                ).toFixed(1)
               ) : (
-                stat.name === 'Tie' && tieLinkedToWin ? (leagueData.statPoints['Win'] / 2).toFixed(1) : leagueData.statPoints[stat.name]
+                stat.points
               )}
             </div>
             <div className="flex items-center justify-center space-x-2">
@@ -157,14 +185,18 @@ export function LeaderboardStep({ leagueData, updateLeagueData }) {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => handlePointChange(stat.name, leagueData.statPoints[stat.name] - 1)}
+                    onClick={() =>
+                      handlePointChange(stat.name, stat.points - 1)
+                    }
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => handlePointChange(stat.name, leagueData.statPoints[stat.name] + 1)}
+                    onClick={() =>
+                      handlePointChange(stat.name, stat.points + 1)
+                    }
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -180,7 +212,7 @@ export function LeaderboardStep({ leagueData, updateLeagueData }) {
             </div>
           </div>
         ))}
-        
+
         <div className="mt-4">
           <Button
             onClick={handleAddStat}

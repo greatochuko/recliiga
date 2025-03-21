@@ -1,7 +1,12 @@
 import { CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LeagueDataType } from "@/api/league";
 
-export function ConfirmationStep({ leagueData }) {
+export function ConfirmationStep({
+  leagueData,
+}: {
+  leagueData: LeagueDataType;
+}) {
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -24,9 +29,7 @@ export function ConfirmationStep({ leagueData }) {
           <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
             <div>
               <dt className="text-sm font-medium text-gray-500">League Name</dt>
-              <dd className="mt-1 text-sm text-gray-900">
-                {leagueData.leagueName}
-              </dd>
+              <dd className="mt-1 text-sm text-gray-900">{leagueData.name}</dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Sport</dt>
@@ -37,17 +40,17 @@ export function ConfirmationStep({ leagueData }) {
                 Privacy Setting
               </dt>
               <dd className="mt-1 text-sm text-gray-900 capitalize">
-                {leagueData.privacySetting}
+                {leagueData.is_private}
               </dd>
             </div>
-            <div>
+            {/* <div>
               <dt className="text-sm font-medium text-gray-500">
                 Total Events
               </dt>
               <dd className="mt-1 text-sm text-gray-900">
                 {leagueData.events.length}
               </dd>
-            </div>
+            </div> */}
           </dl>
         </div>
 

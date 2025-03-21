@@ -31,6 +31,14 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const cannotSubmit =
+    !role ||
+    !fullName.trim() ||
+    !email.trim() ||
+    !phone.trim() ||
+    !password.trim() ||
+    !confirmPassword.trim();
+
   const validateForm = () => {
     if (!role) {
       setError("Please select a role");
@@ -77,6 +85,7 @@ export default function SignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cannotSubmit) return;
     setError("");
 
     if (!validateForm()) return;
@@ -204,7 +213,7 @@ export default function SignUpPage() {
             <Button
               type="submit"
               className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
-              disabled={isLoading}
+              disabled={isLoading || cannotSubmit}
             >
               {isLoading ? "Signing up..." : "Sign Up"}
             </Button>
