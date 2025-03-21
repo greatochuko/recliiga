@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { checkProfileCompletion } from "@/api/user";
+import { checkProfileCompletion, updateUser } from "@/api/user";
 import {
   deleteUser,
   getSession,
@@ -42,6 +42,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
   loading: boolean;
   isProfileComplete: boolean;
   setIsProfileComplete: React.Dispatch<React.SetStateAction<boolean>>;
@@ -193,6 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         resetPassword,
         deleteAccount,
+        setUser,
         loading,
         isProfileComplete,
         setIsProfileComplete,

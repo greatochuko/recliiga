@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { updateUser } from "@/api/user";
 
 interface ProfileFormData {
   full_name: string;
@@ -18,77 +19,41 @@ interface ProfileFormData {
 }
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormData>({
-    full_name: "",
+    full_name: user.full_name || "",
     email: user?.email || "",
-    city: "",
-    phone: "",
+    city: user.city || "",
+    phone: user.phone || "",
+    avatar_url: user.avatar_url || "",
   });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user?.id)
-          .single();
-
-        if (error) throw error;
-
-        console.log({ data });
-
-        if (data) {
-          setFormData({
-            full_name: data.full_name || "",
-            email: user?.email || "",
-            city: data.city || "",
-            phone: data.phone || "",
-            avatar_url: data.avatar_url,
-          });
-        }
-      } catch (error) {
-        toast.error("Error loading profile");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchProfile();
-    }
-  }, [user]);
 
   const handleClose = () => {
     navigate(-1);
   };
 
+  const handleUpdateUser = async () => {
+    try {
+      setLoading(true);
+      const { data: updatedUser, error } = await updateUser(formData);
+      if (error) throw new Error(error);
+
+      setUser(updatedUser);
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      toast.error("Error updating profile");
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEditToggle = async () => {
     if (isEditing) {
-      try {
-        setLoading(true);
-        const { error } = await supabase
-          .from("profiles")
-          .update({
-            full_name: formData.full_name,
-            city: formData.city,
-            phone: formData.phone,
-            avatar_url: formData.avatar_url,
-          })
-          .eq("id", user?.id);
-
-        if (error) throw error;
-        toast.success("Profile updated successfully");
-      } catch (error) {
-        toast.error("Error updating profile");
-        return;
-      } finally {
-        setLoading(false);
-      }
+      await handleUpdateUser();
     }
     setIsEditing(!isEditing);
   };
@@ -96,6 +61,8 @@ export default function Profile() {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    return;
+
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
@@ -127,24 +94,24 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (loading) {
-    return (
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          <AppSidebar />
-          <main className="flex-1 bg-background relative">
-            <div className="absolute top-4 left-4 z-50 flex items-center">
-              <SidebarTrigger className="bg-white shadow-md" />
-              <h1 className="ml-4 text-2xl font-bold">Profile</h1>
-            </div>
-            <div className="flex-1 flex items-center h-full justify-center">
-              <div className="animate-pulse">Loading...</div>
-            </div>
-          </main>
-        </div>
-      </SidebarProvider>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <SidebarProvider>
+  //       <div className="min-h-screen flex w-full">
+  //         <AppSidebar />
+  //         <main className="flex-1 bg-background relative">
+  //           <div className="absolute top-4 left-4 z-50 flex items-center">
+  //             <SidebarTrigger className="bg-white shadow-md" />
+  //             <h1 className="ml-4 text-2xl font-bold">Profile</h1>
+  //           </div>
+  //           <div className="flex-1 flex items-center h-full justify-center">
+  //             <div className="animate-pulse">Loading...</div>
+  //           </div>
+  //         </main>
+  //       </div>
+  //     </SidebarProvider>
+  //   );
+  // }
 
   return (
     <SidebarProvider>

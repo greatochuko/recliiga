@@ -8,7 +8,7 @@ import PersonalInformation from "@/components/player-registration/PersonalInform
 import SportsAndPositions from "@/components/player-registration/SportsAndPositions";
 import { positions, sports } from "@/lib/constants";
 import { ConfirmationAndLeagueCode } from "@/components/player-registration/ConfirmationAndLeagueCode";
-import { updateProfile } from "@/api/user";
+import { completeProfileRegistration } from "@/api/user";
 
 export interface PlayerProfile {
   nickname: string;
@@ -68,7 +68,7 @@ export default function PlayerRegistration() {
         : null,
     };
 
-    const { error } = await updateProfile({
+    const { error } = await completeProfileRegistration({
       nickname: profileData.nickname,
       date_of_birth: profileData.date_of_birth,
       city: profileData.city,
