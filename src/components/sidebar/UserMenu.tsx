@@ -29,6 +29,7 @@ export function UserMenu() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [showInvitePopup, setShowInvitePopup] = useState(false);
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -38,6 +39,7 @@ export function UserMenu() {
       toast.error("Error logging out");
     }
   };
+
   const handleDeleteAccount = async () => {
     if (deleteConfirmation !== "Delete") {
       toast.error('Please type "Delete" to confirm');
@@ -51,6 +53,7 @@ export function UserMenu() {
       console.error("Error deleting account:", error);
     }
   };
+
   return (
     <>
       <DropdownMenu>

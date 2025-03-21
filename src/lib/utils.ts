@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function fetchApi<T>(
   subURL: string,
-  options?: Omit<RequestInit, "body"> & { body: Record<string, string> }
+  options?: Omit<RequestInit, "body"> & { body: Record<string, any> }
 ): Promise<{ data: T; error: null } | { data: null; error: string }> {
   try {
     const response = await fetch(`${import.meta.env.VITE_BASE_URL}${subURL}`, {

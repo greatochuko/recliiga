@@ -4,11 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import PersonalInformation from "@/components/player-registration/PersonalInformation";
 import SportsAndPositions from "@/components/player-registration/SportsAndPositions";
 import { positions, sports } from "@/lib/constants";
 import { ConfirmationAndLeagueCode } from "@/components/player-registration/ConfirmationAndLeagueCode";
+import { updateProfile } from "@/api/user";
 
 export interface PlayerProfile {
   nickname: string;
@@ -63,45 +63,36 @@ export default function PlayerRegistration() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    try {
-      const profilePositions = playerData.sports.map((sport) =>
-        playerData.positions[sport] ? playerData.positions[sport].join(",") : ""
-      );
+    const profilePositions = playerData.sports.map((sport) =>
+      playerData.positions[sport] ? playerData.positions[sport].join(",") : ""
+    );
 
-      const profileData = {
-        ...playerData,
-        user_id: user!.id,
-        date_of_birth: playerData.dateOfBirth
-          ? playerData.dateOfBirth.toISOString()
-          : null,
-      };
+    const profileData = {
+      ...playerData,
+      user_id: user!.id,
+      date_of_birth: playerData.dateOfBirth
+        ? playerData.dateOfBirth.toISOString()
+        : null,
+    };
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          nickname: profileData.nickname,
-          date_of_birth: profileData.date_of_birth,
-          city: profileData.city,
-          sports: profileData.sports,
-          positions: profilePositions,
-          avatar_url: profileData.avatar_url,
-        })
-        .eq("id", user!.id);
+    const { error } = await updateProfile({
+      nickname: profileData.nickname,
+      date_of_birth: profileData.date_of_birth,
+      city: profileData.city,
+      sports: profileData.sports,
+      positions: profilePositions,
+      avatar_url: profileData.avatar_url,
+    });
 
-      if (error) {
-        throw error;
-      }
-
-      toast.success("Profile updated successfully!");
-
-      navigate("/");
-    } catch (err) {
-      const error = err as Error;
-      toast.error(
-        error.message || "An error occurred while saving your profile"
-      );
+    if (error) {
+      toast.error(error || "An error occurred while saving your profile");
       setLoading(false);
+      return;
     }
+
+    toast.success("Profile updated successfully!");
+
+    navigate("/");
   };
 
   const handlePrevious = () => {

@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { checkProfileCompletion } from "@/api/user";
-import { getSession, login } from "@/api/auth";
+import { getSession, login, logout, registerUser } from "@/api/auth";
 
 export type UserType = {
   avatar_url: string | null;
@@ -21,13 +21,17 @@ export type UserType = {
   email: string;
 };
 
+export type SignupDataType = {
+  email: string;
+  password: string;
+  full_name: string;
+  role: string;
+  phone: string;
+};
+
 interface AuthContextType {
   user: UserType | null;
-  signUp: (
-    email: string,
-    password: string,
-    metadata: { full_name: string; role: string; phone: string }
-  ) => Promise<void>;
+  signUp: (signupData: SignupDataType) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -49,22 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // const {
-        //   data: { session },
-        // } = await supabase.auth.getSession();
-
-        // const { data: profile } = await supabase
-        //   .from("profiles")
-        //   .select()
-        //   .eq("id", session.user.id)
-        //   .single();
-
         const profile = await getSession();
-
         setUser(profile);
 
-        const profileComplete = await checkProfileCompletion(profile);
-        setIsProfileComplete(profileComplete);
+        if (profile) {
+          const profileComplete = await checkProfileCompletion();
+          setIsProfileComplete(profileComplete);
+        } else {
+          setIsProfileComplete(false);
+        }
       } catch {
         setIsProfileComplete(false);
       } finally {
@@ -77,29 +74,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      // const {
-      //   error,
-      //   data: { user },
-      // } = await supabase.auth.signInWithPassword({
-      //   email,
-      //   password,
-      // });
-      // if (error) throw error;
-
-      // const { data: profile } = await supabase
-      //   .from("profiles")
-      //   .select()
-      //   .eq("id", user.id)
-      //   .single();
-
       const { data: profile, error } = await login(email, password);
 
       if (error !== null) {
         throw new Error(error);
       }
-      // const profileComplete = await checkProfileCompletion(profile);
 
-      // setIsProfileComplete(profileComplete);
       setUser(profile);
       toast.success("Successfully signed in!");
     } catch (err) {
@@ -109,21 +89,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (
-    email: string,
-    password: string,
-    metadata: { full_name: string; role: string; phone: string }
-  ) => {
+  const signUp = async (signupData: SignupDataType) => {
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: metadata },
-      });
-      if (error) throw error;
+      const { data: profile, error } = await registerUser(signupData);
+
+      if (error !== null) {
+        throw new Error(error);
+      }
+
+      setUser(profile);
 
       // Handle different registrations based on role
-      if (metadata.role === "organizer") {
+      if (signupData.role === "organizer") {
         toast.success(
           "Registration successful! Please sign in to complete your league setup."
         );
@@ -133,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
       }
 
-      setUser(user);
+      redirect("/sign-in");
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -148,8 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sessionStorage.clear();
 
       // Sign out from Supabase
-      await supabase.auth.signOut();
-
+      const logoutSuccess = await logout();
+      if (!logoutSuccess) {
+        throw new Error("Something went wrong");
+      }
       // Clear state
       setUser(null);
 
