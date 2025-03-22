@@ -88,6 +88,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error);
       }
 
+      const profileComplete = await checkProfileCompletion();
+      setIsProfileComplete(profileComplete);
+
       setUser(profile);
       toast.success("Successfully signed in!");
     } catch (err) {
