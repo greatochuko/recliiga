@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { checkProfileCompletion, updateUser } from "@/api/user";
+import { checkProfileCompletion } from "@/api/user";
 import {
   deleteUser,
   getSession,
