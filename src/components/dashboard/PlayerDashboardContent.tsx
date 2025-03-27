@@ -198,7 +198,7 @@ function PlayerDashboardContent() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Your Stats</h2>
+            <h2 className="text-2xl font-bold md:ml-8">Your Stats</h2>
             <LeagueSelector
               leagues={leagues}
               onLeagueChange={handleLeagueChange}

@@ -60,14 +60,14 @@ export function UserMenu() {
           <button className="flex items-center gap-2">
             <User className="w-5 h-5 text-gray-500" />
             <span className="text-sm font-medium">
-              {user?.full_name || "User"}
+              {user?.full_name.split(" ")[0] || "User"}
             </span>
             <ChevronDown className="w-4 h-4 text-gray-500" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end">
+        <DropdownMenuContent className="w-56" align="center">
           <div className="p-2">
-            <h3 className="text-lg font-semibold px-2 py-1.5">My Account</h3>
+            <h3 className="text-lg font-semibold">My Account</h3>
           </div>
           <DropdownMenuItem asChild>
             <Link

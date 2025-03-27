@@ -27,8 +27,3 @@ export async function completeProfileRegistration(
   });
   return data;
 }
-
-export async function checkProfileCompletion() {
-  const data = await fetchApi<boolean>("/user/profile-complete");
-  return data.data;
-}

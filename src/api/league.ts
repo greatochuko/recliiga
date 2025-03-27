@@ -1,17 +1,20 @@
 import { fetchApi } from "@/lib/utils";
 import { LeagueType } from "@/types/league";
 
-export type LeagueDataType = {
-  name: string;
-  sport: string;
-  is_private: boolean;
-  stats: {
-    name: string;
-    abbr: string;
-    isEditing: boolean;
-    points: number;
-  }[];
-};
+export async function fetchLeaguesByUser(): Promise<{
+  leagues: LeagueType[];
+  error: string | null;
+}> {
+  try {
+    const data = await fetchApi<LeagueType[]>("/league");
+    return { leagues: data.data, error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { leagues: [], error: error.message };
+  }
+}
+
+export type LeagueDataType = Omit<LeagueType, "id" | "owner_id" | "players">;
 
 export async function createLeague(leagueData: LeagueDataType) {
   const leagueDataBody = {

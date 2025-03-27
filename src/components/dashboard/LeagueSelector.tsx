@@ -11,7 +11,6 @@ export function LeagueSelector({
 }: LeagueSelectorProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Select League</h2>
       <select
         name="league"
         id="league"

@@ -1,23 +1,14 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-} from "@/components/ui/sidebar";
+import { useNavigate } from "react-router-dom";
+import { Sidebar } from "@/components/ui/sidebar";
 import { ConditionalNavigationMenu } from "./sidebar/ConditionalNavigationMenu";
 import { UserMenu } from "./sidebar/UserMenu";
 import { NotificationsPopover } from "./sidebar/NotificationsPopover";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AppSidebar() {
   const navigate = useNavigate();
-  
+
   const handleLogoClick = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -26,8 +17,8 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h1 
-              className="text-[#FF7A00] text-2xl font-bold cursor-pointer hover:text-[#FF9A30] transition-colors" 
+            <h1
+              className="text-[#FF7A00] text-2xl font-bold cursor-pointer hover:text-[#FF9A30] transition-colors"
               onClick={handleLogoClick}
             >
               REC LiiGA
@@ -52,5 +43,5 @@ export function AppSidebar() {
         </div>
       </div>
     </Sidebar>
-  )
+  );
 }

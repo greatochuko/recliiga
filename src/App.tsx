@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import Index from "./pages/Index";
+import AppLayout from "./pages/AppLayout";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -30,6 +30,7 @@ import SelectCaptains from "./pages/SelectCaptains";
 import EditResults from "./pages/EditResults";
 import TeamDraftPage from "./pages/TeamDraftPage";
 import AuthWrapper from "./components/AuthWrapper";
+import { HomeScreen } from "./components/dashboard/HomeScreen";
 
 const queryClient = new QueryClient();
 
@@ -44,27 +45,32 @@ const AppRoutes = () => (
 
         {/* Registration flows (protected but not requiring a complete profile) */}
         <Route path="/complete-registration" element={<PlayerRegistration />} />
-        <Route path="/create-league" element={<CreateLeague />} />
         <Route path="/league-setup" element={<LeagueSetupPage />} />
 
         {/* Private routes requiring complete profiles */}
-        <Route path="/" element={<Index />} />
-        <Route path="/leagues" element={<Leagues />} />
-        <Route path="/leagues/:id" element={<LeagueDetails />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/events/:id/results" element={<EventResults />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/rate-teammates" element={<RateTeammates />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/player-profile" element={<PlayerProfile />} />
-        <Route path="/manage-events" element={<ManageEvents />} />
-        <Route path="/add-event" element={<AddEvent />} />
-        <Route path="/help" element={<HelpAndSupport />} />
-        <Route path="/select-captains/:eventId" element={<SelectCaptains />} />
-        <Route path="/edit-results/:eventId" element={<EditResults />} />
-        <Route path="/team-draft/:eventId" element={<TeamDraftPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/create-league" element={<CreateLeague />} />
+          <Route path="/leagues" element={<Leagues />} />
+          <Route path="/leagues/:id" element={<LeagueDetails />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={<EventDetails />} />
+          <Route path="/events/:id/results" element={<EventResults />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/rate-teammates" element={<RateTeammates />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/player-profile" element={<PlayerProfile />} />
+          <Route path="/manage-events" element={<ManageEvents />} />
+          <Route path="/add-event" element={<AddEvent />} />
+          <Route path="/help" element={<HelpAndSupport />} />
+          <Route
+            path="/select-captains/:eventId"
+            element={<SelectCaptains />}
+          />
+          <Route path="/edit-results/:eventId" element={<EditResults />} />
+          <Route path="/team-draft/:eventId" element={<TeamDraftPage />} />
+        </Route>
       </Route>
 
       {/* Catch-all route */}

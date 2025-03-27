@@ -3,11 +3,13 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import FullScreenLoader from "./FullScreenLoader";
 
 const authRoutes = ["/sign-in", "/sign-up"];
-const completeProfileRoutes = ["/complete-registration", "/create-league"];
+const completeProfileRoutes = ["/complete-registration"];
 
 export default function AuthWrapper() {
-  const { user, loading, isProfileComplete } = useAuth();
+  const { user, loading } = useAuth();
   const { pathname } = useLocation();
+
+  const isProfileComplete = user?.nickname;
 
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
   const isCompleteProfileRoute = completeProfileRoutes.some((route) =>
@@ -28,15 +30,7 @@ export default function AuthWrapper() {
     }
 
     if (!isCompleteProfileRoute && !isProfileComplete) {
-      return (
-        <Navigate
-          to={
-            user?.role === "organizer"
-              ? "/create-league"
-              : "/complete-registration"
-          }
-        />
-      );
+      return <Navigate to={"/complete-registration"} />;
     }
   } else {
     if (!isAuthRoute) {

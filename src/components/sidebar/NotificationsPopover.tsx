@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
@@ -117,16 +116,19 @@ export function NotificationsPopover() {
           </Badge>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[400px] p-0" align="start">
+      <DropdownMenuContent
+        className="w-[400px] p-0 h-[calc(100dvh-20rem)] overflow-y-auto"
+        align="start"
+      >
         {user && user.role === "organizer" && joinRequests.length > 0 && (
           <>
-            <DropdownMenuLabel className="p-4 font-bold">
+            <DropdownMenuLabel className="p-4 font-medium border-b border-gray-100">
               Join Requests
             </DropdownMenuLabel>
             {joinRequests.map((request) => (
               <DropdownMenuItem
                 key={request.id}
-                className="flex items-center py-3 px-4 hover:bg-gray-50 cursor-default"
+                className="flex items-center border-b border-gray-100 py-3 px-4 hover:bg-gray-50 cursor-default"
               >
                 <Avatar className="h-8 w-8 mr-2">
                   <AvatarImage src={request.avatar} alt={request.name} />
@@ -190,7 +192,7 @@ export function NotificationsPopover() {
                 )}
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator /> */}
           </>
         )}
 

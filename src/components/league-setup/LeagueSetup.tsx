@@ -7,7 +7,7 @@ import { LeaderboardStep } from "./LeaderboardStep";
 import { ConfirmationStep } from "./ConfirmationStep";
 import { toast } from "sonner";
 import { createLeague, LeagueDataType } from "@/api/league";
-import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   { id: 1, name: "League Info" },
@@ -16,23 +16,30 @@ const steps = [
   { id: 3, name: "Confirmation" },
 ];
 
+const initialLeagueData: LeagueDataType = {
+  name: "",
+  sport: "",
+  is_private: false,
+  city: "",
+  date: new Date().toISOString().split("T")[0],
+  leagueCode: "",
+  image: "",
+  stats: [
+    { name: "Win", abbr: "W", isEditing: false, points: 3 },
+    { name: "Loss", abbr: "L", isEditing: false, points: 0 },
+    { name: "Tie", abbr: "T", isEditing: false, points: 1.5 },
+    { name: "Captain Win", abbr: "CW", isEditing: false, points: 5 },
+    { name: "Attendance", abbr: "ATT", isEditing: false, points: 1 },
+    { name: "Non-Attendance", abbr: "N-ATT", isEditing: false, points: -1 },
+  ],
+};
+
 export function LeagueSetup() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [leagueData, setLeagueData] = useState<LeagueDataType>({
-    name: "",
-    sport: "",
-    is_private: false,
-    stats: [
-      { name: "Win", abbr: "W", isEditing: false, points: 3 },
-      { name: "Loss", abbr: "L", isEditing: false, points: 0 },
-      { name: "Tie", abbr: "T", isEditing: false, points: 1.5 },
-      { name: "Captain Win", abbr: "CW", isEditing: false, points: 5 },
-      { name: "Attendance", abbr: "ATT", isEditing: false, points: 1 },
-      { name: "Non-Attendance", abbr: "N-ATT", isEditing: false, points: -1 },
-    ],
-  });
-  const { setIsProfileComplete } = useAuth();
+  const [leagueData, setLeagueData] = useState(initialLeagueData);
+
+  const navigate = useNavigate();
 
   const updateLeagueData = (newData: Partial<LeagueDataType>) => {
     setLeagueData((prevData) => ({ ...prevData, ...newData }));
@@ -44,22 +51,17 @@ export function LeagueSetup() {
     }
   };
 
-  const handleSubmit = async (leagueData: LeagueDataType) => {
+  const handleSubmit = async () => {
     setLoading(true);
-    try {
-      const { error } = await createLeague(leagueData);
-
-      if (error) {
-        throw new Error(error);
-      }
-
+    const { error } = await createLeague(leagueData);
+    if (error) {
+      toast.error("Failed to create league: " + error);
+    } else {
       toast.success("League created successfully!");
-      setIsProfileComplete(true);
-    } catch (error: any) {
-      toast.error("Failed to create league: " + error.message);
-    } finally {
-      setLoading(false);
+      navigate("/leagues");
     }
+
+    setLoading(false);
   };
 
   const handlePrevious = () => {
@@ -69,11 +71,17 @@ export function LeagueSetup() {
   };
 
   const cannotProceed =
-    currentStep === 1 ? !leagueData.name.trim() || !leagueData.sport : false;
+    currentStep === 1
+      ? !leagueData.name.trim() ||
+        !leagueData.sport ||
+        !leagueData.city.trim() ||
+        !leagueData.leagueCode.trim() ||
+        !leagueData.date.trim()
+      : false;
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      <div className="w-full md:w-1/4">
+    <div className="flex flex-col lg:flex-row gap-8">
+      <div className="w-full lg:w-1/4">
         <div className="sticky top-8">
           <h2 className="text-lg font-semibold mb-4">Setup Progress</h2>
           <ol className="relative border-l border-gray-200">
@@ -106,7 +114,7 @@ export function LeagueSetup() {
           </ol>
         </div>
       </div>
-      <div className="w-full md:w-3/4">
+      <div className="w-full lg:w-3/4">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">League Setup</h1>
 
         {currentStep === 1 && (
@@ -146,7 +154,7 @@ export function LeagueSetup() {
           ) : (
             <Button
               className="bg-[#FF7A00] ml-auto hover:bg-[#FF7A00]/90 text-white"
-              onClick={() => handleSubmit(leagueData)}
+              onClick={handleSubmit}
               disabled={loading || cannotProceed}
             >
               {loading && <LoaderIcon className="w-4 h-4 animate-spin" />}

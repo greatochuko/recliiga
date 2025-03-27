@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { checkProfileCompletion } from "@/api/user";
 import {
   deleteUser,
   getSession,
@@ -44,8 +43,6 @@ interface AuthContextType {
   deleteAccount: () => Promise<void>;
   setUser: React.Dispatch<React.SetStateAction<UserType>>;
   loading: boolean;
-  isProfileComplete: boolean;
-  setIsProfileComplete: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,28 +50,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(
-    null
-  );
   const navigate = useNavigate();
 
   useEffect(() => {
     const initializeAuth = async () => {
-      try {
-        const profile = await getSession();
-        setUser(profile);
-
-        if (profile) {
-          const profileComplete = await checkProfileCompletion();
-          setIsProfileComplete(profileComplete);
-        } else {
-          setIsProfileComplete(false);
-        }
-      } catch {
-        setIsProfileComplete(false);
-      } finally {
-        setLoading(false);
-      }
+      const profile = await getSession();
+      setUser(profile);
+      setLoading(false);
     };
 
     initializeAuth();
@@ -87,9 +69,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error !== null) {
         throw new Error(error);
       }
-
-      const profileComplete = await checkProfileCompletion();
-      setIsProfileComplete(profileComplete);
 
       setUser(profile);
       toast.success("Successfully signed in!");
@@ -199,8 +178,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         deleteAccount,
         setUser,
         loading,
-        isProfileComplete,
-        setIsProfileComplete,
       }}
     >
       {children}

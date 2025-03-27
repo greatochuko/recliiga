@@ -40,7 +40,29 @@ export function ConfirmationStep({
                 Privacy Setting
               </dt>
               <dd className="mt-1 text-sm text-gray-900 capitalize">
-                {leagueData.is_private}
+                {leagueData.is_private ? "Private" : "Public"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500">City</dt>
+              <dd className="mt-1 text-sm text-gray-900 capitalize">
+                {leagueData.city}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500">Date</dt>
+              <dd className="mt-1 text-sm text-gray-900 capitalize">
+                {new Date(leagueData.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500">League Code</dt>
+              <dd className="mt-1 text-sm text-gray-900 capitalize">
+                {leagueData.leagueCode}
               </dd>
             </div>
             {/* <div>

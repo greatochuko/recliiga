@@ -79,39 +79,67 @@ export function LeagueInfoStep({
             />
           </div>
 
-          <div>
-            <Label htmlFor="sport" className="text-gray-800">
-              Select Sport
-            </Label>
-            {/* <Select
-              value={leagueData.sport}
-              onValueChange={(value) => updateLeagueData({ sport: value })}
-            >
-              <SelectTrigger id="sport" className="mt-1">
-                <SelectValue placeholder="Select a sport" />
-              </SelectTrigger>
-              <SelectContent>
+          <div className="flex gap-4 flex-col sm:flex-row">
+            <div className="flex-1">
+              <Label htmlFor="sport" className="text-gray-800">
+                Select Sport
+              </Label>
+              <select
+                name="sport"
+                id="sport"
+                className="border mt-1 h-10 block p-2 rounded-md w-full text-sm outline-offset-4"
+                value={leagueData.sport}
+                onChange={(e) => updateLeagueData({ sport: e.target.value })}
+              >
+                <option hidden>Select a sport</option>
                 {sports.map((sport) => (
-                  <SelectItem key={sport} value={sport}>
+                  <option key={sport} value={sport}>
                     {sport}
-                  </SelectItem>
+                  </option>
                 ))}
-              </SelectContent>
-            </Select> */}
-            <select
-              name="sport"
-              id="sport"
-              className="border block p-2 rounded-md w-full text-sm outline-offset-4"
-              value={leagueData.sport}
-              onChange={(e) => updateLeagueData({ sport: e.target.value })}
-            >
-              <option hidden>Select a sport</option>
-              {sports.map((sport) => (
-                <option key={sport} value={sport}>
-                  {sport}
-                </option>
-              ))}
-            </select>
+              </select>
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="city" className="text-gray-800">
+                City
+              </Label>
+              <Input
+                id="city"
+                type="text"
+                value={leagueData.city}
+                onChange={(e) => updateLeagueData({ city: e.target.value })}
+                className="mt-1"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 flex-col sm:flex-row">
+            <div className="flex-1">
+              <Label htmlFor="leagueCode" className="text-gray-800">
+                League Code
+              </Label>
+              <Input
+                id="leagueCode"
+                value={leagueData.leagueCode}
+                onChange={(e) =>
+                  updateLeagueData({ leagueCode: e.target.value })
+                }
+                placeholder="Enter a unique code for your league"
+                className="mt-1"
+              />
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="leagueDate" className="text-gray-800">
+                Start Date
+              </Label>
+              <Input
+                id="leagueDate"
+                type="date"
+                value={leagueData.date}
+                onChange={(e) => updateLeagueData({ date: e.target.value })}
+                className="mt-1"
+              />
+            </div>
           </div>
 
           <div>

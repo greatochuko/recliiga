@@ -1,5 +1,4 @@
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { EventsContent } from "@/components/events/EventsContent";
@@ -13,7 +12,6 @@ export default function ManageEvents() {
     <QueryClientProvider client={queryClient}>
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
-          <AppSidebar />
           <main className="flex-1 bg-background relative">
             <div className="absolute top-4 left-4 z-50 flex items-center">
               <SidebarTrigger className="bg-white shadow-md" />

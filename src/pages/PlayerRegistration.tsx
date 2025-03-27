@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { redirect, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle } from "lucide-react";
@@ -44,7 +44,7 @@ export default function PlayerRegistration() {
   const [playerData, setPlayerData] =
     useState<PlayerProfile>(initialPlayerData);
 
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
   const handleNext = async () => {
     if (currentStep < steps.length) {
@@ -68,7 +68,7 @@ export default function PlayerRegistration() {
         : null,
     };
 
-    const { error } = await completeProfileRegistration({
+    const { data, error } = await completeProfileRegistration({
       nickname: profileData.nickname,
       date_of_birth: profileData.date_of_birth,
       city: profileData.city,
@@ -77,15 +77,15 @@ export default function PlayerRegistration() {
       avatar_url: profileData.avatar_url,
     });
 
+    console.log({ data, error });
+
     if (error) {
       toast.error(error || "An error occurred while saving your profile");
       setLoading(false);
-      return;
+    } else {
+      toast.success("Profile updated successfully!");
+      setUser(data);
     }
-
-    toast.success("Profile updated successfully!");
-
-    redirect("/");
   };
 
   const handlePrevious = () => {
