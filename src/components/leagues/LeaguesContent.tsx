@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Users, Search, MapPin, Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,14 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLeaguesByUser } from "@/api/league";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function LeaguesContent() {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const { user } = useAuth();
 
   const {
     data: { leagues },
-    isLoading,
+    isFetching: isLoading,
     error,
   } = useQuery({
     queryKey: ["leagues"],
@@ -37,12 +38,6 @@ export function LeaguesContent() {
 
   const handleJoinLeague = (leagueId: string) => {
     console.log("Joining league:", leagueId);
-    // Here you would typically make an API call to join the league
-  };
-
-  const handleViewLeague = (leagueId: string) => {
-    // Navigate to the league details page
-    navigate(`/leagues/${leagueId}`);
   };
 
   return (
@@ -77,7 +72,7 @@ export function LeaguesContent() {
       ) : error ? (
         <div className="text-center p-4 text-red-600">{error.message}</div>
       ) : (
-        <div className="grid lg:grid-cols-2 gap-4">
+        <div className="grid xl:grid-cols-2 gap-4">
           {filteredLeagues.length === 0 ? (
             <div className="text-center p-4 text-gray-600">
               No leagues found matching your search.
@@ -87,7 +82,8 @@ export function LeaguesContent() {
               // const isJoined = league.players.some(
               //   (player) => player.id === user.id
               // );
-              const isJoined = false;
+
+              const isJoined = league.owner_id === user.id;
               return (
                 <Card
                   key={league.id}
@@ -141,20 +137,21 @@ export function LeaguesContent() {
                     </div>
                   </CardContent>
                   <CardFooter className="p-6 pt-0">
-                    <Button
-                      className={`w-full py-2 text-base ${
-                        !isJoined
-                          ? "bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
-                          : "bg-white text-[#FF7A00] border border-[#FF7A00] hover:bg-[#FF7A00]/10"
-                      }`}
-                      onClick={() =>
-                        !isJoined
-                          ? handleJoinLeague(league.id)
-                          : handleViewLeague(league.id)
-                      }
-                    >
-                      {!isJoined ? "Join" : "See More"}
-                    </Button>
+                    {isJoined ? (
+                      <Link
+                        to={`/leagues/${league.id}`}
+                        className={`rounded-md w-full text-center font-medium duration-200 py-2 text-sm ${"bg-white text-[#FF7A00] border border-[#FF7A00] hover:bg-[#FF7A00]/10"}`}
+                      >
+                        See More
+                      </Link>
+                    ) : (
+                      <button
+                        className={`rounded-md w-full text-center font-medium duration-200 py-2 text-sm ${"bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"}`}
+                        onClick={() => handleJoinLeague(league.id)}
+                      >
+                        Join
+                      </button>
+                    )}
                   </CardFooter>
                 </Card>
               );

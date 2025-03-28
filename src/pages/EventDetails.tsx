@@ -401,11 +401,9 @@ function EventDetailsContent() {
 
 export default function EventDetails() {
   return (
-    <div className="min-h-screen flex w-full">
-      <main className="flex-1 bg-background relative">
-        <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
-        <EventDetailsContent />
-      </main>
-    </div>
+    <main className="flex-1 bg-background relative">
+      <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
+      <EventDetailsContent />
+    </main>
   );
 }

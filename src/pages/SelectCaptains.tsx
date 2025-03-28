@@ -185,88 +185,86 @@ export default function SelectCaptains() {
   }
 
   return (
-    <div className="min-h-screen flex w-full">
-      <main className="flex-1 bg-background relative">
-        <div className="absolute top-4 left-4 z-50"></div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-          onClick={() => navigate("/events")}
-        >
-          Back to Events
-        </Button>
-        <div className="container mx-auto px-4 py-8 ">
-          <Card className="max-w-3xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center">
-                Upcoming Match
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-8">
-                {event && (
-                  <div className="flex items-center justify-center gap-8 mb-8">
-                    {renderTeamInfo(event.team1, 1)}
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="flex flex-col items-center mb-4 text-center">
-                        <span className="text-xs text-gray-500">
-                          {event.date}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {event.location}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {event.time}
-                        </span>
-                        <span className="text-xs font-bold text-[#FF7A00]">
-                          {event.league}
-                        </span>
-                      </div>
-                      <span className="text-2xl font-bold">vs</span>
+    <main className="flex-1 bg-background relative">
+      <div className="absolute top-4 left-4 z-50"></div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+        onClick={() => navigate("/events")}
+      >
+        Back to Events
+      </Button>
+      <div className="container mx-auto px-4 py-8 ">
+        <Card className="max-w-3xl mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
+              Upcoming Match
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              {event && (
+                <div className="flex items-center justify-center gap-8 mb-8">
+                  {renderTeamInfo(event.team1, 1)}
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="flex flex-col items-center mb-4 text-center">
+                      <span className="text-xs text-gray-500">
+                        {event.date}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {event.location}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {event.time}
+                      </span>
+                      <span className="text-xs font-bold text-[#FF7A00]">
+                        {event.league}
+                      </span>
                     </div>
-                    {renderTeamInfo(event.team2, 2)}
+                    <span className="text-2xl font-bold">vs</span>
                   </div>
+                  {renderTeamInfo(event.team2, 2)}
+                </div>
+              )}
+
+              <div className="flex flex-col items-center space-y-4">
+                {!selectingCaptains ? (
+                  <Button onClick={() => setSelectingCaptains(true)}>
+                    Select Captains
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleConfirmCaptains}
+                    disabled={isSubmitting}
+                    className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Confirming...
+                      </>
+                    ) : (
+                      "Confirm Captains"
+                    )}
+                  </Button>
                 )}
-
-                <div className="flex flex-col items-center space-y-4">
-                  {!selectingCaptains ? (
-                    <Button onClick={() => setSelectingCaptains(true)}>
-                      Select Captains
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleConfirmCaptains}
-                      disabled={isSubmitting}
-                      className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Confirming...
-                        </>
-                      ) : (
-                        "Confirm Captains"
-                      )}
-                    </Button>
-                  )}
-                </div>
-
-                <div className="pt-8 border-t">
-                  <h3 className="text-lg font-semibold mb-4">
-                    Attending Players ({players.length})
-                  </h3>
-                  <AttendingList
-                    players={players}
-                    selectableCaptains={selectingCaptains}
-                    onCaptainSelect={handleCaptainSelect}
-                  />
-                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+
+              <div className="pt-8 border-t">
+                <h3 className="text-lg font-semibold mb-4">
+                  Attending Players ({players.length})
+                </h3>
+                <AttendingList
+                  players={players}
+                  selectableCaptains={selectingCaptains}
+                  onCaptainSelect={handleCaptainSelect}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   );
 }

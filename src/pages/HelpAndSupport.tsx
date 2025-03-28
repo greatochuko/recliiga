@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 
 export default function HelpAndSupport() {
   return (
-    <div className="min-h-screen flex w-full">
       <main className="flex-1 bg-background relative">
         <h1 className="ml-14 text-2xl font-bold">Help & Support</h1>
         <div className="">
@@ -95,6 +94,5 @@ export default function HelpAndSupport() {
           </div>
         </div>
       </main>
-    </div>
   );
 }

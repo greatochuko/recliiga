@@ -573,15 +573,13 @@ function ChatContent() {
 }
 export default function Chat() {
   return (
-    <div className="min-h-screen flex w-full">
-      <main className="flex-1 bg-background relative">
-        <h1 className="ml-14 text-2xl font-bold">Chat</h1>
+    <main className="flex-1 bg-background relative">
+      <h1 className="ml-14 text-2xl font-bold">Chat</h1>
 
-        {/* Chat content starting below the header */}
-        <div className="">
-          <ChatContent />
-        </div>
-      </main>
-    </div>
+      {/* Chat content starting below the header */}
+      <div className="">
+        <ChatContent />
+      </div>
+    </main>
   );
 }

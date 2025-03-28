@@ -471,7 +471,6 @@ export default function LeagueDetails() {
   ];
 
   return (
-    <div className="min-h-screen flex w-full">
       <main className="flex-1 bg-background relative pt-10">
         <div className="absolute top-4 left-4 z-50"></div>
         <div className="p-4 md:p-6">
@@ -614,6 +613,5 @@ export default function LeagueDetails() {
           </section>
         </div>
       </main>
-    </div>
   );
 }
