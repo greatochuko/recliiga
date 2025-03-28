@@ -79,11 +79,10 @@ export function LeaguesContent() {
             </div>
           ) : (
             filteredLeagues.map((league) => {
-              // const isJoined = league.players.some(
-              //   (player) => player.id === user.id
-              // );
+              const isJoined =
+                league.owner_id === user.id ||
+                league.players.some((player) => player.id === user.id);
 
-              const isJoined = league.owner_id === user.id;
               return (
                 <Card
                   key={league.id}
@@ -109,8 +108,7 @@ export function LeaguesContent() {
                         <div className="grid grid-cols-2 gap-2 text-sm text-[#707B81]">
                           <div className="flex items-center">
                             <Users className="w-4 h-4 mr-2" />
-                            {/* <span>{league.players.length} Players</span> */}
-                            <span>27 Players</span>
+                            <span>{league.players.length} Players</span>
                           </div>
                           <div className="flex items-center">
                             <MapPin className="w-4 h-4 mr-2" />

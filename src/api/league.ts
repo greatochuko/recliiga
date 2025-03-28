@@ -14,6 +14,21 @@ export async function fetchLeaguesByUser(): Promise<{
   }
 }
 
+export async function fetchLeagueById(leagueId: string): Promise<{
+  league: LeagueType | null;
+  error: string | null;
+}> {
+  try {
+    const data = await fetchApi<LeagueType | null>(`/league/${leagueId}`);
+    if (!data.data) throw new Error(data.error);
+
+    return { league: data.data, error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { league: null, error: error.message };
+  }
+}
+
 export type LeagueDataType = Omit<LeagueType, "id" | "owner_id" | "players">;
 
 export async function createLeague(leagueData: LeagueDataType) {
