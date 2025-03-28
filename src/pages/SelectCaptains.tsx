@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import { Crown, Star, Loader2 } from "lucide-react";
 
 import { selectEventCaptains } from "@/api/captains";
-import { fetchEventById } from "@/api/events";
-import { getAttendingPlayers } from "@/api/events";
+import { fetchEventById } from "@/api/events2";
+import { getAttendingPlayers } from "@/api/events2";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface Player {

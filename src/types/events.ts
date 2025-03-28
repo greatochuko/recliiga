@@ -12,8 +12,8 @@ export interface Captain {
 }
 
 export interface EventType {
-  id: number;
-  leagueId: number;
+  id: string;
+  leagueId: string;
   date: string;
   time: string;
   location: string;
