@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
 import { ChevronLeft } from "lucide-react";
 
@@ -121,7 +120,6 @@ function AttendingList({
 
 function EventDetailsContent() {
   const navigate = useNavigate();
-  const { id } = useParams();
 
   // Mock data for upcoming event
   const eventData = {
@@ -269,7 +267,7 @@ function EventDetailsContent() {
         <ChevronLeft className="mr-1 h-4 w-4" />
         Previous
       </Button>
-      <div className="container mx-auto px-4 py-8 pt-16">
+      <div className="container mx-auto px-4 py-8 ">
         <Card className="max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">
@@ -403,16 +401,11 @@ function EventDetailsContent() {
 
 export default function EventDetails() {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Event Details</h1>
-          </div>
-          <EventDetailsContent />
-        </main>
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen flex w-full">
+      <main className="flex-1 bg-background relative">
+        <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
+        <EventDetailsContent />
+      </main>
+    </div>
   );
 }

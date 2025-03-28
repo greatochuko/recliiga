@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Search,
@@ -575,20 +573,15 @@ function ChatContent() {
 }
 export default function Chat() {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Chat</h1>
-          </div>
+    <div className="min-h-screen flex w-full">
+      <main className="flex-1 bg-background relative">
+        <h1 className="ml-14 text-2xl font-bold">Chat</h1>
 
-          {/* Chat content starting below the header */}
-          <div className="pt-16">
-            <ChatContent />
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+        {/* Chat content starting below the header */}
+        <div className="">
+          <ChatContent />
+        </div>
+      </main>
+    </div>
   );
 }
