@@ -1,7 +1,7 @@
-
 export interface Team {
+  id: string;
   name: string;
-  avatar: string;
+  logo: string;
   color: string;
 }
 
@@ -11,7 +11,7 @@ export interface Captain {
   avatar: string;
 }
 
-export interface Event {
+export interface EventType {
   id: number;
   leagueId: number;
   date: string;
@@ -20,7 +20,7 @@ export interface Event {
   team1: Team;
   team2: Team;
   rsvpDeadline?: Date;
-  status?: 'upcoming' | 'past' | 'attending' | 'declined';
+  status?: "upcoming" | "past" | "attending" | "declined";
   spotsLeft?: number;
   resultsEntered?: boolean;
   league?: string;
@@ -30,10 +30,5 @@ export interface Event {
     team1?: Captain;
     team2?: Captain;
   };
-  draftStatus?: 'not_started' | 'in_progress' | 'completed';
-}
-
-export interface League {
-  id: number;
-  name: string;
+  draftStatus?: "not_started" | "in_progress" | "completed";
 }

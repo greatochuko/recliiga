@@ -1,18 +1,17 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Edit } from 'lucide-react';
-import { Event } from '@/types/events';
+import { Edit } from "lucide-react";
+import { EventType } from "@/types/events";
 
 interface EventActionsProps {
-  event: Event;
+  event: EventType;
   isPastEvent?: boolean;
-  attendanceStatus: 'attending' | 'declined' | null;
+  attendanceStatus: "attending" | "declined" | null;
   isRsvpOpen: boolean;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
-  setAttendanceStatus: (status: 'attending' | 'declined' | null) => void;
+  setAttendanceStatus: (status: "attending" | "declined" | null) => void;
 }
 
 export const EventActions: React.FC<EventActionsProps> = ({
@@ -27,12 +26,12 @@ export const EventActions: React.FC<EventActionsProps> = ({
   const navigate = useNavigate();
 
   const handleAttend = () => {
-    setAttendanceStatus('attending');
+    setAttendanceStatus("attending");
     setIsEditing(false);
   };
 
   const handleDecline = () => {
-    setAttendanceStatus('declined');
+    setAttendanceStatus("declined");
     setIsEditing(false);
   };
 
@@ -51,12 +50,12 @@ export const EventActions: React.FC<EventActionsProps> = ({
   return (
     <>
       <div className="flex justify-center mt-2 space-x-2">
-        <Button 
-          variant="outline" 
-          className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" 
+        <Button
+          variant="outline"
+          className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
           style={{
-            transform: 'scale(1.1)'
-          }} 
+            transform: "scale(1.1)",
+          }}
           onClick={handleViewDetails}
         >
           {event.hasResults ? "View Results" : "View Details"}
@@ -66,14 +65,14 @@ export const EventActions: React.FC<EventActionsProps> = ({
         <div className="flex justify-center mt-2 space-x-2">
           {(isEditing || !attendanceStatus) && (
             <>
-              <Button 
-                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md" 
+              <Button
+                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
                 onClick={handleAttend}
               >
                 Attend
               </Button>
-              <Button 
-                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md" 
+              <Button
+                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
                 onClick={handleDecline}
               >
                 Decline
@@ -81,9 +80,9 @@ export const EventActions: React.FC<EventActionsProps> = ({
             </>
           )}
           {attendanceStatus && !isEditing && (
-            <Button 
-              variant="outline" 
-              className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md" 
+            <Button
+              variant="outline"
+              className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
               onClick={toggleEdit}
             >
               <Edit className="w-4 h-4 mr-2" />

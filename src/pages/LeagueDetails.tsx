@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import EventCard from "@/components/leagues/EventCard";
@@ -9,77 +8,11 @@ import { fetchLeagueById } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 
-const upcomingEvents = [
-  {
-    id: 1,
-    date: "20-Aug-2025",
-    time: "6:00 PM",
-    location: "Allianz Arena",
-    team1: {
-      name: "Eagle Claws",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#272D31",
-    },
-    team2: {
-      name: "Ravens",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#FFC700",
-    },
-    rsvpDeadline: new Date("2025-08-19T18:00:00"),
-    status: "attending",
-    league: "Premier League",
-    hasResults: false,
-  },
-  {
-    id: 2,
-    date: "25-Aug-2025",
-    time: "7:30 PM",
-    location: "Stamford Bridge",
-    team1: {
-      name: "Blue Lions",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#034694",
-    },
-    team2: {
-      name: "Red Devils",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#DA291C",
-    },
-    rsvpDeadline: new Date("2025-08-24T19:30:00"),
-    status: null,
-    spotsLeft: 2,
-    league: "Championship",
-    hasResults: false,
-  },
-  {
-    id: 3,
-    date: "01-Sep-2025",
-    time: "5:00 PM",
-    location: "Camp Nou",
-    team1: {
-      name: "Catalonia FC",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#A50044",
-    },
-    team2: {
-      name: "White Angels",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#FFFFFF",
-    },
-    rsvpDeadline: new Date("2025-08-31T17:00:00"),
-    status: null,
-    spotsLeft: 1,
-    league: "La Liga",
-    hasResults: false,
-  },
-];
-
 export default function LeagueDetails() {
   const navigate = useNavigate();
   const [showAllPlayers, setShowAllPlayers] = useState(false);
 
   const { user } = useAuth();
-
   const { id } = useParams();
 
   const { isFetching, data } = useQuery({
@@ -117,10 +50,10 @@ export default function LeagueDetails() {
 
   return (
     <main className="flex-1 bg-background relative flex flex-col px-4 md:px-6 gap-6">
-      <div className="flex justify-between ml-4">
+      <div className="flex justify-between ml-6">
         <button
           onClick={() => navigate("/leagues")}
-          className="text-[#FF7A00] flex items-center gap-2 hover:bg-[#FF7A00]/10 duration-200 font-medium text-sm px-3 py-1.5 rounded-md"
+          className="text-[#FF7A00] flex items-center gap-1 hover:bg-[#FF7A00]/10 duration-200 font-medium text-sm px-2 py-1.5 rounded-md"
         >
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
@@ -135,7 +68,7 @@ export default function LeagueDetails() {
         <Card className="w-full mb-6 bg-[#F9F9F9] rounded-lg overflow-hidden">
           <CardContent className="p-4">
             <div className="flex items-start">
-              <Avatar className="w-16 h-16 mr-4">
+              <Avatar className="w-14 h-14 mr-4">
                 <AvatarImage src={league.image} alt={`${league.name} logo`} />
                 <AvatarFallback>
                   {league.name
@@ -157,7 +90,9 @@ export default function LeagueDetails() {
                     })}
                   </span>
                 </div>
-                <div className="text-sm text-[#F79602] mt-1">17 Players</div>
+                <div className="text-sm text-[#F79602] mt-1">
+                  {league.players.length} Players
+                </div>
               </div>
             </div>
           </CardContent>
@@ -168,65 +103,77 @@ export default function LeagueDetails() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Players</h3>
-              <Button
-                variant="link"
-                className="text-sm text-[#FF7A00] hover:underline"
+              <button
+                className="text-sm text-[#FF7A00] hover:underline px-4 py-2 font-medium"
                 onClick={() => setShowAllPlayers(!showAllPlayers)}
               >
                 {showAllPlayers ? "Show Less" : "View All"}
-              </Button>
+              </button>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              {league.players
-                .slice(0, showAllPlayers ? undefined : 8)
-                .map((player, index) => (
-                  <Card
-                    key={index}
-                    className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={handlePlayerClick}
-                  >
-                    <CardContent className="p-2 flex items-center">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage
-                          src={`/placeholder.svg?height=32&width=32`}
-                          alt={player.full_name}
-                        />
-                        <AvatarFallback>
-                          {player.full_name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="ml-2 flex-grow">
-                        <p className="text-sm font-medium">
-                          {player.full_name}
-                        </p>
-                        <p className="text-xs text-gray-500">Midfielder</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-            </div>
+            {league.players.length ? (
+              <div className="grid grid-cols-3 gap-2">
+                {league.players
+                  .slice(0, showAllPlayers ? undefined : 8)
+                  .map((player, index) => (
+                    <Card
+                      key={index}
+                      className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={handlePlayerClick}
+                    >
+                      <CardContent className="p-2 flex items-center">
+                        <Avatar className="w-8 h-8">
+                          <AvatarImage
+                            src={`/placeholder.svg?height=32&width=32`}
+                            alt={player.full_name}
+                          />
+                          <AvatarFallback>
+                            {player.full_name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="ml-2 flex-grow">
+                          <p className="text-sm font-medium">
+                            {player.full_name}
+                          </p>
+                          <p className="text-xs text-gray-500">Midfielder</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500 text-center">
+                No players have joined this league yet. Be the first to invite
+                players!
+              </div>
+            )}
           </div>
         </section>
 
         {/* Upcoming Events Section */}
-        <section className="mb-8">
+        <section>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Upcoming Events</h2>
-            <Link
+            {/* <Link
               to="/events"
-              className="text-[#FF7A00] hover:underline text-sm"
+              className="text-[#FF7A00] hover:underline px-4 py-2 font-medium text-sm"
             >
               View all
-            </Link>
+            </Link> */}
           </div>
-          <div className="space-y-4">
-            {upcomingEvents.map((event) => (
-              <EventCard key={event.id} event={event} showLeagueName={true} />
-            ))}
-          </div>
+          {league.events.length ? (
+            <div className="space-y-4">
+              {league.events.map((event) => (
+                <EventCard key={event.id} event={event} showLeagueName={true} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500 text-center">
+              No events have been scheduled for this league yet.
+            </div>
+          )}
         </section>
       </div>
     </main>

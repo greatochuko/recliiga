@@ -3,19 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus, Loader2 } from "lucide-react";
-import { Event } from "@/types/events";
+import { EventType } from "@/types/events";
 import { CountdownClock } from "@/components/dashboard/CountdownClock";
 import { useAuth } from "@/contexts/AuthContext";
 import { fetchEventCaptains } from "@/api/captains";
 
 interface EventStatusProps {
-  event: Event;
+  event: EventType;
 }
 
 export function EventStatus({ event }: EventStatusProps) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [captains, setCaptains] = useState<Event["captains"]>(
+  const [captains, setCaptains] = useState<EventType["captains"]>(
     event.captains || {}
   );
   const { user } = useAuth();

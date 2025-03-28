@@ -15,7 +15,7 @@ import {
   Teammate,
   getLeagueName,
 } from "@/types/dashboard";
-import { Event } from "@/types/events";
+import { EventType } from "@/types/events";
 import { EventsCard } from "../events/EventsCard";
 import { upcomingEvents } from "../events/MockEventData";
 
@@ -73,7 +73,7 @@ async function fetchTeammates(): Promise<Teammate[]> {
   ];
 }
 
-async function fetchUpcomingEvents(): Promise<Event[]> {
+async function fetchUpcomingEvents(): Promise<EventType[]> {
   return upcomingEvents;
   // return [
   //   {

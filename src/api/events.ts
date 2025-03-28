@@ -1,9 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Event, League } from "@/types/events";
+import { EventType, League } from "@/types/events";
 
 // Fetch all events from the database
 
-export const fetchEvents = async (): Promise<Event[]> => {
+export const fetchEvents = async (): Promise<EventType[]> => {
   try {
     const { data: events, error } = await supabase
       .from("events")
@@ -47,7 +47,7 @@ export const fetchEvents = async (): Promise<Event[]> => {
       dateObj.setHours(dateObj.getHours() - 24);
 
       // Check if user is attending
-      let status: Event["status"] = "upcoming";
+      let status: EventType["status"] = "upcoming";
 
       if (userId) {
         const userRsvp = event.event_rsvps?.find(
@@ -101,7 +101,7 @@ export const fetchEvents = async (): Promise<Event[]> => {
  */
 export const fetchEventById = async (
   eventId: string | number
-): Promise<Event | null> => {
+): Promise<EventType | null> => {
   try {
     const { data: event, error } = await supabase
       .from("events")
@@ -145,7 +145,7 @@ export const fetchEventById = async (
     dateObj.setHours(dateObj.getHours() - 24);
 
     // Check if user is attending
-    let status: Event["status"] = "upcoming";
+    let status: EventType["status"] = "upcoming";
 
     if (userId) {
       const userRsvp = event.event_rsvps?.find(
@@ -203,12 +203,12 @@ export const fetchEventById = async (
       league: event.leagues?.name,
       team1: {
         name: event.team1_name || "Team 1",
-        avatar: "/placeholder.svg?height=64&width=64",
+        logo: "/placeholder.svg?height=64&width=64",
         color: event.team1_color || "#272D31",
       },
       team2: {
         name: event.team2_name || "Team 2",
-        avatar: "/placeholder.svg?height=64&width=64",
+        logo: "/placeholder.svg?height=64&width=64",
         color: event.team2_color || "#FFC700",
       },
       rsvpDeadline: dateObj,

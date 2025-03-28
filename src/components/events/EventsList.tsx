@@ -1,11 +1,10 @@
-
-import { Event } from '@/types/events';
-import { UpcomingEventsSection } from './UpcomingEventsSection';
-import { PastEventsSection } from './PastEventsSection';
+import { EventType } from "@/types/events";
+import { UpcomingEventsSection } from "./UpcomingEventsSection";
+import { PastEventsSection } from "./PastEventsSection";
 
 interface EventsListProps {
-  upcomingEvents: Event[];
-  pastEvents: Event[];
+  upcomingEvents: EventType[];
+  pastEvents: EventType[];
 }
 
 export function EventsList({ upcomingEvents, pastEvents }: EventsListProps) {

@@ -1,7 +1,6 @@
-
-import { useState } from 'react';
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Event } from '@/types/events';
+import { EventType } from "@/types/events";
 import { EventStatus } from "@/components/events/EventStatus";
 import { EventHeader } from "@/components/events/EventHeader";
 import { TeamsDisplay } from "@/components/events/TeamsDisplay";
@@ -10,15 +9,17 @@ import { EventActions } from "@/components/events/EventActions";
 export function EventsCard({
   event,
   isPastEvent = false,
-  showLeagueName = false
+  showLeagueName = false,
 }: {
-  event: Event;
+  event: EventType;
   isPastEvent?: boolean;
   showLeagueName?: boolean;
 }) {
-  const [attendanceStatus, setAttendanceStatus] = useState<'attending' | 'declined' | null>(
-    event.status === 'attending' || event.status === 'declined' 
-      ? event.status 
+  const [attendanceStatus, setAttendanceStatus] = useState<
+    "attending" | "declined" | null
+  >(
+    event.status === "attending" || event.status === "declined"
+      ? event.status
       : null
   );
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
@@ -27,22 +28,22 @@ export function EventsCard({
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
-        <EventHeader 
-          event={event} 
+        <EventHeader
+          event={event}
           attendanceStatus={attendanceStatus}
           isEditing={isEditing}
           isPastEvent={isPastEvent}
         />
-        
+
         <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />
-        
+
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
             <span className="font-bold text-[#FF7A00]">{event.league}</span>
           </div>
         )}
-        
-        <EventActions 
+
+        <EventActions
           event={event}
           isPastEvent={isPastEvent}
           attendanceStatus={attendanceStatus}
@@ -51,7 +52,7 @@ export function EventsCard({
           setIsEditing={setIsEditing}
           setAttendanceStatus={setAttendanceStatus}
         />
-        
+
         {!isPastEvent && <EventStatus event={event} />}
       </CardContent>
     </Card>

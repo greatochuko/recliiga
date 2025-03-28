@@ -1,4 +1,5 @@
 import { UserType } from "@/contexts/AuthContext";
+import { EventType } from "./events";
 
 export type League = {
   id: string;
@@ -31,4 +32,5 @@ export type LeagueType = {
   image?: string;
   city: string;
   stats: LeagueStatType[];
+  events: EventType[];
 };
