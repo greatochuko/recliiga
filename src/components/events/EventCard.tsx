@@ -5,13 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Edit, Trash2, UserPlus, Trophy } from "lucide-react";
 import { EventType } from "@/types/events";
+import { isPast } from "date-fns";
 
 interface EventCardProps {
   event: EventType;
-  onSelectCaptains: (eventId: number) => void;
-  onEdit: (eventId: number) => void;
-  onDelete: (eventId: number) => void;
-  onEnterResults: (eventId: number) => void;
+  onSelectCaptains: (eventId: string) => void;
+  onEdit: (eventId: string) => void;
+  onDelete: (eventId: string) => void;
+  onEnterResults: (eventId: string) => void;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({
@@ -33,6 +34,14 @@ export const EventCard: React.FC<EventCardProps> = ({
     navigate(`/edit-results/${event.id}`);
   };
 
+  const eventDate = event.eventDates[0].date;
+
+  const eventTime = `${event.eventDates[0].startHour}:${event.eventDates[0].startMinute} ${event.eventDates[0].startAmPm}`;
+
+  const eventSpotsLeft = event.numTeams * event.rosterSpots;
+
+  const eventStatus = isPast(eventDate) ? "past" : "upcoming";
+
   return (
     <Card className="mb-4">
       <CardContent className="p-4 relative">
@@ -43,8 +52,14 @@ export const EventCard: React.FC<EventCardProps> = ({
                 className="w-4 h-4 text-gray-500 mr-2"
                 aria-hidden="true"
               />
-              <span className="text-xs text-gray-500 mr-4">{event.date}</span>
-              <span className="text-xs text-gray-500 mr-4">{event.time}</span>
+              <span className="text-xs text-gray-500 mr-4">
+                {new Date(eventDate).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+              <span className="text-xs text-gray-500 mr-4">{eventTime}</span>
               <MapPin
                 className="w-4 h-4 text-gray-500 mr-2"
                 aria-hidden="true"
@@ -52,59 +67,33 @@ export const EventCard: React.FC<EventCardProps> = ({
               <span className="text-xs text-gray-500">{event.location}</span>
             </div>
           </div>
-          {event.status === "upcoming" && event.spotsLeft && (
+          {eventStatus === "upcoming" && eventSpotsLeft && (
             <span className="text-[#E43226] text-xs font-semibold">
-              {event.spotsLeft === 1
+              {eventSpotsLeft === 1
                 ? "1 Spot Left"
-                : `${event.spotsLeft} Spots Left`}
+                : `${eventSpotsLeft} Spots Left`}
             </span>
           )}
         </div>
         <div className="grid grid-cols-3 items-center justify-items-center">
           <div className="flex flex-col items-center">
-            <Avatar
-              className="w-16 h-16"
-              style={{ backgroundColor: event.team1.color }}
-            >
-              <AvatarImage
-                src={event.team1.logo}
-                alt={`${event.team1.name} logo`}
-              />
-              <AvatarFallback>
-                {event.team1.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+            <Avatar className="w-16 h-16 border-2 border-red-500">
+              <AvatarImage src={"/placeholder2.svg"} alt={`Team 1 logo`} />
+              <AvatarFallback>T1</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-semibold mt-2">
-              {event.team1.name}
-            </span>
+            <span className="text-sm font-semibold mt-2">TEAM 1</span>
           </div>
           <span className="text-lg font-semibold">vs</span>
           <div className="flex flex-col items-center">
-            <Avatar
-              className="w-16 h-16"
-              style={{ backgroundColor: event.team2.color }}
-            >
-              <AvatarImage
-                src={event.team2.logo}
-                alt={`${event.team2.name} logo`}
-              />
-              <AvatarFallback>
-                {event.team2.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+            <Avatar className="w-16 h-16 border-2 border-blue-500">
+              <AvatarImage src={"/placeholder2.svg"} alt={`TEAM 2 logo`} />
+              <AvatarFallback>T2</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-semibold mt-2">
-              {event.team2.name}
-            </span>
+            <span className="text-sm font-semibold mt-2">TEAM 2</span>
           </div>
         </div>
         <div className="flex justify-center mt-4 space-x-2">
-          {event.status === "upcoming" && (
+          {eventStatus === "upcoming" && (
             <>
               <Button
                 onClick={handleSelectCaptains}
@@ -135,7 +124,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               </Button>
             </>
           )}
-          {event.status === "past" && (
+          {/*eventStatus === "past" && (
             <Button
               onClick={handleEnterResults}
               variant="outline"
@@ -145,7 +134,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               <Trophy className="w-4 h-4 mr-2" />
               {event.resultsEntered ? "Edit Results" : "Enter Results"}
             </Button>
-          )}
+          )*/}
         </div>
       </CardContent>
     </Card>

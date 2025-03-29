@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { fetchLeaguesByUser } from "@/api/league";
+import { isPast } from "date-fns";
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
@@ -30,40 +31,55 @@ export const EventsContent: React.FC = () => {
     initialData: { leagues: [], error: null },
   });
 
-  const events = leagues.flatMap((league) => [...league.events]);
+  const events = leagues.flatMap((league) =>
+    league.events.flatMap((event) =>
+      event.eventDates.map((eventDate) => ({
+        ...event,
+        id: `${event.id}_${new Date(eventDate.date).toISOString()}`,
+        eventDates: [eventDate],
+      }))
+    )
+  );
 
   const filteredEvents = useMemo(() => {
-    if (!events) return { upcoming: [], past: [] };
-
     const filtered = selectedLeagueId
       ? events.filter((event) => event.leagueId === selectedLeagueId)
       : events;
 
-    const upcoming = filtered.filter((event) => event.status === "upcoming");
-    const past = filtered.filter((event) => event.status === "past");
+    const upcomingEvents = filtered.filter((event) => {
+      const eventDate =
+        event.eventDates.length > 0 ? event.eventDates[0].date : undefined;
+      return !isPast(eventDate);
+    });
 
-    return { upcoming, past };
+    const pastEvents = filtered.filter((event) => {
+      const eventDate =
+        event.eventDates.length > 0 ? event.eventDates[0].date : undefined;
+      return isPast(eventDate);
+    });
+
+    return { upcoming: upcomingEvents, past: pastEvents };
   }, [events, selectedLeagueId]);
 
-  const handleSelectCaptains = (eventId: number) => {
+  const handleSelectCaptains = (eventId: string) => {
     navigate(`/select-captains/${eventId}`);
   };
 
-  const handleEditEvent = (eventId: number) => {
+  const handleEditEvent = (eventId: string) => {
     toast({
       title: "Action initiated",
       description: `Editing event ${eventId}`,
     });
   };
 
-  const handleDeleteEvent = (eventId: number) => {
+  const handleDeleteEvent = (eventId: string) => {
     toast({
       title: "Action initiated",
       description: `Deleting event ${eventId}`,
     });
   };
 
-  const handleEnterResults = (eventId: number) => {
+  const handleEnterResults = (eventId: string) => {
     toast({
       title: "Action initiated",
       description: `Entering results for event ${eventId}`,

@@ -77,8 +77,6 @@ export default function PlayerRegistration() {
       avatar_url: profileData.avatar_url,
     });
 
-    console.log({ data, error });
-
     if (error) {
       toast.error(error || "An error occurred while saving your profile");
       setLoading(false);
