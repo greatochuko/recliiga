@@ -35,4 +35,5 @@ export interface EventType {
   rsvpDeadline: string;
   customRsvpHours: number;
   eventDates: EventDateType[];
+  teams: Team[];
 }

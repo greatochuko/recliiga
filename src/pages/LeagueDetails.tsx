@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import EventCard from "@/components/leagues/EventCard";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueById } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
+import { EventCard } from "@/components/events/EventCard";
 
 export default function LeagueDetails() {
   const navigate = useNavigate();
@@ -166,7 +166,12 @@ export default function LeagueDetails() {
           {league.events.length ? (
             <div className="space-y-4">
               {league.events.map((event) => (
-                <EventCard key={event.id} event={event} showLeagueName={true} />
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                />
               ))}
             </div>
           ) : (

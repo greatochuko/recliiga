@@ -14,32 +14,21 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
-import { fetchLeaguesByUser } from "@/api/league";
 import { isPast } from "date-fns";
+import { fetchEventsByUser } from "@/api/events";
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [selectedLeagueId, setSelectedLeague] = useState<string | null>(null);
 
   const {
-    data: { leagues },
+    data: { data: events },
     isFetching: isLoadingLeagues,
   } = useQuery({
-    queryKey: ["leagues"],
-    queryFn: fetchLeaguesByUser,
-    initialData: { leagues: [], error: null },
+    queryKey: ["event"],
+    queryFn: fetchEventsByUser,
+    initialData: { data: [], error: null },
   });
-
-  const events = leagues.flatMap((league) =>
-    league.events.flatMap((event) =>
-      event.eventDates.map((eventDate) => ({
-        ...event,
-        id: `${event.id}_${new Date(eventDate.date).toISOString()}`,
-        eventDates: [eventDate],
-      }))
-    )
-  );
 
   const filteredEvents = useMemo(() => {
     const filtered = selectedLeagueId
@@ -61,10 +50,6 @@ export const EventsContent: React.FC = () => {
     return { upcoming: upcomingEvents, past: pastEvents };
   }, [events, selectedLeagueId]);
 
-  const handleSelectCaptains = (eventId: string) => {
-    navigate(`/select-captains/${eventId}`);
-  };
-
   const handleEditEvent = (eventId: string) => {
     toast({
       title: "Action initiated",
@@ -76,13 +61,6 @@ export const EventsContent: React.FC = () => {
     toast({
       title: "Action initiated",
       description: `Deleting event ${eventId}`,
-    });
-  };
-
-  const handleEnterResults = (eventId: string) => {
-    toast({
-      title: "Action initiated",
-      description: `Entering results for event ${eventId}`,
     });
   };
 
@@ -100,9 +78,9 @@ export const EventsContent: React.FC = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Leagues</SelectItem>
-            {leagues?.map((league) => (
-              <SelectItem key={league.id} value={league.id}>
-                {league.name}
+            {events.map((event) => (
+              <SelectItem key={event.id} value={event.id}>
+                {event.title}
               </SelectItem>
             ))}
           </SelectContent>
@@ -133,10 +111,8 @@ export const EventsContent: React.FC = () => {
                   <EventCard
                     key={event.id}
                     event={event}
-                    onSelectCaptains={handleSelectCaptains}
                     onEdit={handleEditEvent}
                     onDelete={handleDeleteEvent}
-                    onEnterResults={handleEnterResults}
                   />
                 ))
               )}
@@ -151,10 +127,8 @@ export const EventsContent: React.FC = () => {
                   <EventCard
                     key={event.id}
                     event={event}
-                    onSelectCaptains={handleSelectCaptains}
                     onEdit={handleEditEvent}
                     onDelete={handleDeleteEvent}
-                    onEnterResults={handleEnterResults}
                   />
                 ))
               )}

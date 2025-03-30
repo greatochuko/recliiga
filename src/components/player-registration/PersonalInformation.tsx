@@ -111,26 +111,6 @@ export default function PersonalInformation({
                 <Label htmlFor="dobMonth" className="sr-only">
                   Month
                 </Label>
-                {/* <Select value={dobMonth} onValueChange={setDobMonth}>
-                  <SelectTrigger id="dobMonth">
-                    <SelectValue placeholder="Month" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map(
-                      (month) => (
-                        <SelectItem
-                          key={month}
-                          value={month.toString().padStart(2, "0")}
-                        >
-                          {new Date(2000, month - 1, 1).toLocaleString(
-                            "default",
-                            { month: "long" }
-                          )}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select> */}
                 <select
                   name="dobMonth"
                   id="dobMonth"
@@ -155,18 +135,6 @@ export default function PersonalInformation({
                 <Label htmlFor="dobDay" className="sr-only">
                   Day
                 </Label>
-                {/* <Select value={dobDay} onValueChange={setDobDay}>
-                  <SelectTrigger id="dobDay">
-                    <SelectValue placeholder="Day" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {generateDayOptions().map((day) => (
-                      <SelectItem key={day} value={day}>
-                        {day}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select> */}
                 <select
                   name="dobDay"
                   id="dobDay"
@@ -186,18 +154,6 @@ export default function PersonalInformation({
                 <Label htmlFor="dobYear" className="sr-only">
                   Year
                 </Label>
-                {/* <Select value={dobYear} onValueChange={setDobYear}>
-                  <SelectTrigger id="dobYear">
-                    <SelectValue placeholder="Year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {generateYearOptions().map((year) => (
-                      <SelectItem key={year} value={year}>
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select> */}
                 <select
                   name="dobYear"
                   id="dobYear"

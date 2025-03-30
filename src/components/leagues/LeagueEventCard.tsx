@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { CountdownClock } from "../dashboard/CountdownClock";
 
-export default function EventCard({
+export default function LeagueEventCard({
   event,
   isPastEvent = false,
   showLeagueName = false,
@@ -22,23 +22,6 @@ export default function EventCard({
   );
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
-
-  const getTeamName = (team: any, index: number) => {
-    if (isRsvpOpen) {
-      return `Team ${index + 1}`;
-    }
-    return team.name;
-  };
-
-  const getTeamAvatarFallback = (team: any, index: number) => {
-    if (isRsvpOpen) {
-      return `T${index + 1}`;
-    }
-    return team.name
-      .split(" ")
-      .map((n: string) => n[0])
-      .join("");
-  };
 
   const handleAttend = () => {
     setAttendanceStatus("attending");
@@ -97,41 +80,21 @@ export default function EventCard({
             </span>
           )}
         </div>
-        <div className="grid grid-cols-3 items-center justify-items-center mb-4">
+        <div className="grid grid-cols-3 items-center justify-items-center">
           <div className="flex flex-col items-center">
-            <Avatar
-              className="w-16 h-16"
-              style={{ backgroundColor: event.team1.color }}
-            >
-              <AvatarImage
-                src={event.team1.avatar}
-                alt={getTeamName(event.team1, 0)}
-              />
-              <AvatarFallback>
-                {getTeamAvatarFallback(event.team1, 0)}
-              </AvatarFallback>
+            <Avatar className="w-16 h-16 border-2 border-red-500">
+              <AvatarImage src={"/placeholder2.svg"} alt={`Team 1 logo`} />
+              <AvatarFallback>T1</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-semibold mt-2">
-              {getTeamName(event.team1, 0)}
-            </span>
+            <span className="text-sm font-semibold mt-2">TEAM 1</span>
           </div>
           <span className="text-lg font-semibold">vs</span>
           <div className="flex flex-col items-center">
-            <Avatar
-              className="w-16 h-16"
-              style={{ backgroundColor: event.team2.color }}
-            >
-              <AvatarImage
-                src={event.team2.avatar}
-                alt={getTeamName(event.team2, 1)}
-              />
-              <AvatarFallback>
-                {getTeamAvatarFallback(event.team2, 1)}
-              </AvatarFallback>
+            <Avatar className="w-16 h-16 border-2 border-blue-500">
+              <AvatarImage src={"/placeholder2.svg"} alt={`TEAM 2 logo`} />
+              <AvatarFallback>T2</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-semibold mt-2">
-              {getTeamName(event.team2, 1)}
-            </span>
+            <span className="text-sm font-semibold mt-2">TEAM 2</span>
           </div>
         </div>
         {showLeagueName && (

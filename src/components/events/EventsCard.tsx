@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EventType } from "@/types/events";
 import { EventStatus } from "@/components/events/EventStatus";
 import { EventHeader } from "@/components/events/EventHeader";
-import { TeamsDisplay } from "@/components/events/TeamsDisplay";
+import TeamsDisplay from "@/components/events/TeamsDisplay";
 import { EventActions } from "@/components/events/EventActions";
 
 export function EventsCard({

@@ -2,10 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { EventsContent } from "@/components/events/EventsContent";
 
-// Create a queryClient for the entire page
 const queryClient = new QueryClient();
 
-// Export the page with the necessary sidebar and layout structure
 export default function ManageEvents() {
   return (
     <QueryClientProvider client={queryClient}>

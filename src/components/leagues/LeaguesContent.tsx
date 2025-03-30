@@ -71,9 +71,13 @@ export function LeaguesContent() {
         </div>
       ) : error ? (
         <div className="text-center p-4 text-red-600">{error.message}</div>
+      ) : leagues.length < 1 ? (
+        <div className="text-center p-4 text-gray-600">
+          No leagues available at the moment.
+        </div>
       ) : (
         <div className="grid xl:grid-cols-2 gap-4">
-          {filteredLeagues.length === 0 ? (
+          {filteredLeagues.length < 1 ? (
             <div className="text-center p-4 text-gray-600">
               No leagues found matching your search.
             </div>

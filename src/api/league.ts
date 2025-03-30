@@ -5,13 +5,8 @@ export async function fetchLeaguesByUser(): Promise<{
   leagues: LeagueType[];
   error: string | null;
 }> {
-  try {
-    const data = await fetchApi<LeagueType[]>("/league");
-    return { leagues: data.data, error: null };
-  } catch (err) {
-    const error = err as Error;
-    return { leagues: [], error: error.message };
-  }
+  const data = await fetchApi<LeagueType[]>("/league");
+  return { leagues: data.data, error: data.error };
 }
 
 export async function fetchLeagueById(leagueId: string): Promise<{

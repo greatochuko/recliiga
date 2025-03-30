@@ -3,24 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Edit, Trash2, UserPlus, Trophy } from "lucide-react";
+import { Calendar, MapPin, Edit, Trash2, UserPlus } from "lucide-react";
 import { EventType } from "@/types/events";
 import { isPast } from "date-fns";
 
 interface EventCardProps {
   event: EventType;
-  onSelectCaptains: (eventId: string) => void;
   onEdit: (eventId: string) => void;
   onDelete: (eventId: string) => void;
-  onEnterResults: (eventId: string) => void;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({
   event,
-  onSelectCaptains,
   onEdit,
   onDelete,
-  onEnterResults,
 }) => {
   const navigate = useNavigate();
 
@@ -44,55 +40,59 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   return (
     <Card className="mb-4">
-      <CardContent className="p-4 relative">
-        <div className="flex justify-between items-start mb-2">
+      <CardContent className="relative p-4">
+        <div className="mb-2 flex items-start justify-between">
           <div className="flex flex-col">
-            <div className="flex items-center mb-1">
+            <div className="mb-1 flex items-center">
               <Calendar
-                className="w-4 h-4 text-gray-500 mr-2"
+                className="mr-2 h-4 w-4 text-gray-500"
                 aria-hidden="true"
               />
-              <span className="text-xs text-gray-500 mr-4">
+              <span className="mr-4 text-xs text-gray-500">
                 {new Date(eventDate).toLocaleDateString("en-US", {
                   month: "long",
                   day: "numeric",
                   year: "numeric",
                 })}
               </span>
-              <span className="text-xs text-gray-500 mr-4">{eventTime}</span>
+              <span className="mr-4 text-xs text-gray-500">{eventTime}</span>
               <MapPin
-                className="w-4 h-4 text-gray-500 mr-2"
+                className="mr-2 h-4 w-4 text-gray-500"
                 aria-hidden="true"
               />
               <span className="text-xs text-gray-500">{event.location}</span>
             </div>
           </div>
           {eventStatus === "upcoming" && eventSpotsLeft && (
-            <span className="text-[#E43226] text-xs font-semibold">
+            <span className="text-xs font-semibold text-[#E43226]">
               {eventSpotsLeft === 1
                 ? "1 Spot Left"
                 : `${eventSpotsLeft} Spots Left`}
             </span>
           )}
         </div>
-        <div className="grid grid-cols-3 items-center justify-items-center">
-          <div className="flex flex-col items-center">
-            <Avatar className="w-16 h-16 border-2 border-red-500">
-              <AvatarImage src={"/placeholder2.svg"} alt={`Team 1 logo`} />
-              <AvatarFallback>T1</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-semibold mt-2">TEAM 1</span>
-          </div>
-          <span className="text-lg font-semibold">vs</span>
-          <div className="flex flex-col items-center">
-            <Avatar className="w-16 h-16 border-2 border-blue-500">
-              <AvatarImage src={"/placeholder2.svg"} alt={`TEAM 2 logo`} />
-              <AvatarFallback>T2</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-semibold mt-2">TEAM 2</span>
-          </div>
+        <div className="flex items-center justify-items-center">
+          {event.teams.map((team) => (
+            <React.Fragment key={team.id}>
+              <div className="flex flex-1 flex-col items-center">
+                <Avatar
+                  className="h-16 w-16 border-2"
+                  style={{ borderColor: team.color }}
+                >
+                  <AvatarImage src={team.logo} alt={`${team.name} logo`} />
+                  <AvatarFallback>
+                    {team.name.split(" ").map((n) => n[0])}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="mt-2 text-sm font-semibold">{team.name}</span>
+              </div>
+              <span className="flex-1 text-center text-lg font-semibold last:hidden">
+                vs
+              </span>
+            </React.Fragment>
+          ))}
         </div>
-        <div className="flex justify-center mt-4 space-x-2">
+        <div className="mt-4 flex justify-center space-x-2">
           {eventStatus === "upcoming" && (
             <>
               <Button
@@ -101,7 +101,7 @@ export const EventCard: React.FC<EventCardProps> = ({
                 size="sm"
                 className="flex items-center"
               >
-                <UserPlus className="w-4 h-4 mr-2" />
+                <UserPlus className="mr-2 h-4 w-4" />
                 Select Captains
               </Button>
               <Button
@@ -110,7 +110,7 @@ export const EventCard: React.FC<EventCardProps> = ({
                 size="sm"
                 className="flex items-center"
               >
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit className="mr-2 h-4 w-4" />
                 Edit
               </Button>
               <Button
@@ -119,7 +119,7 @@ export const EventCard: React.FC<EventCardProps> = ({
                 size="sm"
                 className="flex items-center text-red-500 hover:text-red-700"
               >
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </Button>
             </>
