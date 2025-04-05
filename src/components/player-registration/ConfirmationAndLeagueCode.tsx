@@ -1,40 +1,36 @@
 import { PlayerProfile } from "@/pages/PlayerRegistration";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { CheckCircle } from "lucide-react";
 
 interface ConfirmationAndLeagueCodeProps {
   playerData: PlayerProfile;
-  updatePlayerData: (data: Partial<PlayerProfile>) => void;
 }
 
 export function ConfirmationAndLeagueCode({
   playerData,
-  updatePlayerData,
 }: ConfirmationAndLeagueCodeProps) {
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+        <CardTitle className="text-center text-2xl font-semibold text-gray-800">
           Confirmation & League Code
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           <div className="text-center">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">
+            <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
+            <h3 className="mb-2 text-xl font-semibold">
               Your Profile is Ready!
             </h3>
-            <p className="text-[#707B81] mb-6">
+            <p className="mb-6 text-[#707B81]">
               You've successfully set up your Player Profile. Get ready for an
               exciting season!
             </p>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4">
+            <h3 className="mb-4 text-xl font-semibold">
               Confirm Your Information
             </h3>
             <div className="space-y-4">
@@ -66,7 +62,7 @@ export function ConfirmationAndLeagueCode({
                 <span className="font-medium">Positions:</span>
                 {playerData?.positions &&
                 Object.keys(playerData.positions).length > 0 ? (
-                  <ul className="list-disc list-inside pl-4">
+                  <ul className="list-inside list-disc pl-4">
                     {Object.entries(playerData.positions).map(
                       ([sport, sportPositions]) => (
                         <li key={sport}>
@@ -75,7 +71,7 @@ export function ConfirmationAndLeagueCode({
                             ? sportPositions.join(", ")
                             : "None selected"}
                         </li>
-                      )
+                      ),
                     )}
                   </ul>
                 ) : (
@@ -85,22 +81,7 @@ export function ConfirmationAndLeagueCode({
             </div>
           </div>
 
-          <div className="border-t border-gray-200 my-6"></div>
-
-          <div>
-            <Label htmlFor="leagueCode" className="text-sm text-gray-700">
-              League Code
-            </Label>
-            <Input
-              id="leagueCode"
-              value={playerData?.leagueCode || ""}
-              onChange={(e) => updatePlayerData({ leagueCode: e.target.value })}
-              placeholder="Enter league code"
-              className="mt-1"
-            />
-          </div>
-
-          <div className="border-t border-gray-200 my-6"></div>
+          <div className="my-6 border-t border-gray-200"></div>
 
           <div className="text-center">
             {/* Confirmation text removed as per previous instruction */}

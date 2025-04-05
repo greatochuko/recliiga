@@ -57,7 +57,7 @@ export default function PlayerRegistration() {
   const handleSubmit = async () => {
     setLoading(true);
     const profilePositions = playerData.sports.map((sport) =>
-      playerData.positions[sport] ? playerData.positions[sport].join(",") : ""
+      playerData.positions[sport] ? playerData.positions[sport].join(",") : "",
     );
 
     const profileData = {
@@ -102,18 +102,18 @@ export default function PlayerRegistration() {
         !playerData.dateOfBirth ||
         !playerData.city.trim()
       : currentStep === 2
-      ? playerData.sports.length < 1 ||
-        playerData.sports.some(
-          (sport) =>
-            !playerData.positions[sport] ||
-            playerData.positions[sport].length < 1
-        )
-      : false;
+        ? playerData.sports.length < 1 ||
+          playerData.sports.some(
+            (sport) =>
+              !playerData.positions[sport] ||
+              playerData.positions[sport].length < 1,
+          )
+        : false;
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="flex min-h-screen flex-col bg-white">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <RouterLink to="/" className="inline-block">
             <span className="text-4xl font-bold text-[#FF7A00]">REC LiiGA</span>
           </RouterLink>
@@ -121,27 +121,27 @@ export default function PlayerRegistration() {
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="w-full md:w-1/4">
+      <main className="container mx-auto flex-grow px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-8 md:flex-row">
+          <div className="w-full md:w-64">
             <div className="sticky top-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              <h2 className="mb-4 text-2xl font-semibold text-gray-800">
                 Registration Progress
               </h2>
-              <ol className="relative border-l border-gray-200">
+              <ol className="relative ml-4 border-l border-gray-200">
                 {steps.map((step) => (
                   <li key={step.id} className="mb-10 ml-6">
                     <span
-                      className={`absolute flex items-center justify-center w-8 h-8 rounded-full -left-4 ring-4 ring-white ${
+                      className={`absolute -left-4 flex h-8 w-8 -translate-y-1.5 items-center justify-center rounded-full ring-4 ring-white ${
                         step.id === currentStep
                           ? "bg-[#FF7A00] text-white"
                           : step.id < currentStep
-                          ? "bg-green-500 text-white"
-                          : "bg-gray-100 text-gray-500"
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-100 text-gray-500"
                       }`}
                     >
                       {step.id < currentStep ? (
-                        <CheckCircle className="w-5 h-5" />
+                        <CheckCircle className="h-5 w-5" />
                       ) : (
                         step.id
                       )}
@@ -160,8 +160,8 @@ export default function PlayerRegistration() {
               </ol>
             </div>
           </div>
-          <div className="w-full md:w-3/4">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">
+          <div className="w-full flex-1">
+            <h1 className="mb-6 text-4xl font-bold text-gray-800">
               Player Registration
             </h1>
 
@@ -180,13 +180,10 @@ export default function PlayerRegistration() {
               />
             )}
             {currentStep === 3 && (
-              <ConfirmationAndLeagueCode
-                playerData={playerData}
-                updatePlayerData={updatePlayerData}
-              />
+              <ConfirmationAndLeagueCode playerData={playerData} />
             )}
 
-            <div className="flex justify-between mt-6">
+            <div className="mt-6 flex justify-between">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
@@ -195,7 +192,7 @@ export default function PlayerRegistration() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
                 onClick={handleNext}
                 disabled={loading || cannotProceed}
               >
