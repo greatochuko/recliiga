@@ -36,6 +36,7 @@ export function UserMenu() {
       navigate("/sign-in");
       toast.success("Successfully logged out");
     } catch (error) {
+      console.log(error.message);
       toast.error("Error logging out");
     }
   };
@@ -58,11 +59,11 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2">
-            <User className="w-5 h-5 text-gray-500" />
+            <User className="h-5 w-5 text-gray-500" />
             <span className="text-sm font-medium">
               {user?.full_name.split(" ")[0] || "User"}
             </span>
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className="h-4 w-4 text-gray-500" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="center">
@@ -72,24 +73,24 @@ export function UserMenu() {
           <DropdownMenuItem asChild>
             <Link
               to="/profile"
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex cursor-pointer items-center gap-2"
             >
-              <User className="w-4 h-4" />
+              <User className="h-4 w-4" />
               <span>Edit Profile</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setShowInvitePopup(true)}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex cursor-pointer items-center gap-2"
           >
-            <UserPlus className="w-4 h-4" />
+            <UserPlus className="h-4 w-4" />
             <span>Invite Players</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setShowDeleteDialog(true)}
             className="text-red-600"
           >
-            <Trash2 className="w-4 h-4 mr-2" />
+            <Trash2 className="mr-2 h-4 w-4" />
             <span className="">Delete Account</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -97,7 +98,7 @@ export function UserMenu() {
             onClick={() => setShowLogoutDialog(true)}
             className="text-red-600"
           >
-            <LogOut className="w-4 h-4 mr-2 " />
+            <LogOut className="mr-2 h-4 w-4" />
             <span className="text-black">Logout</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -146,7 +147,7 @@ export function UserMenu() {
       </AlertDialog>
 
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <AlertDialogContent className="rounded-lg w-[90%] mx-auto p-4">
+        <AlertDialogContent className="mx-auto w-[90%] rounded-lg p-4">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center">
               Confirm Logout
@@ -158,8 +159,8 @@ export function UserMenu() {
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="sm:items-center sm:justify-center flex-row gap-4  justify-center">
-            <AlertDialogCancel className="border-gray-200 text-left mt-0 ">
+          <AlertDialogFooter className="flex-row justify-center gap-4 sm:items-center sm:justify-center">
+            <AlertDialogCancel className="mt-0 border-gray-200 text-left">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction

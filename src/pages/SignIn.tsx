@@ -22,8 +22,12 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const cannotSubmit =
+    !email.trim().length || !password.trim().length || isLoading;
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cannotSubmit) return;
     setError("");
     setIsLoading(true);
 
@@ -38,32 +42,19 @@ export default function SignInPage() {
     }
   };
 
-  const handleLogoClick = () => {
-    // Reset form and errors
-    setEmail("");
-    setPassword("");
-    setError("");
-    // Force a complete page refresh to reset all state
-    // window.location.href = window.location.pathname
-    // navigate("/sign-in");
-  };
-
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-      <h1
-        className="text-4xl font-bold text-[#FF7A00] mb-8 cursor-pointer hover:text-[#FF9A30] transition-colors"
-        onClick={handleLogoClick}
-      >
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
+      <h1 className="mb-8 cursor-pointer text-4xl font-bold text-[#FF7A00] transition-colors hover:text-[#FF9A30]">
         REC LiiGA
       </h1>
 
       <Card className="w-full max-w-md">
         <form onSubmit={handleSignIn}>
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+            <CardTitle className="text-center text-2xl font-semibold text-gray-800">
               Sign in now
             </CardTitle>
-            <p className="text-center text-[#707B81] text-sm">
+            <p className="text-center text-sm text-[#707B81]">
               Please sign in to continue
             </p>
           </CardHeader>
@@ -99,7 +90,7 @@ export default function SignInPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400" />
@@ -115,7 +106,7 @@ export default function SignInPage() {
                 className="border-0 bg-transparent p-0"
               >
                 <div className="flex items-center">
-                  <AlertCircle className="h-4 w-4 text-red-600 mr-2" />
+                  <AlertCircle className="mr-2 h-4 w-4 text-red-600" />
                   <AlertDescription className="text-red-600">
                     {error}
                   </AlertDescription>
@@ -134,12 +125,12 @@ export default function SignInPage() {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
-              disabled={isLoading}
+              className="w-full bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+              disabled={cannotSubmit}
             >
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
-            <p className="text-sm text-[#707B81] text-center">
+            <p className="text-center text-sm text-[#707B81]">
               Don't have an account?{" "}
               <Link to="/sign-up" className="text-[#FF7A00] hover:underline">
                 Sign up

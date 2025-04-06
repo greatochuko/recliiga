@@ -1,7 +1,9 @@
 import { fetchApi } from "@/lib/utils";
 import { EventType } from "@/types/events";
 
-export type EventDataType = Omit<EventType, "id">;
+export type EventDataType = Omit<EventType, "id" | "teams" | "creatorId"> & {
+  eventDates: Date[];
+};
 
 export async function fetchEventsByUser() {
   const data = await fetchApi<EventType[]>("/event");

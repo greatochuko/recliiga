@@ -28,12 +28,8 @@ export interface EventType {
   location: string;
   numTeams: number;
   rosterSpots: number;
-  isRepeatingEvent: boolean;
-  repeatFrequency?: string;
-  repeatStartDate?: Date;
-  repeatEndDate?: Date;
-  rsvpDeadline: string;
-  customRsvpHours: number;
-  eventDates: EventDateType[];
+  startDate: EventDateType;
+  rsvpDeadline: number;
   teams: Team[];
+  creatorId: string;
 }

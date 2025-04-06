@@ -117,7 +117,6 @@ export default function PlayerRegistration() {
           <RouterLink to="/" className="inline-block">
             <span className="text-4xl font-bold text-[#FF7A00]">REC LiiGA</span>
           </RouterLink>
-          <nav>{/* Add navigation items here if needed */}</nav>
         </div>
       </header>
 
@@ -197,7 +196,9 @@ export default function PlayerRegistration() {
                 disabled={loading || cannotProceed}
               >
                 {currentStep === steps.length
-                  ? "Complete Registration"
+                  ? loading
+                    ? "Loading..."
+                    : "Complete Registration"
                   : "Next"}
               </Button>
             </div>
