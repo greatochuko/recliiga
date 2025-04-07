@@ -6,8 +6,8 @@ export type EventDataType = Omit<EventType, "id" | "teams" | "creatorId"> & {
 };
 
 export async function fetchEventsByUser() {
-  const data = await fetchApi<EventType[]>("/event");
-  return data;
+  const { data, error } = await fetchApi<EventType[]>("/event");
+  return { data: data || [], error };
 }
 
 export async function createEvent(eventData: EventDataType) {

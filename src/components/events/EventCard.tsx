@@ -30,9 +30,9 @@ export const EventCard: React.FC<EventCardProps> = ({
     navigate(`/edit-results/${event.id}`);
   };
 
-  const eventDate = event.eventDates[0].date;
+  const eventDate = event.startDate.date;
 
-  const eventTime = `${event.eventDates[0].startHour}:${event.eventDates[0].startMinute} ${event.eventDates[0].startAmPm}`;
+  const eventTime = `${event.startDate.startHour}:${event.startDate.startMinute} ${event.startDate.startAmPm}`;
 
   const eventSpotsLeft = event.numTeams * event.rosterSpots;
 

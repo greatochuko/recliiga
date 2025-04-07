@@ -13,11 +13,11 @@ export interface Captain {
 
 export interface EventDateType {
   date: Date | undefined;
-  startHour: string;
-  startMinute: string;
+  startHour: number;
+  startMinute: number;
   startAmPm: string;
-  endHour: string;
-  endMinute: string;
+  endHour: number;
+  endMinute: number;
   endAmPm: string;
 }
 

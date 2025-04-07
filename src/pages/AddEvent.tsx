@@ -29,12 +29,12 @@ const initialEventData: EventDataType = {
   rsvpDeadline: 2,
   startDate: {
     date: new Date(),
-    startHour: "12",
-    startMinute: "00",
-    startAmPm: "AM",
-    endHour: "12",
-    endMinute: "00",
-    endAmPm: "AM",
+    startHour: 12,
+    startMinute: 0,
+    startAmPm: "PM",
+    endHour: 1,
+    endMinute: 0,
+    endAmPm: "pM",
   },
   eventDates: [],
 };
@@ -151,7 +151,7 @@ export default function AddEvent() {
     e.preventDefault();
 
     setSubmitting(true);
-    const { error } = await createEvent(eventData);
+    const { error } = await createEvent({ ...eventData, eventDates });
 
     if (error === null) {
       navigate("/manage-events");
@@ -189,7 +189,7 @@ export default function AddEvent() {
                     leagueId: e.target.value,
                   }))
                 }
-                className="rounded-md border px-3 py-2 text-sm"
+                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:bg-gray-100"
                 id="league-id"
                 name="league-id"
                 disabled={isLoadingLeagues}
@@ -313,7 +313,7 @@ export default function AddEvent() {
                     <select
                       value={eventData.startDate.startHour}
                       onChange={(e) =>
-                        updateEventDate("startHour", e.target.value)
+                        updateEventDate("startHour", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -332,7 +332,7 @@ export default function AddEvent() {
                     <select
                       value={eventData.startDate.startMinute}
                       onChange={(e) =>
-                        updateEventDate("startMinute", e.target.value)
+                        updateEventDate("startMinute", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -365,7 +365,7 @@ export default function AddEvent() {
                     <select
                       value={eventData.startDate.endHour}
                       onChange={(e) =>
-                        updateEventDate("endHour", e.target.value)
+                        updateEventDate("endHour", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -384,7 +384,7 @@ export default function AddEvent() {
                     <select
                       value={eventData.startDate.endMinute}
                       onChange={(e) =>
-                        updateEventDate("endMinute", e.target.value)
+                        updateEventDate("endMinute", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -541,14 +541,14 @@ export default function AddEvent() {
                       {format(date, "MMMM d yyyy")},{" "}
                       <>
                         {formatTime(
-                          eventData.startDate.startHour,
-                          eventData.startDate.startMinute,
+                          eventData.startDate.startHour.toString(),
+                          eventData.startDate.startMinute.toString(),
                           eventData.startDate.startAmPm,
                         )}{" "}
                         -{" "}
                         {formatTime(
-                          eventData.startDate.endHour,
-                          eventData.startDate.endMinute,
+                          eventData.startDate.endHour.toString(),
+                          eventData.startDate.endMinute.toString(),
                           eventData.startDate.endAmPm,
                         )}
                         , {format(date, "EEEE")}

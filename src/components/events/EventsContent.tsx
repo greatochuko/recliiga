@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -22,13 +21,16 @@ export const EventsContent: React.FC = () => {
   const [selectedLeagueId, setSelectedLeague] = useState<string | null>(null);
 
   const {
-    data: { data: events },
-    isFetching: isLoadingLeagues,
+    data: { data: events, error },
+    isFetching: isLoadingEvents,
+    refetch: refetchEvents,
   } = useQuery({
     queryKey: ["event"],
     queryFn: fetchEventsByUser,
     initialData: { data: [], error: null },
   });
+
+  console.log({ events, error });
 
   const filteredEvents = useMemo(() => {
     const filtered = selectedLeagueId
@@ -36,14 +38,22 @@ export const EventsContent: React.FC = () => {
       : events;
 
     const upcomingEvents = filtered.filter((event) => {
-      const eventDate =
-        event.eventDates.length > 0 ? event.eventDates[0].date : undefined;
+      const eventDate = new Date(event.startDate.date).setHours(
+        event.startDate.startAmPm === "PM"
+          ? event.startDate.startHour + 12
+          : event.startDate.startHour,
+        event.startDate.startMinute,
+      );
       return !isPast(eventDate);
     });
 
     const pastEvents = filtered.filter((event) => {
-      const eventDate =
-        event.eventDates.length > 0 ? event.eventDates[0].date : undefined;
+      const eventDate = new Date(event.startDate.date).setHours(
+        event.startDate.startAmPm === "PM"
+          ? event.startDate.startHour + 12
+          : event.startDate.startHour,
+        event.startDate.startMinute,
+      );
       return isPast(eventDate);
     });
 
@@ -65,13 +75,13 @@ export const EventsContent: React.FC = () => {
   };
 
   return (
-    <div className="mt-6 mx-auto flex flex-col gap-6 max-w-4xl">
-      <div className="flex justify-between items-center">
+    <div className="mx-auto mt-6 flex max-w-4xl flex-col gap-6">
+      <div className="flex items-center justify-between">
         <Select
           onValueChange={(value) =>
             setSelectedLeague(value === "all" ? null : value)
           }
-          disabled={isLoadingLeagues}
+          disabled={isLoadingEvents}
         >
           <SelectTrigger className="w-full md:w-[300px]">
             <SelectValue placeholder="Select a league" />
@@ -85,7 +95,7 @@ export const EventsContent: React.FC = () => {
             ))}
           </SelectContent>
         </Select>
-        <Button className="bg-[#FF7A00] hover:bg-[#E66900] text-white" asChild>
+        <Button className="bg-[#FF7A00] text-white hover:bg-[#E66900]" asChild>
           <Link to="/add-event">
             <Plus className="mr-2 h-4 w-4" /> Create New Event
           </Link>
@@ -97,13 +107,23 @@ export const EventsContent: React.FC = () => {
           <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
           <TabsTrigger value="past">Past Events</TabsTrigger>
         </TabsList>
-        {isLoadingLeagues ? (
-          <div className="py-10 text-gray-500 text-center">Loading...</div>
+        {isLoadingEvents ? (
+          <div className="py-10 text-center text-gray-500">Loading...</div>
         ) : (
           <>
             <TabsContent value="upcoming">
-              {filteredEvents.upcoming.length === 0 ? (
-                <div className="text-center py-10 text-gray-500">
+              {error ? (
+                <div className="py-10 text-center text-gray-500">
+                  An error occurred while fetching events{" "}
+                  <button
+                    onClick={() => refetchEvents()}
+                    className="text-blue-500 hover:underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : filteredEvents.upcoming.length === 0 ? (
+                <div className="py-10 text-center text-gray-500">
                   No upcoming events found
                 </div>
               ) : (
@@ -119,7 +139,7 @@ export const EventsContent: React.FC = () => {
             </TabsContent>
             <TabsContent value="past">
               {filteredEvents.past.length === 0 ? (
-                <div className="text-center py-10 text-gray-500">
+                <div className="py-10 text-center text-gray-500">
                   No past events found
                 </div>
               ) : (
