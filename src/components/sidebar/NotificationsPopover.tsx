@@ -88,14 +88,14 @@ export function NotificationsPopover() {
   const handleJoinRequest = (
     id: number,
     action: "accept" | "decline",
-    event: React.MouseEvent
+    event: React.MouseEvent,
   ) => {
     event.preventDefault();
     event.stopPropagation();
     setJoinRequests(
       joinRequests.map((request) =>
-        request.id === id ? { ...request, action } : request
-      )
+        request.id === id ? { ...request, action } : request,
+      ),
     );
     setEditingId(null);
     console.log(`${action} join request for player ${id}`);
@@ -107,30 +107,30 @@ export function NotificationsPopover() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-2">
-          <Bell className="w-5 h-5 text-gray-500" />
+          <Bell className="h-5 w-5 text-gray-500" />
           <Badge
             variant="secondary"
-            className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]"
+            className="bg-accent-orange hover:bg-accent-orange text-white"
           >
             {totalNotifications}
           </Badge>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[400px] p-0 h-[calc(100dvh-20rem)] overflow-y-auto"
+        className="h-[calc(100dvh-20rem)] w-[400px] overflow-y-auto p-0"
         align="start"
       >
         {user && user.role === "organizer" && joinRequests.length > 0 && (
           <>
-            <DropdownMenuLabel className="p-4 font-medium border-b border-gray-100">
+            <DropdownMenuLabel className="border-b border-gray-100 p-4 font-medium">
               Join Requests
             </DropdownMenuLabel>
             {joinRequests.map((request) => (
               <DropdownMenuItem
                 key={request.id}
-                className="flex items-center border-b border-gray-100 py-3 px-4 hover:bg-gray-50 cursor-default"
+                className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 hover:bg-gray-50"
               >
-                <Avatar className="h-8 w-8 mr-2">
+                <Avatar className="mr-2 h-8 w-8">
                   <AvatarImage src={request.avatar} alt={request.name} />
                   <AvatarFallback>
                     {request.name
@@ -168,10 +168,10 @@ export function NotificationsPopover() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex gap-2 ml-2">
+                  <div className="ml-2 flex gap-2">
                     <Button
                       size="sm"
-                      className="h-7 px-2 bg-[#F79602] hover:bg-[#E68A00] text-white text-xs"
+                      className="h-7 bg-[#F79602] px-2 text-xs text-white hover:bg-[#E68A00]"
                       onClick={(e) =>
                         handleJoinRequest(request.id, "accept", e)
                       }
@@ -181,7 +181,7 @@ export function NotificationsPopover() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-7 px-2 border-[#F79602] text-[#F79602] hover:bg-[#FFF5E6] text-xs"
+                      className="h-7 border-[#F79602] px-2 text-xs text-[#F79602] hover:bg-[#FFF5E6]"
                       onClick={(e) =>
                         handleJoinRequest(request.id, "decline", e)
                       }
@@ -196,21 +196,21 @@ export function NotificationsPopover() {
           </>
         )}
 
-        <div className="p-4 border-b border-gray-100">
+        <div className="border-b border-gray-100 p-4">
           <h2 className="text-xl font-semibold">New</h2>
         </div>
         <div className="max-h-[400px] overflow-y-auto">
           {notifications.map((notification, index) => (
             <div
               key={notification.id}
-              className={`p-4 hover:bg-gray-50 cursor-pointer ${
+              className={`cursor-pointer p-4 hover:bg-gray-50 ${
                 index < notifications.length - 1
                   ? "border-b border-gray-100"
                   : ""
               }`}
             >
-              <div className="flex gap-3 items-start">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0" />
+              <div className="flex items-start gap-3">
+                <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200" />
                 <div>
                   <p className="text-sm font-medium">{notification.title}</p>
                   <p className="text-xs text-gray-500">{notification.time}</p>

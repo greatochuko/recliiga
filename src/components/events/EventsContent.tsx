@@ -8,13 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EventCard } from "./EventCard";
+import { ManageEventCard } from "./ManageEventCard";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
-import { isPast } from "date-fns";
 import { fetchEventsByUser } from "@/api/events";
+import { getPastEvents, getUpcomingEvents } from "@/lib/utils";
 
 export const EventsContent: React.FC = () => {
   const { toast } = useToast();
@@ -37,25 +37,9 @@ export const EventsContent: React.FC = () => {
       ? events.filter((event) => event.leagueId === selectedLeagueId)
       : events;
 
-    const upcomingEvents = filtered.filter((event) => {
-      const eventDate = new Date(event.startDate.date).setHours(
-        event.startDate.startAmPm === "PM"
-          ? event.startDate.startHour + 12
-          : event.startDate.startHour,
-        event.startDate.startMinute,
-      );
-      return !isPast(eventDate);
-    });
+    const upcomingEvents = getUpcomingEvents(filtered);
 
-    const pastEvents = filtered.filter((event) => {
-      const eventDate = new Date(event.startDate.date).setHours(
-        event.startDate.startAmPm === "PM"
-          ? event.startDate.startHour + 12
-          : event.startDate.startHour,
-        event.startDate.startMinute,
-      );
-      return isPast(eventDate);
-    });
+    const pastEvents = getPastEvents(filtered);
 
     return { upcoming: upcomingEvents, past: pastEvents };
   }, [events, selectedLeagueId]);
@@ -95,7 +79,10 @@ export const EventsContent: React.FC = () => {
             ))}
           </SelectContent>
         </Select>
-        <Button className="bg-[#FF7A00] text-white hover:bg-[#E66900]" asChild>
+        <Button
+          className="bg-accent-orange text-white hover:bg-[#E66900]"
+          asChild
+        >
           <Link to="/add-event">
             <Plus className="mr-2 h-4 w-4" /> Create New Event
           </Link>
@@ -128,7 +115,7 @@ export const EventsContent: React.FC = () => {
                 </div>
               ) : (
                 filteredEvents.upcoming.map((event) => (
-                  <EventCard
+                  <ManageEventCard
                     key={event.id}
                     event={event}
                     onEdit={handleEditEvent}
@@ -144,7 +131,7 @@ export const EventsContent: React.FC = () => {
                 </div>
               ) : (
                 filteredEvents.past.map((event) => (
-                  <EventCard
+                  <ManageEventCard
                     key={event.id}
                     event={event}
                     onEdit={handleEditEvent}

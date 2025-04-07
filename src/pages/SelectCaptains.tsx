@@ -24,8 +24,10 @@ interface Player {
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-1">
-      <span className="text-[#FF7A00] font-medium">{rating.toFixed(2)}</span>
-      <Star className="h-4 w-4 fill-[#FF7A00] text-[#FF7A00]" />
+      <span className="text-accent-orange font-medium">
+        {rating.toFixed(2)}
+      </span>
+      <Star className="fill-accent-orange text-accent-orange h-4 w-4" />
     </div>
   );
 }
@@ -41,10 +43,10 @@ function AttendingList({
 }) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {players.map((player) => (
           <div key={player.id} className="flex items-center gap-2">
-            <Avatar className="w-10 h-10">
+            <Avatar className="h-10 w-10">
               <AvatarImage src={player.avatar} alt={player.name} />
               <AvatarFallback>
                 {player.name
@@ -53,15 +55,15 @@ function AttendingList({
                   .join("")}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="font-semibold truncate">{player.name}</span>
+                <span className="truncate font-semibold">{player.name}</span>
                 <StarRating rating={player.rating} />
                 {player.isCaptain && (
                   <Crown className="h-4 w-4 text-yellow-500" />
                 )}
               </div>
-              <span className="text-sm text-muted-foreground truncate">
+              <span className="truncate text-sm text-muted-foreground">
                 {player.position || "Unassigned"}
               </span>
             </div>
@@ -129,8 +131,8 @@ export default function SelectCaptains() {
 
     setPlayers(
       players.map((player) =>
-        player.id === playerId ? { ...player, isCaptain: isSelected } : player
-      )
+        player.id === playerId ? { ...player, isCaptain: isSelected } : player,
+      ),
     );
   };
 
@@ -147,7 +149,7 @@ export default function SelectCaptains() {
       const success = await selectEventCaptains(
         eventId!,
         selectedCaptains[0].id,
-        selectedCaptains[1].id
+        selectedCaptains[1].id,
       );
 
       if (success) {
@@ -166,7 +168,7 @@ export default function SelectCaptains() {
 
   const renderTeamInfo = (team: any, teamNumber: number) => (
     <div className="flex flex-col items-center space-y-2">
-      <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
+      <Avatar className="h-16 w-16" style={{ backgroundColor: team.color }}>
         <AvatarImage src={team.avatar} alt={`Team ${teamNumber}`} />
         <AvatarFallback>{`T${teamNumber}`}</AvatarFallback>
       </Avatar>
@@ -178,37 +180,37 @@ export default function SelectCaptains() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 text-[#FF7A00] animate-spin" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="text-accent-orange h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <main className="flex-1 bg-background relative">
-      <div className="absolute top-4 left-4 z-50"></div>
+    <main className="relative flex-1 bg-background">
+      <div className="absolute left-4 top-4 z-50"></div>
       <Button
         variant="ghost"
         size="sm"
-        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+        className="text-accent-orange hover:text-accent-orange fixed right-4 top-4 z-10 p-0 hover:bg-transparent hover:underline"
         onClick={() => navigate("/events")}
       >
         Back to Events
       </Button>
-      <div className="container mx-auto px-4 py-8 ">
-        <Card className="max-w-3xl mx-auto">
+      <div className="container mx-auto px-4 py-8">
+        <Card className="mx-auto max-w-3xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
+            <CardTitle className="text-center text-2xl font-bold">
               Upcoming Match
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-8">
               {event && (
-                <div className="flex items-center justify-center gap-8 mb-8">
+                <div className="mb-8 flex items-center justify-center gap-8">
                   {renderTeamInfo(event.team1, 1)}
                   <div className="flex flex-col items-center justify-center">
-                    <div className="flex flex-col items-center mb-4 text-center">
+                    <div className="mb-4 flex flex-col items-center text-center">
                       <span className="text-xs text-gray-500">
                         {event.date}
                       </span>
@@ -218,7 +220,7 @@ export default function SelectCaptains() {
                       <span className="text-xs text-gray-500">
                         {event.time}
                       </span>
-                      <span className="text-xs font-bold text-[#FF7A00]">
+                      <span className="text-accent-orange text-xs font-bold">
                         {event.league}
                       </span>
                     </div>
@@ -237,7 +239,7 @@ export default function SelectCaptains() {
                   <Button
                     onClick={handleConfirmCaptains}
                     disabled={isSubmitting}
-                    className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+                    className="bg-accent-orange hover:bg-accent-orange/90 text-white"
                   >
                     {isSubmitting ? (
                       <>
@@ -251,8 +253,8 @@ export default function SelectCaptains() {
                 )}
               </div>
 
-              <div className="pt-8 border-t">
-                <h3 className="text-lg font-semibold mb-4">
+              <div className="border-t pt-8">
+                <h3 className="mb-4 text-lg font-semibold">
                   Attending Players ({players.length})
                 </h3>
                 <AttendingList

@@ -1,35 +1,31 @@
 import { fetchEventsByUser } from "@/api/events";
 import { EventsList } from "@/components/events/EventsList";
+import { getUpcomingEvents, getPastEvents } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { isPast } from "date-fns";
 
 export default function Events() {
   const {
     data: { data: events },
-    isFetching,
+    isLoading,
   } = useQuery({
     queryKey: ["events"],
     queryFn: fetchEventsByUser,
     initialData: { data: [], error: null },
   });
 
-  const upcomingEvents = events.filter((event) => {
-    const eventDate =
-      event.eventDates.length > 0 ? event.eventDates[0].date : undefined;
-    return !isPast(eventDate);
-  });
+  const upcomingEvents = getUpcomingEvents(events);
 
-  const pastEvents = events.filter((event) => {
-    const eventDate =
-      event.eventDates.length > 0 ? event.eventDates[0].date : undefined;
-    return isPast(eventDate);
-  });
+  const pastEvents = getPastEvents(events);
 
   return (
-    <main className="flex-1 bg-background relative">
+    <main className="relative flex-1 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Events</h1>
       <div className="">
-        <EventsList upcomingEvents={upcomingEvents} pastEvents={pastEvents} />
+        <EventsList
+          loading={isLoading}
+          upcomingEvents={upcomingEvents}
+          pastEvents={pastEvents}
+        />
       </div>
     </main>
   );

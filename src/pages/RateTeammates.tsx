@@ -66,15 +66,15 @@ export default function RateTeammates() {
   };
 
   return (
-    <main className="flex-1 bg-background relative">
+    <main className="relative flex-1 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Rate Teammates</h1>
 
       <div className="">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex justify-between items-center mb-4 ml-auto w-fit px-2">
+        <div className="mx-auto max-w-4xl p-4">
+          <div className="mb-4 ml-auto flex w-fit items-center justify-between px-2">
             <Button
               variant="ghost"
-              className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+              className="text-accent-orange hover:text-accent-orange p-0 hover:bg-transparent hover:underline"
               onClick={() => navigate(-1)}
             >
               Previous
@@ -82,7 +82,7 @@ export default function RateTeammates() {
           </div>
           {players.length > 0 ? (
             <>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-6 text-gray-600">
                 Click on the player or star icons to rate your teammates'
                 performance.
               </p>
@@ -97,16 +97,16 @@ export default function RateTeammates() {
               </div>
             </>
           ) : (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold text-[#FF7A00] mb-4">
+            <div className="py-12 text-center">
+              <h2 className="text-accent-orange mb-4 text-2xl font-bold">
                 All Teammates Rated!
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="mb-6 text-gray-600">
                 Thank you for providing feedback on all your teammates. Your
                 input is valuable for improving team performance.
               </p>
               <Button
-                className="bg-[#FF7A00] hover:bg-[#E66C00] text-white font-bold py-3 px-6 rounded-lg text-lg"
+                className="bg-accent-orange rounded-lg px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
                 onClick={() => navigate("/")}
               >
                 Return to Dashboard

@@ -80,31 +80,33 @@ export function LeagueSetup() {
       : false;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
+    <div className="flex flex-col gap-8 lg:flex-row">
       <div className="w-full lg:w-1/4">
         <div className="sticky top-8">
-          <h2 className="text-lg font-semibold mb-4">Setup Progress</h2>
+          <h2 className="mb-4 text-lg font-semibold">Setup Progress</h2>
           <ol className="relative border-l border-gray-200">
             {steps.map((step) => (
               <li key={step.id} className="mb-10 ml-6">
                 <span
-                  className={`absolute flex items-center justify-center w-8 h-8 rounded-full -left-4 ring-4 ring-white ${
+                  className={`absolute -left-4 flex h-8 w-8 items-center justify-center rounded-full ring-4 ring-white ${
                     step.id === currentStep
-                      ? "bg-[#FF7A00] text-white"
+                      ? "bg-accent-orange text-white"
                       : step.id < currentStep
-                      ? "bg-green-500 text-white"
-                      : "bg-gray-100 text-gray-500"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-100 text-gray-500"
                   }`}
                 >
                   {step.id < currentStep ? (
-                    <Check className="w-5 h-5" />
+                    <Check className="h-5 w-5" />
                   ) : (
                     step.id
                   )}
                 </span>
                 <h3
                   className={`font-medium leading-tight ${
-                    step.id === currentStep ? "text-[#FF7A00]" : "text-gray-500"
+                    step.id === currentStep
+                      ? "text-accent-orange"
+                      : "text-gray-500"
                   }`}
                 >
                   {step.name}
@@ -115,7 +117,7 @@ export function LeagueSetup() {
         </div>
       </div>
       <div className="w-full lg:w-3/4">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">League Setup</h1>
+        <h1 className="mb-6 text-3xl font-bold text-gray-800">League Setup</h1>
 
         {currentStep === 1 && (
           <LeagueInfoStep
@@ -137,7 +139,7 @@ export function LeagueSetup() {
         )} */}
         {currentStep === 3 && <ConfirmationStep leagueData={leagueData} />}
 
-        <div className="flex justify-between mt-6">
+        <div className="mt-6 flex justify-between">
           {currentStep > 1 && (
             <Button variant="outline" onClick={handlePrevious}>
               Previous
@@ -145,7 +147,7 @@ export function LeagueSetup() {
           )}
           {currentStep < steps.length ? (
             <Button
-              className="bg-[#FF7A00] ml-auto hover:bg-[#FF7A00]/90 text-white"
+              className="bg-accent-orange hover:bg-accent-orange/90 ml-auto text-white"
               onClick={handleNext}
               disabled={cannotProceed}
             >
@@ -153,11 +155,11 @@ export function LeagueSetup() {
             </Button>
           ) : (
             <Button
-              className="bg-[#FF7A00] ml-auto hover:bg-[#FF7A00]/90 text-white"
+              className="bg-accent-orange hover:bg-accent-orange/90 ml-auto text-white"
               onClick={handleSubmit}
               disabled={loading || cannotProceed}
             >
-              {loading && <LoaderIcon className="w-4 h-4 animate-spin" />}
+              {loading && <LoaderIcon className="h-4 w-4 animate-spin" />}
               Complete Setup
             </Button>
           )}

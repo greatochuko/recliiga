@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { EventType } from "@/types/events";
@@ -7,11 +7,11 @@ import { EventType } from "@/types/events";
 interface EventActionsProps {
   event: EventType;
   isPastEvent?: boolean;
-  attendanceStatus: "attending" | "declined" | null;
+  attendanceStatus: "attending" | "not-attending" | null;
   isRsvpOpen: boolean;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
-  setAttendanceStatus: (status: "attending" | "declined" | null) => void;
+  setAttendanceStatus: (status: "attending" | "not-attending" | null) => void;
 }
 
 export const EventActions: React.FC<EventActionsProps> = ({
@@ -23,15 +23,13 @@ export const EventActions: React.FC<EventActionsProps> = ({
   setIsEditing,
   setAttendanceStatus,
 }) => {
-  const navigate = useNavigate();
-
   const handleAttend = () => {
     setAttendanceStatus("attending");
     setIsEditing(false);
   };
 
   const handleDecline = () => {
-    setAttendanceStatus("declined");
+    setAttendanceStatus("not-attending");
     setIsEditing(false);
   };
 
@@ -39,55 +37,46 @@ export const EventActions: React.FC<EventActionsProps> = ({
     setIsEditing(!isEditing);
   };
 
-  const handleViewDetails = () => {
-    if (event.hasResults) {
-      navigate(`/events/${event.id}/results`);
-    } else {
-      navigate(`/events/${event.id}`);
-    }
-  };
-
   return (
     <>
-      <div className="flex justify-center mt-2 space-x-2">
-        <Button
-          variant="outline"
-          className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
-          style={{
-            transform: "scale(1.1)",
-          }}
-          onClick={handleViewDetails}
+      <div className="mt-2 flex justify-center space-x-2">
+        <Link
+          to={
+            event.resultsEntered
+              ? `/events/${event.id}/results`
+              : `/events/${event.id}`
+          }
+          className="hover:bg-accent-orange text-accent-orange border-accent-orange rounded-md border bg-white px-4 py-2 text-sm font-medium duration-200 hover:text-white"
         >
-          {event.hasResults ? "View Results" : "View Details"}
-        </Button>
+          {event.resultsEntered ? "View Results" : "View Details"}
+        </Link>
       </div>
       {!isPastEvent && isRsvpOpen && (
-        <div className="flex justify-center mt-2 space-x-2">
+        <div className="mt-2 flex justify-center space-x-2">
           {(isEditing || !attendanceStatus) && (
             <>
-              <Button
-                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
+              <button
+                className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
                 onClick={handleAttend}
               >
                 Attend
-              </Button>
-              <Button
-                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
+              </button>
+              <button
+                className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
                 onClick={handleDecline}
               >
                 Decline
-              </Button>
+              </button>
             </>
           )}
           {attendanceStatus && !isEditing && (
-            <Button
-              variant="outline"
-              className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
+            <button
+              className="text-accent-orange border-accent-orange hover:bg-accent-orange flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:text-white"
               onClick={toggleEdit}
             >
-              <Edit className="w-4 h-4 mr-2" />
+              <Edit className="mr-2 h-4 w-4" />
               Edit RSVP
-            </Button>
+            </button>
           )}
         </div>
       )}

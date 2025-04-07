@@ -175,7 +175,7 @@ const individualMessages = [
 ];
 function ChatContent() {
   const [activeConversation, setActiveConversation] = useState(
-    conversations[0]
+    conversations[0],
   );
   const [messageInput, setMessageInput] = useState("");
   const [isProfileVisible, setIsProfileVisible] = useState(false);
@@ -244,12 +244,12 @@ function ChatContent() {
   };
   return (
     <div className="p-4 md:p-6">
-      <div className="flex h-[calc(100vh-120px)] border rounded-lg overflow-hidden">
+      <div className="flex h-[calc(100vh-120px)] overflow-hidden rounded-lg border">
         {/* Conversations sidebar */}
-        <div className="w-80 border-r border-gray-200 flex flex-col">
+        <div className="flex w-80 flex-col border-r border-gray-200">
           <div className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-inherit text-xl">Messages</h2>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-inherit">Messages</h2>
               <Dialog
                 open={isNewChatDialogOpen}
                 onOpenChange={setIsNewChatDialogOpen}
@@ -258,9 +258,9 @@ function ChatContent() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-[#FF7A00] hover:text-white hover:bg-[#FF7A00]"
+                    className="text-accent-orange hover:bg-accent-orange hover:text-white"
                   >
-                    <Plus className="h-5 w-5 mr-1" />
+                    <Plus className="mr-1 h-5 w-5" />
                     New Chat
                   </Button>
                 </DialogTrigger>
@@ -305,12 +305,12 @@ function ChatContent() {
                 </DialogContent>
               </Dialog>
             </div>
-            <div className="relative w-full mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#707B81] h-4 w-4" />
+            <div className="relative mb-4 w-full">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-[#707B81]" />
               <Input
                 type="search"
                 placeholder="Search"
-                className="pl-10 pr-4 w-full border-[#707B81] focus:border-[#FF7A00] focus:ring-[#FF7A00]"
+                className="focus:border-accent-orange focus:ring-accent-orange w-full border-[#707B81] pl-10 pr-4"
               />
             </div>
           </div>
@@ -318,9 +318,9 @@ function ChatContent() {
             {chats.map((chat) => (
               <div
                 key={chat.id}
-                className={`flex items-center p-4 space-x-3 cursor-pointer relative ${
+                className={`relative flex cursor-pointer items-center space-x-3 p-4 ${
                   chat.id === activeConversation?.id
-                    ? "bg-gray-100 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-[#FF7A00]"
+                    ? "before:bg-accent-orange bg-gray-100 before:absolute before:left-0 before:top-0 before:h-full before:w-1"
                     : "hover:bg-gray-50"
                 }`}
                 onClick={() => handleChatSelect(chat)}
@@ -330,7 +330,7 @@ function ChatContent() {
                     <AvatarImage src={chat.avatar} alt={chat.name} />
                     <AvatarFallback>
                       {chat.type === "group" ? (
-                        <Users className="h-6 w-6 text-[#FF7A00]" />
+                        <Users className="text-accent-orange h-6 w-6" />
                       ) : (
                         getInitials(chat.name)
                       )}
@@ -338,24 +338,24 @@ function ChatContent() {
                   </Avatar>
                   {chat.unread > 0 && (
                     <Badge
-                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-[#FF7A00]"
+                      className="bg-accent-orange absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center p-0 text-xs"
                       aria-label={`${chat.unread} unread messages`}
                     >
                       {chat.unread}
                     </Badge>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <p
-                    className={`font-medium truncate ${
+                    className={`truncate font-medium ${
                       chat.id === activeConversation?.id
-                        ? "text-[#FF7A00]"
+                        ? "text-accent-orange"
                         : "text-gray-900"
                     }`}
                   >
                     {chat.name}
                   </p>
-                  <p className="text-sm truncate text-[#707B81]">
+                  <p className="truncate text-sm text-[#707B81]">
                     {chat.lastMessage}
                   </p>
                 </div>
@@ -370,7 +370,7 @@ function ChatContent() {
                     <DropdownMenuItem
                       onSelect={() => handleDeleteChat(chat.id)}
                     >
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <Trash2 className="mr-2 h-4 w-4" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -381,19 +381,19 @@ function ChatContent() {
         </div>
 
         {/* Chat area */}
-        <section className="flex-1 flex flex-col">
+        <section className="flex flex-1 flex-col">
           {activeConversation && (
             <>
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between border-b border-gray-200 p-4">
                 <div className="flex items-center">
-                  <Avatar className="w-10 h-10 mr-3">
+                  <Avatar className="mr-3 h-10 w-10">
                     <AvatarImage
                       src={activeConversation.avatar}
                       alt={activeConversation.name}
                     />
                     <AvatarFallback>
                       {activeConversation.type === "group" ? (
-                        <Users className="h-6 w-6 text-[#FF7A00]" />
+                        <Users className="text-accent-orange h-6 w-6" />
                       ) : (
                         getInitials(activeConversation.name)
                       )}
@@ -407,8 +407,8 @@ function ChatContent() {
                       {activeConversation.type === "group"
                         ? "Group Chat"
                         : activeConversation.role === "organizer"
-                        ? "League Organizer"
-                        : "Player"}
+                          ? "League Organizer"
+                          : "Player"}
                     </p>
                   </div>
                 </div>
@@ -435,7 +435,7 @@ function ChatContent() {
                   </TooltipProvider>
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 space-y-4 overflow-y-auto p-4">
                 {getMessageData(activeConversation).map((message, index) => (
                   <div
                     key={index}
@@ -451,7 +451,7 @@ function ChatContent() {
                     <div
                       className={`max-w-[70%] ${
                         message.name === "John Doe"
-                          ? "bg-[#FF7A00] text-white"
+                          ? "bg-accent-orange text-white"
                           : "bg-gray-100"
                       } rounded-lg p-3`}
                     >
@@ -461,7 +461,7 @@ function ChatContent() {
                           {message.time}
                         </span>
                       </p>
-                      <p className="text-sm mt-1">{message.message}</p>
+                      <p className="mt-1 text-sm">{message.message}</p>
                     </div>
                     {message.name === "John Doe" && (
                       <Avatar>
@@ -481,14 +481,14 @@ function ChatContent() {
                     placeholder="Type your message..."
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
-                    className="flex-1 border-[#707B81] focus:border-[#FF7A00] focus:ring-[#FF7A00]"
+                    className="focus:border-accent-orange focus:ring-accent-orange flex-1 border-[#707B81]"
                   />
                   <Button variant="ghost" size="icon" type="button">
                     <Paperclip className="h-5 w-5 text-[#707B81]" />
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-[#FF7A00] hover:bg-[#FF7A00]/90"
+                    className="bg-accent-orange hover:bg-accent-orange/90"
                   >
                     <Send className="h-5 w-5" />
                   </Button>
@@ -502,12 +502,12 @@ function ChatContent() {
         {isProfileVisible && activeConversation && (
           <aside className="w-64 border-l border-gray-200 p-4">
             <div className="flex flex-col items-center">
-              <Avatar className="w-24 h-24 mb-4">
+              <Avatar className="mb-4 h-24 w-24">
                 <AvatarImage
                   src={activeConversation.avatar}
                   alt={activeConversation.name}
                 />
-                <AvatarFallback className="text-2xl bg-[#FF7A00] text-white">
+                <AvatarFallback className="bg-accent-orange text-2xl text-white">
                   {activeConversation.type === "group" ? (
                     <Users className="h-12 w-12" />
                   ) : (
@@ -515,10 +515,10 @@ function ChatContent() {
                   )}
                 </AvatarFallback>
               </Avatar>
-              <h4 className="text-lg font-medium text-[#FF7A00]">
+              <h4 className="text-accent-orange text-lg font-medium">
                 {activeConversation.name}
               </h4>
-              <p className="text-sm text-[#707B81] mb-2">
+              <p className="mb-2 text-sm text-[#707B81]">
                 {activeConversation.type === "group"
                   ? "Group Chat"
                   : `${
@@ -527,14 +527,14 @@ function ChatContent() {
                         : "Player"
                     } | New York`}
               </p>
-              <p className="text-sm text-[#707B81] mb-8">
+              <p className="mb-8 text-sm text-[#707B81]">
                 {activeConversation.type === "group"
                   ? `${activeConversation.members?.length || 0} members`
                   : "7:08 PM EST"}
               </p>
               <div className="w-full space-y-2">
                 <Button variant="outline" className="w-full justify-start">
-                  <Eye className="h-4 w-4 mr-2 text-[#FF7A00]" />
+                  <Eye className="text-accent-orange mr-2 h-4 w-4" />
                   {activeConversation.type === "group"
                     ? "View League Info"
                     : "View Profile"}
@@ -542,17 +542,17 @@ function ChatContent() {
               </div>
               {activeConversation.type === "group" &&
                 activeConversation.members && (
-                  <div className="w-full mt-4">
-                    <h5 className="text-sm font-medium text-[#707B81] mb-2">
+                  <div className="mt-4 w-full">
+                    <h5 className="mb-2 text-sm font-medium text-[#707B81]">
                       Members
                     </h5>
                     <div className="max-h-[300px] overflow-y-auto">
                       {activeConversation.members.map((member, index) => (
                         <div
                           key={index}
-                          className="flex items-center space-x-2 mb-2"
+                          className="mb-2 flex items-center space-x-2"
                         >
-                          <Avatar className="w-8 h-8">
+                          <Avatar className="h-8 w-8">
                             <AvatarImage src={member.image} alt={member.name} />
                             <AvatarFallback>{member.initials}</AvatarFallback>
                           </Avatar>
@@ -573,7 +573,7 @@ function ChatContent() {
 }
 export default function Chat() {
   return (
-    <main className="flex-1 bg-background relative">
+    <main className="relative flex-1 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Chat</h1>
 
       {/* Chat content starting below the header */}

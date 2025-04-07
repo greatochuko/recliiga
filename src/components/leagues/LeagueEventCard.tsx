@@ -18,7 +18,7 @@ export default function LeagueEventCard({
 }) {
   const navigate = useNavigate();
   const [attendanceStatus, setAttendanceStatus] = useState(
-    event.status || null
+    event.status || null,
   );
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
   const [isEditing, setIsEditing] = useState(false);
@@ -47,19 +47,19 @@ export default function LeagueEventCard({
 
   return (
     <Card className="mb-4">
-      <CardContent className="p-4 relative">
-        <div className="flex justify-between items-start mb-4">
+      <CardContent className="relative p-4">
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center">
-            <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-            <span className="text-xs text-gray-500 mr-4">{event.date}</span>
-            <span className="text-xs text-gray-500 mr-4">{event.time}</span>
-            <MapPin className="w-4 h-4 text-gray-500 mr-2" />
+            <Calendar className="mr-2 h-4 w-4 text-gray-500" />
+            <span className="mr-4 text-xs text-gray-500">{event.date}</span>
+            <span className="mr-4 text-xs text-gray-500">{event.time}</span>
+            <MapPin className="mr-2 h-4 w-4 text-gray-500" />
             <span className="text-xs text-gray-500">{event.location}</span>
           </div>
           {attendanceStatus === "attending" && !isEditing && (
             <Badge
               variant="secondary"
-              className="bg-[#FF7A00] bg-opacity-20 text-[#FF7A00] text-xs"
+              className="bg-accent-orange text-accent-orange bg-opacity-20 text-xs"
             >
               Attending
             </Badge>
@@ -67,13 +67,13 @@ export default function LeagueEventCard({
           {attendanceStatus === "declined" && !isEditing && (
             <Badge
               variant="secondary"
-              className="bg-red-100 text-red-600 text-xs"
+              className="bg-red-100 text-xs text-red-600"
             >
               Declined
             </Badge>
           )}
           {!isPastEvent && event.spotsLeft && !attendanceStatus && (
-            <span className="text-[#E43226] text-xs font-semibold">
+            <span className="text-xs font-semibold text-[#E43226]">
               {event.spotsLeft === 1
                 ? "1 Spot Left"
                 : `${event.spotsLeft} Spots Left`}
@@ -82,30 +82,30 @@ export default function LeagueEventCard({
         </div>
         <div className="grid grid-cols-3 items-center justify-items-center">
           <div className="flex flex-col items-center">
-            <Avatar className="w-16 h-16 border-2 border-red-500">
+            <Avatar className="h-16 w-16 border-2 border-red-500">
               <AvatarImage src={"/placeholder2.svg"} alt={`Team 1 logo`} />
               <AvatarFallback>T1</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-semibold mt-2">TEAM 1</span>
+            <span className="mt-2 text-sm font-semibold">TEAM 1</span>
           </div>
           <span className="text-lg font-semibold">vs</span>
           <div className="flex flex-col items-center">
-            <Avatar className="w-16 h-16 border-2 border-blue-500">
+            <Avatar className="h-16 w-16 border-2 border-blue-500">
               <AvatarImage src={"/placeholder2.svg"} alt={`TEAM 2 logo`} />
               <AvatarFallback>T2</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-semibold mt-2">TEAM 2</span>
+            <span className="mt-2 text-sm font-semibold">TEAM 2</span>
           </div>
         </div>
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
-            <span className="font-bold text-[#FF7A00]">{event.league}</span>
+            <span className="text-accent-orange font-bold">{event.league}</span>
           </div>
         )}
-        <div className="flex justify-center mt-2 space-x-2">
+        <div className="mt-2 flex justify-center space-x-2">
           <Button
             variant="outline"
-            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
+            className="text-accent-orange border-accent-orange hover:bg-accent-orange rounded-md px-4 py-2 text-sm transition-colors hover:text-white"
             style={{ transform: "scale(1.1)" }}
             onClick={handleViewDetails}
           >
@@ -113,17 +113,17 @@ export default function LeagueEventCard({
           </Button>
         </div>
         {!isPastEvent && isRsvpOpen && (
-          <div className="flex justify-center mt-2 space-x-2">
+          <div className="mt-2 flex justify-center space-x-2">
             {(isEditing || !attendanceStatus) && (
               <>
                 <Button
-                  className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
+                  className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm text-white transition-colors"
                   onClick={handleAttend}
                 >
                   Attend
                 </Button>
                 <Button
-                  className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90 transition-colors px-4 py-2 text-sm rounded-md"
+                  className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm text-white transition-colors"
                   onClick={handleDecline}
                 >
                   Decline
@@ -133,17 +133,17 @@ export default function LeagueEventCard({
             {attendanceStatus && !isEditing && (
               <Button
                 variant="outline"
-                className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white transition-colors px-4 py-2 text-sm rounded-md"
+                className="text-accent-orange border-accent-orange hover:bg-accent-orange rounded-md px-4 py-2 text-sm transition-colors hover:text-white"
                 onClick={toggleEdit}
               >
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit className="mr-2 h-4 w-4" />
                 Edit RSVP
               </Button>
             )}
           </div>
         )}
         {isRsvpOpen && (
-          <div className="flex justify-end items-center mt-2">
+          <div className="mt-2 flex items-center justify-end">
             <div className="flex items-center space-x-2">
               <span className="text-xs text-gray-500">RSVP in:</span>
               <CountdownClock deadline={event.rsvpDeadline} />

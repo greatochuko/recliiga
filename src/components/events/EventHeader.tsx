@@ -5,7 +5,7 @@ import { EventType } from "@/types/events";
 
 interface EventHeaderProps {
   event: EventType;
-  attendanceStatus: "attending" | "declined" | null;
+  attendanceStatus: "attending" | "not-attending" | null;
   isEditing: boolean;
   isPastEvent?: boolean;
 }
@@ -16,33 +16,43 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
   isEditing,
   isPastEvent = false,
 }) => {
+  const spotsLeft = event.numTeams * event.rosterSpots - event.players.length;
+  const eventDate = new Date(event.startDate.date);
+  eventDate.setHours(
+    event.startDate.startAmPm === "PM"
+      ? event.startDate.startHour + 12
+      : event.startDate.startHour,
+    event.startDate.startMinute,
+  );
+  const eventTime = `${event.startDate.startHour}:${event.startDate.startMinute} ${event.startDate.startAmPm}`;
+
   return (
-    <div className="flex justify-between items-start mb-4">
+    <div className="mb-4 flex items-start justify-between">
       <div className="flex items-center">
-        <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-        <span className="text-xs text-gray-500 mr-4">{event.date}</span>
-        <span className="text-xs text-gray-500 mr-4">{event.time}</span>
-        <MapPin className="w-4 h-4 text-gray-500 mr-2" />
+        <Calendar className="mr-2 h-4 w-4 text-gray-500" />
+        <span className="mr-2 text-xs text-gray-500">
+          {eventDate.toDateString()}
+        </span>
+        <span className="mr-6 text-xs text-gray-500">{eventTime}</span>
+        <MapPin className="mr-2 h-4 w-4 text-gray-500" />
         <span className="text-xs text-gray-500">{event.location}</span>
       </div>
       {attendanceStatus === "attending" && !isEditing && (
         <Badge
           variant="secondary"
-          className="bg-[#FF7A00] bg-opacity-20 text-[#FF7A00] text-xs"
+          className="bg-accent-orange text-accent-orange bg-opacity-20 text-xs"
         >
           Attending
         </Badge>
       )}
-      {attendanceStatus === "declined" && !isEditing && (
-        <Badge variant="secondary" className="bg-red-100 text-red-600 text-xs">
-          Declined
+      {attendanceStatus === "not-attending" && !isEditing && (
+        <Badge variant="secondary" className="bg-red-100 text-xs text-red-600">
+          Not Attending
         </Badge>
       )}
-      {!isPastEvent && event.spotsLeft && !attendanceStatus && (
-        <span className="text-[#E43226] text-xs font-semibold">
-          {event.spotsLeft === 1
-            ? "1 Spot Left"
-            : `${event.spotsLeft} Spots Left`}
+      {!isPastEvent && spotsLeft && !attendanceStatus && (
+        <span className="text-xs font-semibold text-[#E43226]">
+          {spotsLeft === 1 ? "1 Spot Left" : `${spotsLeft} Spots Left`}
         </span>
       )}
     </div>

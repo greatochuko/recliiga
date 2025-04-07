@@ -115,7 +115,9 @@ export default function PlayerRegistration() {
       <header className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <RouterLink to="/" className="inline-block">
-            <span className="text-4xl font-bold text-[#FF7A00]">REC LiiGA</span>
+            <span className="text-accent-orange text-4xl font-bold">
+              REC LiiGA
+            </span>
           </RouterLink>
         </div>
       </header>
@@ -133,7 +135,7 @@ export default function PlayerRegistration() {
                     <span
                       className={`absolute -left-4 flex h-8 w-8 -translate-y-1.5 items-center justify-center rounded-full ring-4 ring-white ${
                         step.id === currentStep
-                          ? "bg-[#FF7A00] text-white"
+                          ? "bg-accent-orange text-white"
                           : step.id < currentStep
                             ? "bg-green-500 text-white"
                             : "bg-gray-100 text-gray-500"
@@ -148,7 +150,7 @@ export default function PlayerRegistration() {
                     <h3
                       className={`font-medium leading-tight ${
                         step.id === currentStep
-                          ? "text-[#FF7A00]"
+                          ? "text-accent-orange"
                           : "text-[#707B81]"
                       }`}
                     >
@@ -191,7 +193,7 @@ export default function PlayerRegistration() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+                className="bg-accent-orange hover:bg-accent-orange/90 text-white"
                 onClick={handleNext}
                 disabled={loading || cannotProceed}
               >

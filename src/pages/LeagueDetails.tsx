@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueById } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
-import { EventCard } from "@/components/events/EventCard";
+import { ManageEventCard } from "@/components/events/ManageEventCard";
 
 export default function LeagueDetails() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function LeagueDetails() {
 
   if (isFetching) {
     return (
-      <div className="flex items-center justify-center flex-1">
+      <div className="flex flex-1 items-center justify-center">
         <p>Loading...</p>
       </div>
     );
@@ -30,13 +30,13 @@ export default function LeagueDetails() {
 
   if (data.error) {
     return (
-      <div className="flex items-center justify-center flex-col gap-2 flex-1">
+      <div className="flex flex-1 flex-col items-center justify-center gap-2">
         <p>{data.error}</p>
         <button
           onClick={() => navigate("/leagues")}
-          className="bg-[#FF7A00] flex items-center gap-2 text-white font-medium text-sm px-3 py-1.5 rounded-md"
+          className="bg-accent-orange flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-white"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Leagues
+          <ArrowLeft className="h-4 w-4" /> Back to Leagues
         </button>
       </div>
     );
@@ -49,26 +49,26 @@ export default function LeagueDetails() {
   };
 
   return (
-    <main className="flex-1 bg-background relative flex flex-col px-4 md:px-6 gap-6">
-      <div className="flex justify-between ml-6">
+    <main className="relative flex flex-1 flex-col gap-6 bg-background px-4 md:px-6">
+      <div className="ml-6 flex justify-between">
         <button
           onClick={() => navigate("/leagues")}
-          className="text-[#FF7A00] flex items-center gap-1 hover:bg-[#FF7A00]/10 duration-200 font-medium text-sm px-2 py-1.5 rounded-md"
+          className="text-accent-orange hover:bg-accent-orange/10 flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium duration-200"
         >
-          <ArrowLeft className="w-4 h-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Back
         </button>
         {league.owner_id === user.id && (
-          <button className="ml-auto text-red-500 font-medium px-3 py-1.5 duration-200 rounded-md hover:bg-red-50 text-sm active:bg-red-100">
+          <button className="ml-auto rounded-md px-3 py-1.5 text-sm font-medium text-red-500 duration-200 hover:bg-red-50 active:bg-red-100">
             Delete
           </button>
         )}
       </div>
       <div className="">
         {/* League Info */}
-        <Card className="w-full mb-6 bg-[#F9F9F9] rounded-lg overflow-hidden">
+        <Card className="mb-6 w-full overflow-hidden rounded-lg bg-[#F9F9F9]">
           <CardContent className="p-4">
             <div className="flex items-start">
-              <Avatar className="w-14 h-14 mr-4">
+              <Avatar className="mr-4 h-14 w-14">
                 <AvatarImage src={league.image} alt={`${league.name} logo`} />
                 <AvatarFallback>
                   {league.name
@@ -78,7 +78,7 @@ export default function LeagueDetails() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <div className="flex justify-between items-start">
+                <div className="flex items-start justify-between">
                   <h3 className="text-lg font-semibold text-[rgba(0,0,0,0.8)]">
                     {league.name}
                   </h3>
@@ -90,7 +90,7 @@ export default function LeagueDetails() {
                     })}
                   </span>
                 </div>
-                <div className="text-sm text-[#F79602] mt-1">
+                <div className="mt-1 text-sm text-[#F79602]">
                   {league.players.length} Players
                 </div>
               </div>
@@ -101,10 +101,10 @@ export default function LeagueDetails() {
         {/* Players Section */}
         <section className="mb-6">
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Players</h3>
               <button
-                className="text-sm text-[#FF7A00] hover:underline px-4 py-2 font-medium"
+                className="text-accent-orange px-4 py-2 text-sm font-medium hover:underline"
                 onClick={() => setShowAllPlayers(!showAllPlayers)}
               >
                 {showAllPlayers ? "Show Less" : "View All"}
@@ -117,11 +117,11 @@ export default function LeagueDetails() {
                   .map((player, index) => (
                     <Card
                       key={index}
-                      className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="cursor-pointer overflow-hidden transition-colors hover:bg-gray-50"
                       onClick={handlePlayerClick}
                     >
-                      <CardContent className="p-2 flex items-center">
-                        <Avatar className="w-8 h-8">
+                      <CardContent className="flex items-center p-2">
+                        <Avatar className="h-8 w-8">
                           <AvatarImage
                             src={`/placeholder.svg?height=32&width=32`}
                             alt={player.full_name}
@@ -144,7 +144,7 @@ export default function LeagueDetails() {
                   ))}
               </div>
             ) : (
-              <div className="text-sm text-gray-500 text-center">
+              <div className="text-center text-sm text-gray-500">
                 No players have joined this league yet. Be the first to invite
                 players!
               </div>
@@ -154,11 +154,11 @@ export default function LeagueDetails() {
 
         {/* Upcoming Events Section */}
         <section>
-          <div className="flex justify-between items-center mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Upcoming Events</h2>
             {/* <Link
               to="/events"
-              className="text-[#FF7A00] hover:underline px-4 py-2 font-medium text-sm"
+              className="text-accent-orange hover:underline px-4 py-2 font-medium text-sm"
             >
               View all
             </Link> */}
@@ -166,7 +166,7 @@ export default function LeagueDetails() {
           {league.events.length ? (
             <div className="space-y-4">
               {league.events.map((event) => (
-                <EventCard
+                <ManageEventCard
                   key={event.id}
                   event={event}
                   onEdit={() => {}}
@@ -175,7 +175,7 @@ export default function LeagueDetails() {
               ))}
             </div>
           ) : (
-            <div className="text-sm text-gray-500 text-center">
+            <div className="text-center text-sm text-gray-500">
               No events have been scheduled for this league yet.
             </div>
           )}

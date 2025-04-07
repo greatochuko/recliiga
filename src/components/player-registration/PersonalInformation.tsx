@@ -26,7 +26,7 @@ export default function PersonalInformation({
         const date = new Date(
           parseInt(dobYear),
           parseInt(dobMonth) - 1,
-          parseInt(dobDay)
+          parseInt(dobDay),
         );
         updatePlayerData({ dateOfBirth: date });
       }
@@ -51,8 +51,8 @@ export default function PersonalInformation({
           ? 29
           : 28
         : ["4", "6", "9", "11"].includes(dobMonth)
-        ? 30
-        : 31;
+          ? 30
+          : 31;
 
     if (!dobMonth) return [];
 
@@ -65,24 +65,24 @@ export default function PersonalInformation({
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+        <CardTitle className="text-center text-2xl font-semibold text-gray-800">
           Personal Information
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-32 h-32 mb-4 relative rounded-full border-2 border-black p-1">
-            <Avatar className="w-full h-full">
+        <div className="mb-8 flex flex-col items-center">
+          <div className="relative mb-4 h-32 w-32 rounded-full border-2 border-black p-1">
+            <Avatar className="h-full w-full">
               <AvatarImage src="/placeholder.svg" alt="Player avatar" />
               <AvatarFallback>PA</AvatarFallback>
             </Avatar>
-            <div className="absolute bottom-0 right-0 bg-black text-white rounded-full p-2 shadow-lg">
+            <div className="absolute bottom-0 right-0 rounded-full bg-black p-2 text-white shadow-lg">
               <Upload size={16} />
             </div>
           </div>
           <Button
             variant="link"
-            className="text-sm text-[#FF7A00] hover:underline"
+            className="text-accent-orange text-sm hover:underline"
           >
             Upload photo
           </Button>
@@ -103,7 +103,7 @@ export default function PersonalInformation({
           </div>
 
           <div>
-            <Label className="text-sm text-gray-700 mb-2 block">
+            <Label className="mb-2 block text-sm text-gray-700">
               Date of Birth
             </Label>
             <div className="grid grid-cols-3 gap-4">
@@ -116,7 +116,7 @@ export default function PersonalInformation({
                   id="dobMonth"
                   value={dobMonth}
                   onChange={(e) => setDobMonth(e.target.value)}
-                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full cursor-pointer"
+                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
                 >
                   <option hidden>Month</option>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
@@ -140,7 +140,7 @@ export default function PersonalInformation({
                   id="dobDay"
                   value={dobDay}
                   onChange={(e) => setDobDay(e.target.value)}
-                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full cursor-pointer"
+                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
                 >
                   <option hidden>Day</option>
                   {generateDayOptions().map((day) => (
@@ -159,7 +159,7 @@ export default function PersonalInformation({
                   id="dobYear"
                   value={dobYear}
                   onChange={(e) => setDobYear(e.target.value)}
-                  className="py-2 px-3 text-sm border rounded-md outline-offset-[4px] w-full cursor-pointer"
+                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
                 >
                   <option hidden>Year</option>
                   {generateYearOptions().map((year) => (

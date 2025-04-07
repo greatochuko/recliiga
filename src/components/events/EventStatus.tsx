@@ -16,7 +16,7 @@ export function EventStatus({ event }: EventStatusProps) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [captains, setCaptains] = useState<EventType["captains"]>(
-    event.captains || {}
+    event.captains || {},
   );
   const { user } = useAuth();
   const isOrganizer = user?.role === "organizer";
@@ -58,7 +58,7 @@ export function EventStatus({ event }: EventStatusProps) {
   // Case 1: RSVP is still open - show countdown
   if (isRsvpOpen) {
     return (
-      <div className="flex justify-end items-center mt-2">
+      <div className="mt-2 flex items-center justify-end">
         <div className="flex items-center space-x-2">
           <span className="text-xs text-gray-500">RSVP in:</span>
           <CountdownClock deadline={event.rsvpDeadline} />
@@ -71,9 +71,9 @@ export function EventStatus({ event }: EventStatusProps) {
   if (!captains || Object.keys(captains).length === 0) {
     if (isLoading) {
       return (
-        <div className="flex justify-end items-center mt-2">
+        <div className="mt-2 flex items-center justify-end">
           <Button variant="outline" size="sm" disabled>
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Loading...
           </Button>
         </div>
@@ -83,14 +83,14 @@ export function EventStatus({ event }: EventStatusProps) {
     // Only show the Select Captains button for organizers
     if (isOrganizer) {
       return (
-        <div className="flex justify-end items-center mt-2">
+        <div className="mt-2 flex items-center justify-end">
           <Button
             onClick={handleSelectCaptains}
             variant="outline"
             size="sm"
-            className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
+            className="text-accent-orange border-accent-orange hover:bg-accent-orange hover:text-white"
           >
-            <UserPlus className="h-4 w-4 mr-2" />
+            <UserPlus className="mr-2 h-4 w-4" />
             Select Captains
           </Button>
         </div>
@@ -105,13 +105,13 @@ export function EventStatus({ event }: EventStatusProps) {
     // Check if there are any captains assigned
     const hasCaptains = Object.values(captains).filter(Boolean).length > 0;
     return (
-      <div className="flex justify-end items-center mt-2">
+      <div className="mt-2 flex items-center justify-end">
         {hasCaptains &&
           (event.draftStatus === "completed" ? (
             <Button
               variant="outline"
               size="sm"
-              className="text-gray-500 border-gray-500 cursor-not-allowed"
+              className="cursor-not-allowed border-gray-500 text-gray-500"
               disabled={true}
             >
               {/* Display all captain avatars inside the button */}
@@ -120,7 +120,7 @@ export function EventStatus({ event }: EventStatusProps) {
                 return (
                   <Avatar
                     key={teamKey}
-                    className="w-6 h-6 border-2 border-gray-500 mr-1"
+                    className="mr-1 h-6 w-6 border-2 border-gray-500"
                   >
                     <AvatarImage src={captain.avatar} alt={captain.name} />
                     <AvatarFallback>{captain.name.charAt(0)}</AvatarFallback>
@@ -134,7 +134,7 @@ export function EventStatus({ event }: EventStatusProps) {
               onClick={handleBeginDraft}
               variant="outline"
               size="sm"
-              className="text-[#FF7A00] border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
+              className="text-accent-orange border-accent-orange hover:bg-accent-orange hover:text-white"
             >
               {/* Display all captain avatars inside the button */}
               {Object.entries(captains).map(([teamKey, captain]) => {
@@ -142,7 +142,7 @@ export function EventStatus({ event }: EventStatusProps) {
                 return (
                   <Avatar
                     key={teamKey}
-                    className="w-6 h-6 border-2 border-[#FF7A00] mr-1"
+                    className="border-accent-orange mr-1 h-6 w-6 border-2"
                   >
                     <AvatarImage src={captain.avatar} alt={captain.name} />
                     <AvatarFallback>{captain.name.charAt(0)}</AvatarFallback>

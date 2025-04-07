@@ -18,7 +18,7 @@ export function LeaderboardStep({
   const handlePointChange = (statName: string, value: number) => {
     updateLeagueData({
       stats: leagueData.stats.map((stat) =>
-        stat.name === statName ? { ...stat, points: Number(value) || 0 } : stat
+        stat.name === statName ? { ...stat, points: Number(value) || 0 } : stat,
       ),
     });
 
@@ -29,7 +29,7 @@ export function LeaderboardStep({
 
   const handleStatNameChange = (index: number, newName: string) => {
     const updatedStats = leagueData.stats.map((stat, i) =>
-      i === index ? { ...stat, name: newName } : stat
+      i === index ? { ...stat, name: newName } : stat,
     );
 
     updateLeagueData({
@@ -39,7 +39,7 @@ export function LeaderboardStep({
 
   const handleStatAbbrChange = (index: number, newAbbr: string) => {
     const newStats = leagueData.stats.map((stat, i) =>
-      i === index ? { ...stat, abbr: newAbbr } : stat
+      i === index ? { ...stat, abbr: newAbbr } : stat,
     );
     updateLeagueData({ stats: newStats });
   };
@@ -74,7 +74,7 @@ export function LeaderboardStep({
 
   const toggleStatEditing = (index: number) => {
     const newStats = leagueData.stats.map((stat, i) =>
-      i === index ? { ...stat, isEditing: !stat.isEditing } : stat
+      i === index ? { ...stat, isEditing: !stat.isEditing } : stat,
     );
     updateLeagueData({ stats: newStats });
   };
@@ -82,7 +82,7 @@ export function LeaderboardStep({
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+        <CardTitle className="text-center text-2xl font-semibold text-gray-800">
           Leaderboard Statistics
         </CardTitle>
       </CardHeader>
@@ -90,7 +90,7 @@ export function LeaderboardStep({
         <div className="mb-4 flex justify-end">
           <Button
             onClick={toggleEditing}
-            className="bg-white text-[#FF7A00] border border-[#FF7A00] hover:bg-[#FF7A00] hover:text-white"
+            className="text-accent-orange border-accent-orange hover:bg-accent-orange border bg-white hover:text-white"
           >
             {isEditing ? (
               <Save className="mr-2 h-4 w-4" />
@@ -100,7 +100,7 @@ export function LeaderboardStep({
             {isEditing ? "Save Changes" : "Manual Edit"}
           </Button>
         </div>
-        <div className="grid grid-cols-4 gap-4 mb-4 text-sm font-semibold text-gray-600">
+        <div className="mb-4 grid grid-cols-4 gap-4 text-sm font-semibold text-gray-600">
           <div className="text-center">Statistic</div>
           <div className="text-center">Abbreviation</div>
           <div className="text-center">Points</div>
@@ -114,7 +114,7 @@ export function LeaderboardStep({
               index !== leagueData.stats.length - 1 ? "border-b" : ""
             }`}
           >
-            <div className="font-semibold text-center">
+            <div className="text-center font-semibold">
               {stat.isEditing ? (
                 <Input
                   value={stat.name}
@@ -136,7 +136,7 @@ export function LeaderboardStep({
                 stat.abbr
               )}
             </div>
-            <div className="font-semibold text-center">
+            <div className="text-center font-semibold">
               {stat.isEditing ? (
                 <Input
                   type="number"
@@ -151,7 +151,7 @@ export function LeaderboardStep({
                   onChange={(e) =>
                     handlePointChange(stat.name, parseFloat(e.target.value))
                   }
-                  className="w-16 mx-auto text-center"
+                  className="mx-auto w-16 text-center"
                 />
               ) : stat.name === "Tie" && tieLinkedToWin ? (
                 (
@@ -216,7 +216,7 @@ export function LeaderboardStep({
         <div className="mt-4">
           <Button
             onClick={handleAddStat}
-            className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+            className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Statistic

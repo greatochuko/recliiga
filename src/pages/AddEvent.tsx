@@ -166,7 +166,7 @@ export default function AddEvent() {
         <CardHeader className="relative">
           <Link
             to="/manage-events"
-            className="absolute left-6 top-6 flex items-center gap-1 px-3 py-1.5 text-[#FF7A00]"
+            className="text-accent-orange absolute left-6 top-6 flex items-center gap-1 px-3 py-1.5"
           >
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
@@ -564,7 +564,7 @@ export default function AddEvent() {
 
             <Button
               type="submit"
-              className="w-full bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+              className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
               disabled={submitting || cannotSubmit}
             >
               Add Event

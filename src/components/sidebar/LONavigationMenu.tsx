@@ -67,10 +67,10 @@ export function LONavigationMenu() {
             <Button
               variant="ghost"
               size="sm"
-              className="w-full justify-start px-4 py-2 text-sm font-semibold bg-[#FF7A00] text-white hover:text-white hover:bg-[#E66900] rounded-lg mb-2"
+              className="bg-accent-orange mb-2 w-full justify-start rounded-lg px-4 py-2 text-sm font-semibold text-white hover:bg-[#E66900] hover:text-white"
               onClick={() => setIsLODropdownOpen(!isLODropdownOpen)}
             >
-              <Settings className="h-5 w-5 mr-3" />
+              <Settings className="mr-3 h-5 w-5" />
               League Organizer
               <ChevronDown
                 className={`ml-auto h-4 w-4 transition-transform duration-200 ${
@@ -80,7 +80,7 @@ export function LONavigationMenu() {
             </Button>
 
             {isLODropdownOpen && (
-              <div className="pl-4 mb-4">
+              <div className="mb-4 pl-4">
                 {loActions.map((action) => (
                   <SidebarMenuItem key={action.id}>
                     <SidebarMenuButton
@@ -91,16 +91,16 @@ export function LONavigationMenu() {
                       {action.action ? (
                         <button
                           onClick={action.action}
-                          className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm w-full text-left ${
+                          className={`flex w-full items-center gap-3 rounded-lg px-4 py-2 text-left text-sm ${
                             location.pathname === action.url
-                              ? "text-[#FF7A00] bg-orange-50 font-medium"
-                              : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
+                              ? "text-accent-orange bg-orange-50 font-medium"
+                              : "hover:text-accent-orange text-gray-600 hover:bg-gray-50"
                           }`}
                         >
                           <action.icon
-                            className={`w-4 h-4 ${
+                            className={`h-4 w-4 ${
                               location.pathname === action.url
-                                ? "text-[#FF7A00]"
+                                ? "text-accent-orange"
                                 : "text-gray-500"
                             }`}
                           />
@@ -109,16 +109,16 @@ export function LONavigationMenu() {
                       ) : (
                         <Link
                           to={action.url}
-                          className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm ${
+                          className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm ${
                             location.pathname === action.url
-                              ? "text-[#FF7A00] bg-orange-50 font-medium"
-                              : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
+                              ? "text-accent-orange bg-orange-50 font-medium"
+                              : "hover:text-accent-orange text-gray-600 hover:bg-gray-50"
                           }`}
                         >
                           <action.icon
-                            className={`w-4 h-4 ${
+                            className={`h-4 w-4 ${
                               location.pathname === action.url
-                                ? "text-[#FF7A00]"
+                                ? "text-accent-orange"
                                 : "text-gray-500"
                             }`}
                           />

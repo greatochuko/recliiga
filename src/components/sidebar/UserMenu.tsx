@@ -154,7 +154,7 @@ export function UserMenu() {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
               Are you sure you want to log out of your account?
-              <div className="mt-2 text-[#FF7A00]">
+              <div className="text-accent-orange mt-2">
                 You will need to log in again to access your account.
               </div>
             </AlertDialogDescription>
@@ -165,7 +165,7 @@ export function UserMenu() {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
-              className="bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+              className="bg-accent-orange hover:bg-accent-orange/90 text-white"
             >
               Logout
             </AlertDialogAction>

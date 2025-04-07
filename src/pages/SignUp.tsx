@@ -74,7 +74,7 @@ export default function SignUpPage() {
 
   const handleCountryCodeChange = (value: any) => {
     const selectedCode = popularCountryCodes.find(
-      (code) => code.code === value
+      (code) => code.code === value,
     );
     if (selectedCode) {
       setCountryCode(selectedCode);
@@ -116,13 +116,13 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-      <h1 className="text-4xl font-bold text-[#FF7A00] mb-8">REC LiiGA</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
+      <h1 className="text-accent-orange mb-8 text-4xl font-bold">REC LiiGA</h1>
 
       <Card className="w-full max-w-md">
         <form onSubmit={handleSignUp}>
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+            <CardTitle className="text-center text-2xl font-semibold text-gray-800">
               Register your Account
             </CardTitle>
           </CardHeader>
@@ -201,7 +201,7 @@ export default function SignUpPage() {
                 className="border-0 bg-transparent p-0"
               >
                 <div className="flex items-center">
-                  <AlertCircle className="h-4 w-4 text-red-600 mr-2" />
+                  <AlertCircle className="mr-2 h-4 w-4 text-red-600" />
                   <AlertDescription className="text-red-600">
                     {error}
                   </AlertDescription>
@@ -212,14 +212,17 @@ export default function SignUpPage() {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+              className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
               disabled={isLoading || cannotSubmit}
             >
               {isLoading ? "Signing up..." : "Sign Up"}
             </Button>
-            <p className="text-sm text-[#707B81] text-center">
+            <p className="text-center text-sm text-[#707B81]">
               Already have an account?{" "}
-              <Link to="/sign-in" className="text-[#FF7A00] hover:underline">
+              <Link
+                to="/sign-in"
+                className="text-accent-orange hover:underline"
+              >
                 Sign in
               </Link>
             </p>

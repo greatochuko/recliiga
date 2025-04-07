@@ -45,12 +45,12 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Card
-          className="overflow-hidden cursor-pointer hover:bg-gray-50 transition-colors"
+          className="cursor-pointer overflow-hidden transition-colors hover:bg-gray-50"
           onClick={() => setIsOpen(true)}
         >
-          <CardContent className="p-2 flex items-center justify-between">
+          <CardContent className="flex items-center justify-between p-2">
             <div className="flex items-center">
-              <Avatar className="w-8 h-8">
+              <Avatar className="h-8 w-8">
                 <AvatarImage src={player.avatar} alt={player.name} />
                 <AvatarFallback>
                   {player.name
@@ -60,15 +60,15 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
                 </AvatarFallback>
               </Avatar>
               <div className="ml-2">
-                <p className="text-xs font-medium truncate w-20">
+                <p className="w-20 truncate text-xs font-medium">
                   {player.name}
                 </p>
                 <p className="text-[10px] text-gray-500">{player.position}</p>
               </div>
             </div>
-            <div className="bg-[#FF7A00] px-1 py-0.5 rounded flex items-center rating-btn-area">
+            <div className="bg-accent-orange rating-btn-area flex items-center rounded px-1 py-0.5">
               {[1, 2, 3].map((star) => (
-                <Star key={star} className="w-3 h-3 text-white" fill="white" />
+                <Star key={star} className="h-3 w-3 text-white" fill="white" />
               ))}
             </div>
           </CardContent>
@@ -83,7 +83,7 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex items-center justify-center">
-            <Avatar className="w-24 h-24">
+            <Avatar className="h-24 w-24">
               <AvatarImage src={player.avatar} alt={`${player.name} avatar`} />
               <AvatarFallback>
                 {player.name
@@ -93,7 +93,7 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
               </AvatarFallback>
             </Avatar>
           </div>
-          <h2 className="text-xl font-semibold text-center">{player.name}</h2>
+          <h2 className="text-center text-xl font-semibold">{player.name}</h2>
           <p className="text-center text-gray-600">{player.position}</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-4">
@@ -112,7 +112,7 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                className="bg-[#FF7A00] hover:bg-[#E66C00] text-white font-bold py-3 px-6 rounded-lg text-lg"
+                className="bg-accent-orange rounded-lg px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
               >
                 Submit Rating
               </Button>

@@ -31,9 +31,9 @@ export function LeaguesContent() {
           league.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           league.sport.toLowerCase().includes(searchTerm.toLowerCase()) ||
           league.leagueCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          league.city.toLowerCase().includes(searchTerm.toLowerCase())
+          league.city.toLowerCase().includes(searchTerm.toLowerCase()),
       ),
-    [leagues, searchTerm]
+    [leagues, searchTerm],
   );
 
   const handleJoinLeague = (leagueId: string) => {
@@ -52,33 +52,33 @@ export function LeaguesContent() {
           placeholder="Search by Name, Sport, League Code or City"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2"
+          className="w-full py-2 pl-10 pr-4"
         />
         <div className="absolute inset-y-0 left-0 flex items-center pl-3">
           <Search className="h-5 w-5 text-gray-400" />
         </div>
         <Button
           type="submit"
-          className="absolute inset-y-0 right-0 flex items-center px-4 bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+          className="bg-accent-orange hover:bg-accent-orange/90 absolute inset-y-0 right-0 flex items-center px-4 text-white"
         >
           Search
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="text-center p-4 text-gray-600">
+        <div className="p-4 text-center text-gray-600">
           Searching leagues...
         </div>
       ) : error ? (
-        <div className="text-center p-4 text-red-600">{error.message}</div>
+        <div className="p-4 text-center text-red-600">{error.message}</div>
       ) : leagues.length < 1 ? (
-        <div className="text-center p-4 text-gray-600">
+        <div className="p-4 text-center text-gray-600">
           No leagues available at the moment.
         </div>
       ) : (
-        <div className="grid xl:grid-cols-2 gap-4">
+        <div className="grid gap-4 xl:grid-cols-2">
           {filteredLeagues.length < 1 ? (
-            <div className="text-center p-4 text-gray-600">
+            <div className="p-4 text-center text-gray-600">
               No leagues found matching your search.
             </div>
           ) : (
@@ -94,32 +94,32 @@ export function LeaguesContent() {
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <Avatar className="w-16 h-16">
+                      <Avatar className="h-16 w-16">
                         <AvatarImage src={league.image} alt={league.name} />
                         <AvatarFallback>
                           {league.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-grow">
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="mb-2 flex items-start justify-between">
                           <h3 className="text-xl font-semibold text-gray-800">
                             {league.name}
                           </h3>
-                          <span className="text-xs bg-gray-200 px-2 py-1 rounded">
+                          <span className="rounded bg-gray-200 px-2 py-1 text-xs">
                             {league.leagueCode}
                           </span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm text-[#707B81]">
                           <div className="flex items-center">
-                            <Users className="w-4 h-4 mr-2" />
+                            <Users className="mr-2 h-4 w-4" />
                             <span>{league.players.length} Players</span>
                           </div>
                           <div className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-2" />
+                            <MapPin className="mr-2 h-4 w-4" />
                             <span className="line-clamp-1">{league.city}</span>
                           </div>
                           <div className="flex items-center">
-                            <Calendar className="w-4 h-4 mr-2" />
+                            <Calendar className="mr-2 h-4 w-4" />
                             <span>
                               {new Date(league.date).toLocaleDateString(
                                 "en-US",
@@ -127,7 +127,7 @@ export function LeaguesContent() {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
-                                }
+                                },
                               )}
                             </span>
                           </div>
@@ -142,13 +142,13 @@ export function LeaguesContent() {
                     {isJoined ? (
                       <Link
                         to={`/leagues/${league.id}`}
-                        className={`rounded-md w-full text-center font-medium duration-200 py-2 text-sm ${"bg-white text-[#FF7A00] border border-[#FF7A00] hover:bg-[#FF7A00]/10"}`}
+                        className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"text-accent-orange border-accent-orange hover:bg-accent-orange/10 border bg-white"}`}
                       >
                         See More
                       </Link>
                     ) : (
                       <button
-                        className={`rounded-md w-full text-center font-medium duration-200 py-2 text-sm ${"bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"}`}
+                        className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"bg-accent-orange hover:bg-accent-orange/90 text-white"}`}
                         onClick={() => handleJoinLeague(league.id)}
                       >
                         Join

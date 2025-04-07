@@ -193,16 +193,16 @@ function PlayerDashboardContent() {
 
   return (
     <div className="space-y-8 p-4 md:p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div>
-          <div className="flex justify-between items-center mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold">Your Stats</h2>
             <LeagueSelector
               leagues={leagues}
               onLeagueChange={handleLeagueChange}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* Profile Card */}
             <PlayerRankCard
               league={{
@@ -211,19 +211,19 @@ function PlayerDashboardContent() {
                 totalPlayers: stats.totalTeams,
                 rating: Math.max(
                   0.5,
-                  Math.min(3.0, (selectedLeague.rating || 0) * 3)
+                  Math.min(3.0, (selectedLeague.rating || 0) * 3),
                 ),
               }}
             />
 
             {/* Record Card */}
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-              <h3 className="text-lg font-bold mb-4">Record</h3>
+            <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
+              <h3 className="mb-4 text-lg font-bold">Record</h3>
               <div className="space-y-4">
                 {/* Points Circle */}
                 <div className="flex justify-center">
-                  <div className="relative w-24 h-24">
-                    <svg className="w-full h-full" viewBox="0 0 100 100">
+                  <div className="relative h-24 w-24">
+                    <svg className="h-full w-full" viewBox="0 0 100 100">
                       <circle
                         cx="50"
                         cy="50"
@@ -283,23 +283,23 @@ function PlayerDashboardContent() {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-emerald-100 rounded p-2">
-                    <div className="text-emerald-700 font-bold text-lg">
+                  <div className="rounded bg-emerald-100 p-2">
+                    <div className="text-lg font-bold text-emerald-700">
                       {stats.wins}
                     </div>
-                    <div className="text-emerald-600 text-xs">Won</div>
+                    <div className="text-xs text-emerald-600">Won</div>
                   </div>
-                  <div className="bg-red-100 rounded p-2">
-                    <div className="text-red-700 font-bold text-lg">
+                  <div className="rounded bg-red-100 p-2">
+                    <div className="text-lg font-bold text-red-700">
                       {stats.losses}
                     </div>
-                    <div className="text-red-600 text-xs">Loss</div>
+                    <div className="text-xs text-red-600">Loss</div>
                   </div>
-                  <div className="bg-orange-100 rounded p-2">
-                    <div className="text-orange-700 font-bold text-lg">
+                  <div className="rounded bg-orange-100 p-2">
+                    <div className="text-lg font-bold text-orange-700">
                       {stats.ties}
                     </div>
-                    <div className="text-orange-600 text-xs">Tied</div>
+                    <div className="text-xs text-orange-600">Tied</div>
                   </div>
                 </div>
               </div>
@@ -308,8 +308,8 @@ function PlayerDashboardContent() {
         </div>
 
         {/* Teammates Section */}
-        <div className="flex flex-col h-full">
-          <div className="flex justify-between items-center mb-4">
+        <div className="flex h-full flex-col">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
             <Link
               to="/rate-teammates"
@@ -318,20 +318,20 @@ function PlayerDashboardContent() {
               View all
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 flex-grow">
+          <div className="grid flex-grow grid-cols-2 gap-4">
             {teammates &&
               teammates.slice(0, 8).map((teammate) => (
                 <div
                   key={teammate.id}
-                  className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex items-center justify-between"
+                  className="flex items-center justify-between rounded-lg border border-gray-100 bg-white p-3 shadow-sm"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-gray-400" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                      <User className="h-4 w-4 text-gray-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm">{teammate.name}</h3>
-                      <p className="text-gray-500 text-xs">
+                      <h3 className="text-sm font-semibold">{teammate.name}</h3>
+                      <p className="text-xs text-gray-500">
                         {teammate.position}
                       </p>
                     </div>
@@ -345,9 +345,12 @@ function PlayerDashboardContent() {
 
       {/* Upcoming Events Section */}
       <section className="mb-8">
-        <div className="flex justify-between items-center mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Upcoming Events</h2>
-          <Link to="/events" className="text-[#FF7A00] hover:underline text-sm">
+          <Link
+            to="/events"
+            className="text-accent-orange text-sm hover:underline"
+          >
             View all
           </Link>
         </div>
@@ -356,8 +359,8 @@ function PlayerDashboardContent() {
             upcomingEvents.map((event) => (
               <div key={event.id} className="mb-4">
                 {/* We'll create a separate EventCard component */}
-                <div className="card p-4 bg-white rounded-lg border border-gray-100">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="card rounded-lg border border-gray-100 bg-white p-4">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
                       <p className="font-semibold">
                         {event.date} - {event.time}
@@ -365,12 +368,12 @@ function PlayerDashboardContent() {
                       <p className="text-sm text-gray-500">{event.location}</p>
                     </div>
                     {event.status === "attending" && (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">
                         Attending
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center justify-between mt-3">
+                  <div className="mt-3 flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="mr-4 text-center">
                         <div className="font-semibold">{event.team1.name}</div>
@@ -382,7 +385,7 @@ function PlayerDashboardContent() {
                     </div>
                     <Button
                       variant="outline"
-                      className="text-[#FF7A00] border-[#FF7A00]"
+                      className="text-accent-orange border-accent-orange"
                     >
                       View Details
                     </Button>

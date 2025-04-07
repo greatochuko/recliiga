@@ -16,35 +16,35 @@ export function PlayerRankCard({ league }: PlayerRankCardProps) {
   const { user } = useAuth();
 
   return (
-    <Card className="bg-[#FF7A00] text-white w-full h-full flex flex-col justify-between">
-      <CardContent className="p-4 flex flex-col items-center h-full justify-between">
-        <div className="flex flex-col items-center w-full">
-          <h2 className="text-base font-bold mb-2">{league.name}</h2>
-          <Avatar className="w-16 h-16 mb-2">
+    <Card className="bg-accent-orange flex h-full w-full flex-col justify-between text-white">
+      <CardContent className="flex h-full flex-col items-center justify-between p-4">
+        <div className="flex w-full flex-col items-center">
+          <h2 className="mb-2 text-base font-bold">{league.name}</h2>
+          <Avatar className="mb-2 h-16 w-16">
             <AvatarImage
               src="/placeholder.svg?height=64&width=64"
               alt="Player avatar"
             />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
-          <h3 className="text-sm font-semibold mb-1">{user.full_name}</h3>
+          <h3 className="mb-1 text-sm font-semibold">{user.full_name}</h3>
         </div>
         <div className="flex flex-col items-center">
           <div className="flex items-start">
             <div className="flex items-start">
               <span className="text-lg font-bold">{league.rank}</span>
-              <span className="text-xs font-bold mt-0.5">th</span>
+              <span className="mt-0.5 text-xs font-bold">th</span>
             </div>
-            <span className="text-lg font-bold ml-0.5">
+            <span className="ml-0.5 text-lg font-bold">
               /{league.totalPlayers}
             </span>
           </div>
-          <span className="text-xs mt-1">{league.name}</span>
-          <div className="flex items-center mt-2">
+          <span className="mt-1 text-xs">{league.name}</span>
+          <div className="mt-2 flex items-center">
             <span className="text-base font-bold">
               {Math.max(0.5, Math.min(3.0, league.rating)).toFixed(2)}
             </span>
-            <Star className="w-4 h-4 ml-1 fill-white" />
+            <Star className="ml-1 h-4 w-4 fill-white" />
           </div>
         </div>
       </CardContent>

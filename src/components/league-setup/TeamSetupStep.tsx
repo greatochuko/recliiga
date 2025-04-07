@@ -147,7 +147,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
 
   const handlePositiveNumberInput = (
     value: string,
-    field: "numTeams" | "rosterSpots" | "customRsvpHours"
+    field: "numTeams" | "rosterSpots" | "customRsvpHours",
   ) => {
     const numValue = parseInt(value, 10);
     if (!isNaN(numValue) && numValue > 0) {
@@ -174,7 +174,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
   const updateEventDate = (
     index: number,
     field: keyof EventDate,
-    value: any
+    value: any,
   ) => {
     setCurrentEvent((prev) => {
       const updatedDates = [...prev.eventDates];
@@ -224,7 +224,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+        <CardTitle className="text-center text-2xl font-semibold text-gray-800">
           Add Event
         </CardTitle>
       </CardHeader>
@@ -241,10 +241,10 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
         )}
 
         {leagueData.events.length > 0 && (
-          <div className="space-y-4 mb-8">
+          <div className="mb-8 space-y-4">
             <h3 className="text-lg font-semibold">Created Events</h3>
             {leagueData.events.map((event, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-md">
+              <div key={index} className="rounded-md bg-gray-50 p-4">
                 <h4 className="font-medium">{event.title}</h4>
                 <p>Location: {event.location}</p>
                 <p>
@@ -257,7 +257,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 </p>
                 <div className="mt-2">
                   <h5 className="font-medium">Event Dates:</h5>
-                  <ul className="list-disc list-inside">
+                  <ul className="list-inside list-disc">
                     {event.eventDates.map((date, dateIndex) => (
                       <li key={dateIndex}>
                         {date.date && (
@@ -266,13 +266,13 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                             {formatTime(
                               date.startHour,
                               date.startMinute,
-                              date.startAmPm
+                              date.startAmPm,
                             )}{" "}
                             -{" "}
                             {formatTime(
                               date.endHour,
                               date.endMinute,
-                              date.endAmPm
+                              date.endAmPm,
                             )}
                             , {format(date.date, "EEEE")}
                           </>
@@ -297,7 +297,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           </div>
         )}
 
-        <div className="text-lg font-semibold mb-4">
+        <div className="mb-4 text-lg font-semibold">
           {leagueData.events.length > 0
             ? "Create Another Event"
             : "Create Your First Event"}
@@ -361,7 +361,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           </div>
         )}
 
-        <div className="space-y-4 p-4 bg-gray-50 rounded-md">
+        <div className="space-y-4 rounded-md bg-gray-50 p-4">
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Popover>
@@ -371,7 +371,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !currentEvent.eventDates[0].date && "text-muted-foreground"
+                    !currentEvent.eventDates[0].date && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -420,7 +420,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 <select
                   name="startHour"
                   id="startHour"
-                  className="border p-2 rounded-md block"
+                  className="block rounded-md border p-2"
                   value={currentEvent.eventDates[0].startHour}
                   onChange={(e) =>
                     updateEventDate(0, "startHour", e.target.value)
@@ -457,7 +457,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 <select
                   name="startMinute"
                   id="startMinute"
-                  className="border p-2 rounded-md block"
+                  className="block rounded-md border p-2"
                   value={currentEvent.eventDates[0].startMinute}
                   onChange={(e) =>
                     updateEventDate(0, "startMinute", e.target.value)
@@ -490,7 +490,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 <select
                   name="startAmPm"
                   id="startAmPm"
-                  className="border p-2 rounded-md block"
+                  className="block rounded-md border p-2"
                   value={currentEvent.eventDates[0].startAmPm}
                   onChange={(e) =>
                     updateEventDate(0, "startAmPm", e.target.value)
@@ -528,7 +528,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 <select
                   name="endHour"
                   id="endHour"
-                  className="border p-2 rounded-md block"
+                  className="block rounded-md border p-2"
                   value={currentEvent.eventDates[0].endHour}
                   onChange={(e) =>
                     updateEventDate(0, "endHour", e.target.value)
@@ -564,7 +564,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 <select
                   name="endMinute"
                   id="endMinute"
-                  className="border p-2 rounded-md block"
+                  className="block rounded-md border p-2"
                   value={currentEvent.eventDates[0].endMinute}
                   onChange={(e) =>
                     updateEventDate(0, "endMinute", e.target.value)
@@ -597,7 +597,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                 <select
                   name="endAmPm"
                   id="endAmPm"
-                  className="border p-2 rounded-md block"
+                  className="block rounded-md border p-2"
                   value={currentEvent.eventDates[0].endAmPm}
                   onChange={(e) =>
                     updateEventDate(0, "endAmPm", e.target.value)
@@ -655,7 +655,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                     variant={"outline"}
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !currentEvent.repeatEndDate && "text-muted-foreground"
+                      !currentEvent.repeatEndDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -729,14 +729,14 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
             <Label>Event Dates</Label>
             <div className="space-y-2">
               {currentEvent.eventDates.map((date, index) => (
-                <div key={index} className="p-2 bg-gray-50 rounded-md">
+                <div key={index} className="rounded-md bg-gray-50 p-2">
                   {date.date && (
                     <>
                       {format(date.date, "MMMM d yyyy")},{" "}
                       {formatTime(
                         date.startHour,
                         date.startMinute,
-                        date.startAmPm
+                        date.startAmPm,
                       )}{" "}
                       - {formatTime(date.endHour, date.endMinute, date.endAmPm)}
                       , {format(date.date, "EEEE")}
@@ -753,7 +753,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
 
         <Button
           onClick={addAnotherEvent}
-          className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+          className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
           disabled={cannotAddEvent}
         >
           <Plus className="mr-2 h-4 w-4" />

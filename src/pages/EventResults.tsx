@@ -19,17 +19,17 @@ function TeamRoster({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted-foreground">
           Team members
         </h3>
       </div>
       <div className="space-y-4">
         <div
-          className="flex items-center gap-4 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
+          className="flex cursor-pointer items-center gap-4 rounded-lg bg-gray-100 p-2 transition-colors hover:bg-gray-200"
           onClick={handleViewProfile}
         >
-          <Avatar className="w-12 h-12" style={{ backgroundColor: team.color }}>
+          <Avatar className="h-12 w-12" style={{ backgroundColor: team.color }}>
             <AvatarImage src={team.captain.avatar} alt={team.captain.name} />
             <AvatarFallback>
               {team.captain.name
@@ -49,7 +49,7 @@ function TeamRoster({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="w-4 h-4 text-[#FF7A00]"
+                className="text-accent-orange h-4 w-4"
               >
                 <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
               </svg>
@@ -67,10 +67,10 @@ function TeamRoster({
         {team.players.map((player: any) => (
           <div
             key={player.id}
-            className="flex items-center gap-4 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-colors"
+            className="flex cursor-pointer items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
             onClick={handleViewProfile}
           >
-            <Avatar className="w-12 h-12">
+            <Avatar className="h-12 w-12">
               <AvatarImage src={player.avatar} alt={player.name} />
               <AvatarFallback>
                 {player.name
@@ -194,7 +194,7 @@ function EventResultsContent() {
 
   const renderTeamScore = (team: any) => (
     <div className="flex flex-col items-center space-y-2">
-      <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
+      <Avatar className="h-16 w-16" style={{ backgroundColor: team.color }}>
         <AvatarImage src={team.avatar} alt={team.name} />
         <AvatarFallback>
           {team.name
@@ -209,27 +209,27 @@ function EventResultsContent() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 relative">
+    <div className="container relative mx-auto px-4 py-8">
       <Button
         variant="ghost"
         size="sm"
-        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
+        className="text-accent-orange hover:text-accent-orange fixed right-4 top-4 z-10 p-0 hover:bg-transparent hover:underline"
         onClick={() => navigate(-1)}
       >
         Previous
       </Button>
-      <Card className="max-w-3xl mx-auto">
+      <Card className="mx-auto max-w-3xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-center text-2xl font-bold">
             Match Result
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
-            <div className="flex items-center justify-center gap-8 mb-8">
+            <div className="mb-8 flex items-center justify-center gap-8">
               {renderTeamScore(eventData.team1)}
               <div className="flex flex-col items-center justify-center">
-                <div className="flex flex-col items-center mb-4 text-center">
+                <div className="mb-4 flex flex-col items-center text-center">
                   <span className="text-xs text-gray-500">
                     {eventData.date}
                   </span>
@@ -239,7 +239,7 @@ function EventResultsContent() {
                   <span className="text-xs text-gray-500">
                     {eventData.time}
                   </span>
-                  <span className="text-xs font-bold text-[#FF7A00]">
+                  <span className="text-accent-orange text-xs font-bold">
                     {eventData.league}
                   </span>
                 </div>
@@ -249,7 +249,7 @@ function EventResultsContent() {
             </div>
 
             <div className="text-center">
-              <h2 className="text-xl font-bold mb-2">Final Result</h2>
+              <h2 className="mb-2 text-xl font-bold">Final Result</h2>
               <p className="text-lg">
                 {eventData.team1.name} {eventData.team1.score} -{" "}
                 {eventData.team2.score} {eventData.team2.name}
@@ -258,13 +258,13 @@ function EventResultsContent() {
                 {eventData.team1.score > eventData.team2.score
                   ? `${eventData.team1.name} win!`
                   : eventData.team2.score > eventData.team1.score
-                  ? `${eventData.team2.name} win!`
-                  : "It's a draw!"}
+                    ? `${eventData.team2.name} win!`
+                    : "It's a draw!"}
               </p>
             </div>
 
-            <h2 className="text-2xl font-bold mb-4">Attendance</h2>
-            <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
+            <h2 className="mb-4 text-2xl font-bold">Attendance</h2>
+            <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
               <TeamRoster team={eventData.team1} attendance={attendanceData} />
               <TeamRoster team={eventData.team2} attendance={attendanceData} />
             </div>
@@ -277,7 +277,7 @@ function EventResultsContent() {
 
 export default function EventResults() {
   return (
-    <main className="flex-1 bg-background relative">
+    <main className="relative flex-1 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Match Results</h1>
       <EventResultsContent />
     </main>

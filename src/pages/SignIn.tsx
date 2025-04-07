@@ -44,7 +44,7 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
-      <h1 className="mb-8 cursor-pointer text-4xl font-bold text-[#FF7A00] transition-colors hover:text-[#FF9A30]">
+      <h1 className="text-accent-orange mb-8 cursor-pointer text-4xl font-bold transition-colors hover:text-[#FF9A30]">
         REC LiiGA
       </h1>
 
@@ -125,14 +125,17 @@ export default function SignInPage() {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="w-full bg-[#FF7A00] text-white hover:bg-[#FF7A00]/90"
+              className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
               disabled={cannotSubmit}
             >
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
             <p className="text-center text-sm text-[#707B81]">
               Don't have an account?{" "}
-              <Link to="/sign-up" className="text-[#FF7A00] hover:underline">
+              <Link
+                to="/sign-up"
+                className="text-accent-orange hover:underline"
+              >
                 Sign up
               </Link>
             </p>

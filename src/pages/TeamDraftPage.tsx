@@ -1,30 +1,29 @@
-
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from 'lucide-react';
-import { useTeamDraft } from '@/hooks/use-team-draft';
-import { TeamDraftHeader } from '@/components/draft/TeamDraftHeader';
-import { TeamsSection } from '@/components/draft/TeamsSection';
-import { DraftControls } from '@/components/draft/DraftControls';
-import { PlayersList } from '@/components/draft/PlayersList';
-import { DraftCompletionDialog } from '@/components/draft/DraftCompletionDialog';
+import { Loader2 } from "lucide-react";
+import { useTeamDraft } from "@/hooks/use-team-draft";
+import { TeamDraftHeader } from "@/components/draft/TeamDraftHeader";
+import { TeamsSection } from "@/components/draft/TeamsSection";
+import { DraftControls } from "@/components/draft/DraftControls";
+import { PlayersList } from "@/components/draft/PlayersList";
+import { DraftCompletionDialog } from "@/components/draft/DraftCompletionDialog";
 import { toast } from "sonner";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export default function TeamDraftPage() {
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
   const location = useLocation();
   const eventData = location.state?.eventData;
-  
+
   // Effect to validate we have an event ID
   useEffect(() => {
     if (!eventId) {
       toast.error("No event ID provided");
-      navigate('/events');
+      navigate("/events");
     }
   }, [eventId, navigate]);
-  
+
   const {
     isLoading,
     teams,
@@ -45,13 +44,13 @@ export default function TeamDraftPage() {
     toggleEditMode,
     handleConfirmTeam,
     handleFinalizeDraft,
-    setShowCompletionDialog
+    setShowCompletionDialog,
   } = useTeamDraft(eventId, eventData);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 text-[#FF7A00] animate-spin" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="text-accent-orange h-8 w-8 animate-spin" />
       </div>
     );
   }
@@ -59,7 +58,7 @@ export default function TeamDraftPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <TeamDraftHeader />
-      
+
       <Card className="mb-6">
         <CardContent>
           <DraftControls
@@ -70,8 +69,8 @@ export default function TeamDraftPage() {
             handleUndo={handleUndo}
             draftHistory={draftHistory}
           />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_1.5fr] gap-6 h-[calc(100vh-300px)]">
+
+          <div className="grid h-[calc(100vh-300px)] grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr_1.5fr]">
             {/* Team sections */}
             <TeamsSection
               teams={teams}
@@ -81,8 +80,8 @@ export default function TeamDraftPage() {
             />
 
             {/* Available players */}
-            <div className="lg:col-span-1 lg:col-start-3 flex flex-col h-full">
-              <PlayersList 
+            <div className="flex h-full flex-col lg:col-span-1 lg:col-start-3">
+              <PlayersList
                 availablePlayers={availablePlayers}
                 teams={teams}
                 currentTeam={currentTeam}

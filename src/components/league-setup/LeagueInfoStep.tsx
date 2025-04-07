@@ -42,24 +42,24 @@ export function LeagueInfoStep({
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">
+        <CardTitle className="text-center text-2xl font-semibold text-gray-800">
           League Information
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-32 h-32 mb-4 relative rounded-full border-2 border-black p-1">
-            <Avatar className="w-full h-full">
+        <div className="mb-8 flex flex-col items-center">
+          <div className="relative mb-4 h-32 w-32 rounded-full border-2 border-black p-1">
+            <Avatar className="h-full w-full">
               <AvatarImage src="/placeholder.svg" alt="League avatar" />
               <AvatarFallback>LA</AvatarFallback>
             </Avatar>
-            <div className="absolute bottom-0 right-0 bg-black text-white rounded-full p-2 shadow-lg">
+            <div className="absolute bottom-0 right-0 rounded-full bg-black p-2 text-white shadow-lg">
               <Upload size={16} />
             </div>
           </div>
           <Button
             variant="link"
-            className="text-sm text-[#FF7A00] hover:underline"
+            className="text-accent-orange text-sm hover:underline"
           >
             Upload photo
           </Button>
@@ -79,7 +79,7 @@ export function LeagueInfoStep({
             />
           </div>
 
-          <div className="flex gap-4 flex-col sm:flex-row">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
               <Label htmlFor="sport" className="text-gray-800">
                 Select Sport
@@ -87,7 +87,7 @@ export function LeagueInfoStep({
               <select
                 name="sport"
                 id="sport"
-                className="border mt-1 h-10 block p-2 rounded-md w-full text-sm outline-offset-4"
+                className="mt-1 block h-10 w-full rounded-md border p-2 text-sm outline-offset-4"
                 value={leagueData.sport}
                 onChange={(e) => updateLeagueData({ sport: e.target.value })}
               >
@@ -113,7 +113,7 @@ export function LeagueInfoStep({
             </div>
           </div>
 
-          <div className="flex gap-4 flex-col sm:flex-row">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
               <Label htmlFor="leagueCode" className="text-gray-800">
                 League Code

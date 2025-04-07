@@ -30,7 +30,7 @@ function CountdownClock({ deadline }: { deadline: Date }) {
   }, [deadline]);
 
   return (
-    <div className="text-lg font-semibold flex space-x-4">
+    <div className="flex space-x-4 text-lg font-semibold">
       <div className="flex flex-col items-center">
         <span>{timeLeft.days}</span>
         <span className="text-xs text-gray-500">days</span>
@@ -68,7 +68,7 @@ function AttendingList({
 }) {
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-medium">{teamName}</h3>
           <JerseyIcon color={uniformColor} size={23} />
@@ -78,7 +78,7 @@ function AttendingList({
         {players.map((player) => (
           <div key={player.id} className="flex items-center gap-4">
             <Avatar
-              className="w-10 h-10"
+              className="h-10 w-10"
               style={player.isCaptain ? { backgroundColor: teamColor } : {}}
             >
               <AvatarImage src={player.avatar} alt={player.name} />
@@ -101,7 +101,7 @@ function AttendingList({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="w-4 h-4 text-[#FF7A00]"
+                    className="text-accent-orange h-4 w-4"
                   >
                     <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
                   </svg>
@@ -240,7 +240,7 @@ function EventDetailsContent() {
 
   const renderTeamInfo = (team: any) => (
     <div className="flex flex-col items-center space-y-2">
-      <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
+      <Avatar className="h-16 w-16" style={{ backgroundColor: team.color }}>
         <AvatarImage src={team.avatar} alt={team.name} />
         <AvatarFallback>
           {team.name
@@ -250,7 +250,7 @@ function EventDetailsContent() {
         </AvatarFallback>
       </Avatar>
       <span className="text-sm font-semibold">{team.name}</span>
-      <div className="flex flex-col items-center mt-2">
+      <div className="mt-2 flex flex-col items-center">
         <JerseyIcon color={team.uniformColor} size={48} />
       </div>
     </div>
@@ -261,25 +261,25 @@ function EventDetailsContent() {
       <Button
         variant="ghost"
         size="sm"
-        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline flex items-center"
+        className="text-accent-orange hover:text-accent-orange fixed right-4 top-4 z-10 flex items-center p-0 hover:bg-transparent hover:underline"
         onClick={handleBackClick}
       >
         <ChevronLeft className="mr-1 h-4 w-4" />
         Previous
       </Button>
-      <div className="container mx-auto px-4 py-8 ">
-        <Card className="max-w-3xl mx-auto">
+      <div className="container mx-auto px-4 py-8">
+        <Card className="mx-auto max-w-3xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
+            <CardTitle className="text-center text-2xl font-bold">
               Upcoming Match
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-8">
-              <div className="flex items-center justify-center gap-8 mb-8">
+              <div className="mb-8 flex items-center justify-center gap-8">
                 {renderTeamInfo(eventData.team1)}
                 <div className="flex flex-col items-center justify-center">
-                  <div className="flex flex-col items-center mb-4 text-center">
+                  <div className="mb-4 flex flex-col items-center text-center">
                     <span className="text-xs text-gray-500">
                       {eventData.date}
                     </span>
@@ -289,7 +289,7 @@ function EventDetailsContent() {
                     <span className="text-xs text-gray-500">
                       {eventData.time}
                     </span>
-                    <span className="text-xs font-bold text-[#FF7A00]">
+                    <span className="text-accent-orange text-xs font-bold">
                       {eventData.league}
                     </span>
                   </div>
@@ -301,7 +301,7 @@ function EventDetailsContent() {
               {eventData.draftStatus === "completed" ? (
                 <>
                   <div className="text-center">
-                    <h2 className="text-xl font-bold mb-2">Match Details</h2>
+                    <h2 className="mb-2 text-xl font-bold">Match Details</h2>
                     <p className="text-lg">
                       {eventData.team1.name} vs {eventData.team2.name}
                     </p>
@@ -310,8 +310,8 @@ function EventDetailsContent() {
                     </p>
                   </div>
 
-                  <h2 className="text-2xl font-bold mb-4">Drafted Teams</h2>
-                  <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
+                  <h2 className="mb-4 text-2xl font-bold">Drafted Teams</h2>
+                  <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
                     <AttendingList
                       players={eventData.team1.players}
                       teamColor={eventData.team1.color}
@@ -333,23 +333,23 @@ function EventDetailsContent() {
                     <CountdownClock deadline={eventData.rsvpDeadline} />
                   </div>
 
-                  <div className="pt-8 border-t">
-                    <h3 className="text-lg font-semibold mb-4">
+                  <div className="border-t pt-8">
+                    <h3 className="mb-4 text-lg font-semibold">
                       Attending Players (
                       {eventData.team1.players.length +
                         eventData.team2.players.length}
                       )
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                       {[
                         ...eventData.team1.players,
                         ...eventData.team2.players,
                       ].map((player) => (
                         <div
                           key={player.id}
-                          className="flex items-center gap-2 hover:bg-gray-50 p-2 rounded-md cursor-pointer transition-colors"
+                          className="flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
                         >
-                          <Avatar className="w-10 h-10">
+                          <Avatar className="h-10 w-10">
                             <AvatarImage
                               src={player.avatar}
                               alt={player.name}
@@ -361,9 +361,9 @@ function EventDetailsContent() {
                                 .join("")}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1">
-                              <span className="font-semibold truncate">
+                              <span className="truncate font-semibold">
                                 {player.name}
                               </span>
                               {player.isCaptain && (
@@ -375,13 +375,13 @@ function EventDetailsContent() {
                                   strokeWidth="2"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
-                                  className="w-4 h-4 text-[#FF7A00]"
+                                  className="text-accent-orange h-4 w-4"
                                 >
                                   <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
                                 </svg>
                               )}
                             </div>
-                            <span className="text-sm text-muted-foreground truncate">
+                            <span className="truncate text-sm text-muted-foreground">
                               {player.position || "Unassigned"}
                             </span>
                           </div>
@@ -401,7 +401,7 @@ function EventDetailsContent() {
 
 export default function EventDetails() {
   return (
-    <main className="flex-1 bg-background relative">
+    <main className="relative flex-1 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
       <EventDetailsContent />
     </main>

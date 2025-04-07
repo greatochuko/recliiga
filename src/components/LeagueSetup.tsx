@@ -85,7 +85,7 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
         {step === 4 && (
           <Button
             onClick={handleCreateLeague}
-            className="ml-auto bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
+            className="bg-accent-orange hover:bg-accent-orange/90 ml-auto text-white"
           >
             Create League
           </Button>

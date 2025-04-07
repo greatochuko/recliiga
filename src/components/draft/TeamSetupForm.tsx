@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +17,7 @@ export function TeamSetupForm({
   teamId,
   handleTeamNameChange,
   handleTeamColorChange,
-  toggleEditMode
+  toggleEditMode,
 }: TeamSetupFormProps) {
   return (
     <>
@@ -33,7 +32,7 @@ export function TeamSetupForm({
       </div>
       <div>
         <Label>Team Color</Label>
-        <div className="flex items-center space-x-4 mt-2">
+        <div className="mt-2 flex items-center space-x-4">
           <div className="flex-shrink-0">
             <JerseyIcon color={team.color} size={64} />
           </div>
@@ -41,7 +40,7 @@ export function TeamSetupForm({
             {colorOptions.map((color) => (
               <button
                 key={color.value}
-                className={`w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF7A00] focus:ring-offset-2 border-2 border-black ${team.color === color.value ? 'ring-2 ring-[#FF7A00] ring-offset-2' : ''}`}
+                className={`focus:ring-accent-orange h-8 w-8 rounded-full border-2 border-black focus:outline-none focus:ring-2 focus:ring-offset-2 ${team.color === color.value ? "ring-accent-orange ring-2 ring-offset-2" : ""}`}
                 style={{ backgroundColor: color.value }}
                 onClick={() => handleTeamColorChange(teamId, color.value)}
                 aria-label={`Select ${color.name} color`}
