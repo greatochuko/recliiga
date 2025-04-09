@@ -30,8 +30,6 @@ export const EventsContent: React.FC = () => {
     initialData: { data: [], error: null },
   });
 
-  console.log({ events, error });
-
   const filteredEvents = useMemo(() => {
     const filtered = selectedLeagueId
       ? events.filter((event) => event.leagueId === selectedLeagueId)
@@ -118,7 +116,6 @@ export const EventsContent: React.FC = () => {
                   <ManageEventCard
                     key={event.id}
                     event={event}
-                    onEdit={handleEditEvent}
                     onDelete={handleDeleteEvent}
                   />
                 ))
@@ -134,7 +131,6 @@ export const EventsContent: React.FC = () => {
                   <ManageEventCard
                     key={event.id}
                     event={event}
-                    onEdit={handleEditEvent}
                     onDelete={handleDeleteEvent}
                   />
                 ))

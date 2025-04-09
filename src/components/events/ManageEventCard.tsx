@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,27 +9,13 @@ import { isPast } from "date-fns";
 
 interface ManageEventCardProps {
   event: EventType;
-  onEdit: (eventId: string) => void;
   onDelete: (eventId: string) => void;
 }
 
 export const ManageEventCard: React.FC<ManageEventCardProps> = ({
   event,
-  onEdit,
   onDelete,
 }) => {
-  const navigate = useNavigate();
-
-  const handleSelectCaptains = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate(`/select-captains/${event.id}`);
-  };
-
-  const handleEnterResults = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate(`/edit-results/${event.id}`);
-  };
-
   const eventTime = `${event.startDate.startHour}:${event.startDate.startMinute} ${event.startDate.startAmPm}`;
 
   const eventSpotsLeft = event.numTeams * event.rosterSpots;
@@ -100,24 +86,26 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
         <div className="mt-4 flex justify-center space-x-2">
           {eventStatus === "upcoming" && (
             <>
-              <Button
-                onClick={handleSelectCaptains}
-                variant="outline"
-                size="sm"
-                className="flex items-center"
-              >
-                <UserPlus className="mr-2 h-4 w-4" />
-                Select Captains
-              </Button>
-              <Button
-                onClick={() => onEdit(event.id)}
-                variant="outline"
-                size="sm"
-                className="flex items-center"
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
-              </Button>
+              <Link to={`/select-captains/${event.id}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center"
+                >
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Select Captains
+                </Button>
+              </Link>
+              <Link to={`/edit-event/${event.id}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center"
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
               <Button
                 onClick={() => onDelete(event.id)}
                 variant="outline"
@@ -130,15 +118,12 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
             </>
           )}
           {eventStatus === "past" && (
-            <Button
-              onClick={handleEnterResults}
-              variant="outline"
-              size="sm"
-              className="flex items-center"
-            >
-              <Trophy className="mr-2 h-4 w-4" />
-              {event.resultsEntered ? "Edit Results" : "Enter Results"}
-            </Button>
+            <Link to={`/edit-results/${event.id}`}>
+              <Button variant="outline" size="sm" className="flex items-center">
+                <Trophy className="mr-2 h-4 w-4" />
+                {event.resultsEntered ? "Edit Results" : "Enter Results"}
+              </Button>
+            </Link>
           )}
         </div>
       </CardContent>

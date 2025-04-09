@@ -30,6 +30,7 @@ import EditResults from "./pages/EditResults";
 import TeamDraftPage from "./pages/TeamDraftPage";
 import AuthWrapper from "./components/AuthWrapper";
 import { HomeScreen } from "./components/dashboard/HomeScreen";
+import EditEvent from "./pages/EditEvent";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const AppRoutes = () => (
           <Route path="/player-profile" element={<PlayerProfile />} />
           <Route path="/manage-events" element={<ManageEvents />} />
           <Route path="/add-event" element={<AddEvent />} />
+          <Route path="/edit-event/:id" element={<EditEvent />} />
           <Route path="/help" element={<HelpAndSupport />} />
           <Route
             path="/select-captains/:eventId"

@@ -39,17 +39,17 @@ export function LONavigationMenu() {
       url: "/manage-events",
     },
     {
+      id: "create-league",
+      label: "Create League",
+      icon: FolderPlus,
+      url: "/create-league",
+    },
+    {
       id: "invite-players",
       label: "Invite Players",
       icon: UserPlus,
       url: "#",
       action: () => setShowInvitePopup(true),
-    },
-    {
-      id: "create-league",
-      label: "Create a New League",
-      icon: FolderPlus,
-      url: "/create-league",
     },
     {
       id: "help-support",
@@ -67,7 +67,7 @@ export function LONavigationMenu() {
             <Button
               variant="ghost"
               size="sm"
-              className="bg-accent-orange mb-2 w-full justify-start rounded-lg px-4 py-2 text-sm font-semibold text-white hover:bg-[#E66900] hover:text-white"
+              className="mb-2 w-full justify-start rounded-lg bg-accent-orange px-4 py-2 text-sm font-semibold text-white hover:bg-[#E66900] hover:text-white"
               onClick={() => setIsLODropdownOpen(!isLODropdownOpen)}
             >
               <Settings className="mr-3 h-5 w-5" />
@@ -93,8 +93,8 @@ export function LONavigationMenu() {
                           onClick={action.action}
                           className={`flex w-full items-center gap-3 rounded-lg px-4 py-2 text-left text-sm ${
                             location.pathname === action.url
-                              ? "text-accent-orange bg-orange-50 font-medium"
-                              : "hover:text-accent-orange text-gray-600 hover:bg-gray-50"
+                              ? "bg-orange-50 font-medium text-accent-orange"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-accent-orange"
                           }`}
                         >
                           <action.icon
@@ -111,8 +111,8 @@ export function LONavigationMenu() {
                           to={action.url}
                           className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm ${
                             location.pathname === action.url
-                              ? "text-accent-orange bg-orange-50 font-medium"
-                              : "hover:text-accent-orange text-gray-600 hover:bg-gray-50"
+                              ? "bg-orange-50 font-medium text-accent-orange"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-accent-orange"
                           }`}
                         >
                           <action.icon

@@ -1,6 +1,7 @@
 import { EventType } from "@/types/events";
 import { Button } from "../ui/button";
 import EventCard from "./EventCard";
+import { Loader2Icon } from "lucide-react";
 
 interface EventsListProps {
   upcomingEvents: EventType[];
@@ -28,7 +29,8 @@ export function EventsList({
         </div>
         <div className="space-y-4">
           {loading ? (
-            <div className="flex items-center justify-center py-4 text-gray-500">
+            <div className="flex items-center justify-center gap-2 py-4 text-gray-500">
+              <Loader2Icon className="text-accent-orange h-4 w-4 animate-spin" />{" "}
               Loading upcoming events...
             </div>
           ) : upcomingEvents.length === 0 ? (
@@ -56,7 +58,8 @@ export function EventsList({
         </div>
         <div className="space-y-4">
           {loading ? (
-            <div className="flex items-center justify-center py-4 text-gray-500">
+            <div className="flex items-center justify-center gap-2 py-4 text-gray-500">
+              <Loader2Icon className="text-accent-orange h-4 w-4 animate-spin" />{" "}
               Loading past events...
             </div>
           ) : pastEvents.length === 0 ? (

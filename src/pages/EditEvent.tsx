@@ -1,12 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarIcon, ArrowLeft } from "lucide-react";
+import {
+  CalendarIcon,
+  ArrowLeft,
+  Loader2Icon,
+  ArrowLeftIcon,
+} from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -16,8 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import { fetchLeaguesByUser } from "@/api/league";
-import { EventDataType, createEvent } from "@/api/events";
+import { EventDataType, editEvent, fetchEventById } from "@/api/events";
 import { EventDateType } from "@/types/events";
 
 const initialEventData: EventDataType = {
@@ -39,62 +43,40 @@ const initialEventData: EventDataType = {
   eventDates: [],
 };
 
-export default function AddEvent() {
+export default function EditEvent() {
   const [eventData, setEventData] = useState<EventDataType>(initialEventData);
   const [submitting, setSubmitting] = useState(false);
   const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("1h");
-  const [repeatFrequency, setRepeatFrequency] = useState<
-    "daily" | "weekly" | "bi-weekly" | "monthly" | undefined
-  >();
-  const [repeatEndDate, setRepeatEndDate] = useState<Date | undefined>();
-  const [isRepeatingEvent, setIsRepeatingEvent] = useState(false);
+
+  const { id } = useParams();
 
   const navigate = useNavigate();
 
   const {
-    data: { leagues },
-    isLoading: isLoadingLeagues,
+    data: { data: event },
+    isFetching,
   } = useQuery({
-    queryKey: ["leagues"],
-    queryFn: fetchLeaguesByUser,
-    initialData: { leagues: [], error: null },
+    queryKey: [`event-${id}`],
+    queryFn: () => fetchEventById(id),
+    initialData: { data: null, error: null },
   });
 
-  const eventDates = useMemo(() => {
-    if (!eventData.startDate.date || !repeatEndDate || !repeatFrequency)
-      return [];
-
-    const dates: Date[] = [];
-    const current = new Date(eventData.startDate.date);
-    const end = new Date(repeatEndDate);
-
-    while (current <= end) {
-      dates.push(new Date(current));
-
-      switch (repeatFrequency) {
-        case "daily":
-          current.setDate(current.getDate() + 1);
-          break;
-        case "weekly":
-          current.setDate(current.getDate() + 7);
-          break;
-        case "bi-weekly":
-          current.setDate(current.getDate() + 14);
-          break;
-        case "monthly":
-          current.setMonth(current.getMonth() + 1);
-          break;
-        default:
-          return dates;
-      }
+  useEffect(() => {
+    if (event) {
+      setEventData((prev) => ({
+        ...prev,
+        ...event,
+        startDate: {
+          ...prev.startDate,
+          ...event.startDate,
+          date: new Date(event.startDate.date),
+        },
+      }));
+      setRsvpDeadlineHours(
+        event.rsvpDeadline > 0 ? `${event.rsvpDeadline}h` : "custom",
+      );
     }
-
-    return dates;
-  }, [eventData.startDate.date, repeatEndDate, repeatFrequency]);
-
-  const isDateInPast = (date: Date) => {
-    return isBefore(date, startOfDay(new Date()));
-  };
+  }, [event]);
 
   const handlePositiveNumberInput = (
     value: string,
@@ -106,10 +88,6 @@ export default function AddEvent() {
     } else if (value === "") {
       setEventData((prev) => ({ ...prev, [field]: "" }));
     }
-  };
-
-  const formatTime = (hour: string, minute: string, ampm: string) => {
-    return `${hour}:${minute} ${ampm}`;
   };
 
   function updateEventDate<T extends keyof EventDateType>(
@@ -140,18 +118,16 @@ export default function AddEvent() {
   const cannotSubmit = Object.entries(eventData)
     .map(([key, value]) => {
       if (key === "eventDates") return false;
-      if (isRepeatingEvent) {
-        if (!repeatFrequency || !repeatEndDate) return true;
-      }
+
       return value === "" || value === undefined || value === null;
     })
     .some((isInvalid) => isInvalid);
 
-  const handleCreateEvent = async (e: React.FormEvent) => {
+  const handleEditEvent = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setSubmitting(true);
-    const { error } = await createEvent({ ...eventData, eventDates });
+    const { error } = await editEvent(id, { ...eventData });
 
     if (error === null) {
       navigate("/manage-events");
@@ -159,6 +135,32 @@ export default function AddEvent() {
       setSubmitting(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Loader2Icon className="h-8 w-8 animate-spin text-accent-orange" />
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-4xl font-bold text-gray-800">Event Not Found</h1>
+        <p className="mt-4 text-gray-600">
+          The event you are looking for does not exist or has been removed.
+        </p>
+        <Link
+          to="/manage-events"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 font-medium text-white hover:bg-accent-orange/90"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          Go Back to Events
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <main className="mx-auto w-[90%] max-w-3xl">
@@ -174,32 +176,21 @@ export default function AddEvent() {
             className="text-center text-2xl font-semibold text-gray-800"
             style={{ marginTop: 0 }}
           >
-            Add Event
+            Edit Event
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleCreateEvent} className="flex flex-col gap-6">
+          <form onSubmit={handleEditEvent} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="league-id">League</Label>
               <select
-                value={eventData.leagueId}
-                onChange={(e) =>
-                  setEventData((prev) => ({
-                    ...prev,
-                    leagueId: e.target.value,
-                  }))
-                }
+                defaultValue={eventData.leagueId}
                 className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-default disabled:bg-gray-100"
                 id="league-id"
                 name="league-id"
-                disabled={isLoadingLeagues}
+                disabled
               >
-                <option hidden>Select League</option>
-                {leagues.map((league) => (
-                  <option key={league.id} value={league.id}>
-                    {league.name}
-                  </option>
-                ))}
+                <option value={eventData.leagueId}>{event.league.name}</option>
               </select>
             </div>
 
@@ -422,88 +413,6 @@ export default function AddEvent() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              {/* <Switch
-              id="repeat-event"
-              checked={currentEvent.isRepeatingEvent}
-              onCheckedChange={handleRepeatToggle}
-            /> */}
-              <input
-                type="checkbox"
-                checked={isRepeatingEvent}
-                onChange={() => {
-                  if (isRepeatingEvent) {
-                    setRepeatEndDate(undefined);
-                    setRepeatFrequency(undefined);
-                  }
-                  setIsRepeatingEvent((prev) => !prev);
-                }}
-                name="repeat-event"
-                id="repeat-event"
-                className="accent-gray-700"
-              />
-              <Label htmlFor="repeat-event">Repeat Event</Label>
-            </div>
-
-            {isRepeatingEvent && (
-              <div className="space-y-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="repeat-frequency">Repeat Frequency</Label>
-                  <select
-                    value={repeatFrequency}
-                    onChange={(e) =>
-                      setRepeatFrequency(
-                        e.target.value as typeof repeatFrequency,
-                      )
-                    }
-                    className="rounded-md border px-3 py-2 text-sm"
-                    id="repeat-frequency"
-                    name="repeat-frequency"
-                  >
-                    <option hidden>Select frequency</option>
-                    <option value="daily">Every day</option>
-                    <option value="weekly">Every week</option>
-                    <option value="bi-weekly">Every 2 weeks</option>
-                    <option value="monthly">Every month</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="repeat-end-date">Repeat Until</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="repeat-end-date"
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !repeatEndDate && "text-muted-foreground",
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {repeatEndDate ? (
-                          format(repeatEndDate, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={repeatEndDate}
-                        onSelect={(date) => setRepeatEndDate(date)}
-                        disabled={(date) =>
-                          isBefore(date, startOfDay(new Date()))
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-            )}
-
             <div className="flex flex-col gap-2">
               <Label htmlFor="rsvp-deadline">RSVP Deadline</Label>
               <select
@@ -543,45 +452,12 @@ export default function AddEvent() {
               </div>
             )}
 
-            {eventDates.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <Label>Event Dates</Label>
-                <div className="flex flex-col gap-2">
-                  {eventDates.map((date, index) => (
-                    <div
-                      key={index}
-                      className="rounded-md bg-gray-50 p-2 text-sm"
-                    >
-                      {format(date, "MMMM d yyyy")},{" "}
-                      <>
-                        {formatTime(
-                          eventData.startDate.startHour.toString(),
-                          eventData.startDate.startMinute.toString(),
-                          eventData.startDate.startAmPm,
-                        )}{" "}
-                        -{" "}
-                        {formatTime(
-                          eventData.startDate.endHour.toString(),
-                          eventData.startDate.endMinute.toString(),
-                          eventData.startDate.endAmPm,
-                        )}
-                        , {format(date, "EEEE")}
-                        {isDateInPast(date) && (
-                          <span className="ml-2 text-red-500">(Past date)</span>
-                        )}
-                      </>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <Button
               type="submit"
               className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
               disabled={submitting || cannotSubmit}
             >
-              {submitting ? "Adding Event..." : "Add Event"}
+              {submitting ? "Editing Event..." : "Edit Event"}
             </Button>
           </form>
         </CardContent>

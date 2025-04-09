@@ -17,7 +17,6 @@ import {
 } from "@/types/dashboard";
 import { EventType } from "@/types/events";
 import EventCard from "../events/EventCard";
-import { upcomingEvents } from "../events/MockEventData";
 
 // Mock API functions
 async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
@@ -74,7 +73,7 @@ async function fetchTeammates(): Promise<Teammate[]> {
 }
 
 async function fetchUpcomingEvents(): Promise<EventType[]> {
-  return upcomingEvents;
+  return [];
   // return [
   //   {
   //     id: 1,
@@ -352,7 +351,7 @@ function PlayerDashboardContent() {
           <h2 className="text-lg font-semibold">Upcoming Events</h2>
           <Link
             to="/events"
-            className="text-accent-orange text-sm hover:underline"
+            className="text-sm text-accent-orange hover:underline"
           >
             View all
           </Link>

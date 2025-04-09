@@ -24,7 +24,10 @@ export async function fetchLeagueById(leagueId: string): Promise<{
   }
 }
 
-export type LeagueDataType = Omit<LeagueType, "id" | "owner_id" | "players">;
+export type LeagueDataType = Omit<
+  LeagueType,
+  "id" | "owner_id" | "players" | "leagueCode"
+>;
 
 export async function createLeague(leagueData: LeagueDataType) {
   const leagueDataBody = {

@@ -59,7 +59,7 @@ export function LeaguesContent() {
         </div>
         <Button
           type="submit"
-          className="bg-accent-orange hover:bg-accent-orange/90 absolute inset-y-0 right-0 flex items-center px-4 text-white"
+          className="absolute inset-y-0 right-0 flex items-center bg-accent-orange px-4 text-white hover:bg-accent-orange/90"
         >
           Search
         </Button>
@@ -142,13 +142,13 @@ export function LeaguesContent() {
                     {isJoined ? (
                       <Link
                         to={`/leagues/${league.id}`}
-                        className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"text-accent-orange border-accent-orange hover:bg-accent-orange/10 border bg-white"}`}
+                        className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"border border-accent-orange bg-white text-accent-orange hover:bg-accent-orange/10"}`}
                       >
                         See More
                       </Link>
                     ) : (
                       <button
-                        className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"bg-accent-orange hover:bg-accent-orange/90 text-white"}`}
+                        className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"bg-accent-orange text-white hover:bg-accent-orange/90"}`}
                         onClick={() => handleJoinLeague(league.id)}
                       >
                         Join

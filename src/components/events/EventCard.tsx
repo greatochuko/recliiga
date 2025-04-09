@@ -59,7 +59,7 @@ export default function EventCard({
 
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
-            <span className="text-accent-orange font-bold">
+            <span className="font-bold text-accent-orange">
               {event.league.name}
             </span>
           </div>

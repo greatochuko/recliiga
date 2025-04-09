@@ -22,7 +22,6 @@ const initialLeagueData: LeagueDataType = {
   is_private: false,
   city: "",
   date: new Date().toISOString().split("T")[0],
-  leagueCode: "",
   image: "",
   stats: [
     { name: "Win", abbr: "W", isEditing: false, points: 3 },
@@ -32,6 +31,7 @@ const initialLeagueData: LeagueDataType = {
     { name: "Attendance", abbr: "ATT", isEditing: false, points: 1 },
     { name: "Non-Attendance", abbr: "N-ATT", isEditing: false, points: -1 },
   ],
+  events: [],
 };
 
 export function LeagueSetup() {
@@ -75,13 +75,12 @@ export function LeagueSetup() {
       ? !leagueData.name.trim() ||
         !leagueData.sport ||
         !leagueData.city.trim() ||
-        !leagueData.leagueCode.trim() ||
         !leagueData.date.trim()
       : false;
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
-      <div className="w-full lg:w-1/4">
+      <div className="w-full lg:w-40">
         <div className="sticky top-8">
           <h2 className="mb-4 text-lg font-semibold">Setup Progress</h2>
           <ol className="relative border-l border-gray-200">
@@ -147,7 +146,7 @@ export function LeagueSetup() {
           )}
           {currentStep < steps.length ? (
             <Button
-              className="bg-accent-orange hover:bg-accent-orange/90 ml-auto text-white"
+              className="ml-auto bg-accent-orange text-white hover:bg-accent-orange/90"
               onClick={handleNext}
               disabled={cannotProceed}
             >
@@ -155,7 +154,7 @@ export function LeagueSetup() {
             </Button>
           ) : (
             <Button
-              className="bg-accent-orange hover:bg-accent-orange/90 ml-auto text-white"
+              className="ml-auto bg-accent-orange text-white hover:bg-accent-orange/90"
               onClick={handleSubmit}
               disabled={loading || cannotProceed}
             >

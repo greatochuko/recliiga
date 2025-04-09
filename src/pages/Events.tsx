@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export default function Events() {
   const {
     data: { data: events },
-    isLoading,
+    isFetching,
   } = useQuery({
     queryKey: ["events"],
     queryFn: fetchEventsByUser,
@@ -22,7 +22,7 @@ export default function Events() {
       <h1 className="ml-14 text-2xl font-bold">Events</h1>
       <div className="">
         <EventsList
-          loading={isLoading}
+          loading={isFetching}
           upcomingEvents={upcomingEvents}
           pastEvents={pastEvents}
         />
