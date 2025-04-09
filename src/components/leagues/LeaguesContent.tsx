@@ -103,7 +103,7 @@ export function LeaguesContent({
                           <h3 className="text-xl font-semibold text-gray-800">
                             {league.name}
                           </h3>
-                          {user.role === "organizer" && (
+                          {league.owner_id === user.id && (
                             <CopyLeagueCodeButton
                               leagueCode={league.leagueCode}
                             />

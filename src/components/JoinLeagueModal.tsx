@@ -17,8 +17,7 @@ export default function JoinLeagueModal({
   async function handleJoinLeague(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { data, error } = await joinLeague(leagueCode);
-    console.log({ data, error });
+    const { error } = await joinLeague(leagueCode);
     if (error === null) {
       refetchLeagues();
       closeModal();

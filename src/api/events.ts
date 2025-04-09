@@ -31,7 +31,7 @@ export async function createEvent(eventData: EventDataType) {
 }
 
 export async function editEvent(eventId: string, eventData: EventDataType) {
-  const data = await fetchApi<EventType[]>(`/event/${eventId}`, {
+  const data = await fetchApi<EventType>(`/event/${eventId}`, {
     method: "PATCH",
     body: eventData,
   });

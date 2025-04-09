@@ -19,7 +19,8 @@ export function EventStatus({ event }: EventStatusProps) {
     event.captains || {},
   );
   const { user } = useAuth();
-  const isOrganizer = user?.role === "organizer";
+
+  const isEventOrganizer = user.id === event.creatorId;
 
   // Fetch team captains if not provided
   useEffect(() => {
@@ -81,14 +82,14 @@ export function EventStatus({ event }: EventStatusProps) {
     }
 
     // Only show the Select Captains button for organizers
-    if (isOrganizer) {
+    if (isEventOrganizer) {
       return (
         <div className="mt-2 flex items-center justify-end">
           <Button
             onClick={handleSelectCaptains}
             variant="outline"
             size="sm"
-            className="text-accent-orange border-accent-orange hover:bg-accent-orange hover:text-white"
+            className="border-accent-orange text-accent-orange hover:bg-accent-orange hover:text-white"
           >
             <UserPlus className="mr-2 h-4 w-4" />
             Select Captains
@@ -134,7 +135,7 @@ export function EventStatus({ event }: EventStatusProps) {
               onClick={handleBeginDraft}
               variant="outline"
               size="sm"
-              className="text-accent-orange border-accent-orange hover:bg-accent-orange hover:text-white"
+              className="border-accent-orange text-accent-orange hover:bg-accent-orange hover:text-white"
             >
               {/* Display all captain avatars inside the button */}
               {Object.entries(captains).map(([teamKey, captain]) => {
@@ -142,7 +143,7 @@ export function EventStatus({ event }: EventStatusProps) {
                 return (
                   <Avatar
                     key={teamKey}
-                    className="border-accent-orange mr-1 h-6 w-6 border-2"
+                    className="mr-1 h-6 w-6 border-2 border-accent-orange"
                   >
                     <AvatarImage src={captain.avatar} alt={captain.name} />
                     <AvatarFallback>{captain.name.charAt(0)}</AvatarFallback>
