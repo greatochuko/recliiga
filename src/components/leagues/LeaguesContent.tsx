@@ -103,9 +103,11 @@ export function LeaguesContent({
                           <h3 className="text-xl font-semibold text-gray-800">
                             {league.name}
                           </h3>
-                          <CopyLeagueCodeButton
-                            leagueCode={league.leagueCode}
-                          />
+                          {user.role === "organizer" && (
+                            <CopyLeagueCodeButton
+                              leagueCode={league.leagueCode}
+                            />
+                          )}
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm text-[#707B81]">
                           <div className="flex items-center">

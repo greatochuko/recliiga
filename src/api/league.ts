@@ -6,7 +6,7 @@ export async function fetchLeaguesByUser(): Promise<{
   error: string | null;
 }> {
   const data = await fetchApi<LeagueType[]>("/league");
-  return { leagues: data.data, error: data.error };
+  return { leagues: data.data || [], error: data.error };
 }
 
 export async function fetchLeagueById(leagueId: string): Promise<{
@@ -42,5 +42,14 @@ export async function createLeague(leagueData: LeagueDataType) {
     body: leagueDataBody,
     method: "POST",
   });
+  return data;
+}
+
+export async function joinLeague(leagueCode: string) {
+  const data = await fetchApi("/league/join", {
+    method: "POST",
+    body: { leagueCode },
+  });
+
   return data;
 }

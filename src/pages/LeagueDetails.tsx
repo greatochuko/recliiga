@@ -7,6 +7,8 @@ import { fetchLeagueById } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { ManageEventCard } from "@/components/events/ManageEventCard";
+import EventCard from "@/components/events/EventCard";
+import { getUpcomingEvents } from "@/lib/utils";
 
 export default function LeagueDetails() {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ export default function LeagueDetails() {
         <p>{data.error}</p>
         <button
           onClick={() => navigate("/leagues")}
-          className="bg-accent-orange flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-white"
+          className="flex items-center gap-2 rounded-md bg-accent-orange px-3 py-1.5 text-sm font-medium text-white"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Leagues
         </button>
@@ -48,12 +50,14 @@ export default function LeagueDetails() {
     navigate("/player-profile");
   };
 
+  const upcomingEvents = getUpcomingEvents(league.events);
+
   return (
     <main className="relative flex flex-1 flex-col gap-6 bg-background px-4 md:px-6">
       <div className="ml-6 flex justify-between">
         <button
           onClick={() => navigate("/leagues")}
-          className="text-accent-orange hover:bg-accent-orange/10 flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium duration-200"
+          className="flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
@@ -104,7 +108,7 @@ export default function LeagueDetails() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Players</h3>
               <button
-                className="text-accent-orange px-4 py-2 text-sm font-medium hover:underline"
+                className="px-4 py-2 text-sm font-medium text-accent-orange hover:underline"
                 onClick={() => setShowAllPlayers(!showAllPlayers)}
               >
                 {showAllPlayers ? "Show Less" : "View All"}
@@ -163,16 +167,19 @@ export default function LeagueDetails() {
               View all
             </Link> */}
           </div>
-          {league.events.length ? (
+          {upcomingEvents.length ? (
             <div className="space-y-4">
-              {league.events.map((event) => (
-                <ManageEventCard
-                  key={event.id}
-                  event={event}
-                  onEdit={() => {}}
-                  onDelete={() => {}}
-                />
-              ))}
+              {upcomingEvents.map((event) =>
+                user.role === "organizer" ? (
+                  <ManageEventCard
+                    onDelete={() => {}}
+                    key={event.id}
+                    event={event}
+                  />
+                ) : (
+                  <EventCard event={event} key={event.id} />
+                ),
+              )}
             </div>
           ) : (
             <div className="text-center text-sm text-gray-500">
