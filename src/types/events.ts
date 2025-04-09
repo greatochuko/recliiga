@@ -1,7 +1,7 @@
 import { UserType } from "@/contexts/AuthContext";
 import { LeagueType } from "./league";
 
-export interface Team {
+export interface TeamType {
   id: string;
   name: string;
   logo: string;
@@ -34,7 +34,7 @@ export interface EventType {
   rosterSpots: number;
   startDate: EventDateType;
   rsvpDeadline: number;
-  teams: Team[];
+  teams: TeamType[];
   creatorId: string;
   resultsEntered: boolean;
   players: UserType[];

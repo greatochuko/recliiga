@@ -6,23 +6,21 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQuery } from "@tanstack/react-query";
-import { fetchLeaguesByUser } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
+import { LeagueType } from "@/types/league";
+import CopyLeagueCodeButton from "./CopyLeagueCodeButton";
 
-export function LeaguesContent() {
+export function LeaguesContent({
+  leagues,
+  isLoading,
+  error,
+}: {
+  leagues: LeagueType[];
+  isLoading: boolean;
+  error: Error;
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useAuth();
-
-  const {
-    data: { leagues },
-    isFetching: isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["leagues"],
-    queryFn: fetchLeaguesByUser,
-    initialData: { leagues: [], error: null },
-  });
 
   const filteredLeagues = useMemo(
     () =>
@@ -105,9 +103,9 @@ export function LeaguesContent() {
                           <h3 className="text-xl font-semibold text-gray-800">
                             {league.name}
                           </h3>
-                          <span className="rounded bg-gray-200 px-2 py-1 text-xs">
-                            {league.leagueCode}
-                          </span>
+                          <CopyLeagueCodeButton
+                            leagueCode={league.leagueCode}
+                          />
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm text-[#707B81]">
                           <div className="flex items-center">

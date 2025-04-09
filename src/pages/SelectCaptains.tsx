@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,9 +8,9 @@ import { toast } from "sonner";
 import { Crown, Star, Loader2 } from "lucide-react";
 
 import { selectEventCaptains } from "@/api/captains";
-import { fetchEventById } from "@/api/events2";
-import { getAttendingPlayers } from "@/api/events2";
-import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { fetchEventById } from "@/api/events";
+import { TeamType } from "@/types/events";
 
 interface Player {
   id: string;
@@ -24,10 +24,10 @@ interface Player {
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-1">
-      <span className="text-accent-orange font-medium">
+      <span className="font-medium text-accent-orange">
         {rating.toFixed(2)}
       </span>
-      <Star className="fill-accent-orange text-accent-orange h-4 w-4" />
+      <Star className="h-4 w-4 fill-accent-orange text-accent-orange" />
     </div>
   );
 }
@@ -86,40 +86,18 @@ function AttendingList({
 export default function SelectCaptains() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectingCaptains, setSelectingCaptains] = useState(false);
   const [players, setPlayers] = useState<Player[]>([]);
-  const [event, setEvent] = useState<any>(null);
 
-  useEffect(() => {
-    const loadEventData = async () => {
-      if (!eventId) return;
-
-      setIsLoading(true);
-      try {
-        // Fetch event details
-        const eventData = await fetchEventById(eventId);
-        if (eventData) {
-          setEvent(eventData);
-        }
-
-        // Fetch attending players
-        const attendingPlayersData = await getAttendingPlayers(eventId);
-        setPlayers(attendingPlayersData);
-
-        setSelectingCaptains(true);
-      } catch (error) {
-        console.error("Error loading event data:", error);
-        toast.error("Failed to load event data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadEventData();
-  }, [eventId]);
+  const {
+    data: { data: event },
+    isFetching,
+  } = useQuery({
+    queryKey: [`event-${eventId}`],
+    queryFn: () => fetchEventById(eventId),
+    initialData: { data: null, error: null },
+  });
 
   const handleCaptainSelect = (playerId: string, isSelected: boolean) => {
     const captainCount = players.filter((p) => p.isCaptain).length;
@@ -166,10 +144,13 @@ export default function SelectCaptains() {
     }
   };
 
-  const renderTeamInfo = (team: any, teamNumber: number) => (
+  const renderTeamInfo = (team: TeamType, teamNumber: number) => (
     <div className="flex flex-col items-center space-y-2">
-      <Avatar className="h-16 w-16" style={{ backgroundColor: team.color }}>
-        <AvatarImage src={team.avatar} alt={`Team ${teamNumber}`} />
+      <Avatar
+        className="h-16 w-16 border-2"
+        style={{ borderColor: team.color }}
+      >
+        <AvatarImage src={team.logo} alt={`Team ${teamNumber}`} />
         <AvatarFallback>{`T${teamNumber}`}</AvatarFallback>
       </Avatar>
       <span className="text-sm font-semibold">
@@ -178,10 +159,10 @@ export default function SelectCaptains() {
     </div>
   );
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="text-accent-orange h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin text-accent-orange" />
       </div>
     );
   }
@@ -192,7 +173,7 @@ export default function SelectCaptains() {
       <Button
         variant="ghost"
         size="sm"
-        className="text-accent-orange hover:text-accent-orange fixed right-4 top-4 z-10 p-0 hover:bg-transparent hover:underline"
+        className="fixed right-4 top-4 z-10 p-0 text-accent-orange hover:bg-transparent hover:text-accent-orange hover:underline"
         onClick={() => navigate("/events")}
       >
         Back to Events
@@ -208,25 +189,26 @@ export default function SelectCaptains() {
             <div className="space-y-8">
               {event && (
                 <div className="mb-8 flex items-center justify-center gap-8">
-                  {renderTeamInfo(event.team1, 1)}
+                  {renderTeamInfo(event.teams[0], 1)}
                   <div className="flex flex-col items-center justify-center">
                     <div className="mb-4 flex flex-col items-center text-center">
                       <span className="text-xs text-gray-500">
-                        {event.date}
+                        {new Date(event.startDate.date).toLocaleDateString()}
                       </span>
                       <span className="text-xs text-gray-500">
                         {event.location}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {event.time}
+                        {event.startDate.startHour}:
+                        {event.startDate.startMinute}
                       </span>
-                      <span className="text-accent-orange text-xs font-bold">
-                        {event.league}
+                      <span className="text-xs font-bold text-accent-orange">
+                        {event.league.name}
                       </span>
                     </div>
                     <span className="text-2xl font-bold">vs</span>
                   </div>
-                  {renderTeamInfo(event.team2, 2)}
+                  {renderTeamInfo(event.teams[1], 2)}
                 </div>
               )}
 
@@ -239,7 +221,7 @@ export default function SelectCaptains() {
                   <Button
                     onClick={handleConfirmCaptains}
                     disabled={isSubmitting}
-                    className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+                    className="bg-accent-orange text-white hover:bg-accent-orange/90"
                   >
                     {isSubmitting ? (
                       <>
