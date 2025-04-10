@@ -109,7 +109,7 @@ export default function AddEvent() {
   };
 
   const formatTime = (hour: string, minute: string, ampm: string) => {
-    return `${hour}:${minute} ${ampm}`;
+    return `${hour}:${minute.padStart(2, "0")} ${ampm}`;
   };
 
   function updateEventDate<T extends keyof EventDateType>(

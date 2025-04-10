@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit } from "lucide-react";
 import { EventType } from "@/types/events";
+import { attendEvent, declineEvent } from "@/api/events";
 
 interface EventActionsProps {
   event: EventType;
@@ -22,14 +23,26 @@ export const EventActions: React.FC<EventActionsProps> = ({
   setIsEditing,
   setAttendanceStatus,
 }) => {
-  const handleAttend = () => {
-    setAttendanceStatus("attending");
-    setIsEditing(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleAttend = async () => {
+    setLoading(true);
+    const { error } = await attendEvent(event.id);
+    if (error === null) {
+      setAttendanceStatus("attending");
+      setIsEditing(false);
+    }
+    setLoading(false);
   };
 
-  const handleDecline = () => {
-    setAttendanceStatus("not-attending");
-    setIsEditing(false);
+  const handleDecline = async () => {
+    setLoading(true);
+    const { error } = await declineEvent(event.id);
+    if (error === null) {
+      setAttendanceStatus("not-attending");
+      setIsEditing(false);
+    }
+    setLoading(false);
   };
 
   const toggleEdit = () => {
@@ -45,7 +58,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
               ? `/events/${event.id}/results`
               : `/events/${event.id}`
           }
-          className="hover:bg-accent-orange text-accent-orange border-accent-orange rounded-md border bg-white px-4 py-2 text-sm font-medium duration-200 hover:text-white"
+          className="rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
         >
           {event.resultsEntered ? "View Results" : "View Details"}
         </Link>
@@ -55,14 +68,16 @@ export const EventActions: React.FC<EventActionsProps> = ({
           {(isEditing || !attendanceStatus) && (
             <>
               <button
-                className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
+                className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
                 onClick={handleAttend}
+                disabled={loading || attendanceStatus === "attending"}
               >
                 Attend
               </button>
               <button
-                className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
+                className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
                 onClick={handleDecline}
+                disabled={loading || attendanceStatus === "not-attending"}
               >
                 Decline
               </button>
@@ -70,7 +85,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
           )}
           {attendanceStatus && !isEditing && (
             <button
-              className="text-accent-orange border-accent-orange hover:bg-accent-orange flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:text-white"
+              className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
               onClick={toggleEdit}
             >
               <Edit className="mr-2 h-4 w-4" />

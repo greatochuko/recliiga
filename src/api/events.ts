@@ -37,3 +37,19 @@ export async function editEvent(eventId: string, eventData: EventDataType) {
   });
   return data;
 }
+
+export async function attendEvent(eventId: string) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/attend`, {
+    method: "PATCH",
+    body: {},
+  });
+  return data;
+}
+
+export async function declineEvent(eventId: string) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/decline`, {
+    method: "PATCH",
+    body: {},
+  });
+  return data;
+}

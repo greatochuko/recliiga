@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueById } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
-import { ManageEventCard } from "@/components/events/ManageEventCard";
 import EventCard from "@/components/events/EventCard";
 import { getUpcomingEvents } from "@/lib/utils";
 
@@ -17,12 +16,12 @@ export default function LeagueDetails() {
   const { user } = useAuth();
   const { id } = useParams();
 
-  const { isFetching, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["league", id],
     queryFn: ({ queryKey }) => fetchLeagueById(queryKey[1]),
   });
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <p>Loading...</p>
@@ -169,17 +168,9 @@ export default function LeagueDetails() {
           </div>
           {upcomingEvents.length ? (
             <div className="space-y-4">
-              {upcomingEvents.map((event) =>
-                user.role === "organizer" ? (
-                  <ManageEventCard
-                    onDelete={() => {}}
-                    key={event.id}
-                    event={event}
-                  />
-                ) : (
-                  <EventCard event={event} key={event.id} />
-                ),
-              )}
+              {upcomingEvents.map((event) => (
+                <EventCard event={event} key={event.id} />
+              ))}
             </div>
           ) : (
             <div className="text-center text-sm text-gray-500">

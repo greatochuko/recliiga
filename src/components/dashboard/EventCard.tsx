@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -81,7 +80,7 @@ export function EventCard({
           {attendanceStatus === "attending" && !isEditing && (
             <Badge
               variant="secondary"
-              className="bg-accent-orange text-accent-orange bg-opacity-20 text-xs"
+              className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
             >
               Attending
             </Badge>
@@ -141,7 +140,7 @@ export function EventCard({
         </div>
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
-            <span className="text-accent-orange font-bold">
+            <span className="font-bold text-accent-orange">
               {getLeagueName(event.league)}
             </span>
           </div>
@@ -149,7 +148,7 @@ export function EventCard({
         <div className="mt-2 flex justify-center space-x-2">
           <Button
             variant="outline"
-            className="text-accent-orange border-accent-orange hover:bg-accent-orange rounded-md px-4 py-2 text-sm transition-colors hover:text-white"
+            className="rounded-md border-accent-orange px-4 py-2 text-sm text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
             style={{ transform: "scale(1.1)" }}
             onClick={handleViewDetails}
           >
@@ -161,13 +160,13 @@ export function EventCard({
             {(isEditing || !attendanceStatus) && (
               <>
                 <Button
-                  className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm text-white transition-colors"
+                  className="rounded-md bg-accent-orange px-4 py-2 text-sm text-white transition-colors hover:bg-accent-orange/90"
                   onClick={handleAttend}
                 >
                   Attend
                 </Button>
                 <Button
-                  className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm text-white transition-colors"
+                  className="rounded-md bg-accent-orange px-4 py-2 text-sm text-white transition-colors hover:bg-accent-orange/90"
                   onClick={handleDecline}
                 >
                   Decline
@@ -177,7 +176,7 @@ export function EventCard({
             {attendanceStatus && !isEditing && (
               <Button
                 variant="outline"
-                className="text-accent-orange border-accent-orange hover:bg-accent-orange rounded-md px-4 py-2 text-sm transition-colors hover:text-white"
+                className="rounded-md border-accent-orange px-4 py-2 text-sm text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
                 onClick={toggleEdit}
               >
                 <Edit className="mr-2 h-4 w-4" />
