@@ -66,7 +66,7 @@ const AppRoutes = () => (
           <Route path="/edit-event/:id" element={<EditEvent />} />
           <Route path="/help" element={<HelpAndSupport />} />
           <Route
-            path="/select-captains/:eventId"
+            path="/:eventId/select-captains"
             element={<SelectCaptains />}
           />
           <Route path="/edit-results/:eventId" element={<EditResults />} />

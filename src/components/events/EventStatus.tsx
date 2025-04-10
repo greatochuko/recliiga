@@ -45,7 +45,7 @@ export function EventStatus({ event }: EventStatusProps) {
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
 
   const handleSelectCaptains = () => {
-    navigate(`/select-captains/${event.id}`);
+    navigate(`/${event.id}/select-captains`);
   };
 
   const handleBeginDraft = () => {

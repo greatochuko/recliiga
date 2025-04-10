@@ -86,7 +86,7 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
         <div className="mt-4 flex justify-center space-x-2">
           {eventStatus === "upcoming" && (
             <>
-              <Link to={`/select-captains/${event.id}`}>
+              <Link to={`/${event.id}/select-captains`}>
                 <Button
                   variant="outline"
                   size="sm"
