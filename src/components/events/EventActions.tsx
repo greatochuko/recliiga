@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Edit } from "lucide-react";
 import { EventType } from "@/types/events";
 import { attendEvent, declineEvent } from "@/api/events";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EventActionsProps {
   event: EventType;
@@ -23,6 +24,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
   setIsEditing,
   setAttendanceStatus,
 }) => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleAttend = async () => {
@@ -50,21 +52,19 @@ export const EventActions: React.FC<EventActionsProps> = ({
   };
 
   return (
-    <>
-      <div className="mt-2 flex justify-center space-x-2">
-        <Link
-          to={
-            event.resultsEntered
-              ? `/events/${event.id}/results`
-              : `/events/${event.id}`
-          }
-          className="rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
-        >
-          {event.resultsEntered ? "View Results" : "View Details"}
-        </Link>
-      </div>
+    <div className="flex flex-col items-center justify-center gap-2">
+      <Link
+        to={
+          event.resultsEntered
+            ? `/events/${event.id}/results`
+            : `/events/${event.id}`
+        }
+        className="rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
+      >
+        {event.resultsEntered ? "View Results" : "View Details"}
+      </Link>
       {!isPastEvent && isRsvpOpen && (
-        <div className="mt-2 flex justify-center space-x-2">
+        <div className="flex justify-center space-x-2">
           {(isEditing || !attendanceStatus) && (
             <>
               <button
@@ -73,6 +73,13 @@ export const EventActions: React.FC<EventActionsProps> = ({
                 disabled={loading || attendanceStatus === "attending"}
               >
                 Attend
+              </button>
+              <button
+                className="rounded-md border bg-white px-4 py-2 text-sm font-medium duration-200 hover:bg-neutral-100"
+                onClick={() => setIsEditing(false)}
+                disabled={loading || attendanceStatus === "not-attending"}
+              >
+                Cancel
               </button>
               <button
                 className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
@@ -94,6 +101,14 @@ export const EventActions: React.FC<EventActionsProps> = ({
           )}
         </div>
       )}
-    </>
+      {event.teams.some((team) => team.captain?.id === user.id) && (
+        <Link
+          to={`/events/${event.id}/team-draft`}
+          className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+        >
+          Begin Draft
+        </Link>
+      )}
+    </div>
   );
 };
