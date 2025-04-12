@@ -56,18 +56,16 @@ export default function EventDetails() {
   const navigate = useNavigate();
   const { id: eventId } = useParams();
 
-  const {
-    data: { data: event },
-    isLoading,
-  } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`event-${eventId}`],
     queryFn: () => fetchEventById(eventId),
-    initialData: { data: null, error: null },
   });
+
+  const event = data?.data;
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(-1); // This ensures we go back to the previous page in history
+    navigate(-1);
   };
 
   const rsvpDeadline = useMemo(() => {
@@ -216,7 +214,7 @@ export default function EventDetails() {
                                 {player.full_name}
                               </span>
                               {event.teams.some(
-                                (team) => team.captain.id === player.id,
+                                (team) => team.captain?.id === player.id,
                               ) && (
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"

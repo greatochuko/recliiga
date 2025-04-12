@@ -45,14 +45,12 @@ export default function EditEvent() {
 
   const navigate = useNavigate();
 
-  const {
-    data: { data: event },
-    isLoading,
-  } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`event-${id}`],
     queryFn: () => fetchEventById(id),
-    initialData: { data: null, error: null },
   });
+
+  const event = data?.data;
 
   useEffect(() => {
     if (event) {

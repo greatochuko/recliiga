@@ -105,19 +105,21 @@ export default function SelectCaptains() {
   const [captainIds, setCaptainIds] = useState<string[]>([]);
 
   const {
-    data: { data: event },
+    data,
     isLoading,
+    refetch: refetchEvent,
   } = useQuery({
     queryKey: [`event-${eventId}`],
     queryFn: () => fetchEventById(eventId),
-    initialData: { data: null, error: null },
   });
+
+  const event = data?.data;
 
   useEffect(() => {
     if (event) {
       setPlayers(event.players);
       if (event.teams[0].captain && event.teams[1].captain) {
-        setCaptainIds(event.teams.map((team) => team.captain.id));
+        setCaptainIds(event.teams.map((team) => team.captain?.id));
       }
     }
   }, [event]);
@@ -154,7 +156,7 @@ export default function SelectCaptains() {
         style: { color: "#16a34a" },
       });
       setSelectingCaptains(false);
-      navigate(`/events/${eventId}`);
+      refetchEvent();
     } else {
       toast.error("An error occured selecting captains", {
         style: { color: "#ef4444" },
