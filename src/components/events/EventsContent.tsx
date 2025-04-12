@@ -8,8 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ManageEventCard } from "./ManageEventCard";
-import { useToast } from "@/components/ui/use-toast";
+import ManageEventCard from "./ManageEventCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
@@ -17,7 +16,6 @@ import { fetchEventsByUser } from "@/api/events";
 import { getPastEvents, getUpcomingEvents } from "@/lib/utils";
 
 export const EventsContent: React.FC = () => {
-  const { toast } = useToast();
   const [selectedLeagueId, setSelectedLeague] = useState<string | null>(null);
 
   const {
@@ -49,13 +47,6 @@ export const EventsContent: React.FC = () => {
       new Map(events.map((event) => [event.league.id, event.league])).values(),
     );
   }, [events]);
-
-  const handleDeleteEvent = (eventId: string) => {
-    toast({
-      title: "Action initiated",
-      description: `Deleting event ${eventId}`,
-    });
-  };
 
   return (
     <div className="mx-auto mt-6 flex max-w-4xl flex-col gap-6">
@@ -117,7 +108,7 @@ export const EventsContent: React.FC = () => {
                   <ManageEventCard
                     key={event.id}
                     event={event}
-                    onDelete={handleDeleteEvent}
+                    refetchEvents={refetchEvents}
                   />
                 ))
               )}
@@ -132,7 +123,7 @@ export const EventsContent: React.FC = () => {
                   <ManageEventCard
                     key={event.id}
                     event={event}
-                    onDelete={handleDeleteEvent}
+                    refetchEvents={refetchEvents}
                   />
                 ))
               )}

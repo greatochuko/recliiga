@@ -6,7 +6,7 @@ export interface TeamType {
   name: string;
   logo: string;
   color: string;
-  captain: UserType;
+  captain?: UserType;
 }
 
 export interface Captain {

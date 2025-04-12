@@ -61,3 +61,11 @@ export async function selectCaptains(eventId: string, captains: string[]) {
   });
   return data;
 }
+
+export async function deleteEvent(eventId: string) {
+  const data = await fetchApi<EventType>(`/event/${eventId}`, {
+    method: "DELETE",
+    body: {},
+  });
+  return data;
+}

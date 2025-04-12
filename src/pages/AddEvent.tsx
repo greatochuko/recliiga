@@ -68,7 +68,11 @@ export default function AddEvent() {
     const current = new Date(eventData.startDate.date);
     const end = new Date(repeatEndDate);
 
-    while (current <= end) {
+    // Normalize times to 00:00:00 to ensure comparison is date-only
+    current.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    while (current.getTime() <= end.getTime()) {
       dates.push(new Date(current));
 
       switch (repeatFrequency) {

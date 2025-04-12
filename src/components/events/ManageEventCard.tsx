@@ -3,19 +3,20 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Edit, Trash2, UserPlus, Trophy } from "lucide-react";
+import { Calendar, MapPin, Edit, UserPlus, Trophy } from "lucide-react";
 import { EventType } from "@/types/events";
 import { isPast } from "date-fns";
+import DeleteEventButton from "./DeleteEventButton";
 
 interface ManageEventCardProps {
   event: EventType;
-  onDelete: (eventId: string) => void;
+  refetchEvents: () => void;
 }
 
-export const ManageEventCard: React.FC<ManageEventCardProps> = ({
+export default function ManageEventCard({
   event,
-  onDelete,
-}) => {
+  refetchEvents,
+}: ManageEventCardProps) {
   const eventTime = `${event.startDate.startHour}:${event.startDate.startMinute} ${event.startDate.startAmPm}`;
 
   const eventSpotsLeft = event.numTeams * event.rosterSpots;
@@ -83,10 +84,21 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
             </React.Fragment>
           ))}
         </div>
-        <div className="mt-4 flex justify-center space-x-2">
+        <div className="mt-4 flex justify-center gap-2">
           {eventStatus === "upcoming" && (
             <>
-              <Link to={`/${event.id}/select-captains`}>
+              {event.teams.some((team) => team.captain) ? (
+                <Link to={`/${event.id}/select-captains`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Select Captains
+                  </Button>
+                </Link>
+              ) : (
                 <Button
                   variant="outline"
                   size="sm"
@@ -95,7 +107,7 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
                   <UserPlus className="mr-2 h-4 w-4" />
                   Select Captains
                 </Button>
-              </Link>
+              )}
               <Link to={`/edit-event/${event.id}`}>
                 <Button
                   variant="outline"
@@ -106,15 +118,10 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
                   Edit
                 </Button>
               </Link>
-              <Button
-                onClick={() => onDelete(event.id)}
-                variant="outline"
-                size="sm"
-                className="flex items-center text-red-500 hover:text-red-700"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </Button>
+              <DeleteEventButton
+                eventId={event.id}
+                refetchEvents={refetchEvents}
+              />
             </>
           )}
           {eventStatus === "past" && (
@@ -129,4 +136,4 @@ export const ManageEventCard: React.FC<ManageEventCardProps> = ({
       </CardContent>
     </Card>
   );
-};
+}
