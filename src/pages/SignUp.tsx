@@ -104,10 +104,6 @@ export default function SignUpPage() {
         role: role,
         phone: finalPhone,
       });
-
-      // After successful signup, we'll show them the success message and automatically redirect them to sign in.
-      // Once they sign in, they'll be redirected to the appropriate registration flow based on their role
-      // through the private route protection in App.tsx
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -117,7 +113,7 @@ export default function SignUpPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
-      <h1 className="text-accent-orange mb-8 text-4xl font-bold">REC LiiGA</h1>
+      <h1 className="mb-8 text-4xl font-bold text-accent-orange">REC LiiGA</h1>
 
       <Card className="w-full max-w-md">
         <form onSubmit={handleSignUp}>
@@ -212,7 +208,7 @@ export default function SignUpPage() {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
+              className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
               disabled={isLoading || cannotSubmit}
             >
               {isLoading ? "Signing up..." : "Sign Up"}

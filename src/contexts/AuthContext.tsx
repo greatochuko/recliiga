@@ -81,24 +81,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (signupData: SignupDataType) => {
     try {
-      const { error } = await registerUser(signupData);
+      const { data: profile, error } = await registerUser(signupData);
 
       if (error !== null) {
         throw new Error(error);
       }
 
-      // Handle different registrations based on role
-      if (signupData.role === "organizer") {
-        toast.success(
-          "Registration successful! Please sign in to complete your league setup."
-        );
-      } else {
-        toast.success(
-          "Registration successful! Please sign in to complete your player profile."
-        );
-      }
+      console.log(profile);
 
-      navigate("/sign-in");
+      toast.success(
+        "Registration successful! Please complete your player profile.",
+      );
+
+      setUser(profile);
+      navigate("/complete-registration");
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -130,7 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) throw error;
       toast.success(
-        "Password reset instructions have been sent to your email."
+        "Password reset instructions have been sent to your email.",
       );
     } catch (err) {
       const error = err as Error;
