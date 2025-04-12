@@ -41,8 +41,6 @@ export default function EditEvent() {
   const [submitting, setSubmitting] = useState(false);
   const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("1h");
 
-  console.log("Event Start Time: ", eventData.startTime);
-
   const { id } = useParams();
 
   const navigate = useNavigate();

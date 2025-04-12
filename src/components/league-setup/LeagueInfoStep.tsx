@@ -1,4 +1,4 @@
-import { Upload } from "lucide-react";
+import { CalendarIcon, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +6,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeagueDataType } from "@/api/league";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format, isBefore, startOfDay } from "date-fns";
 
 const sports = [
   "American Football",
@@ -117,13 +125,44 @@ export function LeagueInfoStep({
               <Label htmlFor="leagueDate" className="text-gray-800">
                 Start Date
               </Label>
-              <Input
+              {/* <Input
                 id="leagueDate"
                 type="date"
                 value={leagueData.date}
                 onChange={(e) => updateLeagueData({ date: e.target.value })}
                 className="mt-1"
-              />
+              /> */}
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="date"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !leagueData.date && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {leagueData.date ? (
+                      format(leagueData.date, "MMM dd yyyy")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={new Date(leagueData.date)}
+                    onSelect={(date) =>
+                      updateLeagueData({ date: date.toDateString() })
+                    }
+                    disabled={(date) => isBefore(date, startOfDay(new Date()))}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
