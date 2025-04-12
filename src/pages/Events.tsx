@@ -22,7 +22,7 @@ export default function Events() {
   return (
     <main className="relative flex flex-1 flex-col gap-4 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Events</h1>
-      <div className="px-4">
+      <div className="mx-auto w-full max-w-4xl px-4">
         <Tabs defaultValue="upcoming" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>

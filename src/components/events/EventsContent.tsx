@@ -42,12 +42,13 @@ export const EventsContent: React.FC = () => {
     return { upcoming: upcomingEvents, past: pastEvents };
   }, [events, selectedLeagueId]);
 
-  const handleEditEvent = (eventId: string) => {
-    toast({
-      title: "Action initiated",
-      description: `Editing event ${eventId}`,
-    });
-  };
+  const leagues = useMemo(() => {
+    if (!events.length) return [];
+
+    return Array.from(
+      new Map(events.map((event) => [event.league.id, event.league])).values(),
+    );
+  }, [events]);
 
   const handleDeleteEvent = (eventId: string) => {
     toast({
@@ -70,9 +71,9 @@ export const EventsContent: React.FC = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Leagues</SelectItem>
-            {events.map((event) => (
-              <SelectItem key={event.id} value={event.id}>
-                {event.title}
+            {leagues.map((league) => (
+              <SelectItem key={league.id} value={league.id}>
+                {league.name}
               </SelectItem>
             ))}
           </SelectContent>
