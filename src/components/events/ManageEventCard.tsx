@@ -82,7 +82,7 @@ export default function ManageEventCard({
         <div className="mt-4 flex justify-center gap-2">
           {eventStatus === "upcoming" && (
             <>
-              {event.teams.some((team) => team.captain) ? (
+              {!event.teams.some((team) => team.captain) ? (
                 <Link to={`/${event.id}/select-captains`}>
                   <Button
                     variant="outline"

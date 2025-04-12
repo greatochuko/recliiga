@@ -28,13 +28,10 @@ export function LeaderboardStep({
   };
 
   const handleStatNameChange = (index: number, newName: string) => {
-    const updatedStats = leagueData.stats.map((stat, i) =>
+    const newStats = leagueData.stats.map((stat, i) =>
       i === index ? { ...stat, name: newName } : stat,
     );
-
-    updateLeagueData({
-      stats: updatedStats,
-    });
+    updateLeagueData({ stats: newStats });
   };
 
   const handleStatAbbrChange = (index: number, newAbbr: string) => {
@@ -90,7 +87,7 @@ export function LeaderboardStep({
         <div className="mb-4 flex justify-end">
           <Button
             onClick={toggleEditing}
-            className="text-accent-orange border-accent-orange hover:bg-accent-orange border bg-white hover:text-white"
+            className="border border-accent-orange bg-white text-accent-orange hover:bg-accent-orange hover:text-white"
           >
             {isEditing ? (
               <Save className="mr-2 h-4 w-4" />
@@ -216,7 +213,7 @@ export function LeaderboardStep({
         <div className="mt-4">
           <Button
             onClick={handleAddStat}
-            className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
+            className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Statistic
