@@ -1,12 +1,14 @@
 import { fetchEventsByUser } from "@/api/events";
-import { EventsList } from "@/components/events/EventsList";
 import { getUpcomingEvents, getPastEvents } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EventCard from "@/components/events/EventCard";
 
 export default function Events() {
   const {
-    data: { data: events },
+    data: { data: events, error },
     isFetching,
+    refetch,
   } = useQuery({
     queryKey: ["events"],
     queryFn: fetchEventsByUser,
@@ -18,14 +20,63 @@ export default function Events() {
   const pastEvents = getPastEvents(events);
 
   return (
-    <main className="relative flex-1 bg-background">
+    <main className="relative flex flex-1 flex-col gap-4 bg-background">
       <h1 className="ml-14 text-2xl font-bold">Events</h1>
-      <div className="">
-        <EventsList
-          loading={isFetching}
-          upcomingEvents={upcomingEvents}
-          pastEvents={pastEvents}
-        />
+      <div className="px-4">
+        <Tabs defaultValue="upcoming" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
+            <TabsTrigger value="past">Past Events</TabsTrigger>
+          </TabsList>
+
+          {isFetching ? (
+            <div className="py-10 text-center text-gray-500">Loading...</div>
+          ) : (
+            <>
+              <TabsContent value="upcoming">
+                {error ? (
+                  <div className="py-10 text-center text-gray-500">
+                    An error occurred while fetching events{" "}
+                    <button
+                      onClick={() => refetch()}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : upcomingEvents.length === 0 ? (
+                  <div className="py-10 text-center text-gray-500">
+                    No upcoming events found
+                  </div>
+                ) : (
+                  upcomingEvents.map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      showLeagueName={true}
+                    />
+                  ))
+                )}
+              </TabsContent>
+              <TabsContent value="past">
+                {pastEvents.length === 0 ? (
+                  <div className="py-10 text-center text-gray-500">
+                    No past events found
+                  </div>
+                ) : (
+                  pastEvents.map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      showLeagueName={true}
+                      isPastEvent={true}
+                    />
+                  ))
+                )}
+              </TabsContent>
+            </>
+          )}
+        </Tabs>
       </div>
     </main>
   );
