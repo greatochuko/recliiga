@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeftIcon, ChevronLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEventById } from "@/api/events";
 import FullScreenLoader from "@/components/FullScreenLoader";
@@ -51,87 +51,17 @@ function CountdownClock({ deadline }: { deadline: Date }) {
   );
 }
 
-interface Player {
-  id: number;
-  name: string;
-  avatar: string;
-  position?: string;
-  isCaptain?: boolean;
-}
-
-// function AttendingList({
-//   players,
-//   teamColor,
-//   teamName,
-//   uniformColor,
-// }: {
-//   players: Player[];
-//   teamColor: string;
-//   teamName: string;
-//   uniformColor: string;
-// }) {
-//   return (
-//     <div className="w-full">
-//       <div className="mb-4 flex items-center justify-between">
-//         <div className="flex items-center gap-2">
-//           <h3 className="text-sm font-medium">{teamName}</h3>
-//           <JerseyIcon color={uniformColor} size={23} />
-//         </div>
-//       </div>
-//       <div className="space-y-4">
-//         {players.map((player) => (
-//           <div key={player.id} className="flex items-center gap-4">
-//             <Avatar
-//               className="h-10 w-10"
-//               style={player.isCaptain ? { backgroundColor: teamColor } : {}}
-//             >
-//               <AvatarImage src={player.avatar} alt={player.name} />
-//               <AvatarFallback>
-//                 {player.name
-//                   .split(" ")
-//                   .map((n) => n[0])
-//                   .join("")}
-//               </AvatarFallback>
-//             </Avatar>
-//             <div className="flex-1">
-//               <div className="flex items-center gap-2">
-//                 <span className="font-semibold">{player.name}</span>
-//                 {player.isCaptain && (
-//                   <svg
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     viewBox="0 0 24 24"
-//                     fill="none"
-//                     stroke="currentColor"
-//                     strokeWidth="2"
-//                     strokeLinecap="round"
-//                     strokeLinejoin="round"
-//                     className="h-4 w-4 text-accent-orange"
-//                   >
-//                     <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
-//                   </svg>
-//                 )}
-//               </div>
-//               <span className="text-sm text-muted-foreground">
-//                 {player.position}
-//               </span>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
 export default function EventDetails() {
   const navigate = useNavigate();
   const { id: eventId } = useParams();
 
   const {
-    data: { data: event, error },
-    isLoading,
+    data: { data: event },
+    isFetching,
   } = useQuery({
     queryKey: [`event-${eventId}`],
     queryFn: () => fetchEventById(eventId),
+    initialData: { data: null, error: null },
   });
 
   const handleBackClick = (e: React.MouseEvent) => {
@@ -140,6 +70,9 @@ export default function EventDetails() {
   };
 
   const rsvpDeadline = useMemo(() => {
+    if (!event?.startDate) {
+      return { isPassed: false, time: new Date() };
+    }
     const { date, startHour, startMinute, startAmPm } = event.startDate;
 
     const eventDate = new Date(date);
@@ -159,12 +92,26 @@ export default function EventDetails() {
     return { isPassed: new Date() > rsvpDeadlineTime, time: rsvpDeadlineTime };
   }, [event]);
 
-  if (isLoading) {
+  if (isFetching) {
     return <FullScreenLoader />;
   }
 
-  if (error !== null) {
-    return <div></div>;
+  if (!event) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-4xl font-bold text-gray-800">Event Not Found</h1>
+        <p className="mt-4 text-gray-600">
+          The event you are looking for does not exist or has been removed.
+        </p>
+        <Link
+          to="/events"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 font-medium text-white hover:bg-accent-orange/90"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          Go Back to Events
+        </Link>
+      </div>
+    );
   }
 
   return (
