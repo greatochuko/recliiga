@@ -41,6 +41,8 @@ export default function EditEvent() {
   const [submitting, setSubmitting] = useState(false);
   const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("1h");
 
+  console.log("Event Start Time: ", eventData.startTime);
+
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -189,8 +191,6 @@ export default function EditEvent() {
     }
   }
 
-  console.log(eventData.startTime);
-
   const cannotSubmit = Object.entries(eventData)
     .map(([key, value]) => {
       if (key === "eventDates") return false;
@@ -238,8 +238,11 @@ export default function EditEvent() {
     );
   }
 
-  const eventStartHour = eventData.startTime.getHours();
-  const eventEndHour = eventData.endTime.getHours();
+  const eventStartHour = new Date(eventData.startTime).getHours();
+  const eventStartMinute = new Date(eventData.startTime).getMinutes();
+
+  const eventEndHour = new Date(eventData.endTime).getHours();
+  const eventEndMinute = new Date(eventData.endTime).getMinutes();
 
   return (
     <main className="mx-auto w-[90%] max-w-3xl">
@@ -382,7 +385,7 @@ export default function EditEvent() {
                   <div className="flex gap-2">
                     <select
                       value={
-                        eventStartHour >= 12
+                        eventStartHour > 12
                           ? (eventStartHour - 12).toString().padStart(2, "0")
                           : eventStartHour.toString().padStart(2, "0")
                       }
@@ -404,10 +407,7 @@ export default function EditEvent() {
                       )}
                     </select>
                     <select
-                      value={eventData.startTime
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, "0")}
+                      value={eventStartMinute.toString().padStart(2, "0")}
                       onChange={(e) =>
                         updateEventStartTime("minute", Number(e.target.value))
                       }
@@ -424,7 +424,7 @@ export default function EditEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.startTime.getHours() >= 12 ? "PM" : "AM"}
+                      value={eventStartHour >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
                         updateEventStartTime(
                           "meridiem",
@@ -444,7 +444,7 @@ export default function EditEvent() {
                   <div className="flex gap-2">
                     <select
                       value={
-                        eventEndHour >= 12
+                        eventEndHour > 12
                           ? (eventEndHour - 12).toString().padStart(2, "0")
                           : eventEndHour.toString().padStart(2, "0")
                       }
@@ -466,10 +466,7 @@ export default function EditEvent() {
                       )}
                     </select>
                     <select
-                      value={eventData.endTime
-                        .getMinutes()
-                        .toString()
-                        .padStart(2, "0")}
+                      value={eventEndMinute.toString().padStart(2, "0")}
                       onChange={(e) =>
                         updateEventEndTime("minute", Number(e.target.value))
                       }
@@ -486,7 +483,7 @@ export default function EditEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.endTime.getHours() >= 12 ? "PM" : "AM"}
+                      value={eventEndHour >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
                         updateEventEndTime(
                           "meridiem",

@@ -243,8 +243,8 @@ export default function AddEvent() {
     }
   };
 
-  const eventStartHour = eventData.startTime.getHours();
-  const eventEndHour = eventData.endTime.getHours();
+  const eventStartHour = new Date(eventData.startTime).getHours();
+  const eventEndHour = new Date(eventData.endTime).getHours();
 
   return (
     <main className="mx-auto w-[90%] max-w-3xl">
@@ -439,7 +439,7 @@ export default function AddEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.startTime.getHours() >= 12 ? "PM" : "AM"}
+                      value={eventStartHour >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
                         updateEventStartTime(
                           "meridiem",

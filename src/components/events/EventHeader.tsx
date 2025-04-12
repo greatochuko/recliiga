@@ -2,6 +2,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin } from "lucide-react";
 import { EventType } from "@/types/events";
+import { format } from "date-fns";
 
 interface EventHeaderProps {
   event: EventType;
@@ -17,14 +18,9 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
   isPastEvent = false,
 }) => {
   const spotsLeft = event.numTeams * event.rosterSpots - event.players.length;
-  const eventDate = new Date(event.startDate.date);
-  eventDate.setHours(
-    event.startDate.startAmPm === "PM"
-      ? event.startDate.startHour + 12
-      : event.startDate.startHour,
-    event.startDate.startMinute,
-  );
-  const eventTime = `${event.startDate.startHour}:${event.startDate.startMinute} ${event.startDate.startAmPm}`;
+  const eventDate = new Date(event.startTime);
+
+  const eventTime = format(event.startTime, "h:mm a");
 
   return (
     <div className="mb-4 flex items-start justify-between">
@@ -40,7 +36,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
       {attendanceStatus === "attending" && !isEditing && (
         <Badge
           variant="secondary"
-          className="bg-accent-orange text-accent-orange bg-opacity-20 text-xs"
+          className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
         >
           Attending
         </Badge>

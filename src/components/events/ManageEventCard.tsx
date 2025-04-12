@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Edit, UserPlus, Trophy } from "lucide-react";
 import { EventType } from "@/types/events";
-import { isPast } from "date-fns";
+import { format, isPast } from "date-fns";
 import DeleteEventButton from "./DeleteEventButton";
 
 interface ManageEventCardProps {
@@ -17,16 +17,11 @@ export default function ManageEventCard({
   event,
   refetchEvents,
 }: ManageEventCardProps) {
-  const eventTime = `${event.startDate.startHour}:${event.startDate.startMinute} ${event.startDate.startAmPm}`;
+  const eventDate = new Date(event.startTime);
+
+  const eventTime = format(event.startTime, "h:mm a");
 
   const eventSpotsLeft = event.numTeams * event.rosterSpots;
-
-  const eventDate = new Date(event.startDate.date).setHours(
-    event.startDate.startAmPm === "PM"
-      ? event.startDate.startHour + 12
-      : event.startDate.startHour,
-    event.startDate.startMinute,
-  );
 
   const eventStatus = isPast(eventDate) ? "past" : "upcoming";
 
@@ -108,7 +103,7 @@ export default function ManageEventCard({
                   Select Captains
                 </Button>
               )}
-              <Link to={`/edit-event/${event.id}`}>
+              <Link to={`/events/${event.id}/edit`}>
                 <Button
                   variant="outline"
                   size="sm"

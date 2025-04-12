@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchEventById, selectCaptains } from "@/api/events";
 import { TeamType } from "@/types/events";
 import { UserType } from "@/contexts/AuthContext";
+import { format } from "date-fns";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -212,14 +213,13 @@ export default function SelectCaptains() {
                   <div className="flex flex-col items-center justify-center">
                     <div className="mb-4 flex flex-col items-center text-center">
                       <span className="text-xs text-gray-500">
-                        {new Date(event.startDate.date).toLocaleDateString()}
+                        {new Date(event.startTime).toLocaleDateString()}
                       </span>
                       <span className="text-xs text-gray-500">
                         {event.location}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {event.startDate.startHour}:
-                        {event.startDate.startMinute}
+                        {format(event.startTime, "h:mm a")}
                       </span>
                       <span className="text-xs font-bold text-accent-orange">
                         {event.league.name}

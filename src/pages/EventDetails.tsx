@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchEventById } from "@/api/events";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { TeamType } from "@/types/events";
+import { format } from "date-fns";
 
 function CountdownClock({ deadline }: { deadline: Date }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
@@ -70,23 +71,14 @@ export default function EventDetails() {
   };
 
   const rsvpDeadline = useMemo(() => {
-    if (!event?.startDate) {
+    if (!event?.startTime) {
       return { isPassed: false, time: new Date() };
     }
-    const { date, startHour, startMinute, startAmPm } = event.startDate;
 
-    const eventDate = new Date(date);
-    const hour =
-      startAmPm.toLowerCase() === "pm" && startHour !== 12
-        ? startHour + 12
-        : startHour === 12 && startAmPm.toLowerCase() === "am"
-          ? 0
-          : startHour;
-
-    eventDate.setHours(hour, startMinute, 0, 0);
+    const eventStartTime = new Date(event.startTime);
 
     const rsvpDeadlineTime = new Date(
-      eventDate.getTime() - event.rsvpDeadline * 60 * 1000,
+      eventStartTime.getTime() - event.rsvpDeadline * 60 * 1000,
     );
 
     return { isPassed: new Date() > rsvpDeadlineTime, time: rsvpDeadlineTime };
@@ -140,21 +132,17 @@ export default function EventDetails() {
                 <div className="flex flex-col items-center justify-center">
                   <div className="mb-4 flex flex-col items-center text-center">
                     <span className="text-xs text-gray-500">
-                      {new Date(event.startDate.date).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "short",
-                          day: "2-digit",
-                          year: "numeric",
-                        },
-                      )}
+                      {new Date(event.startTime).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                      })}
                     </span>
                     <span className="text-xs text-gray-500">
                       {event.location}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {event.startDate.startHour}:{event.startDate.startMinute}
-                      {event.startDate.startAmPm}
+                      {format(event.startTime, "h:mm a")}
                     </span>
                     <span className="text-xs font-bold text-accent-orange">
                       {event.league.name}

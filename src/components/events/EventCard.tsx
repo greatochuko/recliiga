@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EventType } from "@/types/events";
 import { EventHeader } from "@/components/events/EventHeader";
@@ -24,21 +24,7 @@ export default function EventCard({
       : "not-attending",
   );
 
-  const eventDate = useMemo(() => {
-    const date = new Date(event.startDate.date);
-    date.setHours(
-      event.startDate.startAmPm === "PM"
-        ? event.startDate.startHour + 12
-        : event.startDate.startHour,
-      event.startDate.startMinute,
-    );
-    return date;
-  }, [
-    event.startDate.date,
-    event.startDate.startAmPm,
-    event.startDate.startHour,
-    event.startDate.startMinute,
-  ]);
+  const eventDate = new Date(event.startTime);
 
   const isRsvpOpen =
     new Date().getTime() < eventDate.getTime() - event.rsvpDeadline * 60 * 1000;
