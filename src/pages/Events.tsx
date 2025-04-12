@@ -7,7 +7,7 @@ import EventCard from "@/components/events/EventCard";
 export default function Events() {
   const {
     data: { data: events, error },
-    isFetching,
+    isLoading,
     refetch,
   } = useQuery({
     queryKey: ["events"],
@@ -29,7 +29,7 @@ export default function Events() {
             <TabsTrigger value="past">Past Events</TabsTrigger>
           </TabsList>
 
-          {isFetching ? (
+          {isLoading ? (
             <div className="py-10 text-center text-gray-500">Loading...</div>
           ) : (
             <>

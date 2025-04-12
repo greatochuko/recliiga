@@ -47,7 +47,7 @@ export default function EditEvent() {
 
   const {
     data: { data: event },
-    isFetching,
+    isLoading,
   } = useQuery({
     queryKey: [`event-${id}`],
     queryFn: () => fetchEventById(id),
@@ -210,7 +210,7 @@ export default function EditEvent() {
     }
   };
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex w-full items-center justify-center">
         <Loader2Icon className="h-8 w-8 animate-spin text-accent-orange" />

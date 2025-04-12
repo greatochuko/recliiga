@@ -20,7 +20,7 @@ export const EventsContent: React.FC = () => {
 
   const {
     data: { data: events, error },
-    isFetching: isLoadingEvents,
+    isLoading: isLoadingEvents,
     refetch: refetchEvents,
   } = useQuery({
     queryKey: ["event"],

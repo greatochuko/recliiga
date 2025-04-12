@@ -9,7 +9,7 @@ export default function Leagues() {
 
   const {
     data: { leagues },
-    isFetching: isLoading,
+    isLoading,
     error,
     refetch,
   } = useQuery({

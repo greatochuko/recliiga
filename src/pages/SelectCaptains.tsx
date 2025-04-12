@@ -194,7 +194,7 @@ export default function SelectCaptains() {
         variant="ghost"
         size="sm"
         className="fixed right-4 top-4 z-10 p-0 text-accent-orange hover:bg-transparent hover:text-accent-orange hover:underline"
-        onClick={() => navigate("/events")}
+        onClick={() => navigate("/manage-events")}
       >
         Back to Events
       </Button>

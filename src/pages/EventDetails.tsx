@@ -58,7 +58,7 @@ export default function EventDetails() {
 
   const {
     data: { data: event },
-    isFetching,
+    isLoading,
   } = useQuery({
     queryKey: [`event-${eventId}`],
     queryFn: () => fetchEventById(eventId),
@@ -84,7 +84,7 @@ export default function EventDetails() {
     return { isPassed: new Date() > rsvpDeadlineTime, time: rsvpDeadlineTime };
   }, [event]);
 
-  if (isFetching) {
+  if (isLoading) {
     return <FullScreenLoader />;
   }
 
