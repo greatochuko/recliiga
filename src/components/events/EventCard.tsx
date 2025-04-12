@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EventType } from "@/types/events";
-import { EventStatus } from "@/components/events/EventStatus";
 import { EventHeader } from "@/components/events/EventHeader";
 import TeamsDisplay from "@/components/events/TeamsDisplay";
 import { EventActions } from "@/components/events/EventActions";
@@ -74,8 +73,6 @@ export default function EventCard({
           setIsEditing={setIsEditing}
           setAttendanceStatus={setAttendanceStatus}
         />
-
-        {!isPastEvent && <EventStatus event={event} />}
       </CardContent>
     </Card>
   );

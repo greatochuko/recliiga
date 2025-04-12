@@ -53,3 +53,11 @@ export async function declineEvent(eventId: string) {
   });
   return data;
 }
+
+export async function selectCaptains(eventId: string, captains: string[]) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/select-captain`, {
+    method: "PATCH",
+    body: { captains },
+  });
+  return data;
+}

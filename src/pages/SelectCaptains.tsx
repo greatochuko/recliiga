@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Crown, Star, Loader2 } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchEventById } from "@/api/events";
+import { fetchEventById, selectCaptains } from "@/api/events";
 import { TeamType } from "@/types/events";
 import { UserType } from "@/contexts/AuthContext";
 
@@ -28,17 +28,22 @@ function AttendingList({
   captainIds,
   selectableCaptains,
   onCaptainSelect,
+  teams,
 }: {
   players: UserType[];
   captainIds: string[];
   selectableCaptains: boolean;
   onCaptainSelect: (playerId: string, checked: boolean) => void;
+  teams: TeamType[];
 }) {
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {players.map((player) => {
           const playerIsCaptain = captainIds.includes(player.id);
+          const playerCaptainIndex = captainIds.findIndex(
+            (capId) => capId === player.id,
+          );
 
           return (
             <label
@@ -72,7 +77,10 @@ function AttendingList({
                   </span>
                   {/* <StarRating rating={player.rating} /> */}
                   {playerIsCaptain && (
-                    <Crown className="h-4 w-4 text-yellow-500" />
+                    <Crown
+                      className="h-4 w-4"
+                      style={{ color: teams[playerCaptainIndex].color }}
+                    />
                   )}
                 </div>
                 <span className="truncate text-sm text-muted-foreground">
@@ -137,11 +145,22 @@ export default function SelectCaptains() {
     }
 
     setIsSubmitting(true);
-    toast.success("Captains selected successfully", {
-      style: { color: "#16a34a" },
-    });
+
+    const { error } = await selectCaptains(eventId, captainIds);
+
+    if (error === null) {
+      toast.success("Captains selected successfully", {
+        style: { color: "#16a34a" },
+      });
+      setSelectingCaptains(false);
+      navigate(`/events/${eventId}`);
+    } else {
+      toast.error("An error occured selecting captains", {
+        style: { color: "#ef4444" },
+      });
+    }
+
     setIsSubmitting(false);
-    setSelectingCaptains(false);
   };
 
   const renderTeamInfo = (team: TeamType, teamNumber: number) => (
@@ -253,6 +272,7 @@ export default function SelectCaptains() {
                   captainIds={captainIds}
                   selectableCaptains={selectingCaptains}
                   onCaptainSelect={handleCaptainSelect}
+                  teams={event?.teams || []}
                 />
               </div>
             </div>
