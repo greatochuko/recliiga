@@ -55,6 +55,7 @@ const AppRoutes = () => (
           <Route path="/leagues/:id" element={<LeagueDetails />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetails />} />
+          <Route path="/events/:id/edit" element={<EditEvent />} />
           <Route path="/events/:id/results" element={<EventResults />} />
           <Route path="/results" element={<Results />} />
           <Route path="/chat" element={<Chat />} />
@@ -63,7 +64,6 @@ const AppRoutes = () => (
           <Route path="/player-profile" element={<PlayerProfile />} />
           <Route path="/manage-events" element={<ManageEvents />} />
           <Route path="/add-event" element={<AddEvent />} />
-          <Route path="/edit-event/:id" element={<EditEvent />} />
           <Route path="/help" element={<HelpAndSupport />} />
           <Route
             path="/:eventId/select-captains"

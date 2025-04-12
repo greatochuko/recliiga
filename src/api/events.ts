@@ -1,5 +1,5 @@
 import { fetchApi } from "@/lib/utils";
-import { EventDateType, EventType } from "@/types/events";
+import { EventType } from "@/types/events";
 
 export type EventDataType = {
   leagueId: string;
@@ -8,8 +8,9 @@ export type EventDataType = {
   numTeams: number;
   rosterSpots: number;
   rsvpDeadline: number;
-  startDate: EventDateType;
-  eventDates: Date[];
+  startTime: Date;
+  endTime: Date;
+  eventDates: { startTime: Date; endTime: Date }[];
 };
 
 export async function fetchEventsByUser() {

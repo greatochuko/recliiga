@@ -15,15 +15,12 @@ export interface Captain {
   avatar: string;
 }
 
-export interface EventDateType {
-  date: Date | undefined;
-  startHour: number;
-  startMinute: number;
-  startAmPm: string;
-  endHour: number;
-  endMinute: number;
-  endAmPm: string;
-}
+export type EventTimeDataType = {
+  date: Date;
+  hour: number;
+  minute: number;
+  meridiem: "AM" | "PM";
+};
 
 export interface EventType {
   id: string;
@@ -33,7 +30,8 @@ export interface EventType {
   location: string;
   numTeams: number;
   rosterSpots: number;
-  startDate: EventDateType;
+  startTime: Date;
+  endTime: Date;
   rsvpDeadline: number;
   teams: TeamType[];
   creatorId: string;

@@ -39,7 +39,7 @@ export default function Events() {
                     An error occurred while fetching events{" "}
                     <button
                       onClick={() => refetch()}
-                      className="text-blue-500 hover:underline"
+                      className="text-accent-orange hover:underline"
                     >
                       Retry
                     </button>

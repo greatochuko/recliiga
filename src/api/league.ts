@@ -9,6 +9,14 @@ export async function fetchLeaguesByUser(): Promise<{
   return { leagues: data.data || [], error: data.error };
 }
 
+export async function fetchLeaguesByCreator(): Promise<{
+  leagues: LeagueType[];
+  error: string | null;
+}> {
+  const data = await fetchApi<LeagueType[]>("/league?type=creator");
+  return { leagues: data.data || [], error: data.error };
+}
+
 export async function fetchLeagueById(leagueId: string): Promise<{
   league: LeagueType | null;
   error: string | null;

@@ -94,7 +94,7 @@ export const EventsContent: React.FC = () => {
                   An error occurred while fetching events{" "}
                   <button
                     onClick={() => refetchEvents()}
-                    className="text-blue-500 hover:underline"
+                    className="text-accent-orange hover:underline"
                   >
                     Retry
                   </button>

@@ -36,25 +36,24 @@ export async function fetchApi<T>(
 }
 
 export function getUpcomingEvents(events: EventType[]) {
-  return events.filter((event) => {
-    const eventDate = new Date(event.startDate.date).setHours(
-      event.startDate.startAmPm === "PM"
-        ? event.startDate.startHour + 12
-        : event.startDate.startHour,
-      event.startDate.startMinute,
-    );
-    return !isPast(eventDate);
-  });
+  return events.filter((event) => !isPast(event.startTime));
 }
 
 export function getPastEvents(events: EventType[]) {
-  return events.filter((event) => {
-    const eventDate = new Date(event.startDate.date).setHours(
-      event.startDate.startAmPm === "PM"
-        ? event.startDate.startHour + 12
-        : event.startDate.startHour,
-      event.startDate.startMinute,
-    );
-    return isPast(eventDate);
-  });
+  return events.filter((event) => isPast(event.startTime));
+}
+
+export function getDateIncrement(freq: string): number {
+  switch (freq) {
+    case "daily":
+      return 1;
+    case "weekly":
+      return 7;
+    case "bi-weekly":
+      return 14;
+    case "monthly":
+      return 30; // Optional: customize for actual calendar months
+    default:
+      return 0;
+  }
 }

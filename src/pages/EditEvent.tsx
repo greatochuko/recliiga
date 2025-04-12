@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { EventDataType, editEvent, fetchEventById } from "@/api/events";
-import { EventDateType } from "@/types/events";
+import { EventTimeDataType } from "@/types/events";
 
 const initialEventData: EventDataType = {
   leagueId: "",
@@ -31,15 +31,8 @@ const initialEventData: EventDataType = {
   numTeams: 2,
   rosterSpots: 1,
   rsvpDeadline: 2,
-  startDate: {
-    date: new Date(),
-    startHour: 12,
-    startMinute: 0,
-    startAmPm: "PM",
-    endHour: 1,
-    endMinute: 0,
-    endAmPm: "PM",
-  },
+  startTime: new Date(),
+  endTime: new Date(),
   eventDates: [],
 };
 
@@ -66,11 +59,6 @@ export default function EditEvent() {
       setEventData((prev) => ({
         ...prev,
         ...event,
-        startDate: {
-          ...prev.startDate,
-          ...event.startDate,
-          date: new Date(event.startDate.date),
-        },
       }));
       setRsvpDeadlineHours(
         event.rsvpDeadline > 0 ? `${event.rsvpDeadline}h` : "custom",
@@ -90,14 +78,100 @@ export default function EditEvent() {
     }
   };
 
-  function updateEventDate<T extends keyof EventDateType>(
+  function updateEventStartTime<T extends keyof EventTimeDataType>(
     field: T,
-    value: EventDateType[T],
+    value: EventTimeDataType[T],
   ) {
-    setEventData((prev) => ({
-      ...prev,
-      startDate: { ...prev.startDate, [field]: value },
-    }));
+    setEventData((prev) => {
+      const updatedStartTime = new Date(prev.startTime);
+
+      switch (field) {
+        case "date":
+          // Preserve the original time
+          updatedStartTime.setFullYear((value as Date).getFullYear());
+          updatedStartTime.setMonth((value as Date).getMonth());
+          updatedStartTime.setDate((value as Date).getDate());
+          break;
+
+        case "hour": {
+          const hour = value as number;
+          const isPM = updatedStartTime.getHours() >= 12;
+          updatedStartTime.setHours(
+            isPM ? (hour % 12) + 12 : hour % 12, // convert to 24-hour format
+          );
+          break;
+        }
+
+        case "minute":
+          updatedStartTime.setMinutes(value as number);
+          break;
+
+        case "meridiem": {
+          const meridiem = value as "AM" | "PM";
+          const currentHour = updatedStartTime.getHours();
+          const isCurrentlyPM = currentHour >= 12;
+          if (meridiem === "AM" && isCurrentlyPM) {
+            updatedStartTime.setHours(currentHour - 12);
+          } else if (meridiem === "PM" && !isCurrentlyPM) {
+            updatedStartTime.setHours(currentHour + 12);
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+
+      return { ...prev, startTime: updatedStartTime };
+    });
+  }
+
+  function updateEventEndTime<T extends keyof EventTimeDataType>(
+    field: T,
+    value: EventTimeDataType[T],
+  ) {
+    setEventData((prev) => {
+      const updatedEndTime = new Date(prev.endTime);
+
+      switch (field) {
+        case "date":
+          // Preserve the original time
+          updatedEndTime.setFullYear((value as Date).getFullYear());
+          updatedEndTime.setMonth((value as Date).getMonth());
+          updatedEndTime.setDate((value as Date).getDate());
+          break;
+
+        case "hour": {
+          const hour = value as number;
+          const isPM = updatedEndTime.getHours() >= 12;
+          updatedEndTime.setHours(
+            isPM ? (hour % 12) + 12 : hour % 12, // convert to 24-hour format
+          );
+          break;
+        }
+
+        case "minute":
+          updatedEndTime.setMinutes(value as number);
+          break;
+
+        case "meridiem": {
+          const meridiem = value as "AM" | "PM";
+          const currentHour = updatedEndTime.getHours();
+          const isCurrentlyPM = currentHour >= 12;
+          if (meridiem === "AM" && isCurrentlyPM) {
+            updatedEndTime.setHours(currentHour - 12);
+          } else if (meridiem === "PM" && !isCurrentlyPM) {
+            updatedEndTime.setHours(currentHour + 12);
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+
+      return { ...prev, endTime: updatedEndTime };
+    });
   }
 
   function handleChangeRsvpDeadline(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -114,6 +188,8 @@ export default function EditEvent() {
       }));
     }
   }
+
+  console.log(eventData.startTime);
 
   const cannotSubmit = Object.entries(eventData)
     .map(([key, value]) => {
@@ -161,6 +237,9 @@ export default function EditEvent() {
       </div>
     );
   }
+
+  const eventStartHour = eventData.startTime.getHours();
+  const eventEndHour = eventData.endTime.getHours();
 
   return (
     <main className="mx-auto w-[90%] max-w-3xl">
@@ -272,12 +351,12 @@ export default function EditEvent() {
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !eventData.startDate.date && "text-muted-foreground",
+                        !eventData.startTime && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {eventData.startDate.date ? (
-                        format(eventData.startDate.date, "PPP")
+                      {eventData.startTime ? (
+                        format(eventData.startTime, "PPP")
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -286,8 +365,8 @@ export default function EditEvent() {
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={eventData.startDate.date}
-                      onSelect={(date) => updateEventDate("date", date)}
+                      selected={eventData.startTime}
+                      onSelect={(date) => updateEventStartTime("date", date)}
                       disabled={(date) =>
                         isBefore(date, startOfDay(new Date()))
                       }
@@ -302,11 +381,13 @@ export default function EditEvent() {
                   <Label>Start Time</Label>
                   <div className="flex gap-2">
                     <select
-                      value={eventData.startDate.startHour
-                        .toString()
-                        .padStart(2, "0")}
+                      value={
+                        eventStartHour >= 12
+                          ? (eventStartHour - 12).toString().padStart(2, "0")
+                          : eventStartHour.toString().padStart(2, "0")
+                      }
                       onChange={(e) =>
-                        updateEventDate("startHour", Number(e.target.value))
+                        updateEventStartTime("hour", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -323,11 +404,12 @@ export default function EditEvent() {
                       )}
                     </select>
                     <select
-                      value={eventData.startDate.startMinute
+                      value={eventData.startTime
+                        .getMinutes()
                         .toString()
                         .padStart(2, "0")}
                       onChange={(e) =>
-                        updateEventDate("startMinute", Number(e.target.value))
+                        updateEventStartTime("minute", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -342,9 +424,12 @@ export default function EditEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.startDate.startAmPm}
+                      value={eventData.startTime.getHours() >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
-                        updateEventDate("startAmPm", e.target.value)
+                        updateEventStartTime(
+                          "meridiem",
+                          e.target.value as "AM" | "PM",
+                        )
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -358,11 +443,13 @@ export default function EditEvent() {
                   <Label>End Time</Label>
                   <div className="flex gap-2">
                     <select
-                      value={eventData.startDate.endHour
-                        .toString()
-                        .padStart(2, "0")}
+                      value={
+                        eventEndHour >= 12
+                          ? (eventEndHour - 12).toString().padStart(2, "0")
+                          : eventEndHour.toString().padStart(2, "0")
+                      }
                       onChange={(e) =>
-                        updateEventDate("endHour", Number(e.target.value))
+                        updateEventEndTime("hour", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -379,11 +466,12 @@ export default function EditEvent() {
                       )}
                     </select>
                     <select
-                      value={eventData.startDate.endMinute
+                      value={eventData.endTime
+                        .getMinutes()
                         .toString()
                         .padStart(2, "0")}
                       onChange={(e) =>
-                        updateEventDate("endMinute", Number(e.target.value))
+                        updateEventEndTime("minute", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -398,9 +486,12 @@ export default function EditEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.startDate.endAmPm}
+                      value={eventData.endTime.getHours() >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
-                        updateEventDate("endAmPm", e.target.value)
+                        updateEventEndTime(
+                          "meridiem",
+                          e.target.value as "AM" | "PM",
+                        )
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >

@@ -13,12 +13,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, getDateIncrement } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import { fetchLeaguesByUser } from "@/api/league";
+import { fetchLeaguesByCreator } from "@/api/league";
 import { EventDataType, createEvent } from "@/api/events";
-import { EventDateType } from "@/types/events";
+import { EventTimeDataType } from "@/types/events";
+
+const initialStartTime = new Date();
+initialStartTime.setDate(initialStartTime.getDate() + 1);
+initialStartTime.setHours(12, 0, 0, 0);
 
 const initialEventData: EventDataType = {
   leagueId: "",
@@ -27,16 +31,13 @@ const initialEventData: EventDataType = {
   numTeams: 2,
   rosterSpots: 1,
   rsvpDeadline: 2,
-  startDate: {
-    date: new Date(),
-    startHour: 12,
-    startMinute: 0,
-    startAmPm: "PM",
-    endHour: 1,
-    endMinute: 0,
-    endAmPm: "PM",
-  },
+  startTime: initialStartTime,
+  endTime: new Date(initialStartTime.getTime() + 2 * 60 * 60 * 1000),
   eventDates: [],
+};
+
+const isDateInPast = (date: Date) => {
+  return isBefore(date, startOfDay(new Date()));
 };
 
 export default function AddEvent() {
@@ -56,74 +57,152 @@ export default function AddEvent() {
     isLoading: isLoadingLeagues,
   } = useQuery({
     queryKey: ["leagues"],
-    queryFn: fetchLeaguesByUser,
+    queryFn: fetchLeaguesByCreator,
     initialData: { leagues: [], error: null },
   });
 
   const eventDates = useMemo(() => {
-    if (!eventData.startDate.date || !repeatEndDate || !repeatFrequency)
-      return [];
+    if (!eventData.startTime || !repeatEndDate || !repeatFrequency) return [];
 
-    const dates: Date[] = [];
-    const current = new Date(eventData.startDate.date);
+    const dates: { startTime: Date; endTime: Date }[] = [];
+
+    // Convert start and end times to proper Date objects
+    const baseStartTime = new Date(eventData.startTime);
+    const baseEndTime = new Date(eventData.endTime);
+
+    // Set the repeat end time to the Date object
     const end = new Date(repeatEndDate);
+    end.setHours(23, 59, 59, 999);
 
-    // Normalize times to 00:00:00 to ensure comparison is date-only
-    current.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
+    const currentStartTime = new Date(baseStartTime);
+    const currentEndTime = new Date(baseEndTime);
 
-    while (current.getTime() <= end.getTime()) {
-      dates.push(new Date(current));
+    while (currentStartTime <= end) {
+      dates.push({
+        startTime: new Date(currentStartTime),
+        endTime: new Date(currentEndTime),
+      });
 
-      switch (repeatFrequency) {
-        case "daily":
-          current.setDate(current.getDate() + 1);
-          break;
-        case "weekly":
-          current.setDate(current.getDate() + 7);
-          break;
-        case "bi-weekly":
-          current.setDate(current.getDate() + 14);
-          break;
-        case "monthly":
-          current.setMonth(current.getMonth() + 1);
-          break;
-        default:
-          return dates;
-      }
+      // Increment the date based on repeat frequency
+      const increment = getDateIncrement(repeatFrequency);
+      currentStartTime.setDate(currentStartTime.getDate() + increment);
+      currentEndTime.setDate(currentEndTime.getDate() + increment);
     }
 
     return dates;
-  }, [eventData.startDate.date, repeatEndDate, repeatFrequency]);
+  }, [eventData.startTime, eventData.endTime, repeatEndDate, repeatFrequency]);
 
-  const isDateInPast = (date: Date) => {
-    return isBefore(date, startOfDay(new Date()));
-  };
+  // Utility functions
 
   const handlePositiveNumberInput = (
     value: string,
     field: "numTeams" | "rosterSpots" | "customRsvpHours",
   ) => {
     const numValue = parseInt(value, 10);
-    if (!isNaN(numValue) && numValue > 0) {
+    if (value === "") {
+      setEventData((prev) => ({ ...prev, [field]: 0 }));
+      return;
+    }
+
+    if (!isNaN(numValue) && numValue >= 1) {
       setEventData((prev) => ({ ...prev, [field]: numValue }));
-    } else if (value === "") {
-      setEventData((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
-  const formatTime = (hour: string, minute: string, ampm: string) => {
-    return `${hour}:${minute.padStart(2, "0")} ${ampm}`;
-  };
-
-  function updateEventDate<T extends keyof EventDateType>(
+  function updateEventStartTime<T extends keyof EventTimeDataType>(
     field: T,
-    value: EventDateType[T],
+    value: EventTimeDataType[T],
   ) {
-    setEventData((prev) => ({
-      ...prev,
-      startDate: { ...prev.startDate, [field]: value },
-    }));
+    setEventData((prev) => {
+      const updatedStartTime = new Date(prev.startTime);
+
+      switch (field) {
+        case "date":
+          // Preserve the original time
+          updatedStartTime.setFullYear((value as Date).getFullYear());
+          updatedStartTime.setMonth((value as Date).getMonth());
+          updatedStartTime.setDate((value as Date).getDate());
+          break;
+
+        case "hour": {
+          const hour = value as number;
+          const isPM = updatedStartTime.getHours() >= 12;
+          updatedStartTime.setHours(
+            isPM ? (hour % 12) + 12 : hour % 12, // convert to 24-hour format
+          );
+          break;
+        }
+
+        case "minute":
+          updatedStartTime.setMinutes(value as number);
+          break;
+
+        case "meridiem": {
+          const meridiem = value as "AM" | "PM";
+          const currentHour = updatedStartTime.getHours();
+          const isCurrentlyPM = currentHour >= 12;
+          if (meridiem === "AM" && isCurrentlyPM) {
+            updatedStartTime.setHours(currentHour - 12);
+          } else if (meridiem === "PM" && !isCurrentlyPM) {
+            updatedStartTime.setHours(currentHour + 12);
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+
+      return { ...prev, startTime: updatedStartTime };
+    });
+  }
+
+  function updateEventEndTime<T extends keyof EventTimeDataType>(
+    field: T,
+    value: EventTimeDataType[T],
+  ) {
+    setEventData((prev) => {
+      const updatedEndTime = new Date(prev.endTime);
+
+      switch (field) {
+        case "date":
+          // Preserve the original time
+          updatedEndTime.setFullYear((value as Date).getFullYear());
+          updatedEndTime.setMonth((value as Date).getMonth());
+          updatedEndTime.setDate((value as Date).getDate());
+          break;
+
+        case "hour": {
+          const hour = value as number;
+          const isPM = updatedEndTime.getHours() >= 12;
+          updatedEndTime.setHours(
+            isPM ? (hour % 12) + 12 : hour % 12, // convert to 24-hour format
+          );
+          break;
+        }
+
+        case "minute":
+          updatedEndTime.setMinutes(value as number);
+          break;
+
+        case "meridiem": {
+          const meridiem = value as "AM" | "PM";
+          const currentHour = updatedEndTime.getHours();
+          const isCurrentlyPM = currentHour >= 12;
+          if (meridiem === "AM" && isCurrentlyPM) {
+            updatedEndTime.setHours(currentHour - 12);
+          } else if (meridiem === "PM" && !isCurrentlyPM) {
+            updatedEndTime.setHours(currentHour + 12);
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+
+      return { ...prev, endTime: updatedEndTime };
+    });
   }
 
   function handleChangeRsvpDeadline(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -163,6 +242,9 @@ export default function AddEvent() {
       setSubmitting(false);
     }
   };
+
+  const eventStartHour = eventData.startTime.getHours();
+  const eventEndHour = eventData.endTime.getHours();
 
   return (
     <main className="mx-auto w-[90%] max-w-3xl">
@@ -258,8 +340,7 @@ export default function AddEvent() {
               </Label>
               <Input
                 id="rosterSpots"
-                type="number"
-                value={eventData.rosterSpots}
+                value={eventData.rosterSpots || ""}
                 onChange={(e) =>
                   handlePositiveNumberInput(e.target.value, "rosterSpots")
                 }
@@ -285,12 +366,12 @@ export default function AddEvent() {
                       variant={"outline"}
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !eventData.startDate.date && "text-muted-foreground",
+                        !eventData.startTime && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {eventData.startDate.date ? (
-                        format(eventData.startDate.date, "PPP")
+                      {eventData.startTime ? (
+                        format(eventData.startTime, "PPP")
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -299,8 +380,8 @@ export default function AddEvent() {
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={eventData.startDate.date}
-                      onSelect={(date) => updateEventDate("date", date)}
+                      selected={eventData.startTime}
+                      onSelect={(date) => updateEventStartTime("date", date)}
                       disabled={(date) =>
                         isBefore(date, startOfDay(new Date()))
                       }
@@ -315,11 +396,13 @@ export default function AddEvent() {
                   <Label>Start Time</Label>
                   <div className="flex gap-2">
                     <select
-                      value={eventData.startDate.startHour
-                        .toString()
-                        .padStart(2, "0")}
+                      value={
+                        eventStartHour > 12
+                          ? (eventStartHour - 12).toString().padStart(2, "0")
+                          : eventStartHour.toString().padStart(2, "0")
+                      }
                       onChange={(e) =>
-                        updateEventDate("startHour", Number(e.target.value))
+                        updateEventStartTime("hour", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -336,11 +419,12 @@ export default function AddEvent() {
                       )}
                     </select>
                     <select
-                      value={eventData.startDate.startMinute
+                      value={eventData.startTime
+                        .getMinutes()
                         .toString()
                         .padStart(2, "0")}
                       onChange={(e) =>
-                        updateEventDate("startMinute", Number(e.target.value))
+                        updateEventStartTime("minute", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -355,9 +439,12 @@ export default function AddEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.startDate.startAmPm}
+                      value={eventData.startTime.getHours() >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
-                        updateEventDate("startAmPm", e.target.value)
+                        updateEventStartTime(
+                          "meridiem",
+                          e.target.value as "AM" | "PM",
+                        )
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -371,11 +458,13 @@ export default function AddEvent() {
                   <Label>End Time</Label>
                   <div className="flex gap-2">
                     <select
-                      value={eventData.startDate.endHour
-                        .toString()
-                        .padStart(2, "0")}
+                      value={
+                        eventEndHour > 12
+                          ? (eventEndHour - 12).toString().padStart(2, "0")
+                          : eventEndHour.toString().padStart(2, "0")
+                      }
                       onChange={(e) =>
-                        updateEventDate("endHour", Number(e.target.value))
+                        updateEventEndTime("hour", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -392,11 +481,12 @@ export default function AddEvent() {
                       )}
                     </select>
                     <select
-                      value={eventData.startDate.endMinute
+                      value={eventData.endTime
+                        .getMinutes()
                         .toString()
                         .padStart(2, "0")}
                       onChange={(e) =>
-                        updateEventDate("endMinute", Number(e.target.value))
+                        updateEventEndTime("minute", Number(e.target.value))
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -411,9 +501,12 @@ export default function AddEvent() {
                       ))}
                     </select>
                     <select
-                      value={eventData.startDate.endAmPm}
+                      value={eventData.endTime.getHours() >= 12 ? "PM" : "AM"}
                       onChange={(e) =>
-                        updateEventDate("endAmPm", e.target.value)
+                        updateEventEndTime(
+                          "meridiem",
+                          e.target.value as "AM" | "PM",
+                        )
                       }
                       className="w-[70px] rounded-md border px-3 py-2 text-sm"
                     >
@@ -556,24 +649,14 @@ export default function AddEvent() {
                       key={index}
                       className="rounded-md bg-gray-50 p-2 text-sm"
                     >
-                      {format(date, "MMMM d yyyy")},{" "}
-                      <>
-                        {formatTime(
-                          eventData.startDate.startHour.toString(),
-                          eventData.startDate.startMinute.toString(),
-                          eventData.startDate.startAmPm,
-                        )}{" "}
-                        -{" "}
-                        {formatTime(
-                          eventData.startDate.endHour.toString(),
-                          eventData.startDate.endMinute.toString(),
-                          eventData.startDate.endAmPm,
-                        )}
-                        , {format(date, "EEEE")}
-                        {isDateInPast(date) && (
-                          <span className="ml-2 text-red-500">(Past date)</span>
-                        )}
-                      </>
+                      {format(date.startTime, "MMMM d yyyy, hh:mm a")}
+                      {" - "}
+                      {format(date.endTime, "hh:mm a")}
+                      {", "}
+                      {format(date.startTime, "EEEE")}
+                      {isDateInPast(date.startTime) && (
+                        <span className="ml-2 text-red-500">(Past date)</span>
+                      )}
                     </div>
                   ))}
                 </div>
