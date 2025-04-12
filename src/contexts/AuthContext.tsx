@@ -87,8 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error);
       }
 
-      console.log(profile);
-
       toast.success(
         "Registration successful! Please complete your player profile.",
       );
