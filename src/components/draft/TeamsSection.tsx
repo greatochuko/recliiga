@@ -1,14 +1,14 @@
-
-import React from 'react';
-import { TeamColumn } from './TeamColumn';
-import { Team } from './types';
+import React from "react";
+import { TeamColumn } from "./TeamColumn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TeamType } from "@/types/events";
 
 interface TeamsSectionProps {
-  teams: Team[];
-  toggleEditMode: (teamId: number) => void;
-  handleTeamNameChange: (teamId: number, name: string) => void;
-  handleTeamColorChange: (teamId: number, color: string) => void;
+  teams: TeamType[];
+  toggleEditMode: (teamId: string) => void;
+  handleTeamNameChange: (teamId: string, name: string) => void;
+  handleTeamColorChange: (teamId: string, color: string) => void;
+  teamEditing: string;
 }
 
 export const TeamsSection: React.FC<TeamsSectionProps> = ({
@@ -16,54 +16,43 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
   toggleEditMode,
   handleTeamNameChange,
   handleTeamColorChange,
+  teamEditing,
 }) => {
   return (
     <>
       {/* Desktop view (side by side) */}
-      <div className="hidden lg:block">
-        <TeamColumn
-          team={teams[0]}
-          index={0}
-          toggleEditMode={toggleEditMode}
-          handleTeamNameChange={handleTeamNameChange}
-          handleTeamColorChange={handleTeamColorChange}
-        />
-      </div>
-      <div className="hidden lg:block">
-        <TeamColumn
-          team={teams[1]}
-          index={1}
-          toggleEditMode={toggleEditMode}
-          handleTeamNameChange={handleTeamNameChange}
-          handleTeamColorChange={handleTeamColorChange}
-        />
-      </div>
+      {teams.map((team, i) => (
+        <div key={team.id} className="hidden lg:block">
+          <TeamColumn
+            isEditingTeam={teamEditing === team.id}
+            team={team}
+            index={i}
+            toggleEditMode={toggleEditMode}
+            handleTeamNameChange={handleTeamNameChange}
+            handleTeamColorChange={handleTeamColorChange}
+          />
+        </div>
+      ))}
 
       {/* Mobile view (tabs) */}
-      <div className="lg:hidden col-span-2">
+      <div className="col-span-2 lg:hidden">
         <Tabs defaultValue="team1">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="team1">Team 1</TabsTrigger>
             <TabsTrigger value="team2">Team 2</TabsTrigger>
           </TabsList>
-          <TabsContent value="team1">
-            <TeamColumn
-              team={teams[0]}
-              index={0}
-              toggleEditMode={toggleEditMode}
-              handleTeamNameChange={handleTeamNameChange}
-              handleTeamColorChange={handleTeamColorChange}
-            />
-          </TabsContent>
-          <TabsContent value="team2">
-            <TeamColumn
-              team={teams[1]}
-              index={1}
-              toggleEditMode={toggleEditMode}
-              handleTeamNameChange={handleTeamNameChange}
-              handleTeamColorChange={handleTeamColorChange}
-            />
-          </TabsContent>
+          {teams.map((team, i) => (
+            <TabsContent value="team1" key={team.id}>
+              <TeamColumn
+                isEditingTeam={teamEditing === team.id}
+                team={team}
+                index={i}
+                toggleEditMode={toggleEditMode}
+                handleTeamNameChange={handleTeamNameChange}
+                handleTeamColorChange={handleTeamColorChange}
+              />
+            </TabsContent>
+          ))}
         </Tabs>
       </div>
     </>

@@ -32,17 +32,17 @@ export const JerseyIcon = ({
 );
 
 export const PlayerRating = ({ rating }: { rating: number }) => (
-  <div className="text-accent-orange flex items-center font-bold">
+  <div className="flex items-center font-bold text-accent-orange">
     <span className="mr-1">{rating.toFixed(2)}</span>
-    <Star className="fill-accent-orange h-4 w-4" />
+    <Star className="h-4 w-4 fill-accent-orange" />
   </div>
 );
 
 export const colorOptions: { name: string; value: string }[] = [
-  { name: "Red", value: "#FF0000" },
-  { name: "Blue", value: "#0000FF" },
-  { name: "Green", value: "#00FF00" },
-  { name: "Yellow", value: "#FFFF00" },
-  { name: "White", value: "#FFFFFF" },
-  { name: "Black", value: "#000000" },
+  { name: "red", value: "#FF0000" },
+  { name: "blue", value: "#0000FF" },
+  { name: "green", value: "#00FF00" },
+  { name: "yellow", value: "#FFFF00" },
+  { name: "white", value: "#FFFFFF" },
+  { name: "black", value: "#000000" },
 ];

@@ -77,7 +77,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
               <button
                 className="rounded-md border bg-white px-4 py-2 text-sm font-medium duration-200 hover:bg-neutral-100"
                 onClick={() => setIsEditing(false)}
-                disabled={loading || attendanceStatus === "not-attending"}
+                disabled={loading}
               >
                 Cancel
               </button>

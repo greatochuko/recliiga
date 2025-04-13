@@ -225,7 +225,7 @@ export default function EditEvent() {
         </p>
         <Link
           to="/manage-events"
-          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 font-medium text-white hover:bg-accent-orange/90"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />
           Go Back to Events

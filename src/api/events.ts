@@ -18,6 +18,11 @@ export async function fetchEventsByUser() {
   return { data: data || [], error };
 }
 
+export async function fetchEventsByCreator() {
+  const { data, error } = await fetchApi<EventType[]>("/event?type=creator");
+  return { data: data || [], error };
+}
+
 export async function fetchEventById(eventId: string) {
   const { data, error } = await fetchApi<EventType>(`/event/${eventId}`);
   return { data, error };

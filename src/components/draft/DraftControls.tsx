@@ -24,9 +24,9 @@ export const DraftControls: React.FC<DraftControlsProps> = ({
   draftHistory,
 }) => {
   return (
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="min-w-[200px] flex-1">
-        <Card className="border-accent-orange w-fit border-2">
+        <Card className="w-fit border-2 border-accent-orange">
           <CardContent className="px-4 py-3">
             <div className="flex items-center space-x-4">
               <div className="text-base font-semibold text-black">
@@ -39,13 +39,13 @@ export const DraftControls: React.FC<DraftControlsProps> = ({
                 disabled={draftStarted}
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Alternating" id="alternating" />
+                  <RadioGroupItem value="alternating" id="alternating" />
                   <Label htmlFor="alternating" className="text-sm">
                     Alternating
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Snake" id="snake" />
+                  <RadioGroupItem value="snake" id="snake" />
                   <Label htmlFor="snake" className="text-sm">
                     Snake
                   </Label>

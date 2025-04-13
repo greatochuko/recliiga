@@ -6,16 +6,29 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Edit2 } from "lucide-react";
-import { Team, Player } from "./types";
-import { JerseyIcon, PlayerRating, colorOptions } from "./DraftUIComponents";
+import { JerseyIcon, PlayerRating } from "./DraftUIComponents";
+import { TeamType } from "@/types/events";
 
 interface TeamColumnProps {
-  team: Team;
+  team: TeamType;
   index: number;
-  toggleEditMode: (teamId: number) => void;
-  handleTeamNameChange: (teamId: number, name: string) => void;
-  handleTeamColorChange: (teamId: number, color: string) => void;
+  toggleEditMode: (teamId: string) => void;
+  handleTeamNameChange: (teamId: string, name: string) => void;
+  handleTeamColorChange: (teamId: string, color: string) => void;
+  isEditingTeam: boolean;
 }
+
+const colorOptions = [
+  "red",
+  "yellow",
+  "orange",
+  "green",
+  "blue",
+  "purple",
+  "white",
+  "black",
+  "teal",
+];
 
 export const TeamColumn: React.FC<TeamColumnProps> = ({
   team,
@@ -23,6 +36,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
   toggleEditMode,
   handleTeamNameChange,
   handleTeamColorChange,
+  isEditingTeam,
 }) => {
   return (
     <Card className="flex h-full flex-col">
@@ -39,23 +53,23 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
               <div className="mt-2 flex items-center space-x-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={team.players[0]?.avatar}
-                    alt={team.captain}
+                    src={team.captain.avatar_url}
+                    alt={team.captain.full_name}
                   />
                   <AvatarFallback>
-                    {team.captain
+                    {team.captain.full_name
                       ?.split(" ")
                       .map((n) => n[0])
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm font-medium">
-                  Captain: {team.captain}
+                  Captain: {team.captain.full_name}
                 </span>
               </div>
             )}
           </div>
-          {!team.isEditing && (
+          {!isEditingTeam && (
             <Button
               variant="ghost"
               size="sm"
@@ -68,7 +82,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden">
-        {team.isEditing ? (
+        {isEditingTeam ? (
           <>
             <div>
               <Label htmlFor={`team-name-${team.id}`}>Team Name</Label>
@@ -88,13 +102,11 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                 <div className="grid grid-cols-3 grid-rows-2 gap-2">
                   {colorOptions.map((color) => (
                     <button
-                      key={color.value}
-                      className={`focus:ring-accent-orange h-8 w-8 rounded-full border-2 border-black focus:outline-none focus:ring-2 focus:ring-offset-2 ${team.color === color.value ? "ring-accent-orange ring-2 ring-offset-2" : ""}`}
-                      style={{ backgroundColor: color.value }}
-                      onClick={() =>
-                        handleTeamColorChange(team.id, color.value)
-                      }
-                      aria-label={`Select ${color.name} color`}
+                      key={color}
+                      className={`h-8 w-8 rounded-full border-2 border-black focus:outline-none ${team.color === color ? "ring-2 ring-accent-orange ring-offset-2" : ""}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => handleTeamColorChange(team.id, color)}
+                      aria-label={`Select ${color} color`}
                     />
                   ))}
                 </div>
@@ -118,7 +130,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
             </div>
             <p>
               <strong>Team Color:</strong>{" "}
-              {colorOptions.find((c) => c.value === team.color)?.name}
+              {colorOptions.find((c) => c === team.color)}
             </p>
           </div>
         )}
@@ -132,20 +144,25 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
               >
                 <div className="flex items-center space-x-2">
                   <Avatar>
-                    <AvatarImage src={player.avatar} alt={player.name} />
+                    <AvatarImage
+                      src={player.avatar_url}
+                      alt={player.full_name}
+                    />
                     <AvatarFallback>
-                      {player.name
+                      {player.full_name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium">{player.name}</p>
-                    <p className="text-sm text-gray-500">{player.position}</p>
+                    <p className="font-medium">{player.full_name}</p>
+                    <p className="text-sm text-gray-500">
+                      {player.positions[0]}
+                    </p>
                   </div>
                 </div>
-                <PlayerRating rating={player.rating} />
+                <PlayerRating rating={4} />
               </div>
             ))}
           </ScrollArea>

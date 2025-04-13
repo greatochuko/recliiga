@@ -1,56 +1,16 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-import { JerseyIcon } from "@/components/draft/DraftUIComponents";
 import { ArrowLeftIcon, ChevronLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEventById } from "@/api/events";
 import FullScreenLoader from "@/components/FullScreenLoader";
-import { TeamType } from "@/types/events";
 import { format } from "date-fns";
-
-function CountdownClock({ deadline }: { deadline: Date }) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      const difference = deadline.getTime() - now.getTime();
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-        });
-      } else {
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [deadline]);
-
-  return (
-    <div className="flex space-x-4 text-lg font-semibold">
-      <div className="flex flex-col items-center">
-        <span>{timeLeft.days}</span>
-        <span className="text-xs text-gray-500">days</span>
-      </div>
-      <div className="flex flex-col items-center">
-        <span>{timeLeft.hours}</span>
-        <span className="text-xs text-gray-500">hours</span>
-      </div>
-      <div className="flex flex-col items-center">
-        <span>{timeLeft.minutes}</span>
-        <span className="text-xs text-gray-500">minutes</span>
-      </div>
-    </div>
-  );
-}
+import CountdownClock from "@/components/events/CountdownClock";
+import TeamInfo from "@/components/events/TeamInfo";
 
 export default function EventDetails() {
   const navigate = useNavigate();
@@ -95,7 +55,7 @@ export default function EventDetails() {
         </p>
         <Link
           to="/events"
-          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 font-medium text-white hover:bg-accent-orange/90"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />
           Go Back to Events
@@ -106,18 +66,20 @@ export default function EventDetails() {
 
   return (
     <main className="relative flex-1 bg-background">
-      <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="fixed right-4 top-4 z-10 flex items-center p-0 text-accent-orange hover:bg-transparent hover:text-accent-orange hover:underline"
-        onClick={handleBackClick}
-      >
-        <ChevronLeft className="mr-1 h-4 w-4" />
-        Previous
-      </Button>
-      <div className="container mx-auto px-4 py-8">
-        <Card className="mx-auto max-w-3xl">
+      <div className="flex items-center justify-between">
+        <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={handleBackClick}
+        >
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
+      </div>
+      <div className="mx-auto p-6">
+        <Card>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-bold">
               Upcoming Match
@@ -127,7 +89,7 @@ export default function EventDetails() {
             <div className="space-y-8">
               <div className="mb-8 flex items-center justify-center gap-8">
                 <TeamInfo team={event.teams[0]} />
-                <div className="flex flex-col items-center justify-center">
+                <div className="flex flex-1 flex-col items-center justify-center">
                   <div className="mb-4 flex flex-col items-center text-center">
                     <span className="text-xs text-gray-500">
                       {new Date(event.startTime).toLocaleDateString("en-US", {
@@ -245,28 +207,5 @@ export default function EventDetails() {
         </Card>
       </div>
     </main>
-  );
-}
-
-function TeamInfo({ team }: { team: TeamType }) {
-  return (
-    <div className="flex flex-col items-center space-y-2">
-      <Avatar
-        className="h-16 w-16 border-2"
-        style={{ borderColor: team.color }}
-      >
-        <AvatarImage src={team.logo} alt={team.name} />
-        <AvatarFallback>
-          {team.name
-            .split(" ")
-            .map((n: string) => n[0])
-            .join("")}
-        </AvatarFallback>
-      </Avatar>
-      <span className="text-sm font-semibold">{team.name}</span>
-      <div className="mt-2 flex flex-col items-center">
-        <JerseyIcon color={team.color} size={48} />
-      </div>
-    </div>
   );
 }

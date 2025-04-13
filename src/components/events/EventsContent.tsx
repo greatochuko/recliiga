@@ -12,7 +12,7 @@ import ManageEventCard from "./ManageEventCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
-import { fetchEventsByUser } from "@/api/events";
+import { fetchEventsByCreator } from "@/api/events";
 import { getPastEvents, getUpcomingEvents } from "@/lib/utils";
 
 export const EventsContent: React.FC = () => {
@@ -24,7 +24,7 @@ export const EventsContent: React.FC = () => {
     refetch: refetchEvents,
   } = useQuery({
     queryKey: ["event"],
-    queryFn: fetchEventsByUser,
+    queryFn: fetchEventsByCreator,
     initialData: { data: [], error: null },
   });
 
