@@ -13,11 +13,11 @@ export default function AuthWrapper() {
 
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
   const isCompleteProfileRoute = completeProfileRoutes.some((route) =>
-    pathname.startsWith(route)
+    pathname.startsWith(route),
   );
 
   if (loading) {
-    return <FullScreenLoader />;
+    return <FullScreenLoader className="h-dvh" />;
   }
 
   if (user) {

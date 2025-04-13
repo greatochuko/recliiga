@@ -102,12 +102,14 @@ export const EventActions: React.FC<EventActionsProps> = ({
         </div>
       )}
       {event.teams.some((team) => team.captain?.id === user.id) && (
-        <Link
-          to={`/events/${event.id}/team-draft`}
-          className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
-        >
-          Begin Draft
-        </Link>
+        <div className="flex w-full justify-end">
+          <Link
+            to={`/events/${event.id}/team-draft`}
+            className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+          >
+            Begin Draft
+          </Link>
+        </div>
       )}
     </div>
   );

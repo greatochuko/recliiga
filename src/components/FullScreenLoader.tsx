@@ -1,9 +1,15 @@
 import { Loader2Icon } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
-export default function FullScreenLoader() {
+export default function FullScreenLoader({ className = "" }) {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <Loader2Icon className="h-8 w-8 animate-spin text-accent-orange" />
+      <Loader2Icon
+        className={twMerge(
+          "h-8 w-8 animate-spin text-accent-orange",
+          className,
+        )}
+      />
     </div>
   );
 }
