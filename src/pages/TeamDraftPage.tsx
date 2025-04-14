@@ -9,6 +9,7 @@ import FullScreenLoader from "@/components/FullScreenLoader";
 import { TeamsSection } from "@/components/draft/TeamsSection";
 import { TeamType } from "@/types/events";
 import { ArrowLeftIcon } from "lucide-react";
+import { PlayersList } from "@/components/draft/PlayersList";
 
 type DraftType = "alternating" | "snake";
 
@@ -19,7 +20,7 @@ export default function TeamDraftPage() {
   const [teamEditing, setTeamEditing] = useState("");
   const [teams, setTeams] = useState<TeamType[]>();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [`event-${id}`],
     queryFn: () => fetchEventById(id),
   });
@@ -64,6 +65,13 @@ export default function TeamDraftPage() {
     return <FullScreenLoader />;
   }
 
+  function cancelTeamEditing() {
+    setTeamEditing("");
+    setTeams(teamList);
+  }
+
+  function handlePlayerDraft(playerId: string) {}
+
   const event = data?.data;
 
   if (!event) {
@@ -99,26 +107,30 @@ export default function TeamDraftPage() {
             draftHistory={[]}
           />
 
-          <div className="grid h-[calc(100vh-300px)] grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr_1.5fr]">
-            {/* Team sections */}
-            <TeamsSection
-              teams={teams}
-              toggleEditMode={toggleEditMode}
-              handleTeamNameChange={handleTeamNameChange}
-              handleTeamColorChange={handleTeamColorChange}
-              teamEditing={teamEditing}
-            />
+          <div className="flex flex-col gap-6">
+            <div className="flex gap-6">
+              {/* Team sections */}
+              <TeamsSection
+                teams={teams}
+                toggleEditMode={toggleEditMode}
+                handleTeamNameChange={handleTeamNameChange}
+                handleTeamColorChange={handleTeamColorChange}
+                teamEditing={teamEditing}
+                cancelTeamEditing={cancelTeamEditing}
+                refetchEvent={refetch}
+              />
+            </div>
 
             {/* Available players */}
-            {/* <div className="flex h-full flex-col lg:col-span-1 lg:col-start-3">
+            <div className="flex h-full flex-col lg:col-span-1 lg:col-start-3">
               <PlayersList
-                availablePlayers={availablePlayers}
+                availablePlayers={event.players}
                 teams={teams}
-                currentTeam={currentTeam}
-                isTeamSetupComplete={isTeamSetupComplete}
+                currentTeam={0}
+                isTeamSetupComplete={false}
                 handlePlayerDraft={handlePlayerDraft}
               />
-            </div>*/}
+            </div>
           </div>
         </CardContent>
       </Card>

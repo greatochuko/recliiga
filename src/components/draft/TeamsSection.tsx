@@ -9,6 +9,8 @@ interface TeamsSectionProps {
   handleTeamNameChange: (teamId: string, name: string) => void;
   handleTeamColorChange: (teamId: string, color: string) => void;
   teamEditing: string;
+  cancelTeamEditing: () => void;
+  refetchEvent: () => void;
 }
 
 export const TeamsSection: React.FC<TeamsSectionProps> = ({
@@ -17,12 +19,14 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
   handleTeamNameChange,
   handleTeamColorChange,
   teamEditing,
+  cancelTeamEditing,
+  refetchEvent,
 }) => {
   return (
     <>
       {/* Desktop view (side by side) */}
       {teams.map((team, i) => (
-        <div key={team.id} className="hidden lg:block">
+        <div key={team.id} className="hidden flex-1 lg:block">
           <TeamColumn
             isEditingTeam={teamEditing === team.id}
             team={team}
@@ -30,19 +34,21 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
             toggleEditMode={toggleEditMode}
             handleTeamNameChange={handleTeamNameChange}
             handleTeamColorChange={handleTeamColorChange}
+            cancelTeamEditing={cancelTeamEditing}
+            refetchEvent={refetchEvent}
           />
         </div>
       ))}
 
       {/* Mobile view (tabs) */}
-      <div className="col-span-2 lg:hidden">
+      <div className="col-span-2 flex-1 lg:hidden">
         <Tabs defaultValue="team1">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="team1">Team 1</TabsTrigger>
             <TabsTrigger value="team2">Team 2</TabsTrigger>
           </TabsList>
           {teams.map((team, i) => (
-            <TabsContent value="team1" key={team.id}>
+            <TabsContent value={`team${i + 1}`} key={team.id}>
               <TeamColumn
                 isEditingTeam={teamEditing === team.id}
                 team={team}
@@ -50,6 +56,8 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
                 toggleEditMode={toggleEditMode}
                 handleTeamNameChange={handleTeamNameChange}
                 handleTeamColorChange={handleTeamColorChange}
+                cancelTeamEditing={cancelTeamEditing}
+                refetchEvent={refetchEvent}
               />
             </TabsContent>
           ))}

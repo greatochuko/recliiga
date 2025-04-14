@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Edit2 } from "lucide-react";
 import { JerseyIcon, PlayerRating } from "./DraftUIComponents";
 import { TeamType } from "@/types/events";
+import { updateTeam } from "@/api/team";
 
 interface TeamColumnProps {
   team: TeamType;
@@ -15,6 +16,8 @@ interface TeamColumnProps {
   toggleEditMode: (teamId: string) => void;
   handleTeamNameChange: (teamId: string, name: string) => void;
   handleTeamColorChange: (teamId: string, color: string) => void;
+  cancelTeamEditing: () => void;
+  refetchEvent: () => void;
   isEditingTeam: boolean;
 }
 
@@ -37,7 +40,21 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
   handleTeamNameChange,
   handleTeamColorChange,
   isEditingTeam,
+  cancelTeamEditing,
+  refetchEvent,
 }) => {
+  const [loading, setLoading] = useState(false);
+
+  async function handleUpdateTeam() {
+    setLoading(true);
+    const { error } = await updateTeam(team.id, team);
+    if (error === null) {
+      toggleEditMode(team.id);
+      refetchEvent();
+    }
+    setLoading(false);
+  }
+
   return (
     <Card className="flex h-full flex-col">
       <CardHeader>
@@ -56,7 +73,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                     src={team.captain.avatar_url}
                     alt={team.captain.full_name}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-sm">
                     {team.captain.full_name
                       ?.split(" ")
                       .map((n) => n[0])
@@ -81,7 +98,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden">
+      <CardContent className="flex flex-1 flex-col overflow-hidden">
         {isEditingTeam ? (
           <>
             <div>
@@ -112,11 +129,23 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                 </div>
               </div>
             </div>
-            {team.name && team.color && (
-              <Button onClick={() => toggleEditMode(team.id)} className="mt-4">
+            <div className="mt-4 flex gap-4">
+              <Button
+                onClick={cancelTeamEditing}
+                variant="outline"
+                className="flex-1"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateTeam}
+                disabled={loading}
+                className="flex-1 bg-accent-orange text-white hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
+              >
                 Confirm Team Setup
               </Button>
-            )}
+            </div>
           </>
         ) : (
           <div>
@@ -134,38 +163,40 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
             </p>
           </div>
         )}
-        <div className="mt-4 h-[calc(100%-200px)]">
+        <div className="mt-4 flex flex-1 flex-col gap-2">
           <Label>Drafted Players ({team.players.length})</Label>
-          <ScrollArea className="mt-2 h-full w-full rounded-md border p-2">
-            {team.players.map((player) => (
-              <div
-                key={player.id}
-                className="flex items-center justify-between p-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <Avatar>
-                    <AvatarImage
-                      src={player.avatar_url}
-                      alt={player.full_name}
-                    />
-                    <AvatarFallback>
-                      {player.full_name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{player.full_name}</p>
-                    <p className="text-sm text-gray-500">
-                      {player.positions[0]}
-                    </p>
+          {team.players.length > 0 && (
+            <ScrollArea className="flex-1 rounded-md border p-2">
+              {team.players.map((player) => (
+                <div
+                  key={player.id}
+                  className="flex items-center justify-between p-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Avatar>
+                      <AvatarImage
+                        src={player.avatar_url}
+                        alt={player.full_name}
+                      />
+                      <AvatarFallback>
+                        {player.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{player.full_name}</p>
+                      <p className="text-sm text-gray-500">
+                        {player.positions[0]}
+                      </p>
+                    </div>
                   </div>
+                  <PlayerRating rating={4} />
                 </div>
-                <PlayerRating rating={4} />
-              </div>
-            ))}
-          </ScrollArea>
+              ))}
+            </ScrollArea>
+          )}
         </div>
       </CardContent>
     </Card>
