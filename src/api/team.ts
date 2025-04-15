@@ -24,3 +24,11 @@ export async function draftPlayer({
   });
   return data;
 }
+
+export async function confirmRooster(teamId: string) {
+  const data = await fetchApi<TeamType>(`/team/${teamId}/confirmRooster`, {
+    method: "POST",
+    body: {},
+  });
+  return data;
+}

@@ -8,6 +8,7 @@ export interface TeamType {
   color: string;
   captain?: UserType;
   players: UserType[];
+  draftCompleted: boolean;
 }
 
 export interface Captain {
