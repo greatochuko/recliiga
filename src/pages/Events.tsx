@@ -5,19 +5,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EventCard from "@/components/events/EventCard";
 
 export default function Events() {
-  const {
-    data: { data: events, error },
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["events"],
     queryFn: fetchEventsByUser,
-    initialData: { data: [], error: null },
   });
 
-  const upcomingEvents = getUpcomingEvents(events);
+  const events = data?.data;
+  const error = data?.error;
 
-  const pastEvents = getPastEvents(events);
+  const upcomingEvents = getUpcomingEvents(events || []);
+
+  const pastEvents = getPastEvents(events || []);
 
   return (
     <main className="relative flex flex-1 flex-col gap-4 bg-background">
@@ -29,7 +27,7 @@ export default function Events() {
             <TabsTrigger value="past">Past Events</TabsTrigger>
           </TabsList>
 
-          {isLoading ? (
+          {isLoading || !data ? (
             <div className="py-10 text-center text-gray-500">Loading...</div>
           ) : (
             <>

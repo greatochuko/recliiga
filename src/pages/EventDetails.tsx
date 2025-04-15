@@ -66,8 +66,8 @@ export default function EventDetails() {
 
   return (
     <main className="relative flex-1 bg-background">
-      <div className="flex items-center justify-between">
-        <h1 className="ml-14 text-2xl font-bold">Event Details</h1>
+      <div className="flex items-center justify-between px-4 pl-14">
+        <h1 className="text-2xl font-bold">Event Details</h1>
         <Button
           variant="link"
           size="sm"

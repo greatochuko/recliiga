@@ -37,7 +37,6 @@ export default function EventCard({
           event={event}
           attendanceStatus={attendanceStatus}
           isEditing={isEditing}
-          isPastEvent={isPastEvent}
         />
 
         <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />

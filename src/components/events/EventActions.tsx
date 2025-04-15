@@ -100,16 +100,19 @@ export const EventActions: React.FC<EventActionsProps> = ({
               </button>
             </>
           )}
-          {attendanceStatus && !isEditing && (
-            <button
-              className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange opacity-50 transition-colors hover:bg-accent-orange hover:text-white disabled:pointer-events-none"
-              onClick={toggleEdit}
-              disabled={eventSpotsLeft <= 0}
-            >
-              <Edit className="mr-2 h-4 w-4" />
-              Edit RSVP
-            </button>
-          )}
+          {attendanceStatus &&
+            !isEditing &&
+            (eventSpotsLeft <= 0 ? (
+              <p className="text-sm text-red-500">No spots remaining</p>
+            ) : (
+              <button
+                className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange transition-colors hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
+                onClick={toggleEdit}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Edit RSVP
+              </button>
+            ))}
         </div>
       )}
       {event.teams.some((team) => team.captain?.id === user.id) && (
