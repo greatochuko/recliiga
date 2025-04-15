@@ -46,9 +46,13 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
           Not Attending
         </Badge>
       )}
-      {!isPastEvent && spotsLeft && !attendanceStatus && (
+      {!isPastEvent && !attendanceStatus && (
         <span className="text-xs font-semibold text-[#E43226]">
-          {spotsLeft === 1 ? "1 Spot Left" : `${spotsLeft} Spots Left`}
+          {!spotsLeft
+            ? "No Spots left"
+            : spotsLeft === 1
+              ? "1 Spot Left"
+              : `${spotsLeft} Spots Left`}
         </span>
       )}
     </div>

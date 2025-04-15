@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TeamType } from "@/types/events";
 
 interface TeamsSectionProps {
+  numEventPlayers: number;
   teams: TeamType[];
   toggleEditMode: (teamId: string) => void;
   handleTeamNameChange: (teamId: string, name: string) => void;
@@ -14,6 +15,7 @@ interface TeamsSectionProps {
 }
 
 export const TeamsSection: React.FC<TeamsSectionProps> = ({
+  numEventPlayers,
   teams,
   toggleEditMode,
   handleTeamNameChange,
@@ -22,12 +24,17 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
   cancelTeamEditing,
   refetchEvent,
 }) => {
+  const canConfirmDraft =
+    teams.reduce((prev, curr) => prev + curr.players.length, 0) + 2 ===
+    numEventPlayers;
+
   return (
     <>
       {/* Desktop view (side by side) */}
       {teams.map((team, i) => (
         <div key={team.id} className="hidden flex-1 lg:block">
           <TeamColumn
+            canConfirmDraft={canConfirmDraft}
             isEditingTeam={teamEditing === team.id}
             team={team}
             index={i}
@@ -50,6 +57,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
           {teams.map((team, i) => (
             <TabsContent value={`team${i + 1}`} key={team.id}>
               <TeamColumn
+                canConfirmDraft={canConfirmDraft}
                 isEditingTeam={teamEditing === team.id}
                 team={team}
                 index={i}

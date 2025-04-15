@@ -107,6 +107,27 @@ export default function TeamDraftPage() {
     );
   }
 
+  let currentTeam: TeamType;
+
+  // For alternating draft
+  if (draftType === "alternating") {
+    currentTeam =
+      teams[0].players.length > teams[1].players.length ? teams[1] : teams[0];
+  }
+
+  // For snake draft
+  else if (draftType === "snake") {
+    const totalPicks = teams[0].players.length + teams[1].players.length;
+    const round = Math.floor(totalPicks / 2);
+    const isEvenRound = round % 2 === 0;
+
+    const isTeam0Turn = isEvenRound
+      ? teams[0].players.length === teams[1].players.length
+      : teams[0].players.length > teams[1].players.length;
+
+    currentTeam = isTeam0Turn ? teams[0] : teams[1];
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <TeamDraftHeader />
@@ -117,15 +138,19 @@ export default function TeamDraftPage() {
             draftType={draftType}
             setDraftType={handleChangeDraftType}
             draftStarted={teams.some((team) => team.players.length > 0)}
-            draftRound={1}
+            draftRound={
+              Math.floor(
+                teams.reduce((prev, curr) => prev + curr.players.length, 0) / 2,
+              ) + 1
+            }
             handleUndo={() => {}}
-            draftHistory={[]}
           />
 
           <div className="flex flex-col gap-6">
             <div className="flex gap-6">
               {/* Team sections */}
               <TeamsSection
+                numEventPlayers={event.players.length}
                 teams={teams}
                 toggleEditMode={toggleEditMode}
                 handleTeamNameChange={handleTeamNameChange}
@@ -142,27 +167,13 @@ export default function TeamDraftPage() {
                 teams={teams}
                 isDrafting={isDrafting}
                 availablePlayers={event.players}
-                currentTeam={
-                  teams[0].players.length > teams[1].players.length
-                    ? teams[1]
-                    : teams[0]
-                }
+                currentTeam={currentTeam}
                 handlePlayerDraft={handlePlayerDraft}
               />
             </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* Draft Completion Dialog */}
-      {/* <DraftCompletionDialog
-        open={showCompletionDialog}
-        teams={teams}
-        onOpenChange={setShowCompletionDialog}
-        onConfirmTeam={handleConfirmTeam}
-        onFinalizeDraft={handleFinalizeDraft}
-        isSubmitting={isSubmitting}
-      /> */}
     </div>
   );
 }

@@ -235,7 +235,10 @@ export default function SelectCaptains() {
 
               <div className="flex items-center justify-center gap-4">
                 {!selectingCaptains ? (
-                  <Button onClick={() => setSelectingCaptains(true)}>
+                  <Button
+                    disabled={event.teams.every((team) => team.captain)}
+                    onClick={() => setSelectingCaptains(true)}
+                  >
                     Select Captains
                   </Button>
                 ) : (

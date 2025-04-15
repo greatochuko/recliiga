@@ -21,7 +21,7 @@ export default function ManageEventCard({
 
   const eventTime = format(event.startTime, "h:mm a");
 
-  const eventSpotsLeft = event.numTeams * event.rosterSpots;
+  const spotsLeft = event.numTeams * event.rosterSpots - event.players.length;
 
   const eventStatus = isPast(eventDate) ? "past" : "upcoming";
 
@@ -50,11 +50,13 @@ export default function ManageEventCard({
               <span className="text-xs text-gray-500">{event.location}</span>
             </div>
           </div>
-          {eventStatus === "upcoming" && eventSpotsLeft && (
+          {eventStatus === "upcoming" && (
             <span className="text-xs font-semibold text-[#E43226]">
-              {eventSpotsLeft === 1
-                ? "1 Spot Left"
-                : `${eventSpotsLeft} Spots Left`}
+              {!spotsLeft
+                ? "No Spots left"
+                : spotsLeft === 1
+                  ? "1 Spot Left"
+                  : `${spotsLeft} Spots Left`}
             </span>
           )}
         </div>
@@ -82,7 +84,17 @@ export default function ManageEventCard({
         <div className="mt-4 flex justify-center gap-2">
           {eventStatus === "upcoming" && (
             <>
-              {!event.teams.some((team) => team.captain) ? (
+              {event.teams.every((team) => team.captain) ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center"
+                  disabled
+                >
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Select Captains
+                </Button>
+              ) : (
                 <Link to={`/${event.id}/select-captains`}>
                   <Button
                     variant="outline"
@@ -93,16 +105,6 @@ export default function ManageEventCard({
                     Select Captains
                   </Button>
                 </Link>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center"
-                  disabled
-                >
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Select Captains
-                </Button>
               )}
               <Link to={`/events/${event.id}/edit`}>
                 <Button

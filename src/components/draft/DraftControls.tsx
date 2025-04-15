@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Undo2 } from "lucide-react";
-import { DraftHistoryItem } from "./types";
 
 interface DraftControlsProps {
   draftType: string;
@@ -12,7 +11,6 @@ interface DraftControlsProps {
   draftStarted: boolean;
   draftRound: number;
   handleUndo: () => void;
-  draftHistory: DraftHistoryItem[];
 }
 
 export const DraftControls: React.FC<DraftControlsProps> = ({
@@ -21,7 +19,6 @@ export const DraftControls: React.FC<DraftControlsProps> = ({
   draftStarted,
   draftRound,
   handleUndo,
-  draftHistory,
 }) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
@@ -58,15 +55,10 @@ export const DraftControls: React.FC<DraftControlsProps> = ({
       {draftStarted && (
         <div className="flex items-center space-x-4">
           <div className="text-lg font-semibold">Round: {draftRound}</div>
-          <Button
-            onClick={handleUndo}
-            disabled={draftHistory.length === 0}
-            variant="outline"
-            size="sm"
-          >
+          {/* <Button onClick={handleUndo} disabled variant="outline" size="sm">
             <Undo2 className="mr-2 h-4 w-4" />
             Undo Pick
-          </Button>
+          </Button> */}
         </div>
       )}
     </div>

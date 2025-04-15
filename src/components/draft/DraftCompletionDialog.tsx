@@ -12,10 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Team } from "./types";
+import { TeamType } from "@/types/events";
 
 interface DraftCompletionDialogProps {
   open: boolean;
-  teams: Team[];
+  teams: TeamType[];
   onOpenChange: (open: boolean) => void;
   onConfirmTeam: (teamId: number) => void;
   onFinalizeDraft: () => void;
@@ -76,7 +77,7 @@ export function DraftCompletionDialog({
                     </span>
                   ) : (
                     <Button
-                      onClick={() => handleConfirmTeam(team.id)}
+                      // onClick={() => handleConfirmTeam(team.id)}
                       variant="outline"
                       size="sm"
                     >
@@ -97,7 +98,7 @@ export function DraftCompletionDialog({
           <AlertDialogAction
             onClick={onFinalizeDraft}
             disabled={!allTeamsConfirmed || isSubmitting}
-            className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+            className="bg-accent-orange text-white hover:bg-accent-orange/90"
           >
             {isSubmitting ? (
               <>

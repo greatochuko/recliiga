@@ -20,6 +20,7 @@ interface TeamColumnProps {
   cancelTeamEditing: () => void;
   refetchEvent: () => void;
   isEditingTeam: boolean;
+  canConfirmDraft: boolean;
 }
 
 const colorOptions = [
@@ -43,6 +44,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
   isEditingTeam,
   cancelTeamEditing,
   refetchEvent,
+  canConfirmDraft,
 }) => {
   const { user } = useAuth();
 
@@ -201,6 +203,16 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
             </ScrollArea>
           )}
         </div>
+        {team.captain?.id === user.id && (
+          <div className="mt-4 flex justify-end">
+            <button
+              disabled={!canConfirmDraft}
+              className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Confirm Rooster
+            </button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

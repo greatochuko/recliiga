@@ -27,6 +27,9 @@ export const EventActions: React.FC<EventActionsProps> = ({
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  const eventSpotsLeft =
+    event.numTeams * event.rosterSpots - event.players.length;
+
   const handleAttend = async () => {
     setLoading(true);
     const { error } = await attendEvent(event.id);
@@ -87,6 +90,9 @@ export const EventActions: React.FC<EventActionsProps> = ({
                 disabled={
                   event.teams.some((team) => team.captain?.id === user.id) ||
                   loading ||
+                  event.teams.some((team) =>
+                    team.players.some((player) => player.id === user.id),
+                  ) ||
                   attendanceStatus === "not-attending"
                 }
               >
@@ -96,8 +102,9 @@ export const EventActions: React.FC<EventActionsProps> = ({
           )}
           {attendanceStatus && !isEditing && (
             <button
-              className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
+              className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange opacity-50 transition-colors hover:bg-accent-orange hover:text-white disabled:pointer-events-none"
               onClick={toggleEdit}
+              disabled={eventSpotsLeft <= 0}
             >
               <Edit className="mr-2 h-4 w-4" />
               Edit RSVP
