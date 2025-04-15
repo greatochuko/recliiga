@@ -1,69 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 import { RatingDialog } from "@/components/rating/RatingDialog";
-import { Player } from "@/components/rating/types";
-
-const dummyPlayers = [
-  {
-    id: 1,
-    name: "John Smith",
-    position: "Midfielder",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 2,
-    name: "Emma Johnson",
-    position: "Forward",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 3,
-    name: "Michael Brown",
-    position: "Defender",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 4,
-    name: "Sarah Davis",
-    position: "Goalkeeper",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 5,
-    name: "David Wilson",
-    position: "Midfielder",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 6,
-    name: "Lisa Anderson",
-    position: "Forward",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 7,
-    name: "Robert Taylor",
-    position: "Defender",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: 8,
-    name: "Jennifer Martinez",
-    position: "Midfielder",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { fetchLeaguesByUser } from "@/api/league";
+import { UserType } from "@/contexts/AuthContext";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 export default function RateTeammates() {
+  const [players, setPlayers] = useState<UserType[]>([]);
+
   const navigate = useNavigate();
 
-  const [players, setPlayers] = useState<Player[]>(dummyPlayers);
+  const {
+    data: { leagues },
+    isLoading,
+  } = useQuery({
+    queryKey: ["players"],
+    queryFn: fetchLeaguesByUser,
+    initialData: { leagues: [], error: null },
+  });
 
-  const handleRatingSubmit = (playerId: number) => {
+  useEffect(() => {
+    if (!isLoading) {
+      setPlayers(leagues.flatMap((league) => league.players));
+    }
+  }, [isLoading, leagues]);
+
+  const handleRatingSubmit = (playerId: string) => {
     setPlayers(players.filter((player) => player.id !== playerId));
   };
+
+  if (isLoading) {
+    return <FullScreenLoader />;
+  }
 
   return (
     <main className="relative flex-1 bg-background">
@@ -74,7 +45,7 @@ export default function RateTeammates() {
           <div className="mb-4 ml-auto flex w-fit items-center justify-between px-2">
             <Button
               variant="ghost"
-              className="text-accent-orange hover:text-accent-orange p-0 hover:bg-transparent hover:underline"
+              className="p-0 text-accent-orange hover:bg-transparent hover:text-accent-orange hover:underline"
               onClick={() => navigate(-1)}
             >
               Previous
@@ -98,7 +69,7 @@ export default function RateTeammates() {
             </>
           ) : (
             <div className="py-12 text-center">
-              <h2 className="text-accent-orange mb-4 text-2xl font-bold">
+              <h2 className="mb-4 text-2xl font-bold text-accent-orange">
                 All Teammates Rated!
               </h2>
               <p className="mb-6 text-gray-600">
@@ -106,7 +77,7 @@ export default function RateTeammates() {
                 input is valuable for improving team performance.
               </p>
               <Button
-                className="bg-accent-orange rounded-lg px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
+                className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
                 onClick={() => navigate("/")}
               >
                 Return to Dashboard

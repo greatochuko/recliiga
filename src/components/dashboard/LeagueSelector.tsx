@@ -1,23 +1,26 @@
-import { League } from "@/types/dashboard";
+import { LeagueType } from "@/types/league";
 
 interface LeagueSelectorProps {
-  leagues: League[];
+  leagues: LeagueType[];
+  selectedLeague: LeagueType;
   onLeagueChange: (leagueId: string) => void;
 }
 
 export function LeagueSelector({
   leagues,
   onLeagueChange,
+  selectedLeague,
 }: LeagueSelectorProps) {
   return (
     <div className="space-y-4">
       <select
         name="league"
         id="league"
-        defaultValue={leagues[0].id}
+        value={selectedLeague?.id}
         onChange={(e) => onLeagueChange(e.target.value)}
-        className="p-2 rounded-md border w-full text-sm"
+        className="w-full rounded-md border p-2 text-sm"
       >
+        <option>All</option>
         {leagues.map((league) => (
           <option key={league.id} value={league.id}>
             {league.name}

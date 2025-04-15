@@ -9,15 +9,11 @@ import {
 import { LeagueSelector } from "./LeagueSelector";
 import { StarRating } from "./StarRating";
 import { PlayerRankCard } from "./PlayerRankCard";
-import {
-  League,
-  PlayerStats,
-  Teammate,
-  getLeagueName,
-} from "@/types/dashboard";
+import { PlayerStats, getLeagueName } from "@/types/dashboard";
 import EventCard from "../events/EventCard";
 import { fetchEventsByUser } from "@/api/events";
 import { getUpcomingEvents } from "@/lib/utils";
+import { fetchLeaguesByUser } from "@/api/league";
 
 async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
   // Simulating different stats for different leagues
@@ -59,43 +55,26 @@ async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
   return leagueStats[leagueId] || leagueStats.premier;
 }
 
-async function fetchTeammates(): Promise<Teammate[]> {
-  return [
-    { id: "1", name: "John Smith", position: "Midfielder", rating: 3 },
-    { id: "2", name: "Emma Johnson", position: "Midfielder", rating: 3 },
-    { id: "3", name: "Michael Brown", position: "Midfielder", rating: 3 },
-    { id: "4", name: "Sarah Davis", position: "Midfielder", rating: 3 },
-    { id: "5", name: "David Wilson", position: "Midfielder", rating: 3 },
-    { id: "6", name: "Lisa Anderson", position: "Midfielder", rating: 3 },
-    { id: "7", name: "Robert Taylor", position: "Midfielder", rating: 3 },
-    { id: "8", name: "Jennifer Martin", position: "Midfielder", rating: 3 },
-  ];
-}
-
 const queryClient = new QueryClient();
 
 export default function PlayerDashboard() {
-  const leagues: League[] = [
-    { id: "premier", name: "Premier League", rating: 0.8 },
-    { id: "division1", name: "Division 1", rating: 0.6 },
-    { id: "casual", name: "Casual League", rating: 0.3 },
-  ];
   const [selectedLeagueId, setSelectedLeagueId] = useState("premier");
-  const [selectedLeague, setSelectedLeague] = useState<League>({
-    id: "premier",
-    name: "Premier League",
-    rating: 0.8,
-  });
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["playerStats", selectedLeagueId],
     queryFn: () => fetchPlayerStats(selectedLeagueId),
   });
 
-  const { data: teammates, isLoading: teammatesLoading } = useQuery({
+  const {
+    data: { leagues },
+    isLoading: teammatesLoading,
+  } = useQuery({
     queryKey: ["teammates"],
-    queryFn: fetchTeammates,
+    queryFn: fetchLeaguesByUser,
+    initialData: { leagues: [], error: null },
   });
+
+  const teammates = leagues.flatMap((league) => league.players);
 
   const {
     data: { data: events },
@@ -107,13 +86,6 @@ export default function PlayerDashboard() {
   });
 
   const upcomingEvents = getUpcomingEvents(events);
-
-  const handleLeagueChange = (leagueId: string) => {
-    setSelectedLeagueId(leagueId);
-    const newLeague =
-      leagues.find((league) => league.id === leagueId) || leagues[0];
-    setSelectedLeague(newLeague);
-  };
 
   if (statsLoading || teammatesLoading || eventsLoading) {
     return (
@@ -132,6 +104,10 @@ export default function PlayerDashboard() {
   const lossFraction = stats.losses / totalGames || 0;
   const tieFraction = stats.ties / totalGames || 0;
 
+  const selectedLeague = leagues.find(
+    (league) => league.id === selectedLeagueId,
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="space-y-8">
@@ -141,7 +117,8 @@ export default function PlayerDashboard() {
               <h2 className="text-2xl font-bold md:ml-8">Your Stats</h2>
               <LeagueSelector
                 leagues={leagues}
-                onLeagueChange={handleLeagueChange}
+                onLeagueChange={(leagueId) => setSelectedLeagueId(leagueId)}
+                selectedLeague={selectedLeague}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -151,10 +128,7 @@ export default function PlayerDashboard() {
                   name: getLeagueName(stats.league),
                   rank: stats.position,
                   totalPlayers: stats.totalTeams,
-                  rating: Math.max(
-                    0.5,
-                    Math.min(3.0, (selectedLeague.rating || 0) * 3),
-                  ),
+                  rating: 3,
                 }}
               />
 
@@ -262,7 +236,7 @@ export default function PlayerDashboard() {
                 View all
               </Link>
             </div>
-            <div className="grid flex-grow gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {teammates &&
                 teammates.slice(0, 8).map((teammate) => (
                   <Link
@@ -276,14 +250,14 @@ export default function PlayerDashboard() {
                       </div>
                       <div>
                         <h3 className="text-sm font-semibold">
-                          {teammate.name}
+                          {teammate.full_name}
                         </h3>
                         <p className="text-xs text-gray-500">
-                          {teammate.position}
+                          {teammate.positions[0]}
                         </p>
                       </div>
                     </div>
-                    <StarRating rating={teammate.rating} />
+                    <StarRating rating={3} />
                   </Link>
                 ))}
             </div>
