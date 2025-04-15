@@ -10,6 +10,7 @@ import { TeamsSection } from "@/components/draft/TeamsSection";
 import { TeamType } from "@/types/events";
 import { ArrowLeftIcon } from "lucide-react";
 import { PlayersList } from "@/components/draft/PlayersList";
+import { draftPlayer } from "@/api/team";
 
 type DraftType = "alternating" | "snake";
 
@@ -19,6 +20,7 @@ export default function TeamDraftPage() {
   const [draftType, setDraftType] = useState<DraftType>("alternating");
   const [teamEditing, setTeamEditing] = useState("");
   const [teams, setTeams] = useState<TeamType[]>();
+  const [isDrafting, setIsDrafting] = useState(false);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: [`event-${id}`],
@@ -70,7 +72,20 @@ export default function TeamDraftPage() {
     setTeams(teamList);
   }
 
-  function handlePlayerDraft(playerId: string) {}
+  async function handlePlayerDraft(teamId: string, playerId: string) {
+    setIsDrafting(true);
+    const { data: updatedTeam, error } = await draftPlayer({
+      teamId,
+      playerId,
+      eventId: event.id,
+    });
+    if (!error) {
+      setTeams((prev) =>
+        prev.map((team) => (team.id === teamId ? updatedTeam : team)),
+      );
+    }
+    setIsDrafting(false);
+  }
 
   const event = data?.data;
 
@@ -101,7 +116,7 @@ export default function TeamDraftPage() {
           <DraftControls
             draftType={draftType}
             setDraftType={handleChangeDraftType}
-            draftStarted={true}
+            draftStarted={teams.some((team) => team.players.length > 0)}
             draftRound={1}
             handleUndo={() => {}}
             draftHistory={[]}
@@ -124,10 +139,14 @@ export default function TeamDraftPage() {
             {/* Available players */}
             <div className="flex h-full flex-col lg:col-span-1 lg:col-start-3">
               <PlayersList
-                availablePlayers={event.players}
                 teams={teams}
-                currentTeam={0}
-                isTeamSetupComplete={false}
+                isDrafting={isDrafting}
+                availablePlayers={event.players}
+                currentTeam={
+                  teams[0].players.length > teams[1].players.length
+                    ? teams[1]
+                    : teams[0]
+                }
                 handlePlayerDraft={handlePlayerDraft}
               />
             </div>

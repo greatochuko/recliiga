@@ -9,6 +9,7 @@ import { Edit2 } from "lucide-react";
 import { JerseyIcon, PlayerRating } from "./DraftUIComponents";
 import { TeamType } from "@/types/events";
 import { updateTeam } from "@/api/team";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TeamColumnProps {
   team: TeamType;
@@ -43,6 +44,8 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
   cancelTeamEditing,
   refetchEvent,
 }) => {
+  const { user } = useAuth();
+
   const [loading, setLoading] = useState(false);
 
   async function handleUpdateTeam() {
@@ -86,7 +89,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
               </div>
             )}
           </div>
-          {!isEditingTeam && (
+          {!isEditingTeam && team.captain?.id === user.id && (
             <Button
               variant="ghost"
               size="sm"

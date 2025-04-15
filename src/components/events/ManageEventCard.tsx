@@ -98,6 +98,7 @@ export default function ManageEventCard({
                   variant="outline"
                   size="sm"
                   className="flex items-center"
+                  disabled
                 >
                   <UserPlus className="mr-2 h-4 w-4" />
                   Select Captains

@@ -84,7 +84,11 @@ export const EventActions: React.FC<EventActionsProps> = ({
               <button
                 className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
                 onClick={handleDecline}
-                disabled={loading || attendanceStatus === "not-attending"}
+                disabled={
+                  event.teams.some((team) => team.captain?.id === user.id) ||
+                  loading ||
+                  attendanceStatus === "not-attending"
+                }
               >
                 Decline
               </button>
