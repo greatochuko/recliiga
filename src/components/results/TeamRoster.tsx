@@ -1,30 +1,47 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Crown } from "lucide-react";
-import { Team } from "./types";
+import { TeamType } from "@/types/events";
 
 interface TeamRosterProps {
-  team: Team;
-  attendance: Record<string, boolean>;
-  onAttendanceChange: (attendance: Record<string, boolean>) => void;
+  team: TeamType;
+  attendingPlayers: string[];
+  setAttendingPlayers: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function TeamRoster({
   team,
-  attendance,
-  onAttendanceChange,
+  attendingPlayers: attendance,
+  setAttendingPlayers: setAttendance,
 }: TeamRosterProps) {
   const allChecked =
-    team.players.every((player) => attendance[player.name]) &&
-    attendance[team.captain.name];
+    team.players.every((player) => attendance.includes(player.id)) &&
+    attendance.includes(team.captain.id);
 
-  const handleSelectAll = (checked: boolean) => {
-    const newAttendance: Record<string, boolean> = {};
-    newAttendance[team.captain.name] = checked;
-    team.players.forEach((player) => {
-      newAttendance[player.name] = checked;
-    });
-    onAttendanceChange(newAttendance);
+  const toggleAttendance = (playerId: string) => {
+    if (attendance.includes(playerId)) {
+      setAttendance((prev) => prev.filter((att) => att === playerId));
+    } else {
+      setAttendance((prev) => [...prev, playerId]);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    const allPlayerIds = [
+      team.captain.id,
+      ...team.players.map((player) => player.id),
+    ];
+
+    const allSelected = allPlayerIds.every((id) => attendance.includes(id));
+
+    if (allSelected) {
+      setAttendance((prev) => prev.filter((id) => !allPlayerIds.includes(id)));
+    } else {
+      setAttendance((prev) => [
+        ...prev,
+        ...allPlayerIds.filter((id) => !prev.includes(id)),
+      ]);
+    }
   };
 
   return (
@@ -43,7 +60,7 @@ export function TeamRoster({
           <Checkbox
             id={`select-all-${team.name}`}
             checked={allChecked}
-            onCheckedChange={handleSelectAll}
+            onCheckedChange={toggleSelectAll}
             aria-label={`Select all players for ${team.name}`}
           />
         </div>
@@ -51,9 +68,12 @@ export function TeamRoster({
       <div className="space-y-4">
         <div className="flex items-center gap-4 rounded-lg bg-gray-100 p-2">
           <Avatar className="h-12 w-12" style={{ backgroundColor: team.color }}>
-            <AvatarImage src={team.captain.avatar} alt={team.captain.name} />
+            <AvatarImage
+              src={team.captain.avatar_url}
+              alt={team.captain.full_name}
+            />
             <AvatarFallback>
-              {team.captain.name
+              {team.captain.full_name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
@@ -61,48 +81,40 @@ export function TeamRoster({
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{team.captain.name}</span>
-              <Crown className="text-accent-orange h-4 w-4" />
+              <span className="font-semibold">{team.captain.full_name}</span>
+              <Crown className="h-4 w-4 text-accent-orange" />
             </div>
             <span className="text-sm text-muted-foreground">
-              {team.captain.position}
+              {team.captain.positions[0]}
             </span>
           </div>
           <Checkbox
-            checked={attendance[team.captain.name] || false}
-            onCheckedChange={(checked) =>
-              onAttendanceChange({
-                ...attendance,
-                [team.captain.name]: checked as boolean,
-              })
-            }
-            aria-label={`Mark ${team.captain.name} as present`}
+            checked={attendance.includes(team.captain.id)}
+            onCheckedChange={() => toggleAttendance(team.captain.id)}
+            aria-label={`Mark ${team.captain.full_name} as present`}
           />
         </div>
         {team.players.map((player) => (
           <div key={player.id} className="flex items-center gap-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={player.avatar} alt={player.name} />
+              <AvatarImage src={player.avatar_url} alt={player.full_name} />
               <AvatarFallback>
-                {player.name
+                {player.full_name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <span className="font-semibold">{player.name}</span>
-              <p className="text-sm text-muted-foreground">{player.position}</p>
+              <span className="font-semibold">{player.full_name}</span>
+              <p className="text-sm text-muted-foreground">
+                {player.positions[0]}
+              </p>
             </div>
             <Checkbox
-              checked={attendance[player.name] || false}
-              onCheckedChange={(checked) =>
-                onAttendanceChange({
-                  ...attendance,
-                  [player.name]: checked as boolean,
-                })
-              }
-              aria-label={`Mark ${player.name} as present`}
+              checked={attendance.includes(player.id)}
+              onCheckedChange={() => toggleAttendance(player.id)}
+              aria-label={`Mark ${player.full_name} as present`}
             />
           </div>
         ))}

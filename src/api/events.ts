@@ -75,3 +75,25 @@ export async function deleteEvent(eventId: string) {
   });
   return data;
 }
+
+type ResultDataType = {
+  eventId: string;
+  team1Score: number;
+  team2Score: number;
+  attendingPlayers: string[];
+  leagueId: string;
+};
+
+export async function submitResult({
+  eventId,
+  team1Score,
+  team2Score,
+  attendingPlayers,
+  leagueId,
+}: ResultDataType) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/submitResult`, {
+    method: "POST",
+    body: { team1Score, team2Score, attendingPlayers, leagueId },
+  });
+  return data;
+}
