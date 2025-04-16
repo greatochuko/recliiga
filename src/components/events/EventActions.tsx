@@ -54,6 +54,10 @@ export const EventActions: React.FC<EventActionsProps> = ({
     setIsEditing(!isEditing);
   };
 
+  const teamCaptained = event.teams.find(
+    (team) => team.captain?.id === user.id,
+  );
+
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       <Link
@@ -115,7 +119,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
             ))}
         </div>
       )}
-      {event.teams.some((team) => team.captain?.id === user.id) && (
+      {teamCaptained && !teamCaptained?.draftCompleted && (
         <div className="flex w-full justify-end">
           <Link
             to={`/events/${event.id}/team-draft`}

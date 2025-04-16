@@ -38,9 +38,7 @@ export default function EventCard({
           attendanceStatus={attendanceStatus}
           isEditing={isEditing}
         />
-
         <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />
-
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
             <span className="font-bold text-accent-orange">
@@ -48,7 +46,6 @@ export default function EventCard({
             </span>
           </div>
         )}
-
         <EventActions
           event={event}
           isPastEvent={isPastEvent}

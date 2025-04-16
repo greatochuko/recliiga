@@ -11,6 +11,7 @@ import FullScreenLoader from "@/components/FullScreenLoader";
 import { format } from "date-fns";
 import CountdownClock from "@/components/events/CountdownClock";
 import TeamInfo from "@/components/events/TeamInfo";
+import { JerseyIcon } from "@/components/draft/DraftUIComponents";
 
 export default function EventDetails() {
   const navigate = useNavigate();
@@ -78,19 +79,19 @@ export default function EventDetails() {
           Previous
         </Button>
       </div>
-      <div className="mx-auto p-6">
+      <div className="mx-auto p-4 sm:p-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-bold">
               Upcoming Match
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 sm:p-6">
             <div className="space-y-8">
               <div className="mb-8 flex items-center justify-center gap-8">
                 <TeamInfo team={event.teams[0]} />
                 <div className="flex flex-1 flex-col items-center justify-center">
-                  <div className="mb-4 flex flex-col items-center text-center">
+                  <div className="mb-4 hidden flex-col items-center text-center sm:flex">
                     <span className="text-xs text-gray-500">
                       {new Date(event.startTime).toLocaleDateString("en-US", {
                         month: "short",
@@ -113,6 +114,23 @@ export default function EventDetails() {
                 <TeamInfo team={event.teams[1]} />
               </div>
 
+              <div className="flex flex-col items-center text-center sm:hidden">
+                <span className="text-xs text-gray-500">
+                  {new Date(event.startTime).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "2-digit",
+                    year: "numeric",
+                  })}
+                </span>
+                <span className="text-xs text-gray-500">{event.location}</span>
+                <span className="text-xs text-gray-500">
+                  {format(event.startTime, "h:mm a")}
+                </span>
+                <span className="text-xs font-bold text-accent-orange">
+                  {event.league.name}
+                </span>
+              </div>
+
               {rsvpDeadline.isPassed ? (
                 <>
                   <div className="text-center">
@@ -124,22 +142,6 @@ export default function EventDetails() {
                       Join us for an exciting match!
                     </p>
                   </div>
-
-                  <h2 className="mb-4 text-2xl font-bold">Drafted Teams</h2>
-                  <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
-                    {/* <AttendingList
-                      players={mockEventData.team1.players}
-                      teamColor={mockEventData.team1.color}
-                      teamName={mockEventData.team1.name}
-                      uniformColor={mockEventData.team1.uniformColor}
-                    />
-                    <AttendingList
-                      players={mockEventData.team2.players}
-                      teamColor={mockEventData.team2.color}
-                      teamName={mockEventData.team2.name}
-                      uniformColor={mockEventData.team2.uniformColor}
-                    /> */}
-                  </div>
                 </>
               ) : (
                 <>
@@ -147,24 +149,29 @@ export default function EventDetails() {
                     <h2 className="text-xl font-bold">RSVP Countdown</h2>
                     <CountdownClock deadline={rsvpDeadline.time} />
                   </div>
-
-                  <div className="border-t pt-8">
-                    <h3 className="mb-4 text-lg font-semibold">
-                      Attending Players ({event.players.length})
-                    </h3>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                      {event.players.map((player) => (
+                </>
+              )}
+              {event.teams.every((team) => team.draftCompleted) ? (
+                <div>
+                  <h3 className="mb-4 text-xl font-semibold">Drafted Teams</h3>
+                  <div className="flex justify-between gap-4 border-t pt-6">
+                    {event.teams.map((team) => (
+                      <div className="flex flex-1 flex-col gap-4">
+                        <h4 className="flex items-center gap-2 font-medium">
+                          {team.name}{" "}
+                          <JerseyIcon color={team.color} size={24} />
+                        </h4>
                         <div
-                          key={player.id}
-                          className="flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                          key={team.captain?.id}
+                          className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
                         >
                           <Avatar className="h-10 w-10">
                             <AvatarImage
-                              src={player.avatar_url}
-                              alt={player.full_name}
+                              src={team.captain?.avatar_url}
+                              alt={team.captain?.full_name}
                             />
                             <AvatarFallback>
-                              {player.full_name
+                              {team.captain?.full_name
                                 .split(" ")
                                 .map((n) => n[0])
                                 .join("")}
@@ -172,35 +179,111 @@ export default function EventDetails() {
                           </Avatar>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1">
-                              <span className="truncate font-semibold">
-                                {player.full_name}
-                              </span>
-                              {event.teams.some(
-                                (team) => team.captain?.id === player.id,
-                              ) && (
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="h-4 w-4 text-accent-orange"
-                                >
-                                  <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
-                                </svg>
-                              )}
+                              <p className="truncate font-semibold">
+                                {team.captain?.full_name}
+                              </p>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="h-4 w-4 text-accent-orange"
+                              >
+                                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                              </svg>
                             </div>
                             <span className="truncate text-sm text-muted-foreground">
-                              {player.positions[0] || "Unassigned"}
+                              {team.captain?.positions[0] || "Unassigned"}
                             </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                        {team.players.map((player) => (
+                          <div
+                            key={player.id}
+                            className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
+                          >
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage
+                                src={player.avatar_url}
+                                alt={player.full_name}
+                              />
+                              <AvatarFallback>
+                                {player.full_name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-semibold">
+                                {player.full_name}
+                              </p>
+                              <span className="truncate text-sm text-muted-foreground">
+                                {player.positions[0] || "Unassigned"}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
                   </div>
-                </>
+                </div>
+              ) : (
+                <div className="border-t pt-8">
+                  <h3 className="mb-4 text-lg font-semibold">
+                    Attending Players ({event.players.length})
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    {event.players.map((player) => (
+                      <div
+                        key={player.id}
+                        className="flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                      >
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={player.avatar_url}
+                            alt={player.full_name}
+                          />
+                          <AvatarFallback>
+                            {player.full_name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1">
+                            <span className="truncate font-semibold">
+                              {player.full_name}
+                            </span>
+                            {event.teams.some(
+                              (team) => team.captain?.id === player.id,
+                            ) && (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="h-4 w-4 text-accent-orange"
+                              >
+                                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                              </svg>
+                            )}
+                          </div>
+                          <span className="truncate text-sm text-muted-foreground">
+                            {player.positions[0] || "Unassigned"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </CardContent>
