@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Team } from "./types";
+import { TeamType } from "@/types/events";
 
 interface ScoreInputProps {
-  team: Team;
+  team: TeamType;
   score: string;
   setScore: (score: string) => void;
 }
@@ -31,8 +31,11 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
 
   return (
     <div className="flex flex-1 flex-col items-center space-y-2">
-      <Avatar className="h-16 w-16" style={{ backgroundColor: team.color }}>
-        <AvatarImage src={team.avatar} alt={team.name} />
+      <Avatar
+        className="h-16 w-16 border-2"
+        style={{ borderColor: team.color }}
+      >
+        <AvatarImage src={team.logo} alt={team.name} />
         <AvatarFallback>
           {team.name
             .split(" ")

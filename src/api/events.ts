@@ -76,7 +76,7 @@ export async function deleteEvent(eventId: string) {
   return data;
 }
 
-type ResultDataType = {
+type CreateResultDataType = {
   eventId: string;
   team1Score: number;
   team2Score: number;
@@ -90,10 +90,28 @@ export async function submitResult({
   team2Score,
   attendingPlayers,
   leagueId,
-}: ResultDataType) {
-  const data = await fetchApi<EventType>(`/event/${eventId}/submitResult`, {
+}: CreateResultDataType) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/result`, {
     method: "POST",
     body: { team1Score, team2Score, attendingPlayers, leagueId },
+  });
+  return data;
+}
+
+type UpdateResultDataType = Omit<CreateResultDataType, "leagueId"> & {
+  resultId: string;
+};
+
+export async function updateResult({
+  eventId,
+  team1Score,
+  team2Score,
+  attendingPlayers,
+  resultId,
+}: UpdateResultDataType) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/result`, {
+    method: "PATCH",
+    body: { team1Score, team2Score, attendingPlayers, resultId },
   });
   return data;
 }

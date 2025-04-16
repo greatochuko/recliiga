@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScoreInput } from "@/components/results/ScoreInput";
 import { EventHeader } from "@/components/results/EventHeader";
@@ -8,12 +6,11 @@ import { TeamsAttendance } from "@/components/results/TeamsAttendance";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockTeamData } from "@/components/results/mockData";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchEventById } from "@/api/events";
 import FullScreenLoader from "@/components/FullScreenLoader";
-import { submitResult } from "@/api/events";
+import { submitResult, updateResult } from "@/api/events";
 import { toast } from "sonner";
 
 export default function EditResults() {
@@ -21,18 +18,30 @@ export default function EditResults() {
   const [team2Score, setTeam2Score] = useState("");
   const [attendingPlayers, setAttendingPlayers] = useState<string[]>([]);
   const [resultLoading, setResultLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { eventId } = useParams();
   const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: [`event-${eventId}`],
     queryFn: () => fetchEventById(eventId),
   });
 
   const event = data?.data;
 
-  if (isLoading) {
+  useEffect(() => {
+    if (event && event.result) {
+      setTeam1Score(event.result.team1Score.toString());
+      setTeam2Score(event.result.team2Score.toString());
+      setAttendingPlayers(
+        event.result.attendingPlayers.map((player) => player.id),
+      );
+      setLoading(false);
+    }
+  }, [event]);
+
+  if (loading) {
     return <FullScreenLoader />;
   }
 
@@ -57,25 +66,41 @@ export default function EditResults() {
   let alertMessage = "";
   if (team1Score && team2Score) {
     if (team1Score > team2Score) {
-      alertMessage = `${mockTeamData.team1.name} beat ${mockTeamData.team2.name} ${team1Score}-${team2Score}`;
+      alertMessage = `${event.teams[0].name} beat ${event.teams[1].name} ${team1Score}-${team2Score}`;
     } else if (team2Score > team1Score) {
-      alertMessage = `${mockTeamData.team2.name} beat ${mockTeamData.team1.name} ${team2Score}-${team1Score}`;
+      alertMessage = `${event.teams[1].name} beat ${event.teams[0].name} ${team2Score}-${team1Score}`;
     } else {
-      alertMessage = `${mockTeamData.team1.name} and ${mockTeamData.team2.name} tied ${team1Score}-${team2Score}`;
+      alertMessage = `${event.teams[0].name} and ${event.teams[1].name} tied ${team1Score}-${team2Score}`;
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setResultLoading(true);
-    const { error } = await submitResult({
-      eventId: event.id,
-      team1Score: Number(team1Score),
-      team2Score: Number(team2Score),
-      attendingPlayers: attendingPlayers,
-      leagueId: event.league.id,
-    });
-    if (error) {
+
+    let hasError = false;
+
+    if (event.resultsEntered) {
+      const { error } = await updateResult({
+        eventId: event.id,
+        team1Score: Number(team1Score),
+        team2Score: Number(team2Score),
+        attendingPlayers: attendingPlayers,
+        resultId: event.result.id,
+      });
+      hasError = !!error;
+    } else {
+      const { error } = await submitResult({
+        eventId: event.id,
+        team1Score: Number(team1Score),
+        team2Score: Number(team2Score),
+        attendingPlayers: attendingPlayers,
+        leagueId: event.league.id,
+      });
+      hasError = !!error;
+    }
+
+    if (hasError) {
       toast.error("An error occured submitting scores");
     } else {
       navigate("/manage-events");
@@ -95,7 +120,7 @@ export default function EditResults() {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="mb-8 flex items-center gap-8">
               <ScoreInput
-                team={mockTeamData.team1}
+                team={event.teams[0]}
                 score={team1Score}
                 setScore={setTeam1Score}
               />
@@ -104,7 +129,7 @@ export default function EditResults() {
                 <span className="text-2xl font-bold">vs</span>
               </div>
               <ScoreInput
-                team={mockTeamData.team2}
+                team={event.teams[1]}
                 score={team2Score}
                 setScore={setTeam2Score}
               />
@@ -139,7 +164,13 @@ export default function EditResults() {
                 className="bg-accent-orange text-white hover:bg-[#E66900] disabled:bg-accent-orange/50"
                 disabled={resultLoading}
               >
-                {resultLoading ? "Submitting..." : "Submit Result"}
+                {event.resultsEntered
+                  ? resultLoading
+                    ? "Updating..."
+                    : "Update Result"
+                  : resultLoading
+                    ? "Submitting..."
+                    : "Submit Result"}
               </Button>
             </div>
           </form>

@@ -39,4 +39,15 @@ export interface EventType {
   creatorId: string;
   resultsEntered: boolean;
   players: UserType[];
+  result?: ResultType;
 }
+
+export type ResultType = {
+  id: string;
+  team1Score: number;
+  team2Score: number;
+  leagueId: string;
+  league: LeagueType;
+  attendingPlayers: UserType[];
+  events: Event[];
+};

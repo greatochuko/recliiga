@@ -114,7 +114,17 @@ export const EventsContent: React.FC = () => {
               )}
             </TabsContent>
             <TabsContent value="past">
-              {filteredEvents.past.length === 0 ? (
+              {error ? (
+                <div className="py-10 text-center text-gray-500">
+                  An error occurred while fetching events{" "}
+                  <button
+                    onClick={() => refetchEvents()}
+                    className="text-accent-orange hover:underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : filteredEvents.past.length === 0 ? (
                 <div className="py-10 text-center text-gray-500">
                   No past events found
                 </div>

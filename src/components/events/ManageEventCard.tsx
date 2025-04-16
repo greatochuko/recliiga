@@ -73,7 +73,7 @@ export default function ManageEventCard({
                     {team.name.split(" ").map((n) => n[0])}
                   </AvatarFallback>
                 </Avatar>
-                <span className="mt-2 text-sm font-semibold">{team.name}</span>
+                <span className="mt-2 text-sm font-semibold">team.name</span>
               </div>
               <span className="flex-1 text-center text-lg font-semibold last:hidden">
                 vs

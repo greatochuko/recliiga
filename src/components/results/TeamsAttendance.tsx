@@ -16,6 +16,7 @@ export function TeamsAttendance({
     <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
       {teams.map((team) => (
         <TeamRoster
+          key={team.id}
           team={team}
           attendingPlayers={attendingPlayers}
           setAttendingPlayers={setAttendingPlayers}

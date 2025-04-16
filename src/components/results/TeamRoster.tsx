@@ -20,7 +20,7 @@ export function TeamRoster({
 
   const toggleAttendance = (playerId: string) => {
     if (attendance.includes(playerId)) {
-      setAttendance((prev) => prev.filter((att) => att === playerId));
+      setAttendance((prev) => prev.filter((att) => att !== playerId));
     } else {
       setAttendance((prev) => [...prev, playerId]);
     }
