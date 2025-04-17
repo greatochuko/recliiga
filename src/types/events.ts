@@ -49,5 +49,17 @@ export type ResultType = {
   leagueId: string;
   league: LeagueType;
   attendingPlayers: UserType[];
-  events: Event[];
+  events: EventType[];
+};
+
+export type LeaderboardDataType = {
+  player: UserType;
+  gamesPlayed: number;
+  gamesWon: number;
+  gamesLost: number;
+  gamesTied: number;
+  gamesWonAsCaptain: number;
+  attendance: number;
+  nonAttendance: number;
+  points: number;
 };

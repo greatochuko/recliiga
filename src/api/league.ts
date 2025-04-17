@@ -1,4 +1,5 @@
 import { fetchApi } from "@/lib/utils";
+import { ResultType } from "@/types/events";
 import { LeagueType } from "@/types/league";
 
 export async function fetchLeaguesByUser(): Promise<{
@@ -60,4 +61,11 @@ export async function joinLeague(leagueCode: string) {
   });
 
   return data;
+}
+export async function fetchResultsByLeague(leagueId: string) {
+  if (!leagueId) {
+    return { data: [], error: "Invalid league ID" };
+  }
+  const data = await fetchApi<ResultType[]>(`/league/${leagueId}/results`);
+  return { data: data.data || [], error: data.error };
 }

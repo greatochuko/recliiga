@@ -1,5 +1,5 @@
 import { UserType } from "@/contexts/AuthContext";
-import { EventType } from "./events";
+import { EventType, ResultType } from "./events";
 
 export type League = {
   id: string;
@@ -33,4 +33,5 @@ export type LeagueType = {
   city: string;
   stats: LeagueStatType[];
   events: EventType[];
+  results: ResultType[];
 };

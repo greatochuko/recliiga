@@ -1,12 +1,25 @@
+import { fetchLeaguesByUser } from "@/api/league";
+import FullScreenLoader from "@/components/FullScreenLoader";
 import { ResultsContent } from "@/components/results/ResultsContent";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Results() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["leagues"],
+    queryFn: fetchLeaguesByUser,
+  });
+
+  if (isLoading || !data) {
+    return <FullScreenLoader />;
+  }
+
+  const leagues = data.leagues;
+
+  
+
   return (
-    <main className="flex-1 bg-background relative">
-      <h1 className="ml-14 text-2xl font-bold">Results</h1>
-      <div className="">
-        <ResultsContent />
-      </div>
+    <main className="mx-auto w-[90%]">
+      <ResultsContent leagues={leagues} />
     </main>
   );
 }
