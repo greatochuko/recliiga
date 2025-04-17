@@ -39,16 +39,8 @@ export type LeagueDataType = Omit<
 >;
 
 export async function createLeague(leagueData: LeagueDataType) {
-  const leagueDataBody = {
-    ...leagueData,
-    stats: leagueData.stats.map((stat) => ({
-      name: stat.name,
-      abbr: stat.abbr,
-      points: stat.points,
-    })),
-  };
   const data = await fetchApi<LeagueType>("/league", {
-    body: leagueDataBody,
+    body: leagueData,
     method: "POST",
   });
   return data;

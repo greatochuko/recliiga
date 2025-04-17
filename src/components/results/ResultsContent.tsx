@@ -19,13 +19,19 @@ export const ResultsContent = ({ leagues }: { leagues: LeagueType[] }) => {
     queryFn: () => fetchResultsByLeague(selectedLeague.id),
   });
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <FullScreenLoader />;
   }
 
-  const results = data.data;
+  if (!data) {
+    <div className="flex h-screen items-center justify-center">
+      <p className="text-gray-500">
+        You have not created or joined any leagues
+      </p>
+    </div>;
+  }
 
-  console.log(selectedLeague);
+  const results = data.data;
 
   return (
     <div className="flex flex-col gap-6">

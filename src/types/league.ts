@@ -14,9 +14,14 @@ export type League = {
 };
 
 export type LeagueStatType = {
-  name: string;
+  name:
+    | "Win"
+    | "Loss"
+    | "Tie"
+    | "Captain Win"
+    | "Attendance"
+    | "Non-Attendance";
   abbr: string;
-  isEditing: boolean;
   points: number;
 };
 

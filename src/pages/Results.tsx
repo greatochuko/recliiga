@@ -9,13 +9,19 @@ export default function Results() {
     queryFn: fetchLeaguesByUser,
   });
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <FullScreenLoader />;
   }
 
-  const leagues = data.leagues;
+  if (!data) {
+    <div className="flex h-screen items-center justify-center">
+      <p className="text-gray-500">
+        You have not created or joined any leagues
+      </p>
+    </div>;
+  }
 
-  
+  const leagues = data.leagues;
 
   return (
     <main className="mx-auto w-[90%]">

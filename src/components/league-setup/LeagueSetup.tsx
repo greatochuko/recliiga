@@ -24,18 +24,19 @@ const initialLeagueData: LeagueDataType = {
   date: new Date().toISOString().split("T")[0],
   image: "",
   stats: [
-    { name: "Win", abbr: "W", isEditing: false, points: 3 },
-    { name: "Loss", abbr: "L", isEditing: false, points: 0 },
-    { name: "Tie", abbr: "T", isEditing: false, points: 1.5 },
-    { name: "Captain Win", abbr: "CW", isEditing: false, points: 5 },
-    { name: "Attendance", abbr: "ATT", isEditing: false, points: 1 },
-    { name: "Non-Attendance", abbr: "N-ATT", isEditing: false, points: -1 },
+    { name: "Win", abbr: "W", points: 3 },
+    { name: "Loss", abbr: "L", points: 0 },
+    { name: "Tie", abbr: "T", points: 1.5 },
+    { name: "Captain Win", abbr: "CW", points: 5 },
+    { name: "Attendance", abbr: "ATT", points: 1 },
+    { name: "Non-Attendance", abbr: "N-ATT", points: -1 },
   ],
   events: [],
+  results: [],
 };
 
 export function LeagueSetup() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [loading, setLoading] = useState(false);
   const [leagueData, setLeagueData] = useState(initialLeagueData);
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Minus, Edit, Save, Trash2 } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,6 @@ export function LeaderboardStep({
   updateLeagueData: (newData: Partial<LeagueDataType>) => void;
 }) {
   const [tieLinkedToWin, setTieLinkedToWin] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
 
   const handlePointChange = (statName: string, value: number) => {
     updateLeagueData({
@@ -27,55 +26,6 @@ export function LeaderboardStep({
     }
   };
 
-  const handleStatNameChange = (index: number, newName: string) => {
-    const newStats = leagueData.stats.map((stat, i) =>
-      i === index ? { ...stat, name: newName } : stat,
-    );
-    updateLeagueData({ stats: newStats });
-  };
-
-  const handleStatAbbrChange = (index: number, newAbbr: string) => {
-    const newStats = leagueData.stats.map((stat, i) =>
-      i === index ? { ...stat, abbr: newAbbr } : stat,
-    );
-    updateLeagueData({ stats: newStats });
-  };
-
-  const handleDeleteStat = (index: number) => {
-    const updatedStats = leagueData.stats.filter((_, i) => i !== index);
-
-    updateLeagueData({
-      stats: updatedStats,
-    });
-  };
-
-  const handleAddStat = () => {
-    const newStatName = `New Stat ${leagueData.stats.length + 1}`;
-    updateLeagueData({
-      stats: [
-        ...leagueData.stats,
-        { name: newStatName, abbr: "NS", isEditing: true, points: 0 },
-      ],
-    });
-    setIsEditing(true);
-  };
-
-  const toggleEditing = () => {
-    setIsEditing(!isEditing);
-    const newStats = leagueData.stats.map((stat) => ({
-      ...stat,
-      isEditing: !isEditing,
-    }));
-    updateLeagueData({ stats: newStats });
-  };
-
-  const toggleStatEditing = (index: number) => {
-    const newStats = leagueData.stats.map((stat, i) =>
-      i === index ? { ...stat, isEditing: !stat.isEditing } : stat,
-    );
-    updateLeagueData({ stats: newStats });
-  };
-
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -84,19 +34,6 @@ export function LeaderboardStep({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 flex justify-end">
-          <Button
-            onClick={toggleEditing}
-            className="border border-accent-orange bg-white text-accent-orange hover:bg-accent-orange hover:text-white"
-          >
-            {isEditing ? (
-              <Save className="mr-2 h-4 w-4" />
-            ) : (
-              <Edit className="mr-2 h-4 w-4" />
-            )}
-            {isEditing ? "Save Changes" : "Manual Edit"}
-          </Button>
-        </div>
         <div className="mb-4 grid grid-cols-4 gap-4 text-sm font-semibold text-gray-600">
           <div className="text-center">Statistic</div>
           <div className="text-center">Abbreviation</div>
@@ -111,114 +48,43 @@ export function LeaderboardStep({
               index !== leagueData.stats.length - 1 ? "border-b" : ""
             }`}
           >
+            <p className="text-center font-semibold">{stat.name}</p>
+            <p className="text-center">{stat.abbr}</p>
             <div className="text-center font-semibold">
-              {stat.isEditing ? (
-                <Input
-                  value={stat.name}
-                  onChange={(e) => handleStatNameChange(index, e.target.value)}
-                  className="w-full text-center"
-                />
-              ) : (
-                stat.name
-              )}
-            </div>
-            <div className="text-center">
-              {stat.isEditing ? (
-                <Input
-                  value={stat.abbr}
-                  onChange={(e) => handleStatAbbrChange(index, e.target.value)}
-                  className="w-full text-center"
-                />
-              ) : (
-                stat.abbr
-              )}
-            </div>
-            <div className="text-center font-semibold">
-              {stat.isEditing ? (
-                <Input
-                  type="number"
-                  value={
-                    stat.name === "Tie" && tieLinkedToWin
-                      ? (
-                          leagueData.stats.find((stat) => stat.name === "Win")
-                            .points / 2
-                        ).toFixed(1)
-                      : stat.points
-                  }
-                  onChange={(e) =>
-                    handlePointChange(stat.name, parseFloat(e.target.value))
-                  }
-                  className="mx-auto w-16 text-center"
-                />
-              ) : stat.name === "Tie" && tieLinkedToWin ? (
-                (
-                  leagueData.stats.find((stat) => stat.name === "Win").points /
-                  2
-                ).toFixed(1)
-              ) : (
-                stat.points
-              )}
+              <Input
+                type="number"
+                value={
+                  stat.name === "Tie" && tieLinkedToWin
+                    ? (
+                        leagueData.stats.find((stat) => stat.name === "Win")
+                          .points / 2
+                      ).toFixed(1)
+                    : stat.points
+                }
+                onChange={(e) =>
+                  handlePointChange(stat.name, parseFloat(e.target.value))
+                }
+                className="mx-auto w-16 text-center"
+              />
             </div>
             <div className="flex items-center justify-center space-x-2">
-              {stat.isEditing ? (
-                <>
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => handleDeleteStat(index)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => toggleStatEditing(index)}
-                  >
-                    <Save className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      handlePointChange(stat.name, stat.points - 1)
-                    }
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      handlePointChange(stat.name, stat.points + 1)
-                    }
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => toggleStatEditing(index)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </>
-              )}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handlePointChange(stat.name, stat.points - 1)}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handlePointChange(stat.name, stat.points + 1)}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         ))}
-
-        <div className="mt-4">
-          <Button
-            onClick={handleAddStat}
-            className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Statistic
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );

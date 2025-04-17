@@ -13,7 +13,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { LeagueType } from "@/types/league";
-import { columnExplanations } from "./data";
 import { LeaderboardDataType, ResultType } from "@/types/events";
 import LeaderboradDataRow from "./LeaderboradDataRow";
 
@@ -80,7 +79,15 @@ function getLeaderBoardData(league: LeagueType, results: ResultType[]) {
 
       const gamesTied = gamesPlayed - gamesWon - gamesLost;
 
-      const points = gamesWon * 3 + gamesTied * 1; // Customize point rules as needed
+      const points =
+        gamesWon * league.stats.find((stat) => stat.name === "Win").points +
+        gamesTied * league.stats.find((stat) => stat.name === "Tie").points +
+        gamesWonAsCaptain *
+          league.stats.find((stat) => stat.name === "Captain Win").points +
+        attendance *
+          league.stats.find((stat) => stat.name === "Attendance").points +
+        nonAttendance *
+          league.stats.find((stat) => stat.name === "Non-Attendance").points;
 
       return {
         player,
@@ -105,6 +112,20 @@ export const ResultsLeaderboard = ({
 }: ResultsLeaderboardProps) => {
   const leaderboardData = getLeaderBoardData(league, results);
 
+  const tableHeaders = [
+    {
+      abbr: "GP",
+      name: "Games Played",
+      points: "",
+    },
+    ...league.stats,
+    {
+      abbr: "PTS",
+      name: "Total Points",
+      points: "",
+    },
+  ];
+
   return (
     <div>
       <h2 className="mb-4 text-2xl font-bold">Results Leaderboard</h2>
@@ -116,28 +137,28 @@ export const ResultsLeaderboard = ({
                 <TableRow>
                   <TableHead className="w-16 text-center">Rank</TableHead>
                   <TableHead className="w-48 min-w-36">Name</TableHead>
-                  {Object.entries(columnExplanations).map(
-                    ([abbr, explanation]) => (
-                      <TableHead
-                        key={abbr}
-                        className="relative w-16 whitespace-nowrap text-center"
-                      >
-                        <Tooltip>
-                          <TooltipTrigger className="w-full cursor-help">
-                            {abbr}
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="top"
-                            align="center"
-                            className="z-50"
-                            sideOffset={5}
-                          >
-                            <p>{explanation}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TableHead>
-                    ),
-                  )}
+                  {tableHeaders.map((stat) => (
+                    <TableHead
+                      key={stat.abbr}
+                      className="relative w-16 whitespace-nowrap text-center"
+                    >
+                      <Tooltip>
+                        <TooltipTrigger className="w-full cursor-help">
+                          {stat.abbr}
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          align="center"
+                          className="z-50"
+                          sideOffset={5}
+                        >
+                          <p>
+                            {stat.name} {stat.points && `(${stat.points})`}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
