@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function Results() {
   const { data, isLoading } = useQuery({
-    queryKey: ["leagues"],
+    queryKey: ["leagues-result"],
     queryFn: fetchLeaguesByUser,
   });
 
@@ -13,19 +13,17 @@ export default function Results() {
     return <FullScreenLoader />;
   }
 
-  if (!data) {
-    <div className="flex h-screen items-center justify-center">
-      <p className="text-gray-500">
-        You have not created or joined any leagues
-      </p>
-    </div>;
+  const leagues = data?.leagues;
+
+  if (!leagues.length) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <p className="text-gray-500">
+          You have not created or joined any leagues
+        </p>
+      </div>
+    );
   }
 
-  const leagues = data.leagues;
-
-  return (
-    <main className="mx-auto w-[90%]">
-      <ResultsContent leagues={leagues} />
-    </main>
-  );
+  return <ResultsContent leagues={leagues} />;
 }

@@ -66,8 +66,8 @@ export default function EventDetails() {
   }
 
   return (
-    <main className="relative flex-1 bg-background">
-      <div className="flex items-center justify-between px-4 pl-14">
+    <main className="relative flex flex-1 flex-col gap-4 bg-background sm:gap-6">
+      <div className="flex items-center justify-between pl-8">
         <h1 className="text-2xl font-bold">Event Details</h1>
         <Button
           variant="link"
@@ -79,7 +79,7 @@ export default function EventDetails() {
           Previous
         </Button>
       </div>
-      <div className="mx-auto p-4 sm:p-6">
+      <div className="mx-auto w-full">
         <Card>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-bold">

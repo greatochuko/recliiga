@@ -15,7 +15,7 @@ export const ResultsContent = ({ leagues }: { leagues: LeagueType[] }) => {
   );
 
   const { data, isLoading } = useQuery({
-    queryKey: [`results-${selectedLeague.id}`],
+    queryKey: [`results-${selectedLeague?.id}`],
     queryFn: () => fetchResultsByLeague(selectedLeague.id),
   });
 
@@ -24,17 +24,19 @@ export const ResultsContent = ({ leagues }: { leagues: LeagueType[] }) => {
   }
 
   if (!data) {
-    <div className="flex h-screen items-center justify-center">
-      <p className="text-gray-500">
-        You have not created or joined any leagues
-      </p>
-    </div>;
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <p className="text-gray-500">
+          You have not created or joined any leagues
+        </p>
+      </div>
+    );
   }
 
   const results = data.data;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flexflex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="ml-6 text-2xl font-bold">Results</h1>
         <LeagueSelector

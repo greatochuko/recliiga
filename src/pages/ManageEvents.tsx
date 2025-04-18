@@ -7,11 +7,9 @@ const queryClient = new QueryClient();
 export default function ManageEvents() {
   return (
     <QueryClientProvider client={queryClient}>
-      <main className="flex-1 bg-background relative">
+      <main className="relative flex-1 bg-background">
         <h1 className="ml-14 text-2xl font-bold">Manage Events</h1>
-        <div className=" px-6">
-          <EventsContent />
-        </div>
+        <EventsContent />
       </main>
     </QueryClientProvider>
   );

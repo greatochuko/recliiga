@@ -76,7 +76,7 @@ export function UserMenu() {
               className="flex cursor-pointer items-center gap-2"
             >
               <User className="h-4 w-4" />
-              <span>Edit Profile</span>
+              <span>My Profile</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -154,7 +154,7 @@ export function UserMenu() {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
               Are you sure you want to log out of your account?
-              <div className="text-accent-orange mt-2">
+              <div className="mt-2 text-accent-orange">
                 You will need to log in again to access your account.
               </div>
             </AlertDialogDescription>
@@ -165,7 +165,7 @@ export function UserMenu() {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
-              className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+              className="bg-accent-orange text-white hover:bg-accent-orange/90"
             >
               Logout
             </AlertDialogAction>

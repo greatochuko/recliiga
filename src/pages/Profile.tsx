@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 
 import { updateUser } from "@/api/user";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 interface ProfileFormData {
   full_name: string;
@@ -58,88 +58,44 @@ export default function Profile() {
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    console.log(event.target.files);
     return;
-
-    const file = event.target.files?.[0];
-    if (!file || !user) return;
-
-    try {
-      setLoading(true);
-      const fileExt = file.name.split(".").pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(filePath);
-
-      setFormData((prev) => ({ ...prev, avatar_url: publicUrl }));
-      toast.success("Profile picture updated");
-    } catch (error) {
-      toast.error("Error uploading image");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleFormChange = (key: keyof ProfileFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  // if (loading) {
-  //   return (
-  //
-  //       <div className="min-h-screen flex w-full">
-  //
-  //         <main className="flex-1 bg-background relative">
-  //
-  //
-  //             <h1 className="ml-4 text-2xl font-bold">Profile</h1>
-  //           </div>
-  //           <div className="flex-1 flex items-center h-full justify-center">
-  //             <div className="animate-pulse">Loading...</div>
-  //           </div>
-  //         </main>
-  //       </div>
-  //
-  //   );
-  // }
+  if (loading) {
+    return <FullScreenLoader />;
+  }
 
   return (
-    <main className="flex-1 bg-background relative">
-      <h1 className="ml-14 text-2xl font-bold">Profile</h1>
-      <div className="">
-        <div className="flex-1 overflow-auto bg-white p-8">
-          <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-sm border">
-            <div className="p-6">
-              <ProfileHeader
-                isEditing={isEditing}
-                onEdit={handleEditToggle}
-                onClose={handleClose}
-                loading={loading}
-              />
-              <ProfileAvatar
-                avatarUrl={formData.avatar_url}
-                fullName={formData.full_name}
-                isEditing={isEditing}
-                loading={loading}
-                onFileChange={handleFileChange}
-              />
-              <ProfileForm
-                formData={formData}
-                isEditing={isEditing}
-                loading={loading}
-                onChange={handleFormChange}
-              />
-            </div>
-          </div>
+    <main className="relative flex flex-1 flex-col gap-6 bg-background">
+      <h1 className="ml-8 text-2xl font-bold">Profile</h1>
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="p-6">
+          <ProfileHeader
+            isEditing={isEditing}
+            onEdit={handleEditToggle}
+            onClose={handleClose}
+            loading={loading}
+          />
+          <ProfileAvatar
+            avatarUrl={formData.avatar_url}
+            fullName={formData.full_name}
+            isEditing={isEditing}
+            loading={loading}
+            onFileChange={handleFileChange}
+          />
+          <ProfileForm
+            formData={formData}
+            isEditing={isEditing}
+            loading={loading}
+            onChange={handleFormChange}
+          />
         </div>
       </div>
     </main>

@@ -36,7 +36,7 @@ const initialLeagueData: LeagueDataType = {
 };
 
 export function LeagueSetup() {
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [leagueData, setLeagueData] = useState(initialLeagueData);
 
@@ -117,7 +117,7 @@ export function LeagueSetup() {
         </div>
       </div>
       <div className="w-full lg:w-3/4">
-        <h1 className="mb-6 text-3xl font-bold text-gray-800">League Setup</h1>
+        {/* <h1 className="mb-6 text-3xl font-bold text-gray-800">League Setup</h1> */}
 
         {currentStep === 1 && (
           <LeagueInfoStep

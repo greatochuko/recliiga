@@ -14,6 +14,7 @@ import EventCard from "../events/EventCard";
 import { fetchEventsByUser } from "@/api/events";
 import { getUpcomingEvents } from "@/lib/utils";
 import { fetchLeaguesByUser } from "@/api/league";
+import { useAuth } from "@/contexts/AuthContext";
 
 async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
   // Simulating different stats for different leagues
@@ -58,6 +59,7 @@ async function fetchPlayerStats(leagueId: string): Promise<PlayerStats> {
 const queryClient = new QueryClient();
 
 export default function PlayerDashboard() {
+  const { user } = useAuth();
   const [selectedLeagueId, setSelectedLeagueId] = useState("premier");
 
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -74,7 +76,9 @@ export default function PlayerDashboard() {
     initialData: { leagues: [], error: null },
   });
 
-  const teammates = leagues.flatMap((league) => league.players);
+  const teammates = leagues
+    .flatMap((league) => league.players)
+    .filter((player) => player.id !== user.id);
 
   const {
     data: { data: events },
@@ -111,7 +115,7 @@ export default function PlayerDashboard() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="space-y-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="flex flex-col gap-6">
           <div>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold md:ml-8">Your Stats</h2>
@@ -231,36 +235,42 @@ export default function PlayerDashboard() {
               <h2 className="text-2xl font-bold">Rate Your Teammates</h2>
               <Link
                 to="/rate-teammates"
-                className="text-[#FF5533] hover:underline"
+                className="text-sm text-accent-orange hover:underline"
               >
                 View all
               </Link>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {teammates &&
-                teammates.slice(0, 8).map((teammate) => (
-                  <Link
-                    to="/rate-teammates"
-                    key={teammate.id}
-                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-white p-3 shadow-sm duration-200 hover:bg-gray-50"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
-                        <User className="h-4 w-4 text-gray-400" />
+            {teammates.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {teammates &&
+                  teammates.slice(0, 8).map((teammate) => (
+                    <Link
+                      to="/rate-teammates"
+                      key={teammate.id}
+                      className="flex items-center justify-between rounded-lg border border-gray-100 bg-white p-3 shadow-sm duration-200 hover:bg-gray-50"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                          <User className="h-4 w-4 text-gray-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold">
+                            {teammate.full_name}
+                          </h3>
+                          <p className="text-xs text-gray-500">
+                            {teammate.positions[0]}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-sm font-semibold">
-                          {teammate.full_name}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          {teammate.positions[0]}
-                        </p>
-                      </div>
-                    </div>
-                    <StarRating rating={3} />
-                  </Link>
-                ))}
-            </div>
+                      <StarRating rating={3} />
+                    </Link>
+                  ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center p-6">
+                <p className="text-gray-500">No teammates found.</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -276,7 +286,7 @@ export default function PlayerDashboard() {
             </Link>
           </div>
           <div className="space-y-4">
-            {upcomingEvents &&
+            {upcomingEvents.length > 0 ? (
               upcomingEvents.map((event) => (
                 <EventCard key={event.id} event={event} showLeagueName={true} />
                 // <div key={event.id} className="mb-4">
@@ -314,7 +324,12 @@ export default function PlayerDashboard() {
                 //     </div>
                 //   </div>
                 // </div>
-              ))}
+              ))
+            ) : (
+              <div className="flex items-center justify-center p-6">
+                <p className="text-gray-500">No upcoming events found.</p>
+              </div>
+            )}
           </div>
         </section>
       </div>

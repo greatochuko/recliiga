@@ -49,7 +49,7 @@ export const EventsContent: React.FC = () => {
   }, [events]);
 
   return (
-    <div className="mx-auto mt-6 flex max-w-4xl flex-col gap-6">
+    <div className="mt-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <Select
           onValueChange={(value) =>

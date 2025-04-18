@@ -1,12 +1,10 @@
-import PlayerDashboard from "./PlayerDashboardContent";
+import PlayerDashboard from "./PlayerDashboard";
 
 export function HomeScreen() {
   return (
-    <main className="flex-1 bg-background relative">
-      <div className="absolute top-1 left-4 z-50 flex items-center"></div>
-      <div className="pt-10 md:pt-0 px-4 md:px-6 max-w-6xl mx-auto">
-        <PlayerDashboard />
-      </div>
+    <main className="relative flex-1 bg-background">
+      <div className="absolute left-4 top-1 z-50 flex items-center"></div>
+      <PlayerDashboard />
     </main>
   );
 }

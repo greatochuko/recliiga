@@ -115,10 +115,13 @@ export default function PlayerRegistration() {
       <header className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <RouterLink to="/" className="inline-block">
-            <span className="text-accent-orange text-4xl font-bold">
+            <span className="text-4xl font-bold text-accent-orange">
               REC LiiGA
             </span>
           </RouterLink>
+          <button className="rounded-md bg-red-100 px-4 py-2 text-sm font-medium text-red-500">
+            Logout
+          </button>
         </div>
       </header>
 
@@ -193,7 +196,7 @@ export default function PlayerRegistration() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+                className="bg-accent-orange text-white hover:bg-accent-orange/90"
                 onClick={handleNext}
                 disabled={loading || cannotProceed}
               >

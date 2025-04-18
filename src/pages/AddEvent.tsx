@@ -247,7 +247,7 @@ export default function AddEvent() {
   const eventEndHour = new Date(eventData.endTime).getHours();
 
   return (
-    <main className="mx-auto w-[90%] max-w-3xl">
+    <main className="mx-auto w-full max-w-3xl">
       <Card className="my-2">
         <CardHeader className="relative">
           <Link

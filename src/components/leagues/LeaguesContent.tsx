@@ -39,7 +39,7 @@ export function LeaguesContent({
   };
 
   return (
-    <div className="mx-auto w-[90%] max-w-5xl pt-10">
+    <div>
       <Label htmlFor="search" className="sr-only">
         Search leagues
       </Label>

@@ -30,11 +30,11 @@ const menuItems = [
     icon: BarChart,
     url: "/results",
   },
-  {
-    title: "Chat",
-    icon: MessageSquare,
-    url: "/chat",
-  },
+  // {
+  //   title: "Chat",
+  //   icon: MessageSquare,
+  //   url: "/chat",
+  // },
 ];
 
 export function NavigationMenu() {
@@ -58,8 +58,8 @@ export function NavigationMenu() {
                       to={item.url}
                       className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm ${
                         isActive
-                          ? "text-accent-orange bg-orange-50 font-medium"
-                          : "hover:text-accent-orange text-gray-600 hover:bg-gray-50"
+                          ? "bg-orange-50 font-medium text-accent-orange"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-accent-orange"
                       }`}
                     >
                       <item.icon

@@ -20,9 +20,9 @@ export default function Leagues() {
 
   return (
     <>
-      <main className="relative flex-1 bg-background">
-        <div className="mr-6 flex items-center justify-between">
-          <h1 className="ml-14 text-2xl font-bold">Leagues</h1>
+      <main className="relative flex flex-1 flex-col gap-6 bg-background">
+        <div className="flex items-center justify-between">
+          <h1 className="ml-8 text-2xl font-bold">Leagues</h1>
           <button
             onClick={() => setModalOpen(true)}
             className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"

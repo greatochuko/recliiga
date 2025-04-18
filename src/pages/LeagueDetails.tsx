@@ -52,7 +52,7 @@ export default function LeagueDetails() {
   const upcomingEvents = getUpcomingEvents(league.events);
 
   return (
-    <main className="relative flex flex-1 flex-col gap-6 bg-background px-4 md:px-6">
+    <main className="relative flex flex-1 flex-col gap-6 bg-background">
       <div className="ml-6 flex justify-between">
         <button
           onClick={() => navigate("/leagues")}
@@ -173,7 +173,7 @@ export default function LeagueDetails() {
               ))}
             </div>
           ) : (
-            <div className="text-center text-sm text-gray-500">
+            <div className="p-4 text-center text-sm text-gray-500">
               No events have been scheduled for this league yet.
             </div>
           )}
