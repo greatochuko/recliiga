@@ -57,7 +57,7 @@ export const EventsContent: React.FC = () => {
           }
           disabled={isLoadingEvents}
         >
-          <SelectTrigger className="w-full md:w-[300px]">
+          <SelectTrigger className="w-fit sm:w-40">
             <SelectValue placeholder="Select a league" />
           </SelectTrigger>
           <SelectContent>

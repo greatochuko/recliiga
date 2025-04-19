@@ -18,7 +18,7 @@ export function AppSidebar() {
         <div className="border-b border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <h1
-              className="text-accent-orange cursor-pointer text-2xl font-bold transition-colors hover:text-[#FF9A30]"
+              className="cursor-pointer text-2xl font-bold text-accent-orange transition-colors hover:text-[#FF9A30]"
               onClick={handleLogoClick}
             >
               REC LiiGA
@@ -39,7 +39,7 @@ export function AppSidebar() {
 
         {/* Footer */}
         <div className="border-t border-gray-200 p-4 text-sm text-gray-500">
-          © 2024 REC LiiGA. All rights reserved.
+          &copy; {new Date().getFullYear()} REC LiiGA. All rights reserved.
         </div>
       </div>
     </Sidebar>

@@ -8,6 +8,7 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 
 import { updateUser } from "@/api/user";
 import FullScreenLoader from "@/components/FullScreenLoader";
+import { ArrowLeft } from "lucide-react";
 
 interface ProfileFormData {
   full_name: string;
@@ -74,7 +75,16 @@ export default function Profile() {
 
   return (
     <main className="relative flex flex-1 flex-col gap-6 bg-background">
-      <h1 className="ml-8 text-2xl font-bold">Profile</h1>
+      <div className="relative ml-8 flex items-center justify-center">
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute left-0 top-1/2 flex -translate-y-1/2 items-center gap-1 text-sm text-accent-orange hover:underline"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Previous
+        </button>
+        <h1 className="ml-8 text-2xl font-bold">Profile</h1>
+      </div>
       <div className="rounded-lg border bg-white shadow-sm">
         <div className="p-6">
           <ProfileHeader

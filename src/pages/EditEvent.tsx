@@ -187,13 +187,15 @@ export default function EditEvent() {
     }
   }
 
-  const cannotSubmit = Object.entries(eventData)
-    .map(([key, value]) => {
-      if (key === "eventDates") return false;
-
-      return value === "" || value === undefined || value === null;
-    })
-    .some((isInvalid) => isInvalid);
+  const cannotSubmit =
+    !eventData.title.trim() ||
+    !eventData.location.trim() ||
+    !eventData.leagueId ||
+    eventData.numTeams < 1 ||
+    eventData.rosterSpots < 1 ||
+    !eventData.startTime ||
+    !eventData.endTime ||
+    !eventData.rsvpDeadline;
 
   const handleEditEvent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -381,9 +383,11 @@ export default function EditEvent() {
                   <div className="flex gap-2">
                     <select
                       value={
-                        eventStartHour > 12
-                          ? (eventStartHour - 12).toString().padStart(2, "0")
-                          : eventStartHour.toString().padStart(2, "0")
+                        eventStartHour === 0
+                          ? (12).toString().padStart(2, "0")
+                          : eventStartHour > 12
+                            ? (eventStartHour - 12).toString().padStart(2, "0")
+                            : eventStartHour.toString().padStart(2, "0")
                       }
                       onChange={(e) =>
                         updateEventStartTime("hour", Number(e.target.value))

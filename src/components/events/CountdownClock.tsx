@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 
-export default function CountdownClock({ deadline }: { deadline: Date }) {
+export default function CountdownClock({
+  deadline,
+  size = "default",
+}: {
+  deadline: Date;
+  size?: "sm" | "default";
+}) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
 
   useEffect(() => {
@@ -23,18 +29,26 @@ export default function CountdownClock({ deadline }: { deadline: Date }) {
   }, [deadline]);
 
   return (
-    <div className="flex space-x-4 text-lg font-semibold">
+    <div
+      className={`flex space-x-4 font-semibold ${size === "sm" ? "text-sm" : "text-lg"}`}
+    >
       <div className="flex flex-col items-center">
         <span>{timeLeft.days}</span>
-        <span className="text-xs text-gray-500">days</span>
+        <span className="text-xs text-gray-500">
+          day{timeLeft.days !== 1 && "s"}
+        </span>
       </div>
       <div className="flex flex-col items-center">
         <span>{timeLeft.hours}</span>
-        <span className="text-xs text-gray-500">hours</span>
+        <span className="text-xs text-gray-500">
+          hour{timeLeft.hours !== 1 && "s"}
+        </span>
       </div>
       <div className="flex flex-col items-center">
         <span>{timeLeft.minutes}</span>
-        <span className="text-xs text-gray-500">minutes</span>
+        <span className="text-xs text-gray-500">
+          minute{timeLeft.minutes !== 1 && "s"}
+        </span>
       </div>
     </div>
   );
