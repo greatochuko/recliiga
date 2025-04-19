@@ -50,7 +50,6 @@ export default function EventCard({
           event={event}
           isPastEvent={isPastEvent}
           attendanceStatus={attendanceStatus}
-          isRsvpOpen={isRsvpOpen}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           setAttendanceStatus={setAttendanceStatus}

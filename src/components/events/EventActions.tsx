@@ -10,7 +10,6 @@ interface EventActionsProps {
   event: EventType;
   isPastEvent?: boolean;
   attendanceStatus: "attending" | "not-attending" | null;
-  isRsvpOpen: boolean;
   isEditing: boolean;
   setIsEditing: (editing: boolean) => void;
   setAttendanceStatus: (status: "attending" | "not-attending" | null) => void;
@@ -20,7 +19,6 @@ export const EventActions: React.FC<EventActionsProps> = ({
   event,
   isPastEvent = false,
   attendanceStatus,
-  isRsvpOpen: asdf,
   isEditing,
   setIsEditing,
   setAttendanceStatus,
