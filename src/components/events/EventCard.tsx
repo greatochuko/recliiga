@@ -33,11 +33,7 @@ export default function EventCard({
   return (
     <Card className="mb-4">
       <CardContent className="relative p-4">
-        <EventHeader
-          event={event}
-          attendanceStatus={attendanceStatus}
-          isEditing={isEditing}
-        />
+        <EventHeader event={event} attendanceStatus={attendanceStatus} />
         <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">

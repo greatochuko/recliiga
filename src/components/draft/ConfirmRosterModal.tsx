@@ -1,24 +1,24 @@
 import ModalContainer from "../ModalContainer";
 
-export default function ConfirmRoosterModal({
+export default function ConfirmRosterModal({
   open,
   loading,
   closeModal,
-  handleConfirmRooster,
+  handleConfirmRoster,
 }: {
   open: boolean;
   loading: boolean;
   closeModal: () => void;
-  handleConfirmRooster: () => void;
+  handleConfirmRoster: () => void;
 }) {
   return (
     <ModalContainer open={open} closeModal={closeModal}>
       <div className="w-[90%] max-w-lg rounded-lg bg-white p-6 shadow-lg">
         <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          Confirm Rooster
+          Confirm Roster
         </h2>
         <p className="mb-6 text-gray-700">
-          Are you sure you want to confirm the selected rooster?
+          Are you sure you want to confirm the selected roster?
           <br />
           <span className="text-red-500">Note: this cannot be undone</span>
         </p>
@@ -30,7 +30,7 @@ export default function ConfirmRoosterModal({
             Cancel
           </button>
           <button
-            onClick={handleConfirmRooster}
+            onClick={handleConfirmRoster}
             className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90 disabled:pointer-events-none disabled:bg-accent-orange/50"
             disabled={loading}
           >

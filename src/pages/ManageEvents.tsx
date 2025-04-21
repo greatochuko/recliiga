@@ -8,7 +8,7 @@ export default function ManageEvents() {
   return (
     <QueryClientProvider client={queryClient}>
       <main className="relative flex-1 bg-background">
-        <h1 className="ml-14 text-2xl font-bold">Manage Events</h1>
+        <h1 className="ml-8 text-2xl font-bold">Manage Events</h1>
         <EventsContent />
       </main>
     </QueryClientProvider>

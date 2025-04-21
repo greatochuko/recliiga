@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueById } from "@/api/league";
-import { useAuth } from "@/contexts/AuthContext";
+// import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import EventCard from "@/components/events/EventCard";
 import { getUpcomingEvents } from "@/lib/utils";
@@ -13,7 +13,7 @@ export default function LeagueDetails() {
   const navigate = useNavigate();
   const [showAllPlayers, setShowAllPlayers] = useState(false);
 
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const { id } = useParams();
 
   const { isLoading, data } = useQuery({
@@ -60,11 +60,11 @@ export default function LeagueDetails() {
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
-        {league.owner_id === user.id && (
+        {/* {league.owner_id === user.id && (
           <button className="ml-auto rounded-md px-3 py-1.5 text-sm font-medium text-red-500 duration-200 hover:bg-red-50 active:bg-red-100">
             Delete
           </button>
-        )}
+        )} */}
       </div>
       <div className="">
         {/* League Info */}
@@ -106,12 +106,14 @@ export default function LeagueDetails() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Players</h3>
-              <button
-                className="px-4 py-2 text-sm font-medium text-accent-orange hover:underline"
-                onClick={() => setShowAllPlayers(!showAllPlayers)}
-              >
-                {showAllPlayers ? "Show Less" : "View All"}
-              </button>
+              {league.players.length > 8 && (
+                <button
+                  className="px-4 py-2 text-sm font-medium text-accent-orange hover:underline"
+                  onClick={() => setShowAllPlayers(!showAllPlayers)}
+                >
+                  {showAllPlayers ? "Show Less" : "View All"}
+                </button>
+              )}
             </div>
             {league.players.length ? (
               <div className="grid grid-cols-3 gap-2">

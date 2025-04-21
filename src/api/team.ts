@@ -25,8 +25,8 @@ export async function draftPlayer({
   return data;
 }
 
-export async function confirmRooster(teamId: string) {
-  const data = await fetchApi<TeamType>(`/team/${teamId}/confirmRooster`, {
+export async function confirmRoster(teamId: string) {
+  const data = await fetchApi<TeamType>(`/team/${teamId}/confirmRoster`, {
     method: "POST",
     body: {},
   });

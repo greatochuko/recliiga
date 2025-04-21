@@ -8,9 +8,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Edit2 } from "lucide-react";
 import { JerseyIcon, PlayerRating } from "./DraftUIComponents";
 import { TeamType } from "@/types/events";
-import { confirmRooster, updateTeam } from "@/api/team";
+import { confirmRoster, updateTeam } from "@/api/team";
 import { useAuth } from "@/contexts/AuthContext";
-import ConfirmRoosterModal from "./ConfirmRoosterModal";
+import ConfirmRosterModal from "./ConfirmRosterModal";
 
 interface TeamColumnProps {
   team: TeamType;
@@ -51,7 +51,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [confirmingRooster, setConfirmingRooster] = useState(false);
+  const [confirmingRoster, setConfirmingRoster] = useState(false);
 
   async function handleUpdateTeam() {
     setLoading(true);
@@ -63,14 +63,14 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
     setLoading(false);
   }
 
-  async function handleConfirmRooster() {
-    setConfirmingRooster(true);
-    const { error } = await confirmRooster(team.id);
+  async function handleConfirmRoster() {
+    setConfirmingRoster(true);
+    const { error } = await confirmRoster(team.id);
     if (!error) {
       setModalIsOpen(false);
       refetchEvent();
     }
-    setConfirmingRooster(false);
+    setConfirmingRoster(false);
   }
 
   return (
@@ -230,17 +230,17 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                 onClick={() => setModalIsOpen(true)}
                 className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Confirm Rooster
+                Confirm Roster
               </button>
             </div>
           ) : null}
         </CardContent>
       </Card>
-      <ConfirmRoosterModal
-        handleConfirmRooster={handleConfirmRooster}
+      <ConfirmRosterModal
+        handleConfirmRoster={handleConfirmRoster}
         open={modalIsOpen}
         closeModal={() => setModalIsOpen(false)}
-        loading={confirmingRooster}
+        loading={confirmingRoster}
       />
     </>
   );
