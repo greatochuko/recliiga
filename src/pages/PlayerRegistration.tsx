@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import SportsAndPositions from "@/components/player-registration/SportsAndPositi
 import { positions, sports } from "@/lib/constants";
 import { ConfirmationAndLeagueCode } from "@/components/player-registration/ConfirmationAndLeagueCode";
 import { completeProfileRegistration } from "@/api/user";
+import { uploadImage } from "@/lib/uploadImage";
 
 export interface PlayerProfile {
   nickname: string;
@@ -41,6 +42,7 @@ const initialPlayerData = {
 export default function PlayerRegistration() {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [profileImage, setProfileImage] = useState<File>();
   const [playerData, setPlayerData] =
     useState<PlayerProfile>(initialPlayerData);
 
@@ -68,13 +70,15 @@ export default function PlayerRegistration() {
         : null,
     };
 
+    const { url } = await uploadImage(profileImage);
+
     const { data, error } = await completeProfileRegistration({
       nickname: profileData.nickname,
       date_of_birth: profileData.date_of_birth,
       city: profileData.city,
       sports: profileData.sports,
       positions: profilePositions,
-      avatar_url: profileData.avatar_url,
+      avatar_url: url,
     });
 
     if (error) {
@@ -95,6 +99,21 @@ export default function PlayerRegistration() {
   const updatePlayerData = useCallback((newData: Partial<PlayerProfile>) => {
     setPlayerData((prevData) => ({ ...prevData, ...newData }));
   }, []);
+
+  function handleChangeLeagueImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const image = e.target.files && e.target.files[0];
+    if (image) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPlayerData((prevData) => ({
+          ...prevData,
+          avatar_url: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(image);
+      setProfileImage(image);
+    }
+  }
 
   const cannotProceed =
     currentStep === 1
@@ -173,6 +192,7 @@ export default function PlayerRegistration() {
               <PersonalInformation
                 playerData={playerData}
                 updatePlayerData={updatePlayerData}
+                handleChangeProfileImage={handleChangeLeagueImage}
               />
             )}
             {currentStep === 2 && (

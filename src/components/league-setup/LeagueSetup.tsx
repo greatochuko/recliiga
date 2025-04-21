@@ -8,6 +8,7 @@ import { ConfirmationStep } from "./ConfirmationStep";
 import { toast } from "sonner";
 import { createLeague, LeagueDataType } from "@/api/league";
 import { useNavigate } from "react-router-dom";
+import { uploadImage } from "@/lib/uploadImage";
 
 const steps = [
   { id: 1, name: "League Info" },
@@ -39,6 +40,7 @@ export function LeagueSetup() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [leagueData, setLeagueData] = useState(initialLeagueData);
+  const [leagueImageFile, setLeagueImageFile] = useState<File>();
 
   const navigate = useNavigate();
 
@@ -54,7 +56,8 @@ export function LeagueSetup() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const { error } = await createLeague(leagueData);
+    const { url } = await uploadImage(leagueImageFile);
+    const { error } = await createLeague({ ...leagueData, image: url });
     if (error) {
       toast.error("Failed to create league: " + error);
     } else {
@@ -70,6 +73,18 @@ export function LeagueSetup() {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  function handleChangeLeagueImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const image = e.target.files && e.target.files[0];
+    if (image) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        updateLeagueData({ image: reader.result as string });
+      };
+      reader.readAsDataURL(image);
+      setLeagueImageFile(image);
+    }
+  }
 
   const cannotProceed =
     currentStep === 1
@@ -123,6 +138,7 @@ export function LeagueSetup() {
           <LeagueInfoStep
             leagueData={leagueData}
             updateLeagueData={updateLeagueData}
+            handleChangeLeagueImage={handleChangeLeagueImage}
           />
         )}
         {currentStep === 2 && (

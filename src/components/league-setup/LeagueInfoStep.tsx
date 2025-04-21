@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
+import React from "react";
 
 const sports = [
   "American Football",
@@ -43,9 +44,11 @@ const sports = [
 export function LeagueInfoStep({
   leagueData,
   updateLeagueData,
+  handleChangeLeagueImage,
 }: {
   leagueData: LeagueDataType;
   updateLeagueData: (newData: Partial<LeagueDataType>) => void;
+  handleChangeLeagueImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <Card className="mb-8">
@@ -58,19 +61,29 @@ export function LeagueInfoStep({
         <div className="mb-8 flex flex-col items-center">
           <div className="relative mb-4 h-32 w-32 rounded-full border-2 border-black p-1">
             <Avatar className="h-full w-full">
-              <AvatarImage src="/placeholder.svg" alt="League avatar" />
+              <AvatarImage
+                src={leagueData.image || "/placeholder.svg"}
+                alt="League avatar"
+              />
               <AvatarFallback>LA</AvatarFallback>
             </Avatar>
             <div className="absolute bottom-0 right-0 rounded-full bg-black p-2 text-white shadow-lg">
               <Upload size={16} />
             </div>
           </div>
-          <Button
-            variant="link"
-            className="text-sm text-accent-orange hover:underline"
+          <label
+            htmlFor="leagueImage"
+            className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
           >
             Upload photo
-          </Button>
+          </label>
+          <input
+            type="file"
+            name="leagueImage"
+            id="leagueImage"
+            hidden
+            onChange={handleChangeLeagueImage}
+          />
         </div>
 
         <div className="space-y-4">

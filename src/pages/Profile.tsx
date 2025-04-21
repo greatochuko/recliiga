@@ -9,6 +9,7 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 import { updateUser } from "@/api/user";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { ArrowLeft } from "lucide-react";
+import { uploadImage } from "@/lib/uploadImage";
 
 interface ProfileFormData {
   full_name: string;
@@ -23,6 +24,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File>();
   const [formData, setFormData] = useState<ProfileFormData>({
     full_name: user.full_name || "",
     email: user?.email || "",
@@ -38,7 +40,11 @@ export default function Profile() {
   const handleUpdateUser = async () => {
     try {
       setLoading(true);
-      const { data: updatedUser, error } = await updateUser(formData);
+      const { url } = await uploadImage(avatarFile);
+      const { data: updatedUser, error } = await updateUser({
+        ...formData,
+        avatar_url: url,
+      });
       if (error) throw new Error(error);
 
       setUser(updatedUser);
@@ -61,7 +67,12 @@ export default function Profile() {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    console.log(event.target.files);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData((prev) => ({ ...prev, avatar_url: reader.result as string }));
+    };
+    reader.readAsDataURL(event.target.files[0]);
+    setAvatarFile(event.target.files[0]);
     return;
   };
 

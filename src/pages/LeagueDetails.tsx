@@ -128,7 +128,7 @@ export default function LeagueDetails() {
                       <CardContent className="flex items-center p-2">
                         <Avatar className="h-8 w-8">
                           <AvatarImage
-                            src={`/placeholder.svg?height=32&width=32`}
+                            src={player.avatar_url}
                             alt={player.full_name}
                           />
                           <AvatarFallback>

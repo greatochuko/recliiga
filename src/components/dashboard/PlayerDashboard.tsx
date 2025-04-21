@@ -76,9 +76,13 @@ export default function PlayerDashboard() {
     initialData: { leagues: [], error: null },
   });
 
-  const teammates = leagues
-    .flatMap((league) => league.players)
-    .filter((player) => player.id !== user.id);
+  const teammates = Array.from(
+    new Map(
+      leagues
+        .flatMap((league) => league.players)
+        .map((player) => [player.id, player]),
+    ).values(),
+  ).filter((player) => player.id !== user.id);
 
   const {
     data: { data: events },
@@ -250,9 +254,17 @@ export default function PlayerDashboard() {
                       className="flex items-center justify-between rounded-lg border border-gray-100 bg-white p-3 shadow-sm duration-200 hover:bg-gray-50"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
-                          <User className="h-4 w-4 text-gray-400" />
-                        </div>
+                        {teammate.avatar_url ? (
+                          <img
+                            src={teammate.avatar_url}
+                            alt={teammate.full_name}
+                            className="h-8 w-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                            <User className="h-4 w-4 text-gray-400" />
+                          </div>
+                        )}
                         <div>
                           <h3 className="text-sm font-semibold">
                             {teammate.full_name}

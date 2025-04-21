@@ -22,7 +22,7 @@ export function ProfileHeader({
           variant="outline"
           onClick={onEdit}
           disabled={loading}
-          className="text-accent-orange border-accent-orange hover:bg-orange-50"
+          className="border-accent-orange text-accent-orange hover:bg-orange-50 hover:text-accent-orange"
         >
           {isEditing ? "Save" : "Edit"}
         </Button>

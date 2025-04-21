@@ -16,13 +16,13 @@ export function PlayerRankCard({ league }: PlayerRankCardProps) {
   const { user } = useAuth();
 
   return (
-    <Card className="bg-accent-orange flex h-full w-full flex-col justify-between text-white">
+    <Card className="flex h-full w-full flex-col justify-between bg-accent-orange text-white">
       <CardContent className="flex h-full flex-col items-center justify-between p-4">
         <div className="flex w-full flex-col items-center">
           <h2 className="mb-2 text-base font-bold">{league.name}</h2>
           <Avatar className="mb-2 h-16 w-16">
             <AvatarImage
-              src="/placeholder.svg?height=64&width=64"
+              src={user.avatar_url || "/placeholder.svg?height=64&width=64"}
               alt="Player avatar"
             />
             <AvatarFallback>JD</AvatarFallback>
