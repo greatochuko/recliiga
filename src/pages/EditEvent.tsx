@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -215,6 +215,11 @@ export default function EditEvent() {
     }
   };
 
+  const rsvpDeadline = useMemo(() => {
+    const startTime = new Date(event.startTime);
+    return new Date(startTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000);
+  }, [event.startTime, event.rsvpDeadline]);
+
   if (isLoading) {
     return (
       <div className="flex w-full items-center justify-center">
@@ -344,32 +349,34 @@ export default function EditEvent() {
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="rosterSpots">Draft Type</Label>
-              <RadioGroup
-                value={eventData.draftType}
-                onValueChange={(value) =>
-                  setEventData((prev) => ({
-                    ...prev,
-                    draftType: value,
-                  }))
-                }
-                className="flex space-x-4 rounded-md border p-2 px-3"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="alternating" id="alternating" />
-                  <Label htmlFor="alternating" className="text-sm">
-                    Alternating
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="snake" id="snake" />
-                  <Label htmlFor="snake" className="text-sm">
-                    Snake
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
+            {rsvpDeadline > new Date() && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="rosterSpots">Draft Type</Label>
+                <RadioGroup
+                  value={eventData.draftType}
+                  onValueChange={(value) =>
+                    setEventData((prev) => ({
+                      ...prev,
+                      draftType: value,
+                    }))
+                  }
+                  className="flex space-x-4 rounded-md border p-2 px-3"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="alternating" id="alternating" />
+                    <Label htmlFor="alternating" className="text-sm">
+                      Alternating
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="snake" id="snake" />
+                    <Label htmlFor="snake" className="text-sm">
+                      Snake
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
 
             {eventData.rosterSpots > 0 && (
               <div className="text-sm text-muted-foreground">
