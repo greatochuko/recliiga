@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueById } from "@/api/league";
-// import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import EventCard from "@/components/events/EventCard";
 import { getUpcomingEvents } from "@/lib/utils";
@@ -13,7 +13,7 @@ export default function LeagueDetails() {
   const navigate = useNavigate();
   const [showAllPlayers, setShowAllPlayers] = useState(false);
 
-  // const { user } = useAuth();
+  const { user } = useAuth();
   const { id } = useParams();
 
   const { isLoading, data } = useQuery({
@@ -44,6 +44,10 @@ export default function LeagueDetails() {
   }
 
   const league = data?.league;
+
+  if (!league.players.some((player) => player.id === user.id)) {
+    return <Navigate to={"/leagues"} replace />;
+  }
 
   const handlePlayerClick = () => {
     navigate("/player-profile");

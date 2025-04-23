@@ -54,6 +54,33 @@ export async function joinLeague(leagueCode: string) {
 
   return data;
 }
+
+export async function acceptLeagueRequest(
+  notificationId: string,
+  playerId: string,
+  leagueId: string,
+) {
+  const data = await fetchApi(`/league/${leagueId}/accept`, {
+    method: "POST",
+    body: { playerId, notificationId },
+  });
+
+  return data;
+}
+
+export async function declineLeagueRequest(
+  notificationId: string,
+  playerId: string,
+  leagueId: string,
+) {
+  const data = await fetchApi(`/league/${leagueId}/decline`, {
+    method: "POST",
+    body: { playerId, notificationId },
+  });
+
+  return data;
+}
+
 export async function fetchResultsByLeague(leagueId: string) {
   if (!leagueId) {
     return { data: [], error: "Invalid league ID" };

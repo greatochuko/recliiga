@@ -27,7 +27,7 @@ export function AppSidebar() {
         </div>
 
         {/* User Profile */}
-        <div className="border-b border-gray-200 p-4">
+        <div className="border-b border-gray-200 p-2">
           <div className="flex items-center justify-between">
             <NotificationsPopover />
             <UserMenu />

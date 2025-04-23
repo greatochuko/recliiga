@@ -58,7 +58,7 @@ export function UserMenu() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-2">
+          <button className="flex items-center gap-2 p-2">
             <User className="h-5 w-5 text-gray-500" />
             <span className="text-sm font-medium">
               {user?.full_name.split(" ")[0] || "User"}

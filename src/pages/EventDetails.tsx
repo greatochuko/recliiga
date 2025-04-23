@@ -169,6 +169,7 @@ export default function EventDetails() {
                             <AvatarImage
                               src={team.captain?.avatar_url}
                               alt={team.captain?.full_name}
+                              className="object-cover"
                             />
                             <AvatarFallback>
                               {team.captain?.full_name
@@ -209,6 +210,7 @@ export default function EventDetails() {
                               <AvatarImage
                                 src={player.avatar_url}
                                 alt={player.full_name}
+                                className="object-cover"
                               />
                               <AvatarFallback>
                                 {player.full_name
@@ -246,6 +248,7 @@ export default function EventDetails() {
                           <AvatarImage
                             src={player.avatar_url}
                             alt={player.full_name}
+                            className="object-cover"
                           />
                           <AvatarFallback>
                             {player.full_name
