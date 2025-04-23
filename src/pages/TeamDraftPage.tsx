@@ -1,6 +1,5 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { TeamDraftHeader } from "@/components/draft/TeamDraftHeader";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEventById } from "@/api/events";
 import { useEffect, useState } from "react";
@@ -8,10 +7,11 @@ import { DraftControls } from "@/components/draft/DraftControls";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { TeamsSection } from "@/components/draft/TeamsSection";
 import { TeamType } from "@/types/events";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, ChevronLeft } from "lucide-react";
 import { PlayersList } from "@/components/draft/PlayersList";
 import { draftPlayer } from "@/api/team";
 import Pusher from "pusher-js";
+import { Button } from "@/components/ui/button";
 
 const PUSHER_API_KEY = import.meta.env.VITE_PUSHER_API_KEY;
 
@@ -24,6 +24,8 @@ export default function TeamDraftPage() {
   const [teamEditing, setTeamEditing] = useState("");
   const [teams, setTeams] = useState<TeamType[]>();
   const [isDrafting, setIsDrafting] = useState(false);
+
+  const navigate = useNavigate();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: [`event-${id}`],
@@ -150,8 +152,19 @@ export default function TeamDraftPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <TeamDraftHeader />
+    <div className="flex flex-1 flex-col gap-4 sm:gap-6">
+      <div className="flex items-center justify-between pl-8">
+        <h1 className="text-2xl font-bold">Team Draft</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={() => navigate(-1)}
+        >
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
+      </div>
 
       <Card className="mb-6">
         <CardContent className="flex flex-col gap-6 p-6">

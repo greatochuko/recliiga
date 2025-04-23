@@ -17,9 +17,21 @@ export default function PersonalInformation({
   updatePlayerData,
   handleChangeProfileImage,
 }: PersonalInfoProps) {
-  const [dobMonth, setDobMonth] = useState("");
-  const [dobDay, setDobDay] = useState("");
-  const [dobYear, setDobYear] = useState("");
+  const [dobMonth, setDobMonth] = useState(
+    playerData.dateOfBirth
+      ? (new Date(playerData.dateOfBirth).getMonth() + 1).toString()
+      : "",
+  );
+  const [dobDay, setDobDay] = useState(
+    playerData.dateOfBirth
+      ? new Date(playerData.dateOfBirth).getDate().toString()
+      : "",
+  );
+  const [dobYear, setDobYear] = useState(
+    playerData.dateOfBirth
+      ? new Date(playerData.dateOfBirth).getFullYear().toString()
+      : "",
+  );
 
   useEffect(() => {
     const updateDateOfBirth = () => {
@@ -77,6 +89,7 @@ export default function PersonalInformation({
               <AvatarImage
                 src={playerData.avatar_url || "/placeholder.svg"}
                 alt="Player avatar"
+                className="object-cover"
               />
               <AvatarFallback>PA</AvatarFallback>
             </Avatar>
@@ -130,12 +143,9 @@ export default function PersonalInformation({
                   className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
                 >
                   <option hidden>Month</option>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                    <option
-                      key={month}
-                      value={month.toString().padStart(2, "0")}
-                    >
-                      {new Date(2000, month - 1, 1).toLocaleString("default", {
+                  {Array.from({ length: 12 }, (_, i) => i).map((month) => (
+                    <option key={month} value={month.toString()}>
+                      {new Date(2000, month, 1).toLocaleString("default", {
                         month: "long",
                       })}
                     </option>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,7 @@ import { format, isBefore, startOfDay } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { EventDataType, editEvent, fetchEventById } from "@/api/events";
 import { EventTimeDataType } from "@/types/events";
+import { useAuth } from "@/contexts/AuthContext";
 
 const initialEventData: EventDataType = {
   leagueId: "",
@@ -40,6 +41,8 @@ export default function EditEvent() {
   const [eventData, setEventData] = useState<EventDataType>(initialEventData);
   const [submitting, setSubmitting] = useState(false);
   const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("1h");
+
+  const { user } = useAuth();
 
   const { id } = useParams();
 
@@ -234,6 +237,10 @@ export default function EditEvent() {
         </Link>
       </div>
     );
+  }
+
+  if (event.creatorId !== user.id) {
+    return <Navigate to={"/manage-events"} replace />;
   }
 
   const eventStartHour = new Date(eventData.startTime).getHours();

@@ -24,6 +24,7 @@ export function PlayerRankCard({ league }: PlayerRankCardProps) {
             <AvatarImage
               src={user.avatar_url || "/placeholder.svg?height=64&width=64"}
               alt="Player avatar"
+              className="object-cover"
             />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
