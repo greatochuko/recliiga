@@ -11,6 +11,9 @@ import { TeamType } from "@/types/events";
 import { ArrowLeftIcon } from "lucide-react";
 import { PlayersList } from "@/components/draft/PlayersList";
 import { draftPlayer } from "@/api/team";
+import Pusher from "pusher-js";
+
+const PUSHER_API_KEY = import.meta.env.VITE_PUSHER_API_KEY;
 
 type DraftType = "alternating" | "snake";
 
@@ -34,6 +37,28 @@ export default function TeamDraftPage() {
       setTeams(teamList);
     }
   }, [teamList]);
+
+  const eventId = data?.data?.id;
+
+  useEffect(() => {
+    const pusher = new Pusher(PUSHER_API_KEY, {
+      cluster: "eu",
+    });
+
+    const channel = pusher.subscribe(`event`);
+
+    channel.bind("draft", (data: { message: TeamType }) => {
+      console.log("Received data:", data.message);
+      setTeams((prev) =>
+        prev.map((team) => (team.id === data.message.id ? data.message : team)),
+      );
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [eventId]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);
@@ -74,16 +99,12 @@ export default function TeamDraftPage() {
 
   async function handlePlayerDraft(teamId: string, playerId: string) {
     setIsDrafting(true);
-    const { data: updatedTeam, error } = await draftPlayer({
+    await draftPlayer({
       teamId,
       playerId,
       eventId: event.id,
     });
-    if (!error) {
-      setTeams((prev) =>
-        prev.map((team) => (team.id === teamId ? updatedTeam : team)),
-      );
-    }
+
     setIsDrafting(false);
   }
 
