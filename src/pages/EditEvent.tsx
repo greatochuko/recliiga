@@ -24,11 +24,13 @@ import { useQuery } from "@tanstack/react-query";
 import { EventDataType, editEvent, fetchEventById } from "@/api/events";
 import { EventTimeDataType } from "@/types/events";
 import { useAuth } from "@/contexts/AuthContext";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const initialEventData: EventDataType = {
   leagueId: "",
   title: "",
   location: "",
+  draftType: "",
   numTeams: 2,
   rosterSpots: 1,
   rsvpDeadline: 2,
@@ -340,6 +342,33 @@ export default function EditEvent() {
                 placeholder="Enter number of roster spots"
                 min="1"
               />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="rosterSpots">Draft Type</Label>
+              <RadioGroup
+                value={eventData.draftType}
+                onValueChange={(value) =>
+                  setEventData((prev) => ({
+                    ...prev,
+                    draftType: value,
+                  }))
+                }
+                className="flex space-x-4 rounded-md border p-2 px-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="alternating" id="alternating" />
+                  <Label htmlFor="alternating" className="text-sm">
+                    Alternating
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="snake" id="snake" />
+                  <Label htmlFor="snake" className="text-sm">
+                    Snake
+                  </Label>
+                </div>
+              </RadioGroup>
             </div>
 
             {eventData.rosterSpots > 0 && (

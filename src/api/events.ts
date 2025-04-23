@@ -5,6 +5,7 @@ export type EventDataType = {
   leagueId: string;
   title: string;
   location: string;
+  draftType: string;
   numTeams: number;
   rosterSpots: number;
   rsvpDeadline: number;

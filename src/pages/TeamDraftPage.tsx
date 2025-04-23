@@ -32,13 +32,14 @@ export default function TeamDraftPage() {
     queryFn: () => fetchEventById(id),
   });
 
-  const teamList = data?.data.teams;
+  const event = data?.data;
 
   useEffect(() => {
-    if (teamList) {
-      setTeams(teamList);
+    if (event) {
+      setDraftType(event.draftType);
+      setTeams(event.teams);
     }
-  }, [teamList]);
+  }, [event]);
 
   const eventId = data?.data?.id;
 
@@ -96,7 +97,7 @@ export default function TeamDraftPage() {
 
   function cancelTeamEditing() {
     setTeamEditing("");
-    setTeams(teamList);
+    setTeams(event.teams);
   }
 
   async function handlePlayerDraft(teamId: string, playerId: string) {
@@ -109,8 +110,6 @@ export default function TeamDraftPage() {
 
     setIsDrafting(false);
   }
-
-  const event = data?.data;
 
   if (!event) {
     return (

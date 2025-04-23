@@ -37,6 +37,7 @@ export interface EventType {
   rsvpDeadline: number;
   teams: TeamType[];
   creatorId: string;
+  draftType: "alternating" | "snake";
   resultsEntered: boolean;
   players: UserType[];
   result?: ResultType;

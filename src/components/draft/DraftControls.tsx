@@ -15,7 +15,6 @@ interface DraftControlsProps {
 
 export const DraftControls: React.FC<DraftControlsProps> = ({
   draftType,
-  setDraftType,
   draftStarted,
   draftRound,
   handleUndo,
@@ -29,12 +28,7 @@ export const DraftControls: React.FC<DraftControlsProps> = ({
               <div className="text-base font-semibold text-black">
                 Draft Type
               </div>
-              <RadioGroup
-                value={draftType}
-                onValueChange={(value) => setDraftType(value)}
-                className="flex space-x-4"
-                disabled={draftStarted}
-              >
+              <RadioGroup value={draftType} className="flex space-x-4" disabled>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="alternating" id="alternating" />
                   <Label htmlFor="alternating" className="text-sm">
