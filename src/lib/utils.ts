@@ -1,4 +1,5 @@
-import { EventType } from "@/types/events";
+import { EventType, LeaderboardDataType, ResultType } from "@/types/events";
+import { LeagueType } from "@/types/league";
 import { clsx, type ClassValue } from "clsx";
 import { isPast } from "date-fns";
 import { twMerge } from "tailwind-merge";
@@ -55,5 +56,110 @@ export function getDateIncrement(freq: string): number {
       return 30; // Optional: customize for actual calendar months
     default:
       return 0;
+  }
+}
+
+export function getLeaderBoardData(league: LeagueType, results: ResultType[]) {
+  const leaderboardData: LeaderboardDataType[] = league.players.map(
+    (player) => {
+      const gamesPlayed = league.events.filter(
+        (event) =>
+          event.resultsEntered &&
+          event.players.some((pl) => pl.id === player.id),
+      ).length;
+
+      const attendance = results.filter((result) =>
+        result.attendingPlayers.some((pl) => pl.id === player.id),
+      ).length;
+
+      const nonAttendance = gamesPlayed - attendance;
+
+      let gamesWon = 0;
+      let gamesLost = 0;
+      let gamesWonAsCaptain = 0;
+
+      results.forEach((result) => {
+        const attended = result.attendingPlayers.some(
+          (pl) => pl.id === player.id,
+        );
+        if (!attended) return;
+
+        const isTeam1 = result.events.some(
+          (event) =>
+            event.teams[0].players.some((pl) => pl.id === player.id) ||
+            event.teams[0].captain.id === player.id,
+        );
+        const isTeam2 = result.events.some(
+          (event) =>
+            event.teams[1].players.some((pl) => pl.id === player.id) ||
+            event.teams[1].captain.id === player.id,
+        );
+
+        if (isTeam1 || isTeam2) {
+          const teamScore = isTeam1 ? result.team1Score : result.team2Score;
+          const opponentScore = isTeam1 ? result.team2Score : result.team1Score;
+
+          if (teamScore > opponentScore) gamesWon++;
+          else if (teamScore < opponentScore) gamesLost++;
+
+          const wasCaptain = result.events.some(
+            (event) =>
+              (event.teams[0].captain.id === player.id &&
+                teamScore > opponentScore &&
+                isTeam1) ||
+              (event.teams[1].captain.id === player.id &&
+                teamScore > opponentScore &&
+                isTeam2),
+          );
+          if (wasCaptain) gamesWonAsCaptain++;
+        }
+      });
+
+      const gamesTied = gamesPlayed - gamesWon - gamesLost;
+
+      const points =
+        gamesWon * league.stats.find((stat) => stat.name === "Win").points +
+        gamesTied * league.stats.find((stat) => stat.name === "Tie").points +
+        gamesWonAsCaptain *
+          league.stats.find((stat) => stat.name === "Captain Win").points +
+        attendance *
+          league.stats.find((stat) => stat.name === "Attendance").points +
+        nonAttendance *
+          league.stats.find((stat) => stat.name === "Non-Attendance").points;
+
+      return {
+        player,
+        gamesPlayed,
+        gamesWon,
+        gamesLost,
+        gamesTied,
+        gamesWonAsCaptain,
+        attendance,
+        nonAttendance,
+        points,
+      };
+    },
+  );
+
+  return leaderboardData;
+}
+
+export function getCardinalSuffix(n: number): string {
+  const remainder10 = n % 10;
+  const remainder100 = n % 100;
+
+  if (remainder100 >= 11 && remainder100 <= 13) {
+    return "th";
+  }
+
+  switch (remainder10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
   }
 }

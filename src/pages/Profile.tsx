@@ -7,7 +7,6 @@ import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 
 import { updateUser } from "@/api/user";
-import FullScreenLoader from "@/components/FullScreenLoader";
 import { ArrowLeft } from "lucide-react";
 import { uploadImage } from "@/lib/uploadImage";
 
@@ -33,10 +32,6 @@ export default function Profile() {
     avatar_url: user.avatar_url || "",
   });
 
-  const handleClose = () => {
-    navigate(-1);
-  };
-
   const handleUpdateUser = async () => {
     try {
       setLoading(true);
@@ -48,9 +43,11 @@ export default function Profile() {
       if (error) throw new Error(error);
 
       setUser(updatedUser);
-      toast.success("Profile updated successfully");
+      toast.success("Profile updated successfully", {
+        style: { color: "#16a34a" },
+      });
     } catch (error) {
-      toast.error("Error updating profile");
+      toast.error("Error updating profile", { style: { color: "#ef4444" } });
       return;
     } finally {
       setLoading(false);
@@ -80,10 +77,6 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (loading) {
-    return <FullScreenLoader />;
-  }
-
   return (
     <main className="relative flex flex-1 flex-col gap-6 bg-background">
       <div className="relative ml-8 flex items-center justify-between">
@@ -101,7 +94,6 @@ export default function Profile() {
           <ProfileHeader
             isEditing={isEditing}
             onEdit={handleEditToggle}
-            onClose={handleClose}
             loading={loading}
           />
           <ProfileAvatar

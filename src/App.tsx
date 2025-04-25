@@ -62,7 +62,7 @@ const AppRoutes = () => (
           <Route path="/chat" element={<Chat />} />
           <Route path="/rate-teammates" element={<RateTeammates />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/player-profile" element={<PlayerProfile />} />
+          <Route path="/profile/:userId" element={<PlayerProfile />} />
           <Route path="/manage-events" element={<ManageEvents />} />
           <Route path="/add-event" element={<AddEvent />} />
           <Route path="/help" element={<HelpAndSupport />} />

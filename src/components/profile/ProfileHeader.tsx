@@ -1,17 +1,14 @@
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ProfileHeaderProps {
   isEditing: boolean;
   onEdit: () => void;
-  onClose: () => void;
   loading: boolean;
 }
 
 export function ProfileHeader({
   isEditing,
   onEdit,
-  onClose,
   loading,
 }: ProfileHeaderProps) {
   return (
@@ -24,15 +21,8 @@ export function ProfileHeader({
           disabled={loading}
           className="border-accent-orange text-accent-orange hover:bg-orange-50 hover:text-accent-orange"
         >
-          {isEditing ? "Save" : "Edit"}
+          {isEditing ? (loading ? "Saving..." : "Save") : "Edit"}
         </Button>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
-          aria-label="Close"
-        >
-          <X className="h-6 w-6" />
-        </button>
       </div>
     </div>
   );

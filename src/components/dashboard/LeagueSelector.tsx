@@ -20,7 +20,7 @@ export function LeagueSelector({
         onChange={(e) => onLeagueChange(e.target.value)}
         className="w-full rounded-md border p-2 text-sm"
       >
-        <option>All</option>
+        <option hidden>Select League</option>
         {leagues.map((league) => (
           <option key={league.id} value={league.id}>
             {league.name}

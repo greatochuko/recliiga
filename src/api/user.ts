@@ -1,6 +1,11 @@
 import { UserType } from "@/contexts/AuthContext";
 import { fetchApi } from "@/lib/utils";
 
+export async function fetchUserProfile(userId: string) {
+  const data = await fetchApi<UserType>(`/user/${userId}`);
+  return data;
+}
+
 export async function updateUser(updateProfileData: Partial<UserType>) {
   const data = await fetchApi<UserType>("/user", {
     body: updateProfileData,
@@ -19,7 +24,7 @@ export type ProfileRegistrationDataType = {
 };
 
 export async function completeProfileRegistration(
-  updateProfileData: ProfileRegistrationDataType
+  updateProfileData: ProfileRegistrationDataType,
 ) {
   const data = await fetchApi<UserType>("/user/complete-profile", {
     body: updateProfileData,
