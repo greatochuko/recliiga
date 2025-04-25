@@ -122,7 +122,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
               to={`/events/${event.id}/team-draft`}
               className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
             >
-              {event.teams.some((team) => team.players.length > 0)
+              {event.teams.some((team) => team.players?.length || 0 > 0)
                 ? "Continue"
                 : "Begin"}{" "}
               Draft
