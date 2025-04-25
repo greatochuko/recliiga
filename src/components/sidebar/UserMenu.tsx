@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import InvitePopup from "@/components/InvitePopup";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 export function UserMenu() {
   const { user, signOut, deleteAccount } = useAuth();
   const navigate = useNavigate();
@@ -58,8 +59,25 @@ export function UserMenu() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-2 p-2">
-            <User className="h-5 w-5 text-gray-500" />
+          <button className="flex items-center gap-2 px-2">
+            {user.avatar_url ? (
+              <Avatar className="h-6 w-6">
+                <AvatarImage
+                  src={user.avatar_url}
+                  alt="Player avatar"
+                  className="object-cover"
+                  sizes="48px"
+                />
+                <AvatarFallback className="text-gray-800">
+                  {user.full_name
+                    .split(" ")
+                    .slice(0, 2)
+                    .map((n) => n[0])}
+                </AvatarFallback>
+              </Avatar>
+            ) : (
+              <User className="h-5 w-5 text-gray-500" />
+            )}
             <span className="text-sm font-medium">
               {user?.full_name.split(" ")[0] || "User"}
             </span>
