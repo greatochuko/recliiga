@@ -1,6 +1,6 @@
 import { fetchLeaguesByUser, fetchResultsByLeague } from "@/api/league";
 import { PlayerRankCard } from "@/components/dashboard/PlayerRankCard";
-import { UserType } from "@/contexts/AuthContext";
+import { useAuth, UserType } from "@/contexts/AuthContext";
 import PlayerRecordCard from "@/components/dashboard/PlayerRecordCard";
 import { getLeaderBoardData } from "@/lib/utils";
 import {
@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../FullScreenLoader";
 
 export default function ProfilePlayerStats({ user }: { user: UserType }) {
+  const { user: authUser } = useAuth();
   const [selectedLeague, setSelectedLeague] = useState(null);
 
   const {
@@ -68,7 +69,11 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Your Stats</h2>
+        <h2 className="text-lg font-semibold">
+          {user.id === authUser.id ? "Your" : user.full_name.split(" ")[0]}
+          {"'s "}
+          Stats
+        </h2>
         <Select
           value={selectedLeague.id}
           onValueChange={(value) =>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
@@ -49,26 +49,18 @@ export default function LeagueDetails() {
     return <Navigate to={"/leagues"} replace />;
   }
 
-  const handlePlayerClick = () => {
-    navigate("/player-profile");
-  };
-
   const upcomingEvents = getUpcomingEvents(league.events);
 
   return (
     <main className="relative flex flex-1 flex-col gap-6 bg-background">
-      <div className="ml-6 flex justify-between">
+      <div className="ml-8 flex justify-between">
+        <h1 className="text-2xl font-bold">League Details</h1>
         <button
           onClick={() => navigate("/leagues")}
           className="flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
         >
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Previous
         </button>
-        {/* {league.owner_id === user.id && (
-          <button className="ml-auto rounded-md px-3 py-1.5 text-sm font-medium text-red-500 duration-200 hover:bg-red-50 active:bg-red-100">
-            Delete
-          </button>
-        )} */}
       </div>
       <div className="">
         {/* League Info */}
@@ -124,32 +116,31 @@ export default function LeagueDetails() {
                 {league.players
                   .slice(0, showAllPlayers ? undefined : 8)
                   .map((player, index) => (
-                    <Card
-                      key={index}
-                      className="cursor-pointer overflow-hidden transition-colors hover:bg-gray-50"
-                      onClick={handlePlayerClick}
-                    >
-                      <CardContent className="flex items-center p-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={player.avatar_url}
-                            alt={player.full_name}
-                          />
-                          <AvatarFallback>
-                            {player.full_name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="ml-2 flex-grow">
-                          <p className="text-sm font-medium">
-                            {player.full_name}
-                          </p>
-                          <p className="text-xs text-gray-500">Midfielder</p>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <Link to={`/profile/${player.id}`} key={index}>
+                      <Card className="cursor-pointer overflow-hidden transition-colors hover:bg-gray-50">
+                        <CardContent className="flex items-center p-2">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={player.avatar_url}
+                              alt={player.full_name}
+                              className="object-cover"
+                            />
+                            <AvatarFallback>
+                              {player.full_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="ml-2 flex-grow">
+                            <p className="text-sm font-medium">
+                              {player.full_name}
+                            </p>
+                            <p className="text-xs text-gray-500">Midfielder</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   ))}
               </div>
             ) : (
