@@ -37,8 +37,8 @@ export default function EditResults() {
       setAttendingPlayers(
         event.result.attendingPlayers.map((player) => player.id),
       );
-      setLoading(false);
     }
+    setLoading(false);
   }, [event]);
 
   if (loading) {
@@ -108,6 +108,8 @@ export default function EditResults() {
     setResultLoading(false);
   };
 
+  const captainSelected = event.teams.some((team) => team.captain);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="mx-auto max-w-4xl">
@@ -153,6 +155,7 @@ export default function EditResults() {
 
             <h2 className="mb-4 text-2xl font-bold">Attendance</h2>
             <TeamsAttendance
+              captainSelected={captainSelected}
               teams={event.teams}
               attendingPlayers={attendingPlayers}
               setAttendingPlayers={setAttendingPlayers}
@@ -162,7 +165,7 @@ export default function EditResults() {
               <Button
                 type="submit"
                 className="bg-accent-orange text-white hover:bg-[#E66900] disabled:bg-accent-orange/50"
-                disabled={resultLoading}
+                disabled={resultLoading || !captainSelected}
               >
                 {event.resultsEntered
                   ? resultLoading
