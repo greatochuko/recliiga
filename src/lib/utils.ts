@@ -50,7 +50,7 @@ export function getPastEvents(events: EventType[]) {
     .filter((event) => isPast(event.startTime))
     .sort(
       (a, b) =>
-        new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+        new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
     );
 }
 

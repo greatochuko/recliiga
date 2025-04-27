@@ -61,12 +61,12 @@ export function UserMenu() {
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 px-2">
             {user.avatar_url ? (
-              <Avatar className="h-6 w-6">
+              <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={user.avatar_url}
                   alt="Player avatar"
                   className="object-cover"
-                  sizes="48px"
+                  sizes="64px"
                 />
                 <AvatarFallback className="text-gray-800">
                   {user.full_name

@@ -140,7 +140,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
           </div>
         )}
       </div>
-      {teamCaptained?.draftCompleted && (
+      {teamCaptained?.draftCompleted && !isPastEvent && (
         <span className="absolute bottom-4 right-4 text-xs font-medium text-green-600">
           {" "}
           Draft Completed{" "}
