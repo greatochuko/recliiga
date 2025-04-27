@@ -14,8 +14,8 @@ import { submitResult, updateResult } from "@/api/events";
 import { toast } from "sonner";
 
 export default function EditResults() {
-  const [team1Score, setTeam1Score] = useState("");
-  const [team2Score, setTeam2Score] = useState("");
+  const [team1Score, setTeam1Score] = useState<number>(0);
+  const [team2Score, setTeam2Score] = useState<number>(0);
   const [attendingPlayers, setAttendingPlayers] = useState<string[]>([]);
   const [resultLoading, setResultLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -32,8 +32,8 @@ export default function EditResults() {
 
   useEffect(() => {
     if (event && event.result) {
-      setTeam1Score(event.result.team1Score.toString());
-      setTeam2Score(event.result.team2Score.toString());
+      setTeam1Score(event.result.team1Score);
+      setTeam2Score(event.result.team2Score);
       setAttendingPlayers(
         event.result.attendingPlayers.map((player) => player.id),
       );
@@ -64,6 +64,9 @@ export default function EditResults() {
   }
 
   let alertMessage = "";
+
+  console.clear();
+  console.log({ team1Score, team2Score });
   if (team1Score && team2Score) {
     if (team1Score > team2Score) {
       alertMessage = `${event.teams[0].name} beat ${event.teams[1].name} ${team1Score}-${team2Score}`;
@@ -83,8 +86,8 @@ export default function EditResults() {
     if (event.resultsEntered) {
       const { error } = await updateResult({
         eventId: event.id,
-        team1Score: Number(team1Score),
-        team2Score: Number(team2Score),
+        team1Score: team1Score,
+        team2Score: team2Score,
         attendingPlayers: attendingPlayers,
         resultId: event.result.id,
       });
@@ -92,8 +95,8 @@ export default function EditResults() {
     } else {
       const { error } = await submitResult({
         eventId: event.id,
-        team1Score: Number(team1Score),
-        team2Score: Number(team2Score),
+        team1Score: team1Score,
+        team2Score: team2Score,
         attendingPlayers: attendingPlayers,
         leagueId: event.league.id,
       });
