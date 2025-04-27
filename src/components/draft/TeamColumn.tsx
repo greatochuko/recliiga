@@ -91,6 +91,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                     <AvatarImage
                       src={team.captain.avatar_url}
                       alt={team.captain.full_name}
+                      className="object-cover"
                     />
                     <AvatarFallback className="text-sm">
                       {team.captain.full_name
@@ -198,6 +199,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                         <AvatarImage
                           src={player.avatar_url}
                           alt={player.full_name}
+                          className="object-cover"
                         />
                         <AvatarFallback>
                           {player.full_name

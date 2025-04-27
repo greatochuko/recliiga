@@ -50,7 +50,8 @@ function AttendingList({
             <label
               htmlFor={player.id}
               key={player.id}
-              className={`flex cursor-pointer items-center gap-3 rounded-md border p-2 ${playerIsCaptain ? "border-accent-orange" : ""}`}
+              className={`flex cursor-pointer items-center gap-3 rounded-md border p-2 aria-disabled:pointer-events-none ${playerIsCaptain ? "border-accent-orange" : "aria-disabled:bg-gray-50"} `}
+              aria-disabled={captainIds.length > 1 && !playerIsCaptain}
             >
               {selectableCaptains && (
                 <Checkbox
@@ -60,10 +61,15 @@ function AttendingList({
                   }
                   aria-label={`Select ${player.full_name} as captain`}
                   id={player.id}
+                  className="bg-white"
                 />
               )}
               <Avatar className="h-10 w-10">
-                <AvatarImage src={player.avatar_url} alt={player.full_name} />
+                <AvatarImage
+                  src={player.avatar_url}
+                  alt={player.full_name}
+                  className="object-cover"
+                />
                 <AvatarFallback>
                   {player.full_name
                     .split(" ")
@@ -137,7 +143,7 @@ export default function SelectCaptains() {
   };
 
   const handleCancelEditing = () => {
-    setCaptainIds([]);
+    setCaptainIds(event ? event.teams.map((team) => team.captain?.id) : []);
     setSelectingCaptains(false);
   };
 
@@ -172,7 +178,11 @@ export default function SelectCaptains() {
         className="h-16 w-16 border-2"
         style={{ borderColor: team.color }}
       >
-        <AvatarImage src={team.logo} alt={`Team ${teamNumber}`} />
+        <AvatarImage
+          src={team.logo}
+          alt={`Team ${teamNumber}`}
+          className="object-cover"
+        />
         <AvatarFallback>{`T${teamNumber}`}</AvatarFallback>
       </Avatar>
       <span className="text-sm font-semibold">
@@ -236,10 +246,15 @@ export default function SelectCaptains() {
               <div className="flex items-center justify-center gap-4">
                 {!selectingCaptains ? (
                   <Button
-                    disabled={event.teams.every((team) => team.captain)}
+                    disabled={event.teams.some(
+                      (team) => team.players.length > 0,
+                    )}
                     onClick={() => setSelectingCaptains(true)}
                   >
-                    Select Captains
+                    {event.teams.every((team) => team.captain)
+                      ? "Change"
+                      : "Select"}{" "}
+                    Captains
                   </Button>
                 ) : (
                   <>

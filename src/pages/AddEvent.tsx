@@ -29,7 +29,7 @@ const initialEventData: EventDataType = {
   leagueId: "",
   title: "",
   location: "",
-  draftType: "",
+  draftType: "alternating",
   numTeams: 2,
   rosterSpots: 1,
   rsvpDeadline: 2,
@@ -362,7 +362,6 @@ export default function AddEvent() {
                   }))
                 }
                 className="flex space-x-4"
-                disabled
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="alternating" id="alternating" />

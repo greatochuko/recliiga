@@ -112,7 +112,7 @@ export default function LeagueDetails() {
               )}
             </div>
             {league.players.length ? (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))] gap-2">
                 {league.players
                   .slice(0, showAllPlayers ? undefined : 8)
                   .map((player, index) => (

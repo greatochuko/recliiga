@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlayerRating } from "./DraftUIComponents";
 import { TeamType } from "@/types/events";
 import { useAuth, UserType } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 interface PlayersListProps {
   availablePlayers: UserType[];
@@ -41,11 +42,15 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                 key={player.id}
                 className="flex items-center justify-between rounded p-2 hover:bg-gray-100"
               >
-                <div className="flex items-center space-x-2">
+                <Link
+                  to={`/profile/${player.id}`}
+                  className="group flex items-center space-x-2"
+                >
                   <Avatar>
                     <AvatarImage
                       src={player.avatar_url}
                       alt={player.full_name}
+                      className="object-cover"
                     />
                     <AvatarFallback>
                       {player.full_name
@@ -56,14 +61,16 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                   </Avatar>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <p className="font-medium">{player.full_name}</p>
+                      <p className="font-medium group-hover:text-accent-orange group-hover:underline">
+                        {player.full_name}
+                      </p>
                       <PlayerRating rating={3} />
                     </div>
                     <p className="text-sm text-gray-500">
                       {player.positions[0]}
                     </p>
                   </div>
-                </div>
+                </Link>
                 <Button
                   onClick={() => handlePlayerDraft(currentTeam.id, player.id)}
                   className="bg-black text-white hover:bg-gray-800"

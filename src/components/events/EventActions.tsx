@@ -85,50 +85,67 @@ export const EventActions: React.FC<EventActionsProps> = ({
     </>
   );
 
+  const teamCaptained = event.teams.find(
+    (team) => team.captain?.id === user.id,
+  );
+
   return (
-    <div className="flex flex-col items-center justify-center gap-2">
-      <Link
-        to={`/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
-        className="rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
-      >
-        {event.resultsEntered ? "View Results" : "View Details"}
-      </Link>
+    <>
+      <div className="flex flex-col items-center justify-center gap-2">
+        <Link
+          to={`/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
+          className="rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
+        >
+          {event.resultsEntered ? "View Results" : "View Details"}
+        </Link>
 
-      {!isPastEvent && isRsvpOpen && (
-        <div className="flex justify-center space-x-2">
-          {(isEditing || !attendanceStatus) && renderRSVPButtons()}
-          {attendanceStatus &&
-            !isEditing &&
-            (spotsRemaining <= 0 ? (
-              <p className="text-sm text-red-500">No spots remaining</p>
-            ) : (
-              <button
-                className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange transition-colors hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit className="h-4 w-4" />
-                Edit RSVP
-              </button>
-            ))}
-        </div>
-      )}
+        {!isPastEvent && isRsvpOpen && (
+          <div className="flex justify-center space-x-2">
+            {(isEditing || !attendanceStatus) && renderRSVPButtons()}
+            {attendanceStatus &&
+              !isEditing &&
+              (spotsRemaining <= 0 ? (
+                <p className="text-sm text-red-500">No spots remaining</p>
+              ) : (
+                <button
+                  className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange transition-colors hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit RSVP
+                </button>
+              ))}
+          </div>
+        )}
 
-      <div className="flex w-full justify-end">
-        {!isPastEvent &&
-          (isRsvpOpen ? (
-            <CountdownClock deadline={rsvpDeadline} size="sm" />
-          ) : (
-            <Link
-              to={`/events/${event.id}/team-draft`}
-              className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
-            >
-              {event.teams.some((team) => team.players?.length || 0 > 0)
-                ? "Continue"
-                : "Begin"}{" "}
-              Draft
-            </Link>
-          ))}
+        {!teamCaptained?.draftCompleted && (
+          <div className="flex w-full justify-end">
+            {!isPastEvent &&
+              (isRsvpOpen ? (
+                <CountdownClock deadline={rsvpDeadline} size="sm" />
+              ) : (
+                !!teamCaptained &&
+                !teamCaptained.draftCompleted && (
+                  <Link
+                    to={`/events/${event.id}/team-draft`}
+                    className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+                  >
+                    {event.teams.some((team) => team.players?.length)
+                      ? "Continue"
+                      : "Begin"}{" "}
+                    Draft
+                  </Link>
+                )
+              ))}
+          </div>
+        )}
       </div>
-    </div>
+      {teamCaptained?.draftCompleted && (
+        <span className="absolute bottom-4 right-4 text-xs font-medium text-green-600">
+          {" "}
+          Draft Completed{" "}
+        </span>
+      )}
+    </>
   );
 };

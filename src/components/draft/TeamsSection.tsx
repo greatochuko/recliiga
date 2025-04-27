@@ -2,6 +2,7 @@ import React from "react";
 import { TeamColumn } from "./TeamColumn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TeamType } from "@/types/events";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TeamsSectionProps {
   numEventPlayers: number;
@@ -24,6 +25,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
   cancelTeamEditing,
   refetchEvent,
 }) => {
+  const { user } = useAuth();
   const canConfirmDraft =
     teams.reduce((prev, curr) => prev + curr.players.length, 0) + 2 ===
     numEventPlayers;
@@ -49,7 +51,9 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
 
       {/* Mobile view (tabs) */}
       <div className="col-span-2 flex-1 lg:hidden">
-        <Tabs defaultValue="team1">
+        <Tabs
+          defaultValue={teams[0].captain.id === user.id ? "team1" : "team2"}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="team1">Team 1</TabsTrigger>
             <TabsTrigger value="team2">Team 2</TabsTrigger>

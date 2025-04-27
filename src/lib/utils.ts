@@ -37,11 +37,21 @@ export async function fetchApi<T>(
 }
 
 export function getUpcomingEvents(events: EventType[]) {
-  return events.filter((event) => !isPast(event.startTime));
+  return events
+    .filter((event) => !isPast(event.startTime))
+    .sort(
+      (a, b) =>
+        new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+    );
 }
 
 export function getPastEvents(events: EventType[]) {
-  return events.filter((event) => isPast(event.startTime));
+  return events
+    .filter((event) => isPast(event.startTime))
+    .sort(
+      (a, b) =>
+        new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+    );
 }
 
 export function getDateIncrement(freq: string): number {

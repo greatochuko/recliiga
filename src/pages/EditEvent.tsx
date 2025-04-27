@@ -216,9 +216,13 @@ export default function EditEvent() {
   };
 
   const rsvpDeadline = useMemo(() => {
-    const startTime = new Date(event.startTime);
-    return new Date(startTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000);
-  }, [event.startTime, event.rsvpDeadline]);
+    if (event) {
+      const startTime = new Date(event.startTime);
+      return new Date(
+        startTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000,
+      );
+    }
+  }, [event]);
 
   if (isLoading) {
     return (

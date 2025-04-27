@@ -68,7 +68,7 @@ export function NotificationsPopover() {
       {isOpen && (
         <div className="absolute left-0 z-10 mt-2 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
           {notifications.length > 0 ? (
-            <div className="max-h-[360px] w-[360px]">
+            <div className="max-h-[280px] w-[280px]">
               {joinRequests.length > 0 && (
                 <>
                   <div className="border-b border-gray-100 p-4 font-medium">
@@ -76,6 +76,7 @@ export function NotificationsPopover() {
                   </div>
                   {joinRequests.map((notif) => (
                     <JoinRequestNotification
+                      key={notif.id}
                       notification={notif}
                       refetchNotifications={refetch}
                     />
@@ -128,7 +129,7 @@ export function NotificationsPopover() {
               <div className="border-t border-gray-100 p-2">
                 <button
                   onClick={markAllAsRead}
-                  disabled={loading}
+                  disabled={!unreadNotifications.length || loading}
                   className="w-full rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90 disabled:pointer-events-none disabled:bg-accent-orange/50"
                 >
                   Mark All as Read
