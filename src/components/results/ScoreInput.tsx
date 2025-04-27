@@ -52,7 +52,7 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
         min="0"
         required
       />
-      <div className="flex space-x-2">
+      <div className="hidden space-x-2 sm:flex">
         <Button
           type="button"
           onClick={() => handleAddScore(2)}
@@ -78,8 +78,8 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
           +10
         </Button>
       </div>
-      <div className="grid grid-cols-5 gap-1">
-        {["1", "2", "3", "4", "5"].map((num) => (
+      <div className="hidden grid-cols-5 gap-1 sm:grid">
+        {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].map((num) => (
           <Button
             key={num}
             type="button"
@@ -91,25 +91,13 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
           </Button>
         ))}
       </div>
-      <div className="grid grid-cols-5 gap-1">
-        {["6", "7", "8", "9", "0"].map((num) => (
-          <Button
-            key={num}
-            type="button"
-            onClick={() => handleNumberInput(num)}
-            size="sm"
-            variant="outline"
-          >
-            {num}
-          </Button>
-        ))}
-      </div>
+
       <Button
         type="button"
         onClick={handleClear}
         size="sm"
         variant="outline"
-        className="w-full"
+        className="hidden w-full sm:block"
       >
         Clear
       </Button>

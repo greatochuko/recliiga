@@ -61,6 +61,7 @@ export default function PlayerProfile() {
             <AvatarImage
               src={profile.avatar_url}
               alt={`${profile.full_name} Profile picture`}
+              className="object-cover"
             />
             <AvatarFallback>
               {profile.full_name

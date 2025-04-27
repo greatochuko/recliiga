@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScoreInput } from "@/components/results/ScoreInput";
 import { EventHeader } from "@/components/results/EventHeader";
 import { TeamsAttendance } from "@/components/results/TeamsAttendance";
@@ -65,8 +65,6 @@ export default function EditResults() {
 
   let alertMessage = "";
 
-  console.clear();
-  console.log({ team1Score, team2Score });
   if (team1Score && team2Score) {
     if (team1Score > team2Score) {
       alertMessage = `${event.teams[0].name} beat ${event.teams[1].name} ${team1Score}-${team2Score}`;
@@ -114,16 +112,24 @@ export default function EditResults() {
   const captainSelected = event.teams.some((team) => team.captain);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="mx-auto max-w-4xl">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">
-            Input Match Result
-          </CardTitle>
-        </CardHeader>
+    <div className="flex flex-1 flex-col gap-4">
+      <div className="relative ml-8 flex items-center justify-between">
+        <h1 className="text-lg font-bold sm:text-2xl">
+          {event.result ? "Edit" : "Enter"} Match Result
+        </h1>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-1 rounded-md p-1.5 px-3 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          Previous
+        </button>
+      </div>
+      <Card className="flex-1">
+        <CardHeader></CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="mb-8 flex items-center gap-8">
+            <div className="mb-8 flex items-center gap-4 sm:gap-8">
               <ScoreInput
                 team={event.teams[0]}
                 score={team1Score}

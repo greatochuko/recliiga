@@ -15,22 +15,26 @@ export default function LeaderboradDataRow({
       <TableCell className="p-3 text-center font-medium">{rank}</TableCell>
       <TableCell className="p-3 font-medium">
         <Link
-          to={`/player-profile`}
-          className="flex cursor-pointer items-center transition-colors hover:text-accent-orange"
+          to={`/profile/${data.player.id}`}
+          className="group flex cursor-pointer items-center transition-colors"
         >
           <Avatar className="mr-2 h-8 w-8">
             <AvatarImage
               src={data.player.avatar_url}
               alt={data.player.full_name}
+              className="object-cover"
             />
             <AvatarFallback>
               {data.player.full_name
                 .split(" ")
+                .slice(0, 2)
                 .map((n) => n[0])
                 .join("")}
             </AvatarFallback>
           </Avatar>
-          {data.player.full_name}
+          <span className="group-hover:text-accent-orange group-hover:underline">
+            {data.player.full_name}
+          </span>
         </Link>
       </TableCell>
       <TableCell className="p-3 text-center">{data.gamesPlayed}</TableCell>
