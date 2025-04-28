@@ -1,15 +1,21 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { fetchEventById } from "@/api/events";
+import { ArrowLeftIcon, ChevronLeftIcon } from "lucide-react";
+import FullScreenLoader from "@/components/FullScreenLoader";
+import { TeamType } from "@/types/events";
+import { UserType } from "@/contexts/AuthContext";
 
 function TeamRoster({
   team,
   attendance,
 }: {
-  team: any;
-  attendance: Record<string, boolean>;
+  team: TeamType;
+  attendance: UserType[];
 }) {
   const navigate = useNavigate();
 
@@ -25,14 +31,15 @@ function TeamRoster({
         </h3>
       </div>
       <div className="space-y-4">
-        <div
-          className="flex cursor-pointer items-center gap-4 rounded-lg bg-gray-100 p-2 transition-colors hover:bg-gray-200"
-          onClick={handleViewProfile}
-        >
+        <div className="flex items-center gap-4 rounded-lg bg-gray-100 p-2 transition-colors hover:bg-gray-200">
           <Avatar className="h-12 w-12" style={{ backgroundColor: team.color }}>
-            <AvatarImage src={team.captain.avatar} alt={team.captain.name} />
+            <AvatarImage
+              src={team.captain.avatar_url}
+              alt={team.captain.full_name}
+              className="object-cover"
+            />
             <AvatarFallback>
-              {team.captain.name
+              {team.captain.full_name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
@@ -40,7 +47,7 @@ function TeamRoster({
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{team.captain.name}</span>
+              <span className="font-semibold">{team.captain.full_name}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -49,42 +56,58 @@ function TeamRoster({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-accent-orange h-4 w-4"
+                className="h-4 w-4 text-accent-orange"
               >
                 <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
               </svg>
             </div>
             <span className="text-sm text-muted-foreground">
-              {team.captain.position}
+              {team.captain.positions[0]}
             </span>
           </div>
           <Badge
-            variant={attendance[team.captain.name] ? "default" : "secondary"}
+            variant={
+              attendance.some((pl) => pl.id === team.captain.id)
+                ? "default"
+                : "secondary"
+            }
           >
-            {attendance[team.captain.name] ? "Present" : "Absent"}
+            {attendance.some((pl) => pl.id === team.captain.id)
+              ? "Present"
+              : "Absent"}
           </Badge>
         </div>
-        {team.players.map((player: any) => (
+        {team.players.map((player) => (
           <div
             key={player.id}
             className="flex cursor-pointer items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
             onClick={handleViewProfile}
           >
             <Avatar className="h-12 w-12">
-              <AvatarImage src={player.avatar} alt={player.name} />
+              <AvatarImage src={player.avatar_url} alt={player.full_name} />
               <AvatarFallback>
-                {player.name
+                {player.full_name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <span className="font-semibold">{player.name}</span>
-              <p className="text-sm text-muted-foreground">{player.position}</p>
+              <span className="font-semibold">{player.full_name}</span>
+              <p className="text-sm text-muted-foreground">
+                {player.positions[0]}
+              </p>
             </div>
-            <Badge variant={attendance[player.name] ? "default" : "secondary"}>
-              {attendance[player.name] ? "Present" : "Absent"}
+            <Badge
+              variant={
+                attendance.some((pl) => pl.id === player.id)
+                  ? "default"
+                  : "secondary"
+              }
+            >
+              {attendance.some((pl) => pl.id === player.id)
+                ? "Present"
+                : "Absent"}
             </Badge>
           </div>
         ))}
@@ -93,132 +116,59 @@ function TeamRoster({
   );
 }
 
-function EventResultsContent() {
+export default function EventResults() {
+  const { id: eventId } = useParams();
   const navigate = useNavigate();
 
-  // Mock data for event results
-  const eventData = {
-    date: "15-Jul-2024",
-    time: "8:00 PM",
-    location: "Old Trafford",
-    league: "Premier League",
-    team1: {
-      name: "Red Devils",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#DA291C",
-      score: 3,
-      captain: {
-        name: "John Smith",
-        avatar: "/placeholder.svg?height=48&width=48",
-        position: "Captain",
-      },
-      players: [
-        {
-          id: 1,
-          name: "Alex Johnson",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Midfielder",
-        },
-        {
-          id: 2,
-          name: "Sam Williams",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Defender",
-        },
-        {
-          id: 3,
-          name: "Chris Brown",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Forward",
-        },
-        {
-          id: 4,
-          name: "Pat Taylor",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Goalkeeper",
-        },
-      ],
-    },
-    team2: {
-      name: "Sky Blues",
-      avatar: "/placeholder.svg?height=64&width=64",
-      color: "#6CABDD",
-      score: 2,
-      captain: {
-        name: "Mike Davis",
-        avatar: "/placeholder.svg?height=48&width=48",
-        position: "Captain",
-      },
-      players: [
-        {
-          id: 5,
-          name: "Tom Wilson",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Defender",
-        },
-        {
-          id: 6,
-          name: "Jamie Lee",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Midfielder",
-        },
-        {
-          id: 7,
-          name: "Casey Morgan",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Forward",
-        },
-        {
-          id: 8,
-          name: "Jordan Riley",
-          avatar: "/placeholder.svg?height=48&width=48",
-          position: "Goalkeeper",
-        },
-      ],
-    },
-  };
+  const { data, isLoading } = useQuery({
+    queryKey: [`event-${eventId}`],
+    queryFn: () => fetchEventById(eventId),
+  });
 
-  // Mock attendance data
-  const attendanceData = {
-    "John Smith": true,
-    "Alex Johnson": true,
-    "Sam Williams": true,
-    "Chris Brown": false,
-    "Pat Taylor": true,
-    "Mike Davis": true,
-    "Tom Wilson": true,
-    "Jamie Lee": false,
-    "Casey Morgan": true,
-    "Jordan Riley": true,
-  };
+  const event = data?.data;
 
-  const renderTeamScore = (team: any) => (
-    <div className="flex flex-col items-center space-y-2">
-      <Avatar className="h-16 w-16" style={{ backgroundColor: team.color }}>
-        <AvatarImage src={team.avatar} alt={team.name} />
-        <AvatarFallback>
-          {team.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")}
-        </AvatarFallback>
-      </Avatar>
-      <span className="text-sm font-semibold">{team.name}</span>
-      <span className="text-4xl font-bold">{team.score}</span>
-    </div>
-  );
+  if (isLoading) {
+    return <FullScreenLoader />;
+  }
+
+  if (!event) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-4xl font-bold text-gray-800">Event Not Found</h1>
+        <p className="mt-4 text-gray-600">
+          The event you are looking for does not exist or has been removed.
+        </p>
+        <Link
+          to="/events"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          Go Back to Events
+        </Link>
+      </div>
+    );
+  }
+
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(-1);
+  };
 
   return (
-    <div className="container relative mx-auto px-4 py-8">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-accent-orange hover:text-accent-orange fixed right-4 top-4 z-10 p-0 hover:bg-transparent hover:underline"
-        onClick={() => navigate(-1)}
-      >
-        Previous
-      </Button>
-      <Card className="mx-auto max-w-3xl">
+    <main className="relative flex flex-1 flex-col gap-4 bg-background sm:gap-6">
+      <div className="flex items-center justify-between pl-8">
+        <h1 className="text-2xl font-bold">Match Results</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={handleBackClick}
+        >
+          <ChevronLeftIcon className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
+      </div>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">
             Match Result
@@ -226,60 +176,117 @@ function EventResultsContent() {
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
-            <div className="mb-8 flex items-center justify-center gap-8">
-              {renderTeamScore(eventData.team1)}
+            <div className="mb-8 grid grid-cols-3 items-center gap-4">
+              <div className="flex flex-col items-center space-y-2">
+                <Avatar
+                  className="h-16 w-16 border-2"
+                  style={{ borderColor: event.teams[0].color }}
+                >
+                  <AvatarImage
+                    src={event.teams[0].logo}
+                    alt={event.teams[0].name}
+                  />
+                  <AvatarFallback>
+                    {event.teams[0].name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-semibold">
+                  {event.teams[0].name}
+                </span>
+                <span className="text-4xl font-bold">
+                  {event.result.team1Score}
+                </span>
+              </div>
+
               <div className="flex flex-col items-center justify-center">
                 <div className="mb-4 flex flex-col items-center text-center">
                   <span className="text-xs text-gray-500">
-                    {eventData.date}
+                    {new Date(event.startTime).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </span>
                   <span className="text-xs text-gray-500">
-                    {eventData.location}
+                    {event.location}
                   </span>
                   <span className="text-xs text-gray-500">
-                    {eventData.time}
+                    {new Date(event.startTime).toLocaleDateString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
                   </span>
-                  <span className="text-accent-orange text-xs font-bold">
-                    {eventData.league}
+                  <span className="text-xs font-bold text-accent-orange">
+                    {event.league.name}
                   </span>
                 </div>
                 <span className="text-2xl font-bold">vs</span>
               </div>
-              {renderTeamScore(eventData.team2)}
+              <div className="flex flex-col items-center space-y-2">
+                <Avatar
+                  className="h-16 w-16 border-2"
+                  style={{ borderColor: event.teams[1].color }}
+                >
+                  <AvatarImage
+                    src={event.teams[1].logo}
+                    alt={event.teams[1].name}
+                  />
+                  <AvatarFallback>
+                    {event.teams[1].name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-semibold">
+                  {event.teams[1].name}
+                </span>
+                <span className="text-4xl font-bold">
+                  {event.result.team2Score}
+                </span>
+              </div>
             </div>
 
             <div className="text-center">
               <h2 className="mb-2 text-xl font-bold">Final Result</h2>
               <p className="text-lg">
-                {eventData.team1.name} {eventData.team1.score} -{" "}
-                {eventData.team2.score} {eventData.team2.name}
+                {event.teams[0].name}{" "}
+                <span className="font-semibold text-accent-orange">
+                  {event.result.team1Score}
+                </span>
+                {" - "}
+                <span className="font-semibold text-accent-orange">
+                  {event.result.team2Score}
+                </span>{" "}
+                {event.teams[1].name}
               </p>
-              <p className="text-md mt-2">
-                {eventData.team1.score > eventData.team2.score
-                  ? `${eventData.team1.name} win!`
-                  : eventData.team2.score > eventData.team1.score
-                    ? `${eventData.team2.name} win!`
+              <p className="text-md mt-2 text-accent-orange">
+                {event.result.team1Score > event.result.team2Score
+                  ? `${event.teams[0].name} win!`
+                  : event.result.team2Score > event.result.team1Score
+                    ? `${event.teams[1].name} win!`
                     : "It's a draw!"}
               </p>
             </div>
 
             <h2 className="mb-4 text-2xl font-bold">Attendance</h2>
             <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
-              <TeamRoster team={eventData.team1} attendance={attendanceData} />
-              <TeamRoster team={eventData.team2} attendance={attendanceData} />
+              <TeamRoster
+                team={event.teams[0]}
+                attendance={event.result.attendingPlayers}
+              />
+              <TeamRoster
+                team={event.teams[1]}
+                attendance={event.result.attendingPlayers}
+              />
             </div>
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-export default function EventResults() {
-  return (
-    <main className="relative flex-1 bg-background">
-      <h1 className="ml-14 text-2xl font-bold">Match Results</h1>
-      <EventResultsContent />
     </main>
   );
 }
