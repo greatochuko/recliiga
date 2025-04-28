@@ -31,6 +31,7 @@ import TeamDraftPage from "./pages/TeamDraftPage";
 import AuthWrapper from "./components/AuthWrapper";
 import { HomeScreen } from "./components/dashboard/HomeScreen";
 import EditEvent from "./pages/EditEvent";
+import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,11 @@ const AppRoutes = () => (
             element={<SelectCaptains />}
           />
           <Route path="/edit-results/:eventId" element={<EditResults />} />
+          <Route
+            path="/rate-teammates/:eventId"
+            element={<RateTeammatesByEvent />}
+          />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Route>
 

@@ -30,7 +30,6 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Rating for", player.full_name, ":", rating);
     onRatingSubmit(player.id);
     setIsOpen(false);
   };
@@ -44,8 +43,12 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
         >
           <CardContent className="flex items-center justify-between p-2">
             <div className="flex items-center">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={player.avatar_url} alt={player.full_name} />
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={player.avatar_url}
+                  alt={player.full_name}
+                  className="object-cover"
+                />
                 <AvatarFallback>
                   {player.full_name
                     .split(" ")
@@ -54,12 +57,8 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
                 </AvatarFallback>
               </Avatar>
               <div className="ml-2">
-                <p className="w-20 truncate text-xs font-medium">
-                  {player.full_name}
-                </p>
-                <p className="text-[10px] text-gray-500">
-                  {player.positions[0]}
-                </p>
+                <p className="font-medium">{player.full_name}</p>
+                <p className="text-xs text-gray-500">{player.positions[0]}</p>
               </div>
             </div>
             <div className="rating-btn-area flex items-center rounded bg-accent-orange px-1 py-0.5">
@@ -83,6 +82,7 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
               <AvatarImage
                 src={player.avatar_url}
                 alt={`${player.full_name} avatar`}
+                className="object-cover"
               />
               <AvatarFallback>
                 {player.full_name
