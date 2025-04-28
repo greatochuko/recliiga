@@ -64,7 +64,7 @@ export default function RateTeammatesByEvent() {
         </Button>
       </div>
       {event.players.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           {event.players.map((player) => (
             <RatingDialog
               key={player.id}
