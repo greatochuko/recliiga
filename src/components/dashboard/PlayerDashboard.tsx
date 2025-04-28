@@ -9,7 +9,7 @@ import { getLeaderBoardData, getUpcomingEvents } from "@/lib/utils";
 import { fetchLeaguesByUser } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import FullScreenLoader from "../FullScreenLoader";
-import TeammatesSection from "./TeammatesSection";
+import RatingSection from "./RatingSection";
 import UpcomingEventsSection from "./UpcomingEventsSection";
 import PlayerStatsOverview from "./PlayerStatsOverview";
 
@@ -34,23 +34,6 @@ export default function PlayerDashboard() {
       setSelectedLeagueId(leagueId);
     }
   }, [leagues]);
-
-  const teammates = Array.from(
-    new Map(
-      leagues
-        .flatMap((league) => league.players)
-        .map((player) => [player.id, player]),
-    ).values(),
-  ).filter((player) => player.id !== user.id);
-
-  // const {
-  //   data: { data: events },
-  //   isLoading: eventsLoading,
-  // } = useQuery({
-  //   queryKey: ["upcomingEvents"],
-  //   queryFn: fetchEventsByUser,
-  //   initialData: { data: [], error: null },
-  // });
 
   const events = leagues.flatMap((league) => league.events);
 
@@ -83,7 +66,7 @@ export default function PlayerDashboard() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-12">
         <PlayerStatsOverview
           leagues={leagues}
           playerData={playerData}
@@ -92,7 +75,7 @@ export default function PlayerDashboard() {
           setSelectedLeagueId={setSelectedLeagueId}
         />
 
-        <TeammatesSection teammates={teammates} />
+        <RatingSection />
 
         <UpcomingEventsSection events={upcomingEvents} />
       </div>
