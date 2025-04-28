@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,6 +7,7 @@ import { Calendar, MapPin, Edit, UserPlus, Trophy } from "lucide-react";
 import { EventType } from "@/types/events";
 import { format, isPast } from "date-fns";
 import DeleteEventButton from "./DeleteEventButton";
+import CountdownClock from "./CountdownClock";
 
 interface ManageEventCardProps {
   event: EventType;
@@ -18,12 +19,14 @@ export default function ManageEventCard({
   refetchEvents,
 }: ManageEventCardProps) {
   const eventDate = new Date(event.startTime);
-
   const eventTime = format(event.startTime, "h:mm a");
-
   const spotsLeft = event.numTeams * event.rosterSpots - event.players.length;
-
   const eventStatus = isPast(eventDate) ? "past" : "upcoming";
+
+  const rsvpDeadline = useMemo(() => {
+    const startTime = new Date(event.startTime);
+    return new Date(startTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000);
+  }, [event.startTime, event.rsvpDeadline]);
 
   return (
     <Card className="mb-4">
@@ -130,6 +133,10 @@ export default function ManageEventCard({
               </Button>
             </Link>
           )}
+        </div>
+
+        <div className="absolute bottom-4 right-4">
+          <CountdownClock deadline={rsvpDeadline} size="sm" />
         </div>
       </CardContent>
     </Card>

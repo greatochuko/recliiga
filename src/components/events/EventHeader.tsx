@@ -7,11 +7,13 @@ import { format } from "date-fns";
 interface EventHeaderProps {
   event: EventType;
   attendanceStatus: "attending" | "not-attending" | null;
+  isPastEvent: boolean;
 }
 
 export const EventHeader: React.FC<EventHeaderProps> = ({
   event,
   attendanceStatus,
+  isPastEvent,
 }) => {
   const eventDate = new Date(event.startTime);
 
@@ -30,18 +32,19 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
         <MapPin className="mr-2 h-4 w-4 text-gray-500" />
         <span className="text-xs text-gray-500">{event.location}</span>
       </div>
-      {attendanceStatus === "attending" ? (
-        <Badge
-          variant="secondary"
-          className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
-        >
-          Attending
-        </Badge>
-      ) : (
-        <Badge variant="secondary" className="text-xs text-red-600">
-          {spotsLeft} spots left
-        </Badge>
-      )}
+      {!isPastEvent &&
+        (attendanceStatus === "attending" ? (
+          <Badge
+            variant="secondary"
+            className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
+          >
+            Attending
+          </Badge>
+        ) : (
+          <Badge variant="secondary" className="text-xs text-red-600">
+            {spotsLeft} spots left
+          </Badge>
+        ))}
     </div>
   );
 };

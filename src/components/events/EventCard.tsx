@@ -16,6 +16,7 @@ export default function EventCard({
   showLeagueName?: boolean;
 }) {
   const { user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
   const [attendanceStatus, setAttendanceStatus] = useState<
     "attending" | "not-attending"
   >(
@@ -28,12 +29,15 @@ export default function EventCard({
 
   const isRsvpOpen =
     new Date().getTime() < eventDate.getTime() - event.rsvpDeadline * 60 * 1000;
-  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <Card className="mb-4">
       <CardContent className="relative p-4">
-        <EventHeader event={event} attendanceStatus={attendanceStatus} />
+        <EventHeader
+          event={event}
+          attendanceStatus={attendanceStatus}
+          isPastEvent={isPastEvent}
+        />
         <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
