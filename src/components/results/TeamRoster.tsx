@@ -71,6 +71,7 @@ export function TeamRoster({
             <AvatarImage
               src={team.captain.avatar_url}
               alt={team.captain.full_name}
+              className="object-cover"
             />
             <AvatarFallback>
               {team.captain.full_name
@@ -97,7 +98,11 @@ export function TeamRoster({
         {team.players.map((player) => (
           <div key={player.id} className="flex items-center gap-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={player.avatar_url} alt={player.full_name} />
+              <AvatarImage
+                src={player.avatar_url}
+                alt={player.full_name}
+                className="object-cover"
+              />
               <AvatarFallback>
                 {player.full_name
                   .split(" ")
