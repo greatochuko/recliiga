@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Crown, Star, Loader2 } from "lucide-react";
+import { Crown, Star, Loader2, ChevronLeftIcon } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchEventById, selectCaptains } from "@/api/events";
@@ -199,106 +199,110 @@ export default function SelectCaptains() {
     );
   }
 
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(-1);
+  };
+
   return (
-    <main className="relative flex-1 bg-background">
-      <div className="absolute left-4 top-4 z-50"></div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="fixed right-4 top-4 z-10 p-0 text-accent-orange hover:bg-transparent hover:text-accent-orange hover:underline"
-        onClick={() => navigate("/manage-events")}
-      >
-        Back to Events
-      </Button>
-      <div className="container mx-auto px-4 py-8">
-        <Card className="mx-auto max-w-3xl">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl font-bold">
-              Upcoming Match
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-8">
-              {event && (
-                <div className="mb-8 flex items-center justify-center gap-8">
-                  {renderTeamInfo(event.teams[0], 1)}
-                  <div className="flex flex-col items-center justify-center">
-                    <div className="mb-4 flex flex-col items-center text-center">
-                      <span className="text-xs text-gray-500">
-                        {new Date(event.startTime).toLocaleDateString()}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {event.location}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {format(event.startTime, "h:mm a")}
-                      </span>
-                      <span className="text-xs font-bold text-accent-orange">
-                        {event.league.name}
-                      </span>
-                    </div>
-                    <span className="text-2xl font-bold">vs</span>
-                  </div>
-                  {renderTeamInfo(event.teams[1], 2)}
-                </div>
-              )}
-
-              <div className="flex items-center justify-center gap-4">
-                {!selectingCaptains ? (
-                  <Button
-                    disabled={event.teams.some(
-                      (team) => team.players.length > 0,
-                    )}
-                    onClick={() => setSelectingCaptains(true)}
-                  >
-                    {event.teams.every((team) => team.captain)
-                      ? "Change"
-                      : "Select"}{" "}
-                    Captains
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      onClick={handleConfirmCaptains}
-                      disabled={isSubmitting}
-                      className="bg-accent-orange text-white hover:bg-accent-orange/90"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Confirming...
-                        </>
-                      ) : (
-                        "Confirm Captains"
-                      )}
-                    </Button>
-                    <Button
-                      onClick={handleCancelEditing}
-                      disabled={isSubmitting}
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
-              </div>
-
-              <div className="border-t pt-8">
-                <h3 className="mb-4 text-lg font-semibold">
-                  Attending Players ({players.length})
-                </h3>
-                <AttendingList
-                  players={players}
-                  captainIds={captainIds}
-                  selectableCaptains={selectingCaptains}
-                  onCaptainSelect={handleCaptainSelect}
-                  teams={event?.teams || []}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    <main className="relative flex flex-1 flex-col gap-4 bg-background sm:gap-6">
+      <div className="flex items-center justify-between pl-8">
+        <h1 className="text-2xl font-bold">Upcoming Match</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={handleBackClick}
+        >
+          <ChevronLeftIcon className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-center text-2xl font-bold">
+            {event.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            {event && (
+              <div className="mb-8 flex items-center justify-center gap-8">
+                {renderTeamInfo(event.teams[0], 1)}
+                <div className="flex flex-col items-center justify-center">
+                  <div className="mb-4 flex flex-col items-center text-center">
+                    <span className="text-xs text-gray-500">
+                      {new Date(event.startTime).toLocaleDateString()}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {event.location}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {format(event.startTime, "h:mm a")}
+                    </span>
+                    <span className="text-xs font-bold text-accent-orange">
+                      {event.league.name}
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold">vs</span>
+                </div>
+                {renderTeamInfo(event.teams[1], 2)}
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-4">
+              {!selectingCaptains ? (
+                <Button
+                  disabled={event.teams.some((team) => team.players.length > 0)}
+                  onClick={() => setSelectingCaptains(true)}
+                >
+                  {event.teams.every((team) => team.captain)
+                    ? "Change"
+                    : "Select"}{" "}
+                  Captains
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleConfirmCaptains}
+                    disabled={isSubmitting}
+                    className="bg-accent-orange text-white hover:bg-accent-orange/90"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Confirming...
+                      </>
+                    ) : (
+                      "Confirm Captains"
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleCancelEditing}
+                    disabled={isSubmitting}
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
+            </div>
+
+            <div className="border-t pt-8">
+              <h3 className="mb-4 text-lg font-semibold">
+                Attending Players ({players.length})
+              </h3>
+              <AttendingList
+                players={players}
+                captainIds={captainIds}
+                selectableCaptains={selectingCaptains}
+                onCaptainSelect={handleCaptainSelect}
+                teams={event?.teams || []}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </main>
   );
 }
