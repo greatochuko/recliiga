@@ -14,7 +14,6 @@ import ConfirmRosterModal from "./ConfirmRosterModal";
 
 interface TeamColumnProps {
   team: TeamType;
-  index: number;
   toggleEditMode: (teamId: string) => void;
   handleTeamNameChange: (teamId: string, name: string) => void;
   handleTeamColorChange: (teamId: string, color: string) => void;
@@ -22,6 +21,7 @@ interface TeamColumnProps {
   refetchEvent: () => void;
   isEditingTeam: boolean;
   canConfirmDraft: boolean;
+  setTeams: React.Dispatch<React.SetStateAction<TeamType[]>>;
 }
 
 const colorOptions = [
@@ -38,7 +38,7 @@ const colorOptions = [
 
 export const TeamColumn: React.FC<TeamColumnProps> = ({
   team,
-  index,
+  setTeams,
   toggleEditMode,
   handleTeamNameChange,
   handleTeamColorChange,
@@ -68,7 +68,11 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
     const { error } = await confirmRoster(team.id);
     if (!error) {
       setModalIsOpen(false);
-      refetchEvent();
+      setTeams((prev) =>
+        prev.map((t) =>
+          t.id === team.id ? { ...t, draftCompleted: true } : t,
+        ),
+      );
     }
     setConfirmingRoster(false);
   }
@@ -78,15 +82,13 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
       <Card className="flex h-full flex-col">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-4">
               <div className="flex items-center space-x-2">
-                <span>
-                  Team {index + 1}: {team.name}
-                </span>
+                <span>Team: {team.name}</span>
                 <JerseyIcon color={team.color} size={24} />
               </div>
               {team.captain && (
-                <div className="mt-2 flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage
                       src={team.captain.avatar_url}

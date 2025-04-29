@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 interface TeamsSectionProps {
   numEventPlayers: number;
   teams: TeamType[];
+  setTeams: React.Dispatch<React.SetStateAction<TeamType[]>>;
   toggleEditMode: (teamId: string) => void;
   handleTeamNameChange: (teamId: string, name: string) => void;
   handleTeamColorChange: (teamId: string, color: string) => void;
@@ -18,6 +19,7 @@ interface TeamsSectionProps {
 export const TeamsSection: React.FC<TeamsSectionProps> = ({
   numEventPlayers,
   teams,
+  setTeams,
   toggleEditMode,
   handleTeamNameChange,
   handleTeamColorChange,
@@ -33,13 +35,13 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
   return (
     <>
       {/* Desktop view (side by side) */}
-      {teams.map((team, i) => (
+      {teams.map((team) => (
         <div key={team.id} className="hidden flex-1 lg:block">
           <TeamColumn
             canConfirmDraft={canConfirmDraft}
             isEditingTeam={teamEditing === team.id}
             team={team}
-            index={i}
+            setTeams={setTeams}
             toggleEditMode={toggleEditMode}
             handleTeamNameChange={handleTeamNameChange}
             handleTeamColorChange={handleTeamColorChange}
@@ -64,7 +66,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
                 canConfirmDraft={canConfirmDraft}
                 isEditingTeam={teamEditing === team.id}
                 team={team}
-                index={i}
+                setTeams={setTeams}
                 toggleEditMode={toggleEditMode}
                 handleTeamNameChange={handleTeamNameChange}
                 handleTeamColorChange={handleTeamColorChange}

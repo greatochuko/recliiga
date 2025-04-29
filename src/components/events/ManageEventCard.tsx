@@ -137,9 +137,11 @@ export default function ManageEventCard({
           )}
         </div>
 
-        <div className="absolute bottom-4 right-4">
-          <CountdownClock deadline={rsvpDeadline} size="sm" />
-        </div>
+        {eventStatus === "upcoming" && (
+          <div className="absolute bottom-4 right-4">
+            <CountdownClock deadline={rsvpDeadline} size="sm" />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

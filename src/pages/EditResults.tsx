@@ -12,8 +12,11 @@ import { fetchEventById } from "@/api/events";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { submitResult, updateResult } from "@/api/events";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function EditResults() {
+  const { user } = useAuth();
+
   const [team1Score, setTeam1Score] = useState<number>(0);
   const [team2Score, setTeam2Score] = useState<number>(0);
   const [attendingPlayers, setAttendingPlayers] = useState<string[]>([]);
@@ -58,6 +61,25 @@ export default function EditResults() {
         >
           <ArrowLeftIcon className="h-5 w-5" />
           Go Back to Events
+        </Link>
+      </div>
+    );
+  }
+
+  if (event.creatorId !== user.id) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-4xl font-bold text-gray-800">Access Denied</h1>
+        <p className="mt-4 max-w-xl text-center text-gray-600">
+          Only the event creator can view or manage this page. If you believe
+          this is a mistake, please contact support.
+        </p>
+        <Link
+          to="/events"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          Back to Events
         </Link>
       </div>
     );

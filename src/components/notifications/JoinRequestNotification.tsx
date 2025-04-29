@@ -47,9 +47,9 @@ export default function JoinRequestNotification({
   return (
     <div
       key={notification.id}
-      className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+      className="flex cursor-default items-center gap-2 border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
     >
-      <div className="mr-2 h-8 w-8 overflow-hidden rounded-full bg-gray-200">
+      <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-200">
         {notification.initiator.avatar_url ? (
           <img
             src={notification.initiator.avatar_url}
@@ -75,7 +75,7 @@ export default function JoinRequestNotification({
         </p>
       </div>
 
-      <div className="ml-2 flex gap-2">
+      <div className="ml-auto flex gap-2">
         <button
           className="h-7 rounded bg-accent-orange px-2 text-xs text-white duration-200 hover:bg-accent-orange/90"
           onClick={() =>

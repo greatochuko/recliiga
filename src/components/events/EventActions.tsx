@@ -91,8 +91,8 @@ export const EventActions: React.FC<EventActionsProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-[7rem_1fr_7rem] items-end gap-4">
-      <span className="w-fit text-xs font-bold text-accent-orange">
+    <div className="grid grid-cols-[8rem_1fr_8rem] items-center gap-4">
+      <span className="w-fit self-end text-xs font-bold text-accent-orange">
         {event.league.name}
       </span>
 
@@ -145,69 +145,6 @@ export const EventActions: React.FC<EventActionsProps> = ({
           Draft Completed
         </span>
       )}
-    </div>
-  );
-
-  return (
-    <div className="flex flex-col gap-2">
-      <Link
-        to={`/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
-        className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange hover:bg-accent-orange hover:text-white"
-      >
-        {event.resultsEntered ? "View Results" : "View Details"}
-      </Link>
-
-      {!isPastEvent && isRsvpOpen && (
-        <>
-          {!attendanceStatus || isEditing ? (
-            renderRSVPControls()
-          ) : spotsRemaining <= 0 ? (
-            <p className="text-center text-sm text-red-500">
-              No spots remaining
-            </p>
-          ) : (
-            <div className="flex justify-center">
-              <button
-                className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit className="h-4 w-4" />
-                Edit RSVP
-              </button>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Bottom Row: Countdown + Draft Button + Draft Status */}
-      <div className="flex w-full items-center justify-between">
-        {isRsvpOpen && !isPastEvent ? (
-          <CountdownClock deadline={rsvpDeadline} size="sm" />
-        ) : (
-          <div />
-        )}
-
-        {teamCaptained &&
-          !teamCaptained.draftCompleted &&
-          !isPastEvent &&
-          !isRsvpOpen && (
-            <Link
-              to={`/events/${event.id}/team-draft`}
-              className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
-            >
-              {event.teams.some((team) => team.players?.length)
-                ? "Continue"
-                : "Begin"}{" "}
-              Draft
-            </Link>
-          )}
-
-        {teamCaptained?.draftCompleted && !isPastEvent && (
-          <span className="text-xs font-medium text-green-600">
-            Draft Completed
-          </span>
-        )}
-      </div>
     </div>
   );
 };

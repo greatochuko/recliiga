@@ -14,8 +14,11 @@ import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { fetchEventsByCreator } from "@/api/events";
 import { getPastEvents, getUpcomingEvents } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const EventsContent: React.FC = () => {
+  const { user } = useAuth();
+
   const [selectedLeagueId, setSelectedLeague] = useState<string | null>(null);
 
   const {
@@ -69,14 +72,16 @@ export const EventsContent: React.FC = () => {
             ))}
           </SelectContent>
         </Select>
-        <Button
-          className="bg-accent-orange text-white hover:bg-[#E66900]"
-          asChild
-        >
-          <Link to="/add-event">
-            <Plus className="mr-2 h-4 w-4" /> Create New Event
-          </Link>
-        </Button>
+        {user.role === "organizer" && (
+          <Button
+            className="bg-accent-orange text-white hover:bg-[#E66900]"
+            asChild
+          >
+            <Link to="/add-event">
+              <Plus className="mr-2 h-4 w-4" /> Create New Event
+            </Link>
+          </Button>
+        )}
       </div>
 
       <Tabs defaultValue="upcoming" className="w-full">

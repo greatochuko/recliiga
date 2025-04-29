@@ -22,6 +22,10 @@ export function NotificationsPopover() {
   );
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
+  const unreadNotificationCount = notifications.filter(
+    (notif) => !notif.isRead || notif.type === "LEAGUE_REQUEST",
+  ).length;
+
   async function toggleDropdown() {
     setIsOpen((prev) => !prev);
   }
@@ -58,9 +62,9 @@ export function NotificationsPopover() {
     <div className="relative" ref={dropdownRef}>
       <button className="flex items-center gap-2 p-2" onClick={toggleDropdown}>
         <Bell className="h-5 w-5 text-gray-500" />
-        {unreadNotifications.length > 0 && (
+        {unreadNotificationCount > 0 && (
           <span className="ml-1 rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">
-            {unreadNotifications.length}
+            {unreadNotificationCount}
           </span>
         )}
       </button>
@@ -68,7 +72,7 @@ export function NotificationsPopover() {
       {isOpen && (
         <div className="absolute left-0 z-10 mt-2 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
           {notifications.length > 0 ? (
-            <div className="max-h-[280px] w-[280px]">
+            <div className="max-h-[340px] w-[340px]">
               {joinRequests.length > 0 && (
                 <>
                   <div className="border-b border-gray-100 p-4 font-medium">

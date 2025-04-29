@@ -47,11 +47,7 @@ export default function Events() {
                 </div>
               ) : (
                 upcomingEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    showLeagueName={true}
-                  />
+                  <EventCard key={event.id} event={event} />
                 ))
               )}
             </TabsContent>
@@ -62,12 +58,7 @@ export default function Events() {
                 </div>
               ) : (
                 pastEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    showLeagueName={true}
-                    isPastEvent={true}
-                  />
+                  <EventCard key={event.id} event={event} isPastEvent={true} />
                 ))
               )}
             </TabsContent>

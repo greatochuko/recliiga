@@ -12,12 +12,14 @@ import { PlayersList } from "@/components/draft/PlayersList";
 import { draftPlayer } from "@/api/team";
 import Pusher from "pusher-js";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PUSHER_API_KEY = import.meta.env.VITE_PUSHER_API_KEY;
 
 type DraftType = "alternating" | "snake";
 
 export default function TeamDraftPage() {
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
 
   const [draftType, setDraftType] = useState<DraftType>("alternating");
@@ -51,7 +53,6 @@ export default function TeamDraftPage() {
     const channel = pusher.subscribe(`event`);
 
     channel.bind("draft", (data: { message: TeamType }) => {
-      console.log(data);
       setTeams((prev) =>
         prev.map((team) => (team.id === data.message.id ? data.message : team)),
       );
@@ -115,7 +116,7 @@ export default function TeamDraftPage() {
     return (
       <div className="flex w-full flex-col items-center justify-center px-4 text-center">
         <h1 className="text-4xl font-bold text-gray-800">Event Not Found</h1>
-        <p className="mt-4 text-gray-600">
+        <p className="mt-4 max-w-xl text-center text-gray-600">
           The event you are looking for does not exist or has been removed.
         </p>
         <Link
@@ -124,6 +125,27 @@ export default function TeamDraftPage() {
         >
           <ArrowLeftIcon className="h-5 w-5" />
           Go Back to Events
+        </Link>
+      </div>
+    );
+  }
+
+  if (!event.teams.some((team) => team.captain?.id === user.id)) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-3xl font-bold text-gray-800">
+          You're Not a Team Captain
+        </h1>
+        <p className="mt-4 max-w-xl text-center text-gray-600">
+          You must be a team captain to access this section. Please contact your
+          league admin if you believe this is an error.
+        </p>
+        <Link
+          to="/events"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          Back to Events
         </Link>
       </div>
     );
@@ -185,6 +207,7 @@ export default function TeamDraftPage() {
               <TeamsSection
                 numEventPlayers={event.players.length}
                 teams={teams}
+                setTeams={setTeams}
                 toggleEditMode={toggleEditMode}
                 handleTeamNameChange={handleTeamNameChange}
                 handleTeamColorChange={handleTeamColorChange}
