@@ -91,8 +91,8 @@ export const EventActions: React.FC<EventActionsProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-[8rem_1fr_8rem] items-center gap-4">
-      <span className="w-fit self-end text-xs font-bold text-accent-orange">
+    <div className="grid grid-cols-[8rem_1fr_8rem] items-end gap-4">
+      <span className="w-fit  text-xs font-bold text-accent-orange">
         {event.league.name}
       </span>
 
