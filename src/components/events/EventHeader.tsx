@@ -24,6 +24,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
   return (
     <div className="mb-4 flex items-start justify-between">
       <div className="flex items-center">
+        <h3 className="mr-6 font-medium">{event.title}</h3>
         <Calendar className="mr-2 h-4 w-4 text-gray-500" />
         <span className="mr-2 text-xs text-gray-500">
           {eventDate.toDateString()}

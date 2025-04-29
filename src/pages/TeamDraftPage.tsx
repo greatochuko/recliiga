@@ -51,6 +51,7 @@ export default function TeamDraftPage() {
     const channel = pusher.subscribe(`event`);
 
     channel.bind("draft", (data: { message: TeamType }) => {
+      console.log(data);
       setTeams((prev) =>
         prev.map((team) => (team.id === data.message.id ? data.message : team)),
       );

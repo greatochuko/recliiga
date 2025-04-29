@@ -188,11 +188,11 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
           <div className="mt-4 flex flex-1 flex-col gap-2">
             <Label>Drafted Players ({team.players.length})</Label>
             {team.players.length > 0 && (
-              <ScrollArea className="flex-1 rounded-md border p-2">
+              <ScrollArea className="rounded-md border p-2">
                 {team.players.map((player) => (
                   <div
                     key={player.id}
-                    className="flex items-center justify-between p-2"
+                    className="mb-2 flex items-center justify-between rounded-md border border-gray-200 bg-[#fafafa] p-2 last:mb-0"
                   >
                     <div className="flex items-center space-x-2">
                       <Avatar>

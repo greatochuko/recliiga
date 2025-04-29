@@ -36,7 +36,7 @@ import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => (
-  <div className="min-h-screen w-full">
+  <div className="min-h-dvh w-full">
     <Routes>
       {/* Public routes */}
       <Route element={<AuthWrapper />}>

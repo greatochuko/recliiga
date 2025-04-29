@@ -6,7 +6,7 @@ import ModalContainer from "../ModalContainer";
 
 interface RatingDialogProps {
   player: UserType;
-  onRatingSubmit: (playerId: string) => void;
+  onRatingSubmit: (rating: number) => void;
 }
 
 export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
@@ -19,7 +19,7 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onRatingSubmit(player.id);
+    onRatingSubmit(rating);
     setIsOpen(false);
   };
 
@@ -104,7 +104,7 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="rounded-lg bg-orange-500 px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-orange-600"
+                className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-accent-orange/90"
               >
                 Submit Rating
               </button>

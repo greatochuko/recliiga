@@ -34,11 +34,13 @@ export default function ManageEventCard({
         <div className="mb-2 flex items-start justify-between">
           <div className="flex flex-col">
             <div className="mb-1 flex items-center">
+              <h3 className="mr-4 font-medium">{event.title}</h3>
+
               <Calendar
                 className="mr-2 h-4 w-4 text-gray-500"
                 aria-hidden="true"
               />
-              <span className="mr-4 text-xs text-gray-500">
+              <span className="mr-2 text-xs text-gray-500">
                 {new Date(eventDate).toLocaleDateString("en-US", {
                   month: "long",
                   day: "numeric",

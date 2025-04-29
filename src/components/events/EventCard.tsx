@@ -9,11 +9,9 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function EventCard({
   event,
   isPastEvent = false,
-  showLeagueName = false,
 }: {
   event: EventType;
   isPastEvent?: boolean;
-  showLeagueName?: boolean;
 }) {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -39,13 +37,7 @@ export default function EventCard({
           isPastEvent={isPastEvent}
         />
         <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />
-        {showLeagueName && (
-          <div className="absolute bottom-4 left-4 text-xs">
-            <span className="font-bold text-accent-orange">
-              {event.league.name}
-            </span>
-          </div>
-        )}
+
         <EventActions
           event={event}
           isPastEvent={isPastEvent}

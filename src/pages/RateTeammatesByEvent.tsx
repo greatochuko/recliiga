@@ -1,15 +1,15 @@
 import { fetchEventById } from "@/api/events";
 import FullScreenLoader from "@/components/FullScreenLoader";
+import PageHeader from "@/components/PageHeader";
 import { RatingDialog } from "@/components/rating/RatingDialog";
 import { Button } from "@/components/ui/button";
 import { UserType } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeftIcon, ChevronLeftIcon } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function RateTeammatesByEvent() {
   const { eventId } = useParams();
-
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
@@ -45,31 +45,26 @@ export default function RateTeammatesByEvent() {
     );
   }
 
-  function handleRatingSubmit(player: UserType) {
-    console.log("Rating submitted for player:", player.full_name);
+  function handleRatingSubmit(player: UserType, rating: number) {
+    console.log(
+      "Rating submitted for player:",
+      player.full_name,
+      "Rating:",
+      rating,
+    );
   }
 
   return (
     <main className="flex flex-1 flex-col gap-4">
-      <div className="flex items-center justify-between pl-8">
-        <h1 className="text-2xl font-bold">Rate Teammates for {event.title}</h1>
-        <Button
-          variant="link"
-          size="sm"
-          className="text-accent-orange"
-          onClick={navigateBack}
-        >
-          <ChevronLeftIcon className="mr-1 h-4 w-4" />
-          Previous
-        </Button>
-      </div>
+      <PageHeader title="Rate Teammates" />
+
       {event.players.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {event.players.map((player) => (
             <RatingDialog
               key={player.id}
               player={player}
-              onRatingSubmit={() => handleRatingSubmit(player)}
+              onRatingSubmit={(rating) => handleRatingSubmit(player, rating)}
             />
           ))}
         </div>
