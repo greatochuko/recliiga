@@ -20,9 +20,7 @@ export default function UpcomingEventsSection({
       </div>
       <div className="space-y-4">
         {events.length > 0 ? (
-          events.map((event) => (
-            <EventCard key={event.id} event={event} showLeagueName={true} />
-          ))
+          events.map((event) => <EventCard key={event.id} event={event} />)
         ) : (
           <div className="flex items-center justify-center p-6">
             <p className="text-gray-500">No upcoming events found.</p>

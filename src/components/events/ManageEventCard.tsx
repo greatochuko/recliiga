@@ -28,6 +28,8 @@ export default function ManageEventCard({
     return new Date(startTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000);
   }, [event.startTime, event.rsvpDeadline]);
 
+  const isRsvpOpen = new Date() < rsvpDeadline;
+
   return (
     <Card className="mb-4">
       <CardContent className="relative p-4">
@@ -137,7 +139,7 @@ export default function ManageEventCard({
           )}
         </div>
 
-        {eventStatus === "upcoming" && (
+        {isRsvpOpen && (
           <div className="absolute bottom-4 right-4">
             <CountdownClock deadline={rsvpDeadline} size="sm" />
           </div>

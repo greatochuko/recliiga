@@ -23,11 +23,6 @@ export default function EventCard({
       : "not-attending",
   );
 
-  const eventDate = new Date(event.startTime);
-
-  const isRsvpOpen =
-    new Date().getTime() < eventDate.getTime() - event.rsvpDeadline * 60 * 1000;
-
   return (
     <Card className="mb-4">
       <CardContent className="relative p-4">
@@ -36,7 +31,7 @@ export default function EventCard({
           attendanceStatus={attendanceStatus}
           isPastEvent={isPastEvent}
         />
-        <TeamsDisplay event={event} isRsvpOpen={isRsvpOpen} />
+        <TeamsDisplay event={event} />
 
         <EventActions
           event={event}

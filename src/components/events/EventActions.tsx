@@ -92,7 +92,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
 
   return (
     <div className="grid grid-cols-[8rem_1fr_8rem] items-end gap-4">
-      <span className="w-fit  text-xs font-bold text-accent-orange">
+      <span className="w-fit text-xs font-bold text-accent-orange">
         {event.league.name}
       </span>
 
@@ -130,20 +130,23 @@ export const EventActions: React.FC<EventActionsProps> = ({
         <div className="w-10" />
       ) : isRsvpOpen ? (
         <CountdownClock deadline={rsvpDeadline} size="sm" />
-      ) : teamCaptained && !teamCaptained.draftCompleted ? (
-        <Link
-          to={`/events/${event.id}/team-draft`}
-          className="ml-auto w-fit rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
-        >
-          {event.teams.some((team) => team.players?.length)
-            ? "Continue"
-            : "Begin"}{" "}
-          Draft
-        </Link>
       ) : (
-        <span className="text-xs font-medium text-green-600">
-          Draft Completed
-        </span>
+        teamCaptained &&
+        (!teamCaptained.draftCompleted ? (
+          <Link
+            to={`/events/${event.id}/team-draft`}
+            className="ml-auto w-fit rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+          >
+            {event.teams.some((team) => team.players?.length)
+              ? "Continue"
+              : "Begin"}{" "}
+            Draft
+          </Link>
+        ) : (
+          <span className="text-xs font-medium text-green-600">
+            Draft Completed
+          </span>
+        ))
       )}
     </div>
   );
