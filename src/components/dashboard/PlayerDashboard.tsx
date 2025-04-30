@@ -53,10 +53,14 @@ export default function PlayerDashboard() {
       ? getLeaderBoardData(selectedLeague, results)
       : [];
 
+  console.log(leaderboardData);
+
   const playerData = leaderboardData.find((data) => data.player.id === user.id);
 
   const playerRank =
-    leaderboardData.findIndex((data) => data.player.id === user.id) + 1;
+    [...leaderboardData]
+      .sort((a, b) => b.points - a.points)
+      .findIndex((data) => data.player.id === user.id) + 1;
 
   const upcomingEvents = getUpcomingEvents(events);
 

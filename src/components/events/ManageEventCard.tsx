@@ -142,6 +142,9 @@ export default function ManageEventCard({
             <CountdownClock deadline={rsvpDeadline} size="sm" />
           </div>
         )}
+        <span className="absolute bottom-4 left-4 text-xs font-bold text-accent-orange">
+          {event.league.name}
+        </span>
       </CardContent>
     </Card>
   );
