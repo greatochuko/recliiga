@@ -53,8 +53,6 @@ export default function PlayerDashboard() {
       ? getLeaderBoardData(selectedLeague, results)
       : [];
 
-  console.log(leaderboardData);
-
   const playerData = leaderboardData.find((data) => data.player.id === user.id);
 
   const playerRank =

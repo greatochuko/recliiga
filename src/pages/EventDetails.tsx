@@ -83,29 +83,29 @@ export default function EventDetails() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-bold">
-              Upcoming Match
+              {event.title}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0 sm:p-6">
             <div className="space-y-8">
               <div className="mb-8 flex items-center justify-center gap-8">
                 <TeamInfo team={event.teams[0]} />
-                <div className="flex flex-1 flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center">
                   <div className="mb-4 hidden flex-col items-center text-center sm:flex">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm font-medium text-gray-500">
                       {new Date(event.startTime).toLocaleDateString("en-US", {
                         month: "short",
                         day: "2-digit",
                         year: "numeric",
                       })}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm font-medium text-gray-500">
                       {event.location}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm font-medium text-gray-500">
                       {format(event.startTime, "h:mm a")}
                     </span>
-                    <span className="text-xs font-bold text-accent-orange">
+                    <span className="text-sm font-bold text-accent-orange">
                       {event.league.name}
                     </span>
                   </div>
@@ -115,18 +115,20 @@ export default function EventDetails() {
               </div>
 
               <div className="flex flex-col items-center text-center sm:hidden">
-                <span className="text-xs text-gray-500">
+                <span className="text-sm font-medium text-gray-500">
                   {new Date(event.startTime).toLocaleDateString("en-US", {
                     month: "short",
                     day: "2-digit",
                     year: "numeric",
                   })}
-                </span>
-                <span className="text-xs text-gray-500">{event.location}</span>
-                <span className="text-xs text-gray-500">
+                  {", "}
                   {format(event.startTime, "h:mm a")}
                 </span>
-                <span className="text-xs font-bold text-accent-orange">
+                <span className="text-sm font-medium text-gray-500">
+                  {event.location}
+                </span>
+                <span className="text-sm font-medium text-gray-500"></span>
+                <span className="text-sm font-bold text-accent-orange">
                   {event.league.name}
                 </span>
               </div>
@@ -146,7 +148,7 @@ export default function EventDetails() {
               ) : (
                 <>
                   <div className="flex flex-col items-center space-y-4">
-                    <h2 className="text-xl font-bold">RSVP Countdown</h2>
+                    <h2 className="text-xl font-bold">Event Countdown</h2>
                     <CountdownClock deadline={rsvpDeadline.time} />
                   </div>
                 </>
