@@ -6,6 +6,7 @@ export interface TeamType {
   name: string;
   logo: string;
   color: string;
+  captainId: string;
   captain?: UserType;
   players: UserType[];
   draftCompleted: boolean;

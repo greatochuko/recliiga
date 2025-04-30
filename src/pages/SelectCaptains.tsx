@@ -125,7 +125,7 @@ export default function SelectCaptains() {
     if (event) {
       setPlayers(event.players);
       if (event.teams[0].captain && event.teams[1].captain) {
-        setCaptainIds(event.teams.map((team) => team.captain?.id));
+        setCaptainIds(event.teams.map((team) => team.captainId));
       }
     }
   }, [event]);
@@ -143,7 +143,7 @@ export default function SelectCaptains() {
   };
 
   const handleCancelEditing = () => {
-    setCaptainIds(event ? event.teams.map((team) => team.captain?.id) : []);
+    setCaptainIds(event ? event.teams.map((team) => team.captainId) : []);
     setSelectingCaptains(false);
   };
 

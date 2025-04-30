@@ -36,7 +36,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
             const playerIsDrafted =
               teams.some((team) =>
                 team.players.some((pl) => pl.id === player.id),
-              ) || teams.some((team) => team.captain?.id === player.id);
+              ) || teams.some((team) => team.captainId === player.id);
             return (
               <div
                 key={player.id}
@@ -75,7 +75,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                   onClick={() => handlePlayerDraft(currentTeam.id, player.id)}
                   className="bg-black text-white hover:bg-gray-800"
                   disabled={
-                    currentTeam.captain?.id !== user.id ||
+                    currentteam.captainId !== user.id ||
                     playerIsDrafted ||
                     isDrafting
                   }

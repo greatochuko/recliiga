@@ -110,7 +110,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
             </div>
             {!team.draftCompleted &&
               !isEditingTeam &&
-              team.captain?.id === user.id && (
+              team.captainId === user.id && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -227,7 +227,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
             <p className="mt-4 flex justify-end text-sm font-medium text-green-600">
               Draft Completed
             </p>
-          ) : team.captain?.id === user.id ? (
+          ) : team.captainId === user.id ? (
             <div className="mt-4 flex justify-end">
               <button
                 disabled={!canConfirmDraft}

@@ -130,7 +130,7 @@ export default function TeamDraftPage() {
     );
   }
 
-  if (!event.teams.some((team) => team.captain?.id === user.id)) {
+  if (!event.teams.some((team) => team.captainId === user.id)) {
     return (
       <div className="flex w-full flex-col items-center justify-center px-4 text-center">
         <h1 className="text-3xl font-bold text-gray-800">

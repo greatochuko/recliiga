@@ -7,6 +7,7 @@ export default function UpcomingEventsSection({
 }: {
   events: EventType[];
 }) {
+  console.log(events[0]);
   return (
     <section className="mb-8">
       <div className="mb-4 flex items-center justify-between">

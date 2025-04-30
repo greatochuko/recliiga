@@ -164,7 +164,7 @@ export default function EventDetails() {
                           <JerseyIcon color={team.color} size={24} />
                         </h4>
                         <div
-                          key={team.captain?.id}
+                          key={team.captainId}
                           className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
                         >
                           <Avatar className="h-10 w-10">
@@ -265,7 +265,7 @@ export default function EventDetails() {
                               {player.full_name}
                             </span>
                             {event.teams.some(
-                              (team) => team.captain?.id === player.id,
+                              (team) => team.captainId === player.id,
                             ) && (
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"

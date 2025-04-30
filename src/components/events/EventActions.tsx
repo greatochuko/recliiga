@@ -28,14 +28,12 @@ export const EventActions: React.FC<EventActionsProps> = ({
 
   const spotsRemaining =
     event.numTeams * event.rosterSpots - event.players.length;
-  const isCaptain = event.teams.some((team) => team.captain?.id === user.id);
+  const isCaptain = event.teams.some((team) => team.captainId === user.id);
   const isPlayer = event.teams.some((team) =>
     team.players?.some((p) => p.id === user.id),
   );
 
-  const teamCaptained = event.teams.find(
-    (team) => team.captain?.id === user.id,
-  );
+  const teamCaptained = event.teams.find((team) => team.captainId === user.id);
 
   const rsvpDeadline = useMemo(() => {
     const start = new Date(event.startTime);
