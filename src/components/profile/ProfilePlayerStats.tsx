@@ -48,7 +48,9 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
   const playerData = leaderboardData.find((data) => data.player.id === user.id);
 
   const playerRank =
-    leaderboardData.findIndex((data) => data.player.id === user.id) + 1;
+    [...leaderboardData]
+      .sort((a, b) => b.points - a.points)
+      .findIndex((data) => data.player.id === user.id) + 1;
 
   if (isLoading || !selectedLeague) {
     return <FullScreenLoader />;

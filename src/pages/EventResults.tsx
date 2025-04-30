@@ -17,12 +17,6 @@ function TeamRoster({
   team: TeamType;
   attendance: UserType[];
 }) {
-  const navigate = useNavigate();
-
-  const handleViewProfile = () => {
-    navigate("/player-profile");
-  };
-
   return (
     <div className="w-full">
       <div className="mb-4 flex items-center justify-between">
@@ -47,7 +41,12 @@ function TeamRoster({
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{team.captain.full_name}</span>
+              <Link
+                to={`/profile/${team.captain.id}`}
+                className="font-semibold hover:text-accent-orange hover:underline"
+              >
+                {team.captain.full_name}
+              </Link>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -80,8 +79,7 @@ function TeamRoster({
         {team.players.map((player) => (
           <div
             key={player.id}
-            className="flex cursor-pointer items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
-            onClick={handleViewProfile}
+            className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
           >
             <Avatar className="h-12 w-12">
               <AvatarImage src={player.avatar_url} alt={player.full_name} />
@@ -93,7 +91,12 @@ function TeamRoster({
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <span className="font-semibold">{player.full_name}</span>
+              <Link
+                to={`/profile/${player.id}`}
+                className="font-semibold hover:text-accent-orange hover:underline"
+              >
+                {player.full_name}
+              </Link>
               <p className="text-sm text-muted-foreground">
                 {player.positions[0]}
               </p>
