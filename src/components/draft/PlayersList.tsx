@@ -75,7 +75,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                   onClick={() => handlePlayerDraft(currentTeam.id, player.id)}
                   className="bg-black text-white hover:bg-gray-800"
                   disabled={
-                    currentteam.captainId !== user.id ||
+                    currentTeam.captainId !== user.id ||
                     playerIsDrafted ||
                     isDrafting
                   }
