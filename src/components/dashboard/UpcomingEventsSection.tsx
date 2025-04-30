@@ -1,11 +1,14 @@
 import { EventType } from "@/types/events";
 import EventCard from "../events/EventCard";
 import { Link } from "react-router-dom";
+import FullScreenLoader from "../FullScreenLoader";
 
 export default function UpcomingEventsSection({
   events,
+  isLoading,
 }: {
   events: EventType[];
+  isLoading: boolean;
 }) {
   return (
     <section className="mb-8">
@@ -19,7 +22,11 @@ export default function UpcomingEventsSection({
         </Link>
       </div>
       <div className="space-y-4">
-        {events.length > 0 ? (
+        {isLoading ? (
+          <div className="py-8">
+            <FullScreenLoader />
+          </div>
+        ) : events.length > 0 ? (
           events.map((event) => <EventCard key={event.id} event={event} />)
         ) : (
           <div className="flex items-center justify-center p-6">

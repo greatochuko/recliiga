@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   QueryClient,
   QueryClientProvider,
@@ -19,14 +19,15 @@ export default function PlayerDashboard() {
   const { user } = useAuth();
   const [selectedLeagueId, setSelectedLeagueId] = useState("premier");
 
-  const {
-    data: { leagues },
-    isLoading: leaguesLoading,
-  } = useQuery({
+  const { data: leaguesData, isLoading: leaguesLoading } = useQuery({
     queryKey: ["teammates"],
     queryFn: fetchLeaguesByUser,
-    initialData: { leagues: [], error: null },
   });
+
+  const leagues = useMemo(
+    () => leaguesData?.leagues || [],
+    [leaguesData?.leagues],
+  );
 
   useEffect(() => {
     if (leagues.length > 0) {
@@ -41,7 +42,7 @@ export default function PlayerDashboard() {
     (league) => league.id === selectedLeagueId,
   );
 
-  const { data } = useQuery({
+  const { data, isLoading: resultsLoading } = useQuery({
     queryKey: [`results-${selectedLeague?.id}`],
     queryFn: () => fetchResultsByLeague(selectedLeague?.id),
   });
@@ -79,7 +80,10 @@ export default function PlayerDashboard() {
 
         <RatingSection />
 
-        <UpcomingEventsSection events={upcomingEvents} />
+        <UpcomingEventsSection
+          isLoading={leaguesLoading || resultsLoading}
+          events={upcomingEvents}
+        />
       </div>
     </QueryClientProvider>
   );
