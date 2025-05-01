@@ -31,7 +31,6 @@ export async function fetchApi<T>(
     return { data: result.data, error: null };
   } catch (err) {
     const error = err as Error;
-    // console.log(error.message);
     return { data: null, error: error.message };
   }
 }
@@ -82,7 +81,14 @@ export function getLeaderBoardData(league: LeagueType, results: ResultType[]) {
         result.attendingPlayers.some((pl) => pl.id === player.id),
       ).length;
 
-      const nonAttendance = gamesPlayed - attendance;
+      // const nonAttendance = 0;
+
+      const nonAttendance = results.filter(
+        (result) =>
+          result.events.some((event) =>
+            event.players.some((pl) => pl.id === player.id),
+          ) && !result.attendingPlayers.some((pl) => pl.id === player.id),
+      ).length;
 
       let gamesWon = 0;
       let gamesLost = 0;
@@ -97,12 +103,12 @@ export function getLeaderBoardData(league: LeagueType, results: ResultType[]) {
         const isTeam1 = result.events.some(
           (event) =>
             event.teams[0].players.some((pl) => pl.id === player.id) ||
-            event.teams[0].captain.id === player.id,
+            event.teams[0].captainId === player.id,
         );
         const isTeam2 = result.events.some(
           (event) =>
             event.teams[1].players.some((pl) => pl.id === player.id) ||
-            event.teams[1].captain.id === player.id,
+            event.teams[1].captainId === player.id,
         );
 
         if (isTeam1 || isTeam2) {

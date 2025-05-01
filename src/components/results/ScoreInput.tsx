@@ -5,28 +5,28 @@ import { TeamType } from "@/types/events";
 
 interface ScoreInputProps {
   team: TeamType;
-  score: number;
-  setScore: (score: number) => void;
+  score: string;
+  setScore: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newScore = e.target.value;
-    setScore(Number(newScore));
+    setScore(newScore);
   };
 
   const handleAddScore = (amount: number) => {
-    const newScore = (score || 0) + amount;
-    setScore(Number(newScore));
+    const newScore = score + amount;
+    setScore(newScore);
   };
 
   const handleNumberInput = (number: string) => {
     const newScore = score + number;
-    setScore(Number(newScore));
+    setScore(newScore);
   };
 
   const handleClear = () => {
-    setScore(0);
+    setScore("");
   };
 
   return (

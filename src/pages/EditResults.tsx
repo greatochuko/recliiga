@@ -17,8 +17,8 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function EditResults() {
   const { user } = useAuth();
 
-  const [team1Score, setTeam1Score] = useState<number>(0);
-  const [team2Score, setTeam2Score] = useState<number>(0);
+  const [team1Score, setTeam1Score] = useState("");
+  const [team2Score, setTeam2Score] = useState("");
   const [attendingPlayers, setAttendingPlayers] = useState<string[]>([]);
   const [resultLoading, setResultLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -35,8 +35,8 @@ export default function EditResults() {
 
   useEffect(() => {
     if (event && event.result) {
-      setTeam1Score(event.result.team1Score);
-      setTeam2Score(event.result.team2Score);
+      setTeam1Score(event.result.team1Score.toString());
+      setTeam2Score(event.result.team2Score.toString());
       setAttendingPlayers(
         event.result.attendingPlayers.map((player) => player.id),
       );
@@ -88,9 +88,9 @@ export default function EditResults() {
   let alertMessage = "";
 
   if (team1Score && team2Score) {
-    if (team1Score > team2Score) {
+    if (parseInt(team1Score) > parseInt(team2Score)) {
       alertMessage = `${event.teams[0].name} beat ${event.teams[1].name} ${team1Score}-${team2Score}`;
-    } else if (team2Score > team1Score) {
+    } else if (parseInt(team2Score) > parseInt(team1Score)) {
       alertMessage = `${event.teams[1].name} beat ${event.teams[0].name} ${team2Score}-${team1Score}`;
     } else {
       alertMessage = `${event.teams[0].name} and ${event.teams[1].name} tied ${team1Score}-${team2Score}`;
@@ -106,8 +106,8 @@ export default function EditResults() {
     if (event.resultsEntered) {
       const { error } = await updateResult({
         eventId: event.id,
-        team1Score: team1Score,
-        team2Score: team2Score,
+        team1Score: parseInt(team1Score),
+        team2Score: parseInt(team2Score),
         attendingPlayers: attendingPlayers,
         resultId: event.result.id,
       });
@@ -115,8 +115,8 @@ export default function EditResults() {
     } else {
       const { error } = await submitResult({
         eventId: event.id,
-        team1Score: team1Score,
-        team2Score: team2Score,
+        team1Score: parseInt(team1Score),
+        team2Score: parseInt(team2Score),
         attendingPlayers: attendingPlayers,
         leagueId: event.league.id,
       });
@@ -148,7 +148,9 @@ export default function EditResults() {
         </button>
       </div>
       <Card className="flex-1">
-        <CardHeader></CardHeader>
+        <CardHeader className="text-center text-2xl font-semibold">
+          {event.title}
+        </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="mb-8 flex items-center gap-4 sm:gap-8">

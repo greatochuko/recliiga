@@ -174,7 +174,7 @@ export default function EventResults() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">
-            Match Result
+            {event.title}
           </CardTitle>
         </CardHeader>
         <CardContent>
