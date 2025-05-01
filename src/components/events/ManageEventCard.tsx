@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Edit, UserPlus, Trophy } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Edit,
+  UserPlus,
+  Trophy,
+  ClockIcon,
+} from "lucide-react";
 import { EventType } from "@/types/events";
 import { format, isPast } from "date-fns";
 import DeleteEventButton from "./DeleteEventButton";
@@ -34,31 +41,38 @@ export default function ManageEventCard({
     <Card className="mb-4">
       <CardContent className="relative p-4">
         <div className="mb-2 flex items-start justify-between">
-          <div className="flex flex-col">
-            <div className="mb-1 flex items-center">
+          <div className="flex flex-1 flex-col">
+            <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:items-center">
               <h3 className="mr-4 font-medium">{event.title}</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="flex items-center gap-2 text-xs text-gray-500">
+                  <Calendar
+                    className="h-4 w-4 text-gray-500"
+                    aria-hidden="true"
+                  />
+                  {new Date(eventDate).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+                <span className="flex items-center gap-2 text-xs text-gray-500">
+                  <ClockIcon className="h-4 w-4 text-gray-500" />
+                  {eventTime}
+                </span>
 
-              <Calendar
-                className="mr-2 h-4 w-4 text-gray-500"
-                aria-hidden="true"
-              />
-              <span className="mr-2 text-xs text-gray-500">
-                {new Date(eventDate).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-              <span className="mr-4 text-xs text-gray-500">{eventTime}</span>
-              <MapPin
-                className="mr-2 h-4 w-4 text-gray-500"
-                aria-hidden="true"
-              />
-              <span className="text-xs text-gray-500">{event.location}</span>
+                <span className="flex items-center gap-2 text-xs text-gray-500">
+                  <MapPin
+                    className="h-4 w-4 text-gray-500"
+                    aria-hidden="true"
+                  />
+                  {event.location}
+                </span>
+              </div>
             </div>
           </div>
           {eventStatus === "upcoming" && (
-            <span className="text-xs font-semibold text-[#E43226]">
+            <span className="w-fit text-xs font-semibold text-[#E43226]">
               {!spotsLeft
                 ? "No Spots left"
                 : spotsLeft === 1
@@ -67,6 +81,7 @@ export default function ManageEventCard({
             </span>
           )}
         </div>
+
         <div className="flex items-center justify-items-center">
           {event.teams.map((team) => (
             <React.Fragment key={team.id}>
@@ -80,7 +95,9 @@ export default function ManageEventCard({
                     {team.name.split(" ").map((n) => n[0])}
                   </AvatarFallback>
                 </Avatar>
-                <span className="mt-2 text-sm font-semibold">{team.name}</span>
+                <span className="mt-2 text-center text-sm font-semibold">
+                  {team.name}
+                </span>
               </div>
               <span className="flex-1 text-center text-lg font-semibold last:hidden">
                 vs
@@ -88,8 +105,9 @@ export default function ManageEventCard({
             </React.Fragment>
           ))}
         </div>
-        <div className="mt-4 flex justify-center gap-2">
-          {eventStatus === "upcoming" && (
+
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {eventStatus === "upcoming" ? (
             <>
               {event.teams.every((team) => team.captain) ? (
                 <Button
@@ -113,25 +131,30 @@ export default function ManageEventCard({
                   </Button>
                 </Link>
               )}
-              <Link to={`/events/${event.id}/edit`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center"
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
-              </Link>
-              <DeleteEventButton
-                eventId={event.id}
-                refetchEvents={refetchEvents}
-              />
+              <div className="flex gap-4">
+                <Link to={`/events/${event.id}/edit`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
+                </Link>
+                <DeleteEventButton
+                  eventId={event.id}
+                  refetchEvents={refetchEvents}
+                />
+              </div>
             </>
-          )}
-          {eventStatus === "past" && (
+          ) : (
             <Link to={`/edit-results/${event.id}`}>
-              <Button variant="outline" size="sm" className="flex items-center">
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden items-center sm:flex"
+              >
                 <Trophy className="mr-2 h-4 w-4" />
                 {event.resultsEntered ? "Edit Results" : "Enter Results"}
               </Button>
@@ -139,14 +162,28 @@ export default function ManageEventCard({
           )}
         </div>
 
-        {isRsvpOpen && (
-          <div className="absolute bottom-4 right-4">
-            <CountdownClock deadline={rsvpDeadline} size="sm" />
-          </div>
-        )}
-        <span className="absolute bottom-4 left-4 text-xs font-bold text-accent-orange">
-          {event.league.name}
-        </span>
+        <div className="mt-4 flex items-end justify-between gap-4">
+          {isRsvpOpen && (
+            <div className="bottom-4 right-4">
+              <CountdownClock deadline={rsvpDeadline} size="sm" />
+            </div>
+          )}
+          {eventStatus === "past" && (
+            <Link to={`/edit-results/${event.id}`}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center sm:hidden"
+              >
+                <Trophy className="mr-2 h-4 w-4" />
+                {event.resultsEntered ? "Edit Results" : "Enter Results"}
+              </Button>
+            </Link>
+          )}
+          <span className="bottom-4 left-4 ml-auto text-xs font-bold text-accent-orange">
+            {event.league.name}
+          </span>
+        </div>
       </CardContent>
     </Card>
   );

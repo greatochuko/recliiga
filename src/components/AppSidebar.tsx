@@ -30,7 +30,7 @@ export function AppSidebar() {
           </div>
 
           {/* Navigation Menu */}
-          <ConditionalNavigationMenu />
+          <ConditionalNavigationMenu toggleSidebar={toggleSidebar} />
 
           {/* Footer */}
           <div className="border-t border-gray-200 p-4 text-sm text-gray-500">

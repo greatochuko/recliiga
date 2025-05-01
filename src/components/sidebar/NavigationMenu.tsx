@@ -37,7 +37,11 @@ const menuItems = [
   // },
 ];
 
-export function NavigationMenu() {
+export function NavigationMenu({
+  toggleSidebar,
+}: {
+  toggleSidebar: () => void;
+}) {
   const location = useLocation();
 
   return (
@@ -56,6 +60,7 @@ export function NavigationMenu() {
                   >
                     <Link
                       to={item.url}
+                      onClick={toggleSidebar}
                       className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm ${
                         isActive
                           ? "bg-orange-50 font-medium text-accent-orange"

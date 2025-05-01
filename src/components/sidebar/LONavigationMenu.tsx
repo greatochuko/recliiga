@@ -19,7 +19,11 @@ import {
 import { Button } from "@/components/ui/button";
 import InvitePopup from "@/components/InvitePopup";
 
-export function LONavigationMenu() {
+export function LONavigationMenu({
+  toggleSidebar,
+}: {
+  toggleSidebar: () => void;
+}) {
   const location = useLocation();
   const [isLODropdownOpen, setIsLODropdownOpen] = useState(false);
   const [showInvitePopup, setShowInvitePopup] = useState(false);
@@ -49,7 +53,7 @@ export function LONavigationMenu() {
       label: "Invite Players",
       icon: UserPlus,
       url: "#",
-      action: () => setShowInvitePopup(true),
+      action: () => setShowInvitePopup((prev) => !prev),
     },
     {
       id: "help-support",
@@ -109,6 +113,7 @@ export function LONavigationMenu() {
                       ) : (
                         <Link
                           to={action.url}
+                          onClick={toggleSidebar}
                           className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm ${
                             location.pathname === action.url
                               ? "bg-orange-50 font-medium text-accent-orange"
@@ -134,7 +139,10 @@ export function LONavigationMenu() {
         </SidebarGroupContent>
       </SidebarGroup>
 
-      {showInvitePopup && <InvitePopup />}
+      <InvitePopup
+        closeModal={() => setShowInvitePopup(false)}
+        open={showInvitePopup}
+      />
     </SidebarContent>
   );
 }

@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Copy, Send, AlertCircle, CheckCircle, Info } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import ModalContainer from "./ModalContainer";
 
-export default function InvitePopup() {
+export default function InvitePopup({
+  closeModal,
+  open,
+}: {
+  open: boolean;
+  closeModal: () => void;
+}) {
   const [inviteLink, setInviteLink] = useState(
     "https://recliiga.com/invite/abc123",
   );
@@ -19,7 +16,6 @@ export default function InvitePopup() {
   const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(true);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(inviteLink);
@@ -41,88 +37,82 @@ export default function InvitePopup() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="space-y-4">
+    <ModalContainer open={open} closeModal={closeModal}>
+      <div className="mx-auto w-[90%] max-w-md rounded-lg bg-white p-6 shadow-md sm:max-w-md">
+        <div className="space-y-4">
           <div className="flex justify-center">
-            <span className="text-accent-orange text-4xl font-bold">
+            <span className="text-4xl font-bold text-accent-orange">
               REC LiiGA
             </span>
           </div>
-          <DialogTitle className="text-center text-2xl font-semibold text-gray-800">
+          <h2 className="text-center text-2xl font-semibold text-gray-800">
             Share Invite Link
-          </DialogTitle>
-        </DialogHeader>
+          </h2>
+        </div>
+
         <div className="mt-4 space-y-4">
-          <Alert className="bg-accent-orange/10 border-accent-orange text-accent-orange">
-            <Info className="mr-2 h-4 w-4" />
-            <AlertDescription>
+          <div className="flex items-start gap-2 rounded-md border border-accent-orange bg-accent-orange/10 p-3 text-sm text-accent-orange">
+            <Info className="mt-0.5 h-4 w-4" />
+            <p>
               This invite link will expire in 7 days. Share it with your team
               members soon!
-            </AlertDescription>
-          </Alert>
+            </p>
+          </div>
 
           <div className="space-y-2">
-            <Label htmlFor="invite-link" className="text-sm text-gray-700">
+            <label htmlFor="invite-link" className="text-sm text-gray-700">
               Shareable Invite Link
-            </Label>
+            </label>
             <div className="flex space-x-2">
-              <Input
+              <input
                 id="invite-link"
                 value={inviteLink}
                 readOnly
-                className="flex-grow"
+                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange"
               />
-              <Button
+              <button
                 onClick={handleCopyLink}
-                className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
               >
                 <Copy className="mr-2 h-4 w-4" />
                 {copied ? "Copied!" : "Copy"}
-              </Button>
+              </button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email-invite" className="text-sm text-gray-700">
+            <label htmlFor="email-invite" className="text-sm text-gray-700">
               Invite by Email
-            </Label>
+            </label>
             <div className="flex space-x-2">
-              <Input
+              <input
                 id="email-invite"
                 type="email"
                 placeholder="Enter email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-grow"
+                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange"
               />
-              <Button
+              <button
                 onClick={handleSendInvite}
-                className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
               >
                 <Send className="mr-2 h-4 w-4" />
                 Send
-              </Button>
+              </button>
             </div>
           </div>
 
           {error && (
-            <Alert
-              variant="destructive"
-              className="border-0 bg-transparent p-0"
-            >
-              <div className="flex items-center">
-                <AlertCircle className="mr-2 h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-600">
-                  {error}
-                </AlertDescription>
-              </div>
-            </Alert>
+            <div className="flex items-center text-sm text-red-600">
+              <AlertCircle className="mr-2 h-4 w-4" />
+              <p>{error}</p>
+            </div>
           )}
 
           {invitedEmails.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-sm text-gray-700">Invited Members</Label>
+              <label className="text-sm text-gray-700">Invited Members</label>
               <ul className="space-y-1 text-sm text-[#707B81]">
                 {invitedEmails.map((email, index) => (
                   <li key={index} className="flex items-center">
@@ -134,7 +124,7 @@ export default function InvitePopup() {
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalContainer>
   );
 }

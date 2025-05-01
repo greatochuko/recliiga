@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ManageEventCard from "./ManageEventCard";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { fetchEventsByCreator } from "@/api/events";
@@ -73,14 +72,17 @@ export const EventsContent: React.FC = () => {
           </SelectContent>
         </Select>
         {user.role === "organizer" && (
-          <Button
-            className="bg-accent-orange text-white hover:bg-[#E66900]"
-            asChild
+          // <Button
+          //   className="bg-accent-orange text-white hover:bg-[#E66900]"
+          //   asChild
+          // >
+          <Link
+            to="/add-event"
+            className="flex items-center gap-1 rounded-md bg-accent-orange px-3 py-2 text-white hover:bg-[#E66900] sm:px-4"
           >
-            <Link to="/add-event">
-              <Plus className="mr-2 h-4 w-4" /> Create New Event
-            </Link>
-          </Button>
+            <Plus className="h-4 w-4" /> Create New Event
+          </Link>
+          // </Button>
         )}
       </div>
 
