@@ -31,7 +31,7 @@ export default function PlayerDashboard() {
 
   useEffect(() => {
     if (leagues.length > 0) {
-      const leagueId = leagues[0].id;
+      const leagueId = leagues[1].id;
       setSelectedLeagueId(leagueId);
     }
   }, [leagues]);
@@ -67,6 +67,8 @@ export default function PlayerDashboard() {
     return <FullScreenLoader />;
   }
 
+  const selectedLeagueEvents = selectedLeague?.events || [];
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex flex-col gap-12">
@@ -78,7 +80,10 @@ export default function PlayerDashboard() {
           setSelectedLeagueId={setSelectedLeagueId}
         />
 
-        <RatingSection />
+        <RatingSection
+          events={selectedLeagueEvents}
+          isLoading={leaguesLoading}
+        />
 
         <UpcomingEventsSection
           isLoading={leaguesLoading || resultsLoading}

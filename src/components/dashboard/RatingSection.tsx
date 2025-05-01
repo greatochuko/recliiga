@@ -1,22 +1,18 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchEventsByUser } from "@/api/events";
 import FullScreenLoader from "../FullScreenLoader";
 import { getPastEvents, getUnratedTeammates } from "@/lib/utils";
 import EventRatingCard from "../events/EventRatingCard";
+import { EventType } from "@/types/events";
 
-export default function RatingSection() {
+export default function RatingSection({
+  events,
+  isLoading,
+}: {
+  isLoading: boolean;
+  events: EventType[];
+}) {
   const { user } = useAuth();
-
-  const {
-    data: { data: events },
-    isLoading,
-  } = useQuery({
-    queryKey: ["upcomingEvents"],
-    queryFn: fetchEventsByUser,
-    initialData: { data: [], error: null },
-  });
 
   const pastEvents = getPastEvents(events);
 
