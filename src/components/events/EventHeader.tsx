@@ -8,18 +8,18 @@ interface EventHeaderProps {
   event: EventType;
   attendanceStatus: "attending" | "not-attending" | null;
   isPastEvent: boolean;
+  spotsLeft: number;
 }
 
 export const EventHeader: React.FC<EventHeaderProps> = ({
   event,
   attendanceStatus,
   isPastEvent,
+  spotsLeft,
 }) => {
   const eventDate = new Date(event.startTime);
 
   const eventTime = format(event.startTime, "h:mm a");
-
-  const spotsLeft = event.numTeams * event.rosterSpots - event.players.length;
 
   return (
     <div className="mb-4 flex items-start justify-between">

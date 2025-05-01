@@ -13,6 +13,9 @@ export default function EventCard({
   event: EventType;
   isPastEvent?: boolean;
 }) {
+  const [spotsLeft, setSpotsLeft] = useState(
+    event.numTeams * event.rosterSpots - event.players.length,
+  );
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [attendanceStatus, setAttendanceStatus] = useState<
@@ -27,6 +30,7 @@ export default function EventCard({
     <Card className="mb-4">
       <CardContent className="relative p-4">
         <EventHeader
+          spotsLeft={spotsLeft}
           event={event}
           attendanceStatus={attendanceStatus}
           isPastEvent={isPastEvent}
@@ -35,6 +39,7 @@ export default function EventCard({
 
         <EventActions
           event={event}
+          setSpotsRemaining={setSpotsLeft}
           isPastEvent={isPastEvent}
           attendanceStatus={attendanceStatus}
           isEditing={isEditing}

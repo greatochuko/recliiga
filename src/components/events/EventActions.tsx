@@ -8,6 +8,7 @@ import CountdownClock from "./CountdownClock";
 
 interface EventActionsProps {
   event: EventType;
+  setSpotsRemaining: React.Dispatch<React.SetStateAction<number>>;
   isPastEvent?: boolean;
   attendanceStatus: "attending" | "not-attending" | null;
   isEditing: boolean;
@@ -17,6 +18,7 @@ interface EventActionsProps {
 
 export const EventActions: React.FC<EventActionsProps> = ({
   event,
+  setSpotsRemaining,
   isPastEvent = false,
   attendanceStatus,
   isEditing,
@@ -26,8 +28,6 @@ export const EventActions: React.FC<EventActionsProps> = ({
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const spotsRemaining =
-    event.numTeams * event.rosterSpots - event.players.length;
   const isCaptain = event.teams.some((team) => team.captainId === user.id);
   const isPlayer = event.teams.some((team) =>
     team.players?.some((p) => p.id === user.id),
@@ -50,6 +50,8 @@ export const EventActions: React.FC<EventActionsProps> = ({
         : await declineEvent(event.id);
 
     if (!response.error) {
+      if (status === "attending") setSpotsRemaining((prev) => prev - 1);
+      else setSpotsRemaining((prev) => prev + 1);
       setAttendanceStatus(status);
       setIsEditing(false);
     }
@@ -105,10 +107,6 @@ export const EventActions: React.FC<EventActionsProps> = ({
           <>
             {!attendanceStatus || isEditing ? (
               renderRSVPControls()
-            ) : spotsRemaining <= 0 ? (
-              <p className="text-center text-sm text-red-500">
-                No spots remaining
-              </p>
             ) : (
               <div className="flex justify-center">
                 <button
