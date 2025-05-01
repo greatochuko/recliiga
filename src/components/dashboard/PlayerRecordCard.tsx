@@ -67,7 +67,7 @@ export default function PlayerRecordCard({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold">
+              <span className="text-2xl font-bold">
                 {playerData?.points || 0}
               </span>
               <span className="text-gray-500">PTS</span>
