@@ -346,6 +346,7 @@ export default function AddEvent() {
                 onChange={(e) =>
                   handlePositiveNumberInput(e.target.value, "rosterSpots")
                 }
+                autoComplete="off"
                 placeholder="Enter number of roster spots"
                 min="1"
               />
