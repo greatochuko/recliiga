@@ -33,6 +33,7 @@ export default function SignInPage() {
 
     try {
       await signIn(email, password);
+
       navigate("/");
     } catch (err) {
       const error = err as Error;

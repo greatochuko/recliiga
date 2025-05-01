@@ -67,11 +67,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data: profile, error } = await login(email, password);
+      const { data: profile, error, token } = await login(email, password);
 
       if (error !== null) {
         throw new Error(error);
       }
+
+      localStorage.setItem("token", token);
 
       setUser(profile);
       toast.success("Successfully signed in!");
@@ -84,11 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (signupData: SignupDataType) => {
     try {
-      const { data: profile, error } = await registerUser(signupData);
+      const { data: profile, error, token } = await registerUser(signupData);
 
       if (error !== null) {
         throw new Error(error);
       }
+
+      localStorage.setItem("token", token);
 
       toast.success(
         "Registration successful! Please complete your player profile.",
@@ -105,11 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      const logoutSuccess = await logout();
-      if (!logoutSuccess) {
-        throw new Error("Something went wrong");
-      }
-      // Clear state
+      localStorage.removeItem("token");
       setUser(null);
 
       toast.success("Successfully signed out");
@@ -158,7 +158,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // redirect("/sign-in");
     } catch (err) {
       const error = err as Error;
-      console.error("Error in deletion process:", error.message);
       toast.error(error.message || "Failed to delete account");
       throw error;
     }
