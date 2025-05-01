@@ -68,12 +68,14 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
     );
   }
 
+  const userFirstName = user.full_name.split(" ")[0];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">
-          {user.id === authUser.id ? "Your" : user.full_name.split(" ")[0]}
-          {"'s "}
+          {user.id === authUser.id ? "Your" : userFirstName}
+          {userFirstName.at(-1) === "s" ? "' " : "'s "}
           Stats
         </h2>
         <Select
@@ -94,7 +96,7 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
           </SelectContent>
         </Select>
       </div>
-      <div className="grid h-[calc(100%-2rem)] max-h-[320px] grid-cols-2 gap-4">
+      <div className="grid h-[calc(100%-2rem)] max-h-[320px] gap-4 sm:grid-cols-2">
         <PlayerRankCard
           league={selectedLeague}
           playerRank={playerRank}
