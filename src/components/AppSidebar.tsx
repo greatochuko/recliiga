@@ -7,6 +7,11 @@ import { NotificationsPopover } from "./sidebar/NotificationsPopover";
 export function AppSidebar() {
   const { toggleSidebar } = useSidebar();
 
+  function closeSidebar() {
+    if (window.innerWidth > 767) return;
+    toggleSidebar();
+  }
+
   return (
     <div className="relative">
       <Sidebar className="border-r border-gray-200 bg-white">
@@ -30,7 +35,7 @@ export function AppSidebar() {
           </div>
 
           {/* Navigation Menu */}
-          <ConditionalNavigationMenu toggleSidebar={toggleSidebar} />
+          <ConditionalNavigationMenu toggleSidebar={closeSidebar} />
 
           {/* Footer */}
           <div className="border-t border-gray-200 p-4 text-sm text-gray-500">

@@ -48,9 +48,10 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
         type="number"
         value={score}
         onChange={handleScoreChange}
-        className="w-24 text-center"
+        className="w-24 text-center text-sm sm:text-base"
         min="0"
         required
+        placeholder="Score"
       />
       <div className="hidden space-x-2 sm:flex">
         <Button

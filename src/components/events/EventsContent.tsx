@@ -72,17 +72,12 @@ export const EventsContent: React.FC = () => {
           </SelectContent>
         </Select>
         {user.role === "organizer" && (
-          // <Button
-          //   className="bg-accent-orange text-white hover:bg-[#E66900]"
-          //   asChild
-          // >
           <Link
             to="/add-event"
-            className="flex items-center gap-1 rounded-md bg-accent-orange px-3 py-2 text-white hover:bg-[#E66900] sm:px-4"
+            className="flex items-center gap-1 rounded-md bg-accent-orange px-3 py-2 font-medium text-white hover:bg-[#E66900] sm:px-4"
           >
             <Plus className="h-4 w-4" /> Create New Event
           </Link>
-          // </Button>
         )}
       </div>
 

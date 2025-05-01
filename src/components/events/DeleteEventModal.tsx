@@ -34,9 +34,9 @@ export default function DeleteEventModal({
   }
   return (
     <ModalContainer open={open} closeModal={closeModal}>
-      <div className="flex flex-col items-center justify-center gap-2 rounded-md bg-white p-6">
+      <div className="mx-auto flex w-[90%] max-w-md flex-col items-center justify-center gap-2 rounded-md bg-white p-6">
         <h2 className="text-lg font-semibold text-gray-800">Delete Event</h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-600">
           Are you sure you want to delete this event? This action cannot be
           undone.
         </p>

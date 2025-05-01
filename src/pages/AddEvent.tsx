@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarIcon, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -20,6 +20,7 @@ import { fetchLeaguesByCreator } from "@/api/league";
 import { EventDataType, createEvent } from "@/api/events";
 import { EventTimeDataType } from "@/types/events";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import PageHeader from "@/components/PageHeader";
 
 const initialStartTime = new Date();
 initialStartTime.setDate(initialStartTime.getDate() + 1);
@@ -250,22 +251,9 @@ export default function AddEvent() {
 
   return (
     <main className="mx-auto w-full max-w-3xl">
+      <PageHeader title="Add Event" />
       <Card className="my-2">
-        <CardHeader className="relative">
-          <Link
-            to="/manage-events"
-            className="absolute left-6 top-6 flex items-center gap-1 px-3 py-1.5 text-accent-orange"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
-          <CardTitle
-            className="text-center text-2xl font-semibold text-gray-800"
-            style={{ marginTop: 0 }}
-          >
-            Add Event
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <form onSubmit={handleCreateEvent} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="league-id">League</Label>
@@ -421,7 +409,7 @@ export default function AddEvent() {
                 </Popover>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <Label>Start Time</Label>
                   <div className="flex gap-2">

@@ -122,7 +122,10 @@ export function UserMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {showInvitePopup && <InvitePopup />}
+      <InvitePopup
+        open={showInvitePopup}
+        closeModal={() => setShowInvitePopup(false)}
+      />
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>

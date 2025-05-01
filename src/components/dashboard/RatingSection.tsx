@@ -46,7 +46,7 @@ export default function RatingSection({
         </ul>
       ) : (
         <div className="flex items-center justify-center p-6">
-          <p className="text-gray-500">No teammates found.</p>
+          <p className="text-gray-500">No teammates due for rating.</p>
         </div>
       )}
     </div>
