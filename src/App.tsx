@@ -36,54 +36,63 @@ import ErrorPage from "./pages/ErrorPage";
 
 const queryClient = new QueryClient();
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      element: (
+        <AuthProvider>
+          <AuthWrapper />
+        </AuthProvider>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        { path: "/sign-in", element: <SignIn /> },
+        { path: "/sign-up", element: <SignUp /> },
+        { path: "/forgot-password", element: <ForgotPassword /> },
+        { path: "/complete-registration", element: <PlayerRegistration /> },
+        { path: "/league-setup", element: <LeagueSetupPage /> },
+        {
+          element: <AppLayout />,
+          errorElement: <ErrorPage />,
+          children: [
+            { path: "/", element: <HomeScreen /> },
+            { path: "/create-league", element: <CreateLeague /> },
+            { path: "/leagues", element: <Leagues /> },
+            { path: "/leagues/:id", element: <LeagueDetails /> },
+            { path: "/events", element: <Events /> },
+            { path: "/events/:id", element: <EventDetails /> },
+            { path: "/events/:id/edit", element: <EditEvent /> },
+            { path: "/events/:id/results", element: <EventResults /> },
+            { path: "/events/:id/team-draft", element: <TeamDraftPage /> },
+            { path: "/results", element: <Results /> },
+            { path: "/chat", element: <Chat /> },
+            { path: "/rate-teammates", element: <RateTeammates /> },
+            { path: "/profile", element: <Profile /> },
+            { path: "/profile/:userId", element: <PlayerProfile /> },
+            { path: "/manage-events", element: <ManageEvents /> },
+            { path: "/add-event", element: <AddEvent /> },
+            { path: "/help", element: <HelpAndSupport /> },
+            { path: "/:eventId/select-captains", element: <SelectCaptains /> },
+            { path: "/edit-results/:eventId", element: <EditResults /> },
+            {
+              path: "/rate-teammates/:eventId",
+              element: <RateTeammatesByEvent />,
+            },
+            { path: "*", element: <NotFound /> },
+          ],
+        },
+      ],
+    },
+    { path: "*", element: <NotFound /> },
+  ],
   {
-    element: (
-      <AuthProvider>
-        <AuthWrapper />
-      </AuthProvider>
-    ),
-    errorElement: <ErrorPage />,
-    children: [
-      { path: "/sign-in", element: <SignIn /> },
-      { path: "/sign-up", element: <SignUp /> },
-      { path: "/forgot-password", element: <ForgotPassword /> },
-      { path: "/complete-registration", element: <PlayerRegistration /> },
-      { path: "/league-setup", element: <LeagueSetupPage /> },
-      {
-        element: <AppLayout />,
-        errorElement: <ErrorPage />,
-        children: [
-          { path: "/", element: <HomeScreen /> },
-          { path: "/create-league", element: <CreateLeague /> },
-          { path: "/leagues", element: <Leagues /> },
-          { path: "/leagues/:id", element: <LeagueDetails /> },
-          { path: "/events", element: <Events /> },
-          { path: "/events/:id", element: <EventDetails /> },
-          { path: "/events/:id/edit", element: <EditEvent /> },
-          { path: "/events/:id/results", element: <EventResults /> },
-          { path: "/events/:id/team-draft", element: <TeamDraftPage /> },
-          { path: "/results", element: <Results /> },
-          { path: "/chat", element: <Chat /> },
-          { path: "/rate-teammates", element: <RateTeammates /> },
-          { path: "/profile", element: <Profile /> },
-          { path: "/profile/:userId", element: <PlayerProfile /> },
-          { path: "/manage-events", element: <ManageEvents /> },
-          { path: "/add-event", element: <AddEvent /> },
-          { path: "/help", element: <HelpAndSupport /> },
-          { path: "/:eventId/select-captains", element: <SelectCaptains /> },
-          { path: "/edit-results/:eventId", element: <EditResults /> },
-          {
-            path: "/rate-teammates/:eventId",
-            element: <RateTeammatesByEvent />,
-          },
-          { path: "*", element: <NotFound /> },
-        ],
-      },
-    ],
+    future: {
+      v7_fetcherPersist: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+    },
   },
-  { path: "*", element: <NotFound /> },
-]);
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

@@ -74,4 +74,5 @@ export type UserRatingType = {
   userId: string;
   ratedById: string;
   eventId: string;
+  event: EventType;
 };

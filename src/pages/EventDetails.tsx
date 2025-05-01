@@ -262,9 +262,12 @@ export default function EventDetails() {
                         </Avatar>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1">
-                            <span className="truncate font-semibold">
+                            <Link
+                              to={`/profile/${player.id}`}
+                              className="truncate font-semibold hover:text-accent-orange hover:underline"
+                            >
                               {player.full_name}
-                            </span>
+                            </Link>
                             {event.teams.some(
                               (team) => team.captainId === player.id,
                             ) && (

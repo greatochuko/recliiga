@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth, UserType } from "@/contexts/AuthContext";
 import { LeagueType } from "@/types/league";
 import { getCardinalSuffix } from "@/lib/utils";
+import { useMemo } from "react";
 
 export function PlayerRankCard({
   league,
@@ -17,6 +18,20 @@ export function PlayerRankCard({
   const { user: authUser } = useAuth();
 
   const user = player || authUser;
+
+  const userRatings = useMemo(
+    () => user.ratings.filter((rating) => rating.event.leagueId === league?.id),
+    [league?.id, user.ratings],
+  );
+
+  const userRating = useMemo(
+    () =>
+      userRatings.length > 0
+        ? userRatings.reduce((acc, curr) => acc + curr.score, 0) /
+          userRatings.length
+        : 0,
+    [userRatings],
+  );
 
   return (
     <Card className="flex h-full w-full flex-col justify-between bg-accent-orange text-white">
@@ -54,9 +69,7 @@ export function PlayerRankCard({
           </div>
           <span className="mt-1 text-xs">{league?.name || "League"}</span>
           <div className="mt-2 flex items-center">
-            <span className="text-base font-bold">
-              {user.rating.toFixed(2)}
-            </span>
+            <span className="text-base font-bold">{userRating.toFixed(2)}</span>
             <Star className="ml-1 h-4 w-4 fill-white" />
           </div>
         </div>
