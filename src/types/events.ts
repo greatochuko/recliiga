@@ -32,6 +32,7 @@ export interface EventType {
   title: string;
   location: string;
   numTeams: number;
+  ratings: UserRatingType[];
   rosterSpots: number;
   startTime: Date;
   endTime: Date;
@@ -64,4 +65,13 @@ export type LeaderboardDataType = {
   attendance: number;
   nonAttendance: number;
   points: number;
+};
+
+export type UserRatingType = {
+  id: string;
+  score: number;
+  createdAt: string;
+  userId: string;
+  ratedById: string;
+  eventId: string;
 };

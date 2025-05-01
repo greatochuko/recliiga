@@ -179,3 +179,19 @@ export function getCardinalSuffix(n: number): string {
       return "th";
   }
 }
+
+export function getUnratedTeammates(event: EventType, userId: string) {
+  return event.teams
+    .find(
+      (team) =>
+        team.captainId === userId ||
+        team.players.some((player) => player.id === userId),
+    )
+    .players.filter((pl) => pl.id !== userId)
+    .filter(
+      (user) =>
+        !event.ratings.some(
+          (rating) => rating.userId === user.id && rating.ratedById === userId,
+        ),
+    );
+}

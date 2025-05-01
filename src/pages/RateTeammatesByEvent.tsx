@@ -3,12 +3,17 @@ import FullScreenLoader from "@/components/FullScreenLoader";
 import PageHeader from "@/components/PageHeader";
 import { RatingDialog } from "@/components/rating/RatingDialog";
 import { Button } from "@/components/ui/button";
-import { UserType } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { getUnratedTeammates } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeftIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function RateTeammatesByEvent() {
+  const { user } = useAuth();
+  const [teammates, setTeammates] = useState([]);
+
   const { eventId } = useParams();
   const navigate = useNavigate();
 
@@ -18,6 +23,12 @@ export default function RateTeammatesByEvent() {
   });
 
   const event = data?.data;
+
+  useEffect(() => {
+    if (event) {
+      setTeammates(getUnratedTeammates(event, user.id));
+    }
+  }, [event, user.id]);
 
   if (isLoading) {
     return <FullScreenLoader />;
@@ -45,26 +56,18 @@ export default function RateTeammatesByEvent() {
     );
   }
 
-  function handleRatingSubmit(player: UserType, rating: number) {
-    console.log(
-      "Rating submitted for player:",
-      player.full_name,
-      "Rating:",
-      rating,
-    );
-  }
-
   return (
     <main className="flex flex-1 flex-col gap-4">
       <PageHeader title="Rate Teammates" />
 
-      {event.players.length > 0 ? (
+      {teammates.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          {event.players.map((player) => (
+          {teammates.map((player) => (
             <RatingDialog
               key={player.id}
               player={player}
-              onRatingSubmit={(rating) => handleRatingSubmit(player, rating)}
+              eventId={event.id}
+              setTeammates={setTeammates}
             />
           ))}
         </div>

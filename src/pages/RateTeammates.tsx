@@ -23,8 +23,10 @@ export default function RateTeammates() {
 
   const pastEvents = getPastEvents(events);
 
-  const eventsToRate = pastEvents.filter((event) =>
-    event.players.some((player) => player.id === user.id),
+  const eventsToRate = pastEvents.filter(
+    (event) =>
+      event.resultsEntered &&
+      event.players.some((player) => player.id === user.id),
   );
 
   if (isLoading) {

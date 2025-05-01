@@ -116,3 +116,15 @@ export async function updateResult({
   });
   return data;
 }
+
+export async function rateTeammate(
+  eventId: string,
+  userId: string,
+  score: number,
+) {
+  const data = await fetchApi<EventType>(`/event/${eventId}/rate-teammate`, {
+    method: "POST",
+    body: { userId, score },
+  });
+  return data;
+}

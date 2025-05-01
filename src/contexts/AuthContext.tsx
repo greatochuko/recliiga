@@ -9,6 +9,7 @@ import {
   logout,
   registerUser,
 } from "@/api/auth";
+import { UserRatingType } from "@/types/events";
 
 export type UserType = {
   avatar_url: string | null;
@@ -17,6 +18,7 @@ export type UserType = {
   date_of_birth: string | null;
   full_name: string | null;
   id: string;
+  ratings: UserRatingType[];
   nickname: string | null;
   phone: string | null;
   positions: string[] | null;

@@ -3,24 +3,37 @@ import { Star, XIcon } from "lucide-react";
 import { StarRating } from "./StarRating";
 import { UserType } from "@/contexts/AuthContext";
 import ModalContainer from "../ModalContainer";
+import { Link } from "react-router-dom";
+import { rateTeammate } from "@/api/events";
 
 interface RatingDialogProps {
+  eventId: string;
   player: UserType;
-  onRatingSubmit: (rating: number) => void;
+  setTeammates: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
+export function RatingDialog({
+  eventId,
+  player,
+  setTeammates,
+}: RatingDialogProps) {
   const [rating, setRating] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onRatingSubmit(rating);
-    setIsOpen(false);
+    setLoading(true);
+    const { error } = await rateTeammate(eventId, player.id, rating);
+    if (!error) {
+      setTeammates((prev) => prev.filter((tm) => tm.id !== player.id));
+      setIsOpen(false);
+    }
+    setLoading(false);
   };
 
   return (
@@ -84,7 +97,12 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
                   .join("")}
               </div>
             )}
-            <h2 className="text-xl font-semibold">{player.full_name}</h2>
+            <Link
+              to={`/profile/${player.id}`}
+              className="text-xl font-semibold hover:text-accent-orange hover:underline"
+            >
+              {player.full_name}
+            </Link>
             <p className="text-neutral-600">{player.positions[0]}</p>
           </div>
 
@@ -104,7 +122,8 @@ export function RatingDialog({ player, onRatingSubmit }: RatingDialogProps) {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-accent-orange/90"
+                disabled={loading}
+                className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
               >
                 Submit Rating
               </button>

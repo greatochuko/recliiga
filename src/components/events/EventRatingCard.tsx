@@ -1,7 +1,14 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { getUnratedTeammates } from "@/lib/utils";
+import { EventType } from "@/types/events";
 import { MapPinIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function EventRatingCard({ event }) {
+export default function EventRatingCard({ event }: { event: EventType }) {
+  const { user } = useAuth();
+
+  const teammates = getUnratedTeammates(event, user.id);
+
   return (
     <Link
       key={event.id}
@@ -26,7 +33,7 @@ export default function EventRatingCard({ event }) {
       {/* <p className="mb-4 text-sm text-gray-600">{event.description}</p> */}
 
       <div className="flex items-center gap-2">
-        {event.players.slice(0, 3).map((player) => (
+        {teammates.slice(0, 3).map((player) => (
           <div key={player.id} className="relative">
             {player.avatar_url ? (
               <img
@@ -44,9 +51,9 @@ export default function EventRatingCard({ event }) {
             )}
           </div>
         ))}
-        {event.players.length > 3 && (
+        {teammates.length > 3 && (
           <span className="text-xs text-gray-500">
-            +{event.players.length - 3} more
+            +{teammates.length - 3} more
           </span>
         )}
 

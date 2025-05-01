@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEventsByUser } from "@/api/events";
 import FullScreenLoader from "../FullScreenLoader";
-import { getPastEvents } from "@/lib/utils";
+import { getPastEvents, getUnratedTeammates } from "@/lib/utils";
 import EventRatingCard from "../events/EventRatingCard";
 
 export default function RatingSection() {
@@ -20,8 +20,11 @@ export default function RatingSection() {
 
   const pastEvents = getPastEvents(events);
 
-  const eventsToRate = pastEvents.filter((event) =>
-    event.players.some((player) => player.id === user.id),
+  const eventsToRate = pastEvents.filter(
+    (event) =>
+      event.resultsEntered &&
+      event.players.some((player) => player.id === user.id) &&
+      getUnratedTeammates(event, user.id).length > 0,
   );
 
   return (
