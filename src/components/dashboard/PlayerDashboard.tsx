@@ -31,12 +31,10 @@ export default function PlayerDashboard() {
 
   useEffect(() => {
     if (leagues.length > 0) {
-      const leagueId = leagues[1].id;
+      const leagueId = leagues[0].id;
       setSelectedLeagueId(leagueId);
     }
   }, [leagues]);
-
-  const events = leagues.flatMap((league) => league.events);
 
   const selectedLeague = leagues.find(
     (league) => league.id === selectedLeagueId,
@@ -61,13 +59,12 @@ export default function PlayerDashboard() {
       .sort((a, b) => b.points - a.points)
       .findIndex((data) => data.player.id === user.id) + 1;
 
-  const upcomingEvents = getUpcomingEvents(events);
-
   if (leaguesLoading) {
     return <FullScreenLoader />;
   }
 
   const selectedLeagueEvents = selectedLeague?.events || [];
+  const upcomingEvents = getUpcomingEvents(selectedLeagueEvents);
 
   return (
     <QueryClientProvider client={queryClient}>

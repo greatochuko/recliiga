@@ -11,7 +11,7 @@ export default function UpcomingEventsSection({
   isLoading: boolean;
 }) {
   return (
-    <section className="mb-8">
+    <section>
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold">Upcoming Events</h2>
         <Link
