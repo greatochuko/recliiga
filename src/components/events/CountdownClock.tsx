@@ -7,7 +7,18 @@ export default function CountdownClock({
   deadline: Date;
   size?: "sm" | "default";
 }) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const now = new Date();
+    const difference = deadline.getTime() - now.getTime();
+
+    return difference > 0
+      ? {
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+        }
+      : { days: 0, hours: 0, minutes: 0 };
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {

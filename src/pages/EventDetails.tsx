@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import CountdownClock from "@/components/events/CountdownClock";
 import TeamInfo from "@/components/events/TeamInfo";
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
+import { StarRating } from "@/components/rating/StarRating";
 
 export default function EventDetails() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function EventDetails() {
     const eventStartTime = new Date(event.startTime);
 
     const rsvpDeadlineTime = new Date(
-      eventStartTime.getTime() - event.rsvpDeadline * 60 * 1000,
+      eventStartTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000,
     );
 
     return { isPassed: new Date() > rsvpDeadlineTime, time: rsvpDeadlineTime };
@@ -149,7 +150,7 @@ export default function EventDetails() {
                 <>
                   <div className="flex flex-col items-center space-y-4">
                     <h2 className="text-xl font-bold">Event Countdown</h2>
-                    <CountdownClock deadline={rsvpDeadline.time} />
+                    <CountdownClock deadline={new Date(event.startTime)} />
                   </div>
                 </>
               )}
@@ -280,6 +281,9 @@ export default function EventDetails() {
                                 <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
                               </svg>
                             )}
+                            <div className="ml-1">
+                              <StarRating rating={player.rating} displayValue />
+                            </div>
                           </div>
                           <span className="truncate text-sm text-muted-foreground">
                             {player.positions[0] || "Unassigned"}
