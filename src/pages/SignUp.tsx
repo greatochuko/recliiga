@@ -112,8 +112,10 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
-      <h1 className="mb-8 text-4xl font-bold text-accent-orange">REC LiiGA</h1>
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-white p-4">
+      <h1 className="mb-8 text-3xl font-bold text-accent-orange sm:text-4xl">
+        REC LiiGA
+      </h1>
 
       <Card className="w-full max-w-md">
         <form onSubmit={handleSignUp}>

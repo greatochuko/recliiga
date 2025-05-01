@@ -46,8 +46,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-8">
-      <h1 className="text-accent-orange mb-8 text-4xl font-bold">REC LiiGA</h1>
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-white p-8">
+      <h1 className="mb-8 text-4xl font-bold text-accent-orange">REC LiiGA</h1>
 
       <Card className="w-full max-w-md">
         {resetSent ? (
@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
             </CardTitle>
             <Alert className="border-0 bg-transparent p-0">
               <div className="flex items-start">
-                <CheckCircle className="text-accent-orange mr-2 mt-0.5 h-5 w-5" />
+                <CheckCircle className="mr-2 mt-0.5 h-5 w-5 text-accent-orange" />
                 <AlertDescription className="text-[#707B81]">
                   We've sent an email to{" "}
                   <span className="font-semibold text-gray-800">{email}</span>{" "}
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
               Didn't receive the email? Check your spam folder or{" "}
               <button
                 onClick={() => setResetSent(false)}
-                className="text-accent-orange font-semibold hover:underline"
+                className="font-semibold text-accent-orange hover:underline"
               >
                 try again
               </button>
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
             <CardFooter className="flex flex-col space-y-4">
               <Button
                 type="submit"
-                className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
+                className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
                 disabled={isLoading}
               >
                 {isLoading ? "Sending..." : "Reset Password"}

@@ -1,30 +1,24 @@
-import { useNavigate } from "react-router-dom";
-import { Sidebar, SidebarTrigger } from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
+import { Sidebar, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { ConditionalNavigationMenu } from "./sidebar/ConditionalNavigationMenu";
 import { UserMenu } from "./sidebar/UserMenu";
 import { NotificationsPopover } from "./sidebar/NotificationsPopover";
 
 export function AppSidebar() {
-  const navigate = useNavigate();
-
-  const handleLogoClick = () => {
-    navigate("/");
-  };
+  const { toggleSidebar } = useSidebar();
 
   return (
     <div className="relative">
       <Sidebar className="border-r border-gray-200 bg-white">
         <div className="flex h-full flex-col">
-          {/* Logo */}
           <div className="border-b border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <h1
-                className="cursor-pointer text-2xl font-bold text-accent-orange transition-colors hover:text-[#FF9A30]"
-                onClick={handleLogoClick}
-              >
-                REC LiiGA
-              </h1>
-            </div>
+            <Link
+              to={"/"}
+              className="w-fit cursor-pointer text-2xl font-bold text-accent-orange transition-colors hover:text-[#FF9A30]"
+              onClick={toggleSidebar}
+            >
+              REC LiiGA
+            </Link>
           </div>
 
           {/* User Profile */}

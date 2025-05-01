@@ -130,7 +130,7 @@ export default function PlayerRegistration() {
         : false;
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-dvh flex-col bg-white">
       <header className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <RouterLink to="/" className="inline-block">
