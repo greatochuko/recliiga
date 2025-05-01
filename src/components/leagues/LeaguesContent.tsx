@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LeagueType } from "@/types/league";
@@ -41,17 +40,11 @@ export function LeaguesContent({
           placeholder="Search by Name, Sport, League Code or City"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full py-2 pl-10 pr-4"
+          className="w-full py-2 pl-10 text-sm"
         />
         <div className="absolute inset-y-0 left-0 flex items-center pl-3">
           <SearchIcon className="h-5 w-5 text-gray-400" />
         </div>
-        <Button
-          type="submit"
-          className="absolute inset-y-0 right-0 flex items-center bg-accent-orange px-4 text-white hover:bg-accent-orange/90"
-        >
-          Search
-        </Button>
       </div>
 
       {isLoading ? (

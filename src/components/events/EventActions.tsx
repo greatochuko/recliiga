@@ -60,7 +60,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
   };
 
   const renderRSVPControls = () => (
-    <div className="flex justify-center space-x-2">
+    <div className="flex gap-2 sm:justify-center sm:space-x-2">
       <button
         className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
         onClick={() => handleRSVP("attending")}
@@ -91,12 +91,12 @@ export const EventActions: React.FC<EventActionsProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-[8rem_1fr_8rem] items-end gap-4">
-      <span className="w-fit text-xs font-bold text-accent-orange">
+    <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-[8rem_1fr_8rem]">
+      <span className="absolute right-4 top-4 text-xs font-bold text-accent-orange sm:static sm:w-fit">
         {event.league.name}
       </span>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col items-center justify-center gap-4">
         <Link
           to={`/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
           className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
@@ -108,7 +108,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
             {!attendanceStatus || isEditing ? (
               renderRSVPControls()
             ) : (
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-2 sm:flex-row">
                 <button
                   className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
                   onClick={() => setIsEditing(true)}
@@ -123,9 +123,11 @@ export const EventActions: React.FC<EventActionsProps> = ({
       </div>
 
       {isPastEvent ? (
-        <div className="w-10" />
+        <div className="h-6 sm:w-10" />
       ) : isRsvpOpen ? (
-        <CountdownClock deadline={rsvpDeadline} size="sm" />
+        <div className="flex justify-center">
+          <CountdownClock deadline={rsvpDeadline} size="sm" />
+        </div>
       ) : (
         teamCaptained &&
         (!teamCaptained.draftCompleted ? (

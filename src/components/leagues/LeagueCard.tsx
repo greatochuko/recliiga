@@ -15,51 +15,51 @@ export default function LeagueCard({ league }: { league: LeagueType }) {
 
   return (
     <Card key={league.id} className="overflow-hidden border border-gray-200">
-      <CardContent className="p-6">
-        <div className="flex items-start space-x-4">
+      <CardContent className="flex flex-col gap-4 p-6">
+        <div className="flex items-start gap-x-4">
           <Avatar className="h-16 w-16">
             <AvatarImage src={league.image} alt={league.name} />
             <AvatarFallback>
               {league.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-grow">
-            <div className="mb-2 flex items-start justify-between">
-              <h3 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
-                {league.name}
-                {league.is_private && (
-                  <LockIcon className="h-4 w-4 text-accent-orange" />
-                )}
-              </h3>
-              {league.owner_id === user.id && (
-                <CopyLeagueCodeButton leagueCode={league.leagueCode} />
+          <div className="flex flex-1 flex-col items-start justify-between gap-x-4 gap-y-1 sm:flex-row">
+            <h3 className="flex flex-1 items-center gap-2 text-lg font-semibold text-gray-800 sm:text-xl">
+              {league.name}
+              {league.is_private && (
+                <LockIcon className="h-4 w-4 text-accent-orange" />
               )}
+            </h3>
+            {league.owner_id === user.id && (
+              <CopyLeagueCodeButton leagueCode={league.leagueCode} />
+            )}
+          </div>
+        </div>
+        <div>
+          <div className="grid grid-cols-2 gap-2 text-sm text-[#707B81] sm:-mt-10 sm:ml-20">
+            <div className="flex items-center">
+              <Users className="mr-2 h-4 w-4" />
+              <span>
+                {league.players.length} Player
+                {league.players.length !== 1 && "s"}
+              </span>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-sm text-[#707B81]">
-              <div className="flex items-center">
-                <Users className="mr-2 h-4 w-4" />
-                <span>
-                  {league.players.length} Player
-                  {league.players.length !== 1 && "s"}
-                </span>
-              </div>
-              <div className="flex items-center">
-                <MapPin className="mr-2 h-4 w-4" />
-                <span className="line-clamp-1">{league.city}</span>
-              </div>
-              <div className="flex items-center">
-                <Calendar className="mr-2 h-4 w-4" />
-                <span>
-                  {new Date(league.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-medium">{league.sport}</span>
-              </div>
+            <div className="flex items-center">
+              <MapPin className="mr-2 h-4 w-4" />
+              <span className="line-clamp-1">{league.city}</span>
+            </div>
+            <div className="flex items-center">
+              <Calendar className="mr-2 h-4 w-4" />
+              <span>
+                {new Date(league.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <span className="font-medium">{league.sport}</span>
             </div>
           </div>
         </div>

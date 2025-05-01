@@ -26,7 +26,7 @@ export default function JoinLeagueModal({
   }
   return (
     <ModalContainer open={open} closeModal={closeModal}>
-      <div className="rounded-md bg-white p-6">
+      <div className="w-[90%] max-w-lg rounded-md bg-white p-6">
         <h2 className="text-lg font-semibold text-gray-800">Join a League</h2>
         <p className="mt-2 text-sm text-gray-600">
           Enter the league code provided by the league administrator to join.

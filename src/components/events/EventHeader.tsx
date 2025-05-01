@@ -22,27 +22,34 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
   const eventTime = format(event.startTime, "h:mm a");
 
   return (
-    <div className="mb-4 flex items-start justify-between">
-      <div className="flex items-center">
-        <h3 className="mr-6 font-medium">{event.title}</h3>
-        <Calendar className="mr-2 h-4 w-4 text-gray-500" />
-        <span className="mr-2 text-xs text-gray-500">
-          {eventDate.toDateString()}
-        </span>
-        <span className="mr-6 text-xs text-gray-500">{eventTime}</span>
-        <MapPin className="mr-2 h-4 w-4 text-gray-500" />
-        <span className="text-xs text-gray-500">{event.location}</span>
+    <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center">
+        <h3 className="mr-4 text-base font-medium">{event.title}</h3>
+        <div className="flex flex-wrap gap-2">
+          <div className="mr-4 flex items-center text-gray-500">
+            <Calendar className="mr-1 h-4 w-4" />
+            <span className="text-xs">{eventDate.toDateString()}</span>
+          </div>
+          <span className="mr-4 text-xs text-gray-500">{eventTime}</span>
+          <div className="flex items-center text-gray-500">
+            <MapPin className="mr-1 h-4 w-4" />
+            <span className="text-xs">{event.location}</span>
+          </div>
+        </div>
       </div>
       {!isPastEvent &&
         (attendanceStatus === "attending" ? (
           <Badge
             variant="secondary"
-            className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
+            className="mt-2 self-start bg-accent-orange bg-opacity-20 text-xs text-accent-orange sm:mt-0 sm:self-auto"
           >
             Attending
           </Badge>
         ) : (
-          <Badge variant="secondary" className="text-xs text-red-600">
+          <Badge
+            variant="secondary"
+            className="mt-2 self-start text-xs text-red-600 sm:mt-0 sm:self-auto"
+          >
             {spotsLeft} spots left
           </Badge>
         ))}
