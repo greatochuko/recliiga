@@ -250,7 +250,7 @@ export default function AddEvent() {
   const eventEndHour = new Date(eventData.endTime).getHours();
 
   return (
-    <main className="mx-auto w-full max-w-3xl">
+    <main className="flex-1">
       <PageHeader title="Add Event" />
       <Card className="my-2">
         <CardContent className="p-4 sm:p-6">

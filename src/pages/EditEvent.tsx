@@ -261,7 +261,7 @@ export default function EditEvent() {
   const eventEndMinute = new Date(eventData.endTime).getMinutes();
 
   return (
-    <main className="mx-auto w-full max-w-3xl">
+    <main className="flex-1">
       <Card className="my-2">
         <CardHeader className="relative">
           <Link

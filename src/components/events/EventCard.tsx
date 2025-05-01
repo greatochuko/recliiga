@@ -39,6 +39,7 @@ export default function EventCard({
 
         <EventActions
           event={event}
+          spotsLeft={spotsLeft}
           setSpotsRemaining={setSpotsLeft}
           isPastEvent={isPastEvent}
           attendanceStatus={attendanceStatus}

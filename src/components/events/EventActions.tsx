@@ -8,6 +8,7 @@ import CountdownClock from "./CountdownClock";
 
 interface EventActionsProps {
   event: EventType;
+  spotsLeft: number;
   setSpotsRemaining: React.Dispatch<React.SetStateAction<number>>;
   isPastEvent?: boolean;
   attendanceStatus: "attending" | "not-attending" | null;
@@ -18,6 +19,7 @@ interface EventActionsProps {
 
 export const EventActions: React.FC<EventActionsProps> = ({
   event,
+  spotsLeft,
   setSpotsRemaining,
   isPastEvent = false,
   attendanceStatus,
@@ -64,7 +66,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
       <button
         className="rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-orange/90 disabled:bg-accent-orange/50"
         onClick={() => handleRSVP("attending")}
-        disabled={loading || attendanceStatus === "attending"}
+        disabled={loading || attendanceStatus === "attending" || spotsLeft < 1}
       >
         Attend
       </button>
