@@ -122,9 +122,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
         )}
       </div>
 
-      {isPastEvent ? (
-        <div className="h-6 sm:w-10" />
-      ) : isRsvpOpen ? (
+      {isPastEvent ? null : isRsvpOpen ? (
         <div className="flex justify-center">
           <CountdownClock deadline={rsvpDeadline} size="sm" />
         </div>

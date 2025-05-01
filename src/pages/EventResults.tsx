@@ -205,25 +205,23 @@ export default function EventResults() {
               </div>
 
               <div className="flex flex-col items-center justify-center">
-                <div className="mb-4 flex flex-col items-center text-center">
-                  <span className="text-xs text-gray-500">
+                <div className="mb-4 flex flex-col items-center text-center text-xs sm:text-sm">
+                  <span className="text-gray-500">
                     {new Date(event.startTime).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {event.location}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {new Date(event.startTime).toLocaleDateString("en-US", {
+                  <span className="text-gray-500">
+                    {new Date(event.startTime).toLocaleTimeString("en-US", {
                       hour: "2-digit",
                       minute: "2-digit",
                       hour12: true,
                     })}
                   </span>
-                  <span className="text-xs font-bold text-accent-orange">
+                  <span className="text-gray-500">{event.location}</span>
+                  <span className="font-bold text-accent-orange">
                     {event.league.name}
                   </span>
                 </div>
