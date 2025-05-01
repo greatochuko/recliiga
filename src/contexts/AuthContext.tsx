@@ -17,6 +17,7 @@ export type UserType = {
   created_at: string;
   date_of_birth: string | null;
   full_name: string | null;
+  rating: number;
   id: string;
   ratings: UserRatingType[];
   nickname: string | null;

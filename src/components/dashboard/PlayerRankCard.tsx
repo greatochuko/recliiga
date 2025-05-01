@@ -55,7 +55,7 @@ export function PlayerRankCard({
           <span className="mt-1 text-xs">{league?.name || "League"}</span>
           <div className="mt-2 flex items-center">
             <span className="text-base font-bold">
-              {/* {Math.max(0.5, Math.min(3.0, league.rating)).toFixed(2)} */}
+              {user.rating.toFixed(2)}
             </span>
             <Star className="ml-1 h-4 w-4 fill-white" />
           </div>

@@ -82,7 +82,7 @@ function AttendingList({
                   <span className="truncate font-semibold">
                     {player.full_name}
                   </span>
-                  {/* <StarRating rating={player.rating} /> */}
+                  <StarRating rating={player.rating} />
                   {playerIsCaptain && (
                     <Crown
                       className="h-4 w-4"

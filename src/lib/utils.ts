@@ -181,17 +181,17 @@ export function getCardinalSuffix(n: number): string {
 }
 
 export function getUnratedTeammates(event: EventType, userId: string) {
-  return event.teams
-    .find(
-      (team) =>
-        team.captainId === userId ||
-        team.players.some((player) => player.id === userId),
-    )
-    .players.filter((pl) => pl.id !== userId)
-    .filter(
-      (user) =>
-        !event.ratings.some(
-          (rating) => rating.userId === user.id && rating.ratedById === userId,
-        ),
-    );
+  const eventTeam = event.teams.find(
+    (team) =>
+      team.captainId === userId ||
+      team.players.some((player) => player.id === userId),
+  );
+
+  return [...eventTeam.players, eventTeam.captain].filter(
+    (user) =>
+      user.id !== userId &&
+      !event.ratings.some(
+        (rating) => rating.userId === user.id && rating.ratedById === userId,
+      ),
+  );
 }
