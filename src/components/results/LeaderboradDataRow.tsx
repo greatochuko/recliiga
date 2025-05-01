@@ -13,7 +13,7 @@ export default function LeaderboradDataRow({
   return (
     <TableRow>
       <TableCell className="p-3 text-center font-medium">{rank}</TableCell>
-      <TableCell className="p-3 font-medium">
+      <TableCell className="border-l p-3 font-medium">
         <Link
           to={`/profile/${data.player.id}`}
           className="group flex cursor-pointer items-center transition-colors"
@@ -37,16 +37,30 @@ export default function LeaderboradDataRow({
           </span>
         </Link>
       </TableCell>
-      <TableCell className="p-3 text-center">{data.gamesPlayed}</TableCell>
-      <TableCell className="p-3 text-center">{data.gamesWon}</TableCell>
-      <TableCell className="p-3 text-center">{data.gamesLost}</TableCell>
-      <TableCell className="p-3 text-center">{data.gamesTied}</TableCell>
-      <TableCell className="p-3 text-center">
+      <TableCell className="border-l p-3 text-center">
+        {data.gamesPlayed}
+      </TableCell>
+      <TableCell className="border-l p-3 text-center">
+        {data.gamesWon}
+      </TableCell>
+      <TableCell className="border-l p-3 text-center">
+        {data.gamesLost}
+      </TableCell>
+      <TableCell className="border-l p-3 text-center">
+        {data.gamesTied}
+      </TableCell>
+      <TableCell className="border-l p-3 text-center">
         {data.gamesWonAsCaptain}
       </TableCell>
-      <TableCell className="p-3 text-center">{data.attendance}</TableCell>
-      <TableCell className="p-3 text-center">{data.nonAttendance}</TableCell>
-      <TableCell className="p-3 text-center font-bold">{data.points}</TableCell>
+      <TableCell className="border-l p-3 text-center">
+        {data.attendance}
+      </TableCell>
+      <TableCell className="border-l p-3 text-center">
+        {data.nonAttendance}
+      </TableCell>
+      <TableCell className="border-l p-3 text-center font-bold">
+        {data.points}
+      </TableCell>
     </TableRow>
   );
 }

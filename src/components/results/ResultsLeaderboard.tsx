@@ -180,11 +180,11 @@ export const ResultsLeaderboard = ({
               <TableHeader className="bg-gray-100">
                 <TableRow>
                   <TableHead className="w-16 text-center">Rank</TableHead>
-                  <TableHead className="w-48 min-w-36">Name</TableHead>
+                  <TableHead className="w-48 min-w-36 border-l">Name</TableHead>
                   {tableHeaders.map((stat) => (
                     <TableHead
                       key={stat.abbr}
-                      className="relative w-16 whitespace-nowrap text-center"
+                      className="relative w-16 whitespace-nowrap border-l text-center"
                     >
                       <Tooltip>
                         <TooltipTrigger
