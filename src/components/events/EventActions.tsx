@@ -5,6 +5,7 @@ import { EventType } from "@/types/events";
 import { attendEvent, declineEvent } from "@/api/events";
 import { useAuth } from "@/contexts/AuthContext";
 import CountdownClock from "./CountdownClock";
+import { Badge } from "../ui/badge";
 
 interface EventActionsProps {
   event: EventType;
@@ -125,7 +126,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
       </div>
 
       {isPastEvent ? null : isRsvpOpen ? (
-        <div className="flex justify-center">
+        <div className="flex justify-end">
           <CountdownClock deadline={rsvpDeadline} size="sm" />
         </div>
       ) : (
@@ -146,6 +147,13 @@ export const EventActions: React.FC<EventActionsProps> = ({
           </span>
         ))
       )}
+
+      <Badge
+        variant="secondary"
+        className="absolute bottom-4 left-4 mt-2 self-start text-xs text-red-600 sm:mt-0 sm:hidden sm:self-auto"
+      >
+        {spotsLeft} spots left
+      </Badge>
     </div>
   );
 };
