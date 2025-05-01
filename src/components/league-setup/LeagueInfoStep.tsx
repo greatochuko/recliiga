@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
 import React from "react";
 
-const sports = [
+const sportsList = [
   "American Football",
   "Soccer",
   "Aussie Rules Football",
@@ -50,6 +50,8 @@ export function LeagueInfoStep({
   updateLeagueData: (newData: Partial<LeagueDataType>) => void;
   handleChangeLeagueImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const sports = [...sportsList].sort((a, b) => a.localeCompare(b));
+
   return (
     <Card className="mb-8">
       <CardHeader>
