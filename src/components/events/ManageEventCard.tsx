@@ -44,7 +44,7 @@ export default function ManageEventCard({
           <div className="flex flex-1 flex-col">
             <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:items-center">
               <h3 className="mr-4 font-medium">{event.title}</h3>
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <span className="flex items-center gap-2 text-xs text-gray-500">
                   <Calendar
                     className="h-4 w-4 text-gray-500"
@@ -153,7 +153,7 @@ export default function ManageEventCard({
           )}
         </div>
 
-        <div className="mt-4 flex items-end justify-between gap-4">
+        <div className="flex items-end justify-between gap-4">
           {isRsvpOpen && (
             <div className="bottom-4 right-4">
               <CountdownClock deadline={rsvpDeadline} size="sm" />
@@ -171,6 +171,12 @@ export default function ManageEventCard({
               </Button>
             </Link>
           )}
+          <Link to={`/events/${event.id}/edit`}>
+            <Button variant="outline" size="sm" className="flex items-center">
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+          </Link>
           <span className="bottom-4 left-4 ml-auto text-xs font-bold text-accent-orange">
             {event.league.name}
           </span>

@@ -5,13 +5,8 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  CalendarIcon,
-  ArrowLeft,
-  Loader2Icon,
-  ArrowLeftIcon,
-} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { CalendarIcon, Loader2Icon, ArrowLeftIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -25,6 +20,7 @@ import { EventDataType, editEvent, fetchEventById } from "@/api/events";
 import { EventTimeDataType } from "@/types/events";
 import { useAuth } from "@/contexts/AuthContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import PageHeader from "@/components/PageHeader";
 
 const initialEventData: EventDataType = {
   leagueId: "",
@@ -262,22 +258,9 @@ export default function EditEvent() {
 
   return (
     <main className="flex-1">
+      <PageHeader title="Edit Event" />
       <Card className="my-2">
-        <CardHeader className="relative">
-          <Link
-            to="/manage-events"
-            className="absolute left-6 top-6 flex items-center gap-1 px-3 py-1.5 text-accent-orange"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Link>
-          <CardTitle
-            className="text-center text-2xl font-semibold text-gray-800"
-            style={{ marginTop: 0 }}
-          >
-            Edit Event
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <form onSubmit={handleEditEvent} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="league-id">League</Label>
@@ -424,7 +407,7 @@ export default function EditEvent() {
                 </Popover>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <Label>Start Time</Label>
                   <div className="flex gap-2">
