@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, StarIcon, TrophyIcon, UserPlusIcon } from "lucide-react";
+import {
+  Bell,
+  SparklesIcon,
+  StarIcon,
+  TrophyIcon,
+  UserPlusIcon,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotifications, readAllNotifications } from "@/api/notification";
 import JoinRequestNotification from "../notifications/JoinRequestNotification";
@@ -32,6 +38,10 @@ export function NotificationsPopover() {
   const ratingNotifications = notifications.filter(
     (n) => n.type === "RATE_TEAMMATES",
   );
+  const selectCaptainNotifications = notifications.filter(
+    (n) => n.type === "SELECT_CAPTAIN",
+  );
+
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
   const unreadNotificationCount = notifications.filter(
@@ -188,6 +198,22 @@ export function NotificationsPopover() {
                               {notif.event.title}.
                             </span>{" "}
                             - share your feedback now!
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {selectCaptainNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+                      >
+                        <SparklesIcon className="mr-2 mt-1 h-4 w-4 self-start text-accent-orange" />
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            Game on! Select the Captain for{" "}
+                            <span className="font-medium">
+                              {notif.event.title}.
+                            </span>
                           </p>
                         </div>
                       </div>

@@ -12,6 +12,7 @@ export type NotificationType = {
     | "RATE_TEAMMATES"
     | "SELECT_CAPTAIN";
   isRead: boolean;
+  scheduleTime: string;
   initiator: UserType;
   leagueId: string;
   league: LeagueType;

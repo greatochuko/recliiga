@@ -14,6 +14,7 @@ import { Plus } from "lucide-react";
 import { fetchEventsByCreator } from "@/api/events";
 import { getPastEvents, getUpcomingEvents } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import FullScreenLoader from "../FullScreenLoader";
 
 export const EventsContent: React.FC = () => {
   const { user } = useAuth();
@@ -21,14 +22,16 @@ export const EventsContent: React.FC = () => {
   const [selectedLeagueId, setSelectedLeague] = useState<string | null>(null);
 
   const {
-    data: { data: events, error },
+    data,
     isLoading: isLoadingEvents,
     refetch: refetchEvents,
   } = useQuery({
-    queryKey: ["event"],
+    queryKey: ["eventsByCreator"],
     queryFn: fetchEventsByCreator,
-    initialData: { data: [], error: null },
   });
+
+  const events = useMemo(() => data?.data || [], [data?.data]);
+  const error = data?.error;
 
   const filteredEvents = useMemo(() => {
     const filtered = selectedLeagueId
@@ -87,7 +90,8 @@ export const EventsContent: React.FC = () => {
           <TabsTrigger value="past">Past Events</TabsTrigger>
         </TabsList>
         {isLoadingEvents ? (
-          <div className="py-10 text-center text-gray-500">Loading...</div>
+          // <div className="py-10 text-center text-gray-500">Loading...</div>
+          <FullScreenLoader className="h-40" />
         ) : (
           <>
             <TabsContent value="upcoming">

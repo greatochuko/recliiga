@@ -59,6 +59,7 @@ export default function EditEvent() {
         ...prev,
         ...event,
       }));
+      console.log(event.rsvpDeadline);
       setRsvpDeadlineHours(
         event.rsvpDeadline > 0 ? `${event.rsvpDeadline}h` : "custom",
       );
