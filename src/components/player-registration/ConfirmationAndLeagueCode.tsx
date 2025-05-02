@@ -13,7 +13,7 @@ export function ConfirmationAndLeagueCode({
     <Card className="mb-8">
       <CardHeader>
         <CardTitle className="text-center text-2xl font-semibold text-gray-800">
-          Confirmation & League Code
+          Confirmation
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -79,12 +79,6 @@ export function ConfirmationAndLeagueCode({
                 )}
               </div>
             </div>
-          </div>
-
-          <div className="my-6 border-t border-gray-200"></div>
-
-          <div className="text-center">
-            {/* Confirmation text removed as per previous instruction */}
           </div>
         </div>
       </CardContent>

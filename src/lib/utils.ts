@@ -209,8 +209,8 @@ export function getUnratedTeammates(event: EventType, userId: string) {
 }
 
 export function getUserRating(leagueId: string, userRatings: UserRatingType[]) {
-  const filteredRatings = userRatings.filter(
-    (rating) => rating.event.leagueId === leagueId,
+  const filteredRatings = (userRatings || []).filter(
+    (rating) => (rating.leagueId || rating.event.leagueId) === leagueId,
   );
 
   return filteredRatings.length > 0

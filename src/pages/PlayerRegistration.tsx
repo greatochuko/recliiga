@@ -26,7 +26,7 @@ export interface PlayerProfile {
 const steps = [
   { id: 1, name: "Personal Information" },
   { id: 2, name: "Sports & Positions" },
-  { id: 3, name: "Confirmation & League Code" },
+  { id: 3, name: "Confirmation" },
 ];
 
 const initialPlayerData = {

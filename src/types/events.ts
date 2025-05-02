@@ -73,6 +73,8 @@ export type UserRatingType = {
   createdAt: string;
   userId: string;
   ratedById: string;
+  leagueId: string;
+  league: LeagueType;
   eventId: string;
   event: EventType;
 };

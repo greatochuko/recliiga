@@ -1,22 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import RoleSelect from "@/components/auth/RoleSelect";
 import CountryCodeSelect, {
   popularCountryCodes,
 } from "@/components/auth/CountryCodeSelect";
 import PasswordInput from "@/components/auth/PasswordInput";
+import { AlertCircle } from "lucide-react";
 
 export default function SignUpPage() {
   const { signUp } = useAuth();
@@ -40,126 +30,102 @@ export default function SignUpPage() {
     !confirmPassword.trim();
 
   const validateForm = () => {
-    if (!role) {
-      setError("Please select a role");
-      return false;
-    }
-    if (!fullName.trim()) {
-      setError("Please enter your full name");
-      return false;
-    }
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-    if (!phone.trim()) {
-      setError("Please enter your phone number");
-      return false;
-    }
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return false;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return false;
-    }
+    if (!role) return setError("Please select a role"), false;
+    if (!fullName.trim()) return setError("Please enter your full name"), false;
+    if (!validateEmail(email))
+      return setError("Please enter a valid email address"), false;
+    if (!phone.trim()) return setError("Please enter your phone number"), false;
+    if (password.length < 8)
+      return setError("Password must be at least 8 characters"), false;
+    if (password !== confirmPassword)
+      return setError("Passwords do not match"), false;
     return true;
   };
 
-  const validateEmail = (email: string) => {
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(String(email).toLowerCase());
-  };
+  const validateEmail = (email: string) =>
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+      email.toLowerCase(),
+    );
 
   const handleCountryCodeChange = (value: any) => {
-    const selectedCode = popularCountryCodes.find(
-      (code) => code.code === value,
-    );
-    if (selectedCode) {
-      setCountryCode(selectedCode);
-    } else {
-      setCountryCode(popularCountryCodes[0]);
-    }
+    const selected = popularCountryCodes.find((code) => code.code === value);
+    setCountryCode(selected || popularCountryCodes[0]);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (cannotSubmit) return;
-    setError("");
+    if (cannotSubmit || !validateForm()) return;
 
-    if (!validateForm()) return;
-
-    const finalPhone =
+    const fullPhone =
       countryCode.code === "other"
         ? `${customCountryCode}${phone}`
         : `${countryCode.code}${phone}`;
 
     try {
       setIsLoading(true);
+      setError("");
       await signUp({
         email,
         password,
         full_name: fullName,
-        role: role,
-        phone: finalPhone,
+        role,
+        phone: fullPhone,
       });
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-white p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
       <h1 className="mb-8 text-3xl font-bold text-accent-orange sm:text-4xl">
         REC LiiGA
       </h1>
 
-      <Card className="w-full max-w-md">
-        <form onSubmit={handleSignUp}>
-          <CardHeader>
-            <CardTitle className="text-center text-2xl font-semibold text-gray-800">
-              Register your Account
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white shadow-md">
+        <form onSubmit={handleSignUp} className="p-6">
+          <h2 className="mb-6 text-center text-2xl font-semibold text-gray-800">
+            Register your Account
+          </h2>
+
+          <div className="space-y-4">
             <RoleSelect role={role} onRoleSelect={setRole} />
 
             <div className="space-y-2">
-              <label htmlFor="fullName" className="text-sm text-gray-800">
+              <label htmlFor="fullName" className="block text-sm text-gray-800">
                 Full Name
               </label>
-              <Input
+              <input
                 id="fullName"
                 type="text"
                 placeholder="John Doe"
-                className="w-full"
+                className="w-full rounded-md border border-gray-300 p-2 text-sm ring-offset-2 focus:outline-none focus:ring-2 focus:ring-gray-800"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm text-gray-800">
+              <label htmlFor="email" className="block text-sm text-gray-800">
                 Email
               </label>
-              <Input
+              <input
                 id="email"
                 type="email"
                 placeholder="johndoe@gmail.com"
-                className="w-full"
+                className="w-full rounded-md border border-gray-300 p-2 text-sm ring-offset-2 focus:outline-none focus:ring-2 focus:ring-gray-800"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-sm text-gray-800">
+              <label htmlFor="phone" className="block text-sm text-gray-800">
                 Phone Number
               </label>
-              <div className="flex items-center space-x-2">
+              <div className="flex gap-2">
                 <CountryCodeSelect
                   countryCode={countryCode}
                   customCountryCode={customCountryCode}
@@ -168,11 +134,11 @@ export default function SignUpPage() {
                     setCustomCountryCode(e.target.value)
                   }
                 />
-                <Input
+                <input
                   id="phone"
                   type="tel"
                   placeholder="123-456-7890"
-                  className="w-full"
+                  className="w-full flex-1 rounded-md border border-gray-300 p-2 text-sm ring-offset-2 focus:outline-none focus:ring-2 focus:ring-gray-800"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
@@ -194,27 +160,21 @@ export default function SignUpPage() {
             />
 
             {error && (
-              <Alert
-                variant="destructive"
-                className="border-0 bg-transparent p-0"
-              >
-                <div className="flex items-center">
-                  <AlertCircle className="mr-2 h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-600">
-                    {error}
-                  </AlertDescription>
-                </div>
-              </Alert>
+              <div className="flex items-center gap-2 rounded-md bg-red-100 p-2 text-sm text-red-600">
+                <AlertCircle className="h-4 w-4" />
+                <span>{error}</span>
+              </div>
             )}
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button
+          </div>
+
+          <div className="mt-6 flex flex-col gap-4">
+            <button
               type="submit"
-              className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
               disabled={isLoading || cannotSubmit}
+              className="w-full rounded-md bg-accent-orange py-2 text-white ring-accent-orange/70 ring-offset-2 hover:bg-accent-orange/90 focus:ring disabled:opacity-60"
             >
               {isLoading ? "Signing up..." : "Sign Up"}
-            </Button>
+            </button>
             <p className="text-center text-sm text-[#707B81]">
               Already have an account?{" "}
               <Link
@@ -224,9 +184,9 @@ export default function SignUpPage() {
                 Sign in
               </Link>
             </p>
-          </CardFooter>
+          </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
