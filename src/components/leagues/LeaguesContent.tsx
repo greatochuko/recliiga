@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { LeagueType } from "@/types/league";
 import LeagueCard from "./LeagueCard";
 import { SearchIcon } from "lucide-react";
+import FullScreenLoader from "../FullScreenLoader";
 
 export function LeaguesContent({
   leagues,
@@ -48,9 +49,7 @@ export function LeaguesContent({
       </div>
 
       {isLoading ? (
-        <div className="p-4 text-center text-gray-600">
-          Searching leagues...
-        </div>
+        <FullScreenLoader className="h-40" />
       ) : error ? (
         <div className="p-4 text-center text-red-600">{error.message}</div>
       ) : leagues.length < 1 ? (
