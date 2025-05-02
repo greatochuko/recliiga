@@ -119,6 +119,9 @@ export function LeagueInfoStep({
                   {sport}
                 </option>
               ))}
+              <option key={"other"} value={"other"}>
+                Other
+              </option>
             </select>
           </div>
 
