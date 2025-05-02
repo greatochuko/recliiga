@@ -205,6 +205,7 @@ export default function TeamDraftPage() {
             <div className="flex gap-6">
               {/* Team sections */}
               <TeamsSection
+                event={event}
                 numEventPlayers={event.players.length}
                 teams={teams}
                 setTeams={setTeams}
@@ -220,6 +221,7 @@ export default function TeamDraftPage() {
             {/* Available players */}
             <div className="flex h-full flex-col lg:col-span-1 lg:col-start-3">
               <PlayersList
+                event={event}
                 teams={teams}
                 isDrafting={isDrafting}
                 availablePlayers={event.players}

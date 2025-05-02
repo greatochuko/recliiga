@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlayerRating } from "./DraftUIComponents";
-import { TeamType } from "@/types/events";
+import { EventType, TeamType } from "@/types/events";
 import { useAuth, UserType } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { getUserRating } from "@/lib/utils";
 
 interface PlayersListProps {
   availablePlayers: UserType[];
@@ -14,6 +15,7 @@ interface PlayersListProps {
   teams: TeamType[];
   handlePlayerDraft: (teamId: string, playerId: string) => void;
   isDrafting: boolean;
+  event: EventType;
 }
 
 export const PlayersList: React.FC<PlayersListProps> = ({
@@ -22,6 +24,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
   teams,
   handlePlayerDraft,
   isDrafting,
+  event,
 }) => {
   const { user } = useAuth();
 
@@ -64,7 +67,9 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                       <p className="font-medium group-hover:text-accent-orange group-hover:underline">
                         {player.full_name}
                       </p>
-                      <PlayerRating rating={3} />
+                      <PlayerRating
+                        rating={getUserRating(event.leagueId, player.ratings)}
+                      />
                     </div>
                     <p className="text-sm text-gray-500">
                       {player.positions[0]}

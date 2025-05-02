@@ -1,4 +1,9 @@
-import { EventType, LeaderboardDataType, ResultType } from "@/types/events";
+import {
+  EventType,
+  LeaderboardDataType,
+  ResultType,
+  UserRatingType,
+} from "@/types/events";
 import { LeagueType } from "@/types/league";
 import { clsx, type ClassValue } from "clsx";
 import { isPast } from "date-fns";
@@ -201,4 +206,15 @@ export function getUnratedTeammates(event: EventType, userId: string) {
         (rating) => rating.userId === user.id && rating.ratedById === userId,
       ),
   );
+}
+
+export function getUserRating(leagueId: string, userRatings: UserRatingType[]) {
+  const filteredRatings = userRatings.filter(
+    (rating) => rating.event.leagueId === leagueId,
+  );
+
+  return filteredRatings.length > 0
+    ? filteredRatings.reduce((acc, curr) => acc + curr.score, 0) /
+        filteredRatings.length
+    : 0;
 }

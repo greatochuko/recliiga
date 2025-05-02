@@ -13,6 +13,7 @@ import CountdownClock from "@/components/events/CountdownClock";
 import TeamInfo from "@/components/events/TeamInfo";
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
 import { StarRating } from "@/components/rating/StarRating";
+import { getUserRating } from "@/lib/utils";
 
 export default function EventDetails() {
   const navigate = useNavigate();
@@ -285,7 +286,13 @@ export default function EventDetails() {
                               </svg>
                             )}
                             <div className="ml-1">
-                              <StarRating rating={player.rating} displayValue />
+                              <StarRating
+                                rating={getUserRating(
+                                  event.leagueId,
+                                  player.ratings,
+                                )}
+                                displayValue
+                              />
                             </div>
                           </div>
                           <span className="truncate text-sm text-muted-foreground">

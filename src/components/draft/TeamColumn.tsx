@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Edit2 } from "lucide-react";
 import { JerseyIcon, PlayerRating } from "./DraftUIComponents";
-import { TeamType } from "@/types/events";
+import { EventType, TeamType } from "@/types/events";
 import { confirmRoster, updateTeam } from "@/api/team";
 import { useAuth } from "@/contexts/AuthContext";
 import ConfirmRosterModal from "./ConfirmRosterModal";
+import { getUserRating } from "@/lib/utils";
 
 interface TeamColumnProps {
   team: TeamType;
@@ -22,6 +23,7 @@ interface TeamColumnProps {
   isEditingTeam: boolean;
   canConfirmDraft: boolean;
   setTeams: React.Dispatch<React.SetStateAction<TeamType[]>>;
+  event: EventType;
 }
 
 const colorOptions = [
@@ -37,6 +39,7 @@ const colorOptions = [
 ];
 
 export const TeamColumn: React.FC<TeamColumnProps> = ({
+  event,
   team,
   setTeams,
   toggleEditMode,
@@ -217,7 +220,9 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                         </p>
                       </div>
                     </div>
-                    <PlayerRating rating={4} />
+                    <PlayerRating
+                      rating={getUserRating(event.leagueId, player.ratings)}
+                    />
                   </div>
                 ))}
               </ScrollArea>

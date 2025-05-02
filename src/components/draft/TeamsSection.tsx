@@ -1,7 +1,7 @@
 import React from "react";
 import { TeamColumn } from "./TeamColumn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TeamType } from "@/types/events";
+import { EventType, TeamType } from "@/types/events";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface TeamsSectionProps {
@@ -14,11 +14,13 @@ interface TeamsSectionProps {
   teamEditing: string;
   cancelTeamEditing: () => void;
   refetchEvent: () => void;
+  event: EventType;
 }
 
 export const TeamsSection: React.FC<TeamsSectionProps> = ({
   numEventPlayers,
   teams,
+  event,
   setTeams,
   toggleEditMode,
   handleTeamNameChange,
@@ -38,6 +40,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
       {teams.map((team) => (
         <div key={team.id} className="hidden flex-1 lg:block">
           <TeamColumn
+            event={event}
             canConfirmDraft={canConfirmDraft}
             isEditingTeam={teamEditing === team.id}
             team={team}
@@ -66,6 +69,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
                 canConfirmDraft={canConfirmDraft}
                 isEditingTeam={teamEditing === team.id}
                 team={team}
+                event={event}
                 setTeams={setTeams}
                 toggleEditMode={toggleEditMode}
                 handleTeamNameChange={handleTeamNameChange}

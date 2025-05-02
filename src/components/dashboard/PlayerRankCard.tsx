@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth, UserType } from "@/contexts/AuthContext";
 import { LeagueType } from "@/types/league";
-import { getCardinalSuffix } from "@/lib/utils";
+import { getCardinalSuffix, getUserRating } from "@/lib/utils";
 import { useMemo } from "react";
 
 export function PlayerRankCard({
@@ -19,18 +19,9 @@ export function PlayerRankCard({
 
   const user = player || authUser;
 
-  const userRatings = useMemo(
-    () => user.ratings.filter((rating) => rating.event.leagueId === league?.id),
-    [league?.id, user.ratings],
-  );
-
   const userRating = useMemo(
-    () =>
-      userRatings.length > 0
-        ? userRatings.reduce((acc, curr) => acc + curr.score, 0) /
-          userRatings.length
-        : 0,
-    [userRatings],
+    () => getUserRating(league?.id, user.ratings),
+    [league?.id, user.ratings],
   );
 
   return (

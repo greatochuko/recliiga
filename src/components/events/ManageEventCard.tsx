@@ -171,7 +171,7 @@ export default function ManageEventCard({
               </Button>
             </Link>
           )}
-          <Link to={`/events/${event.id}/edit`}>
+          <Link to={`/events/${event.id}/edit`} className="sm:hidden">
             <Button variant="outline" size="sm" className="flex items-center">
               <Edit className="mr-2 h-4 w-4" />
               Edit
