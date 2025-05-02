@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell } from "lucide-react";
+import { Bell, StarIcon, TrophyIcon, UserPlusIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotifications, readAllNotifications } from "@/api/notification";
 import JoinRequestNotification from "../notifications/JoinRequestNotification";
@@ -28,6 +28,9 @@ export function NotificationsPopover() {
   );
   const resultNotifications = notifications.filter(
     (n) => n.type === "RESULT_READY",
+  );
+  const ratingNotifications = notifications.filter(
+    (n) => n.type === "RATE_TEAMMATES",
   );
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
@@ -140,6 +143,7 @@ export function NotificationsPopover() {
                         key={notif.id}
                         className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
                       >
+                        <UserPlusIcon className="mr-2 mt-1 h-4 w-4 self-start text-accent-orange" />
                         <div className="flex-1">
                           <p className="text-sm">
                             You have been drafted to{" "}
@@ -159,6 +163,7 @@ export function NotificationsPopover() {
                         key={notif.id}
                         className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
                       >
+                        <TrophyIcon className="mr-2 mt-1 h-4 w-4 self-start text-accent-orange" />
                         <div className="flex-1">
                           <p className="text-sm">
                             Results are out for{" "}
@@ -166,6 +171,23 @@ export function NotificationsPopover() {
                               {notif.event.title}.
                             </span>{" "}
                             Check out the latest scores and rankings
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {ratingNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+                      >
+                        <StarIcon className="mr-2 mt-1 h-4 w-4 self-start text-accent-orange" />
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            It's time to rate your teammates from{" "}
+                            <span className="font-medium">
+                              {notif.event.title}.
+                            </span>{" "}
+                            - share your feedback now!
                           </p>
                         </div>
                       </div>

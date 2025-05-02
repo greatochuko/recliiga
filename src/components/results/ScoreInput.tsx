@@ -16,8 +16,8 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
   };
 
   const handleAddScore = (amount: number) => {
-    const newScore = score + amount;
-    setScore(newScore);
+    const newScore = Number(score) + amount;
+    setScore(newScore.toString());
   };
 
   const handleNumberInput = (number: string) => {
