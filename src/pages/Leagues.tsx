@@ -7,16 +7,12 @@ import { useState } from "react";
 export default function Leagues() {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const {
-    data: { leagues },
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["leagues"],
     queryFn: fetchLeaguesByUser,
-    initialData: { leagues: [], error: null },
   });
+
+  const leagues = data?.leagues || [];
 
   return (
     <>

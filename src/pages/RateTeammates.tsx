@@ -12,14 +12,12 @@ export default function RateTeammates() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const {
-    data: { data: events },
-    isLoading,
-  } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["upcomingEvents"],
     queryFn: fetchEventsByUser,
-    initialData: { data: [], error: null },
   });
+
+  const events = data?.data || [];
 
   const pastEvents = getPastEvents(events);
 

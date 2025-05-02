@@ -55,14 +55,12 @@ export default function AddEvent() {
 
   const navigate = useNavigate();
 
-  const {
-    data: { leagues },
-    isLoading: isLoadingLeagues,
-  } = useQuery({
-    queryKey: ["leagues"],
+  const { data, isLoading: isLoadingLeagues } = useQuery({
+    queryKey: ["leaguesByCreator"],
     queryFn: fetchLeaguesByCreator,
-    initialData: { leagues: [], error: null },
   });
+
+  const leagues = data?.leagues || [];
 
   const eventDates = useMemo(() => {
     if (!eventData.startTime || !repeatEndDate || !repeatFrequency) return [];

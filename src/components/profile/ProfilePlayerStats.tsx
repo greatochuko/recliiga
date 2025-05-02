@@ -18,14 +18,12 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
   const { user: authUser } = useAuth();
   const [selectedLeague, setSelectedLeague] = useState(null);
 
-  const {
-    data: { leagues },
-    isLoading,
-  } = useQuery({
+  const { data: leagueData, isLoading } = useQuery({
     queryKey: ["leagues"],
     queryFn: fetchLeaguesByUser,
-    initialData: { leagues: [], error: null },
   });
+
+  const leagues = leagueData?.leagues;
 
   useEffect(() => {
     if (leagues && leagues.length > 0) {
@@ -38,7 +36,7 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
     queryFn: () => fetchResultsByLeague(selectedLeague?.id),
   });
 
-  const results = data?.data;
+  const results = data?.data || [];
 
   const leaderboardData =
     selectedLeague && results
@@ -56,7 +54,7 @@ export default function ProfilePlayerStats({ user }: { user: UserType }) {
     return <FullScreenLoader />;
   }
 
-  if (!leagues || leagues.length === 0) {
+  if (!leagues || leagues.length < 1) {
     return (
       <div className="flex w-full flex-col items-center justify-center px-4 text-center">
         <h1 className="text-4xl font-bold text-gray-800">No Leagues Found</h1>
