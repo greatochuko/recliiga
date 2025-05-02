@@ -2,13 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {
-  deleteUser,
-  getSession,
-  login,
-  logout,
-  registerUser,
-} from "@/api/auth";
+import { deleteUser, getSession, login, registerUser } from "@/api/auth";
 import { UserRatingType } from "@/types/events";
 
 export type UserType = {
@@ -147,7 +141,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error || "Failed to delete account data");
       }
 
-      await logout();
+      localStorage.removeItem("token");
+      setUser(null);
 
       // Clear state
       setUser(null);
