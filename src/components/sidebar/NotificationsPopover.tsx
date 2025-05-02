@@ -26,6 +26,9 @@ export function NotificationsPopover() {
   const draftNotifications = notifications.filter(
     (n) => n.type === "PLAYER_DRAFTED",
   );
+  const resultNotifications = notifications.filter(
+    (n) => n.type === "RESULT_READY",
+  );
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
   const unreadNotificationCount = notifications.filter(
@@ -137,23 +140,6 @@ export function NotificationsPopover() {
                         key={notif.id}
                         className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
                       >
-                        {/* <div className="mr-2 h-8 w-8 overflow-hidden rounded-full bg-gray-200">
-                          {notif.initiator.avatar_url ? (
-                            <img
-                              src={notif.initiator.avatar_url}
-                              alt={notif.initiator.full_name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-xs font-medium text-gray-700">
-                              {notif.initiator.full_name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </div>
-                          )}
-                        </div> */}
-
                         <div className="flex-1">
                           <p className="text-sm">
                             You have been drafted to{" "}
@@ -164,6 +150,22 @@ export function NotificationsPopover() {
                             <span className="font-medium">
                               {notif.event.title}
                             </span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {resultNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+                      >
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            Results are out for{" "}
+                            <span className="font-medium">
+                              {notif.event.title}.
+                            </span>{" "}
+                            Check out the latest scores and rankings
                           </p>
                         </div>
                       </div>
