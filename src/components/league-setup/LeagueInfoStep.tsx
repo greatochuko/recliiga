@@ -89,7 +89,7 @@ export function LeagueInfoStep({
         </div>
 
         <div className="space-y-4">
-          <div>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="leagueName" className="text-gray-800">
               League Name
             </Label>
@@ -102,14 +102,14 @@ export function LeagueInfoStep({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="sport" className="text-gray-800">
               Select Sport
             </Label>
             <select
               name="sport"
               id="sport"
-              className="mt-1 block h-10 w-full rounded-md border p-2 text-sm outline-offset-4"
+              className="block h-10 w-full rounded-md border p-2 text-sm outline-offset-2 focus-visible:outline"
               value={leagueData.sport}
               onChange={(e) => updateLeagueData({ sport: e.target.value })}
             >
@@ -126,7 +126,7 @@ export function LeagueInfoStep({
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="flex-1">
+            <div className="flex flex-1 flex-col gap-2">
               <Label htmlFor="city" className="text-gray-800">
                 City
               </Label>
@@ -135,11 +135,10 @@ export function LeagueInfoStep({
                 type="text"
                 value={leagueData.city}
                 onChange={(e) => updateLeagueData({ city: e.target.value })}
-                className="mt-1"
               />
             </div>
 
-            <div className="flex-1">
+            <div className="flex flex-1 flex-col gap-2">
               <Label htmlFor="leagueDate" className="text-gray-800">
                 Start Date
               </Label>

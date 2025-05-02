@@ -6,10 +6,10 @@ export async function fetchNotifications() {
   return { data: data.data, error: data.error };
 }
 
-export async function readAllNotifications() {
+export async function readAllNotifications(notificationIds: string[]) {
   const data = await fetchApi<NotificationType[]>("/notification/read-all", {
     method: "POST",
-    body: {},
+    body: { notificationIds },
   });
   return { data: data.data, error: data.error };
 }

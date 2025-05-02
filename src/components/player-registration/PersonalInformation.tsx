@@ -140,7 +140,7 @@ export default function PersonalInformation({
                   id="dobMonth"
                   value={dobMonth}
                   onChange={(e) => setDobMonth(e.target.value)}
-                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
+                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-2 focus-visible:outline"
                 >
                   <option hidden>Month</option>
                   {Array.from({ length: 12 }, (_, i) => i).map((month) => (
@@ -161,7 +161,7 @@ export default function PersonalInformation({
                   id="dobDay"
                   value={dobDay}
                   onChange={(e) => setDobDay(e.target.value)}
-                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
+                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-2 focus-visible:outline"
                 >
                   <option hidden>Day</option>
                   {generateDayOptions().map((day) => (
@@ -180,7 +180,7 @@ export default function PersonalInformation({
                   id="dobYear"
                   value={dobYear}
                   onChange={(e) => setDobYear(e.target.value)}
-                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-[4px]"
+                  className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-offset-2 focus-visible:outline"
                 >
                   <option hidden>Year</option>
                   {generateYearOptions().map((year) => (

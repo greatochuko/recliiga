@@ -1,25 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "./ui/button";
-import { ChevronLeftIcon } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 
 export default function PageHeader({ title }: { title: string }) {
   const navigate = useNavigate();
 
-  function navigateBack() {
-    navigate(-1);
-  }
   return (
     <div className="flex items-center justify-between pl-8">
       <h1 className="text-2xl font-bold">{title}</h1>
-      <Button
-        variant="link"
-        size="sm"
-        className="text-accent-orange"
-        onClick={navigateBack}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1 rounded-md p-1.5 px-3 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
       >
-        <ChevronLeftIcon className="mr-1 h-4 w-4" />
+        <ArrowLeftIcon className="h-4 w-4" />
         Previous
-      </Button>
+      </button>
     </div>
   );
 }

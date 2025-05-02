@@ -17,8 +17,14 @@ export function NotificationsPopover() {
 
   const notifications = data?.data || [];
   const joinRequests = notifications.filter((n) => n.type === "LEAGUE_REQUEST");
-  const otherNotifications = notifications.filter(
+  const joinLeagutNotifications = notifications.filter(
     (n) => n.type === "JOIN_LEAGUE",
+  );
+  const otherNotifications = notifications.filter(
+    (n) => n.type !== "JOIN_LEAGUE",
+  );
+  const draftNotifications = notifications.filter(
+    (n) => n.type === "PLAYER_DRAFTED",
   );
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
@@ -32,7 +38,7 @@ export function NotificationsPopover() {
 
   async function markAllAsRead() {
     setLoading(true);
-    await readAllNotifications();
+    await readAllNotifications(unreadNotifications.map((notif) => notif.id));
     refetch();
     setLoading(false);
   }
@@ -93,7 +99,7 @@ export function NotificationsPopover() {
                     Updates
                   </div>
                   <div className="max-h-[400px] overflow-y-auto">
-                    {otherNotifications.map((notif) => (
+                    {joinLeagutNotifications.map((notif) => (
                       <div
                         key={notif.id}
                         className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
@@ -121,6 +127,42 @@ export function NotificationsPopover() {
                             <span className="font-normal">
                               {" "}
                               Joined {notif.league.name}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {draftNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+                      >
+                        {/* <div className="mr-2 h-8 w-8 overflow-hidden rounded-full bg-gray-200">
+                          {notif.initiator.avatar_url ? (
+                            <img
+                              src={notif.initiator.avatar_url}
+                              alt={notif.initiator.full_name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-xs font-medium text-gray-700">
+                              {notif.initiator.full_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </div>
+                          )}
+                        </div> */}
+
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            You have been drafted to{" "}
+                            <span className="font-medium">
+                              {notif.team.name}
+                            </span>{" "}
+                            for{" "}
+                            <span className="font-medium">
+                              {notif.event.title}
                             </span>
                           </p>
                         </div>

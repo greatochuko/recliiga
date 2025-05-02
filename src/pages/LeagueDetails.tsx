@@ -89,7 +89,7 @@ export default function LeagueDetails() {
                     })}
                   </span>
                 </div>
-                <div className="mt-1 text-sm text-[#F79602]">
+                <div className="text-sm font-medium text-[#F79602]">
                   {league.players.length} Players
                 </div>
               </div>
@@ -112,7 +112,7 @@ export default function LeagueDetails() {
               )}
             </div>
             {league.players.length ? (
-              <div className="grid grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))] gap-2">
+              <div className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-2">
                 {league.players
                   .slice(0, showAllPlayers ? undefined : 8)
                   .map((player, index) => (

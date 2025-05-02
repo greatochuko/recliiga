@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 
 import { updateUser } from "@/api/user";
-import { ArrowLeft } from "lucide-react";
 import { uploadImage } from "@/lib/uploadImage";
+import PageHeader from "@/components/PageHeader";
 
 interface ProfileFormData {
   full_name: string;
@@ -20,7 +19,6 @@ interface ProfileFormData {
 
 export default function Profile() {
   const { user, setUser } = useAuth();
-  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File>();
@@ -79,16 +77,7 @@ export default function Profile() {
 
   return (
     <main className="relative flex flex-1 flex-col gap-6 bg-background">
-      <div className="relative ml-8 flex items-center justify-between">
-        <h1 className="ml-0 text-2xl font-bold">Profile</h1>
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-1 rounded-md p-1.5 px-3 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Previous
-        </button>
-      </div>
+      <PageHeader title="Profile" />
       <div className="rounded-lg border bg-white shadow-sm">
         <div className="p-6">
           <ProfileHeader
