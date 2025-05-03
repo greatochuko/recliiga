@@ -41,7 +41,7 @@ export default function CountdownClock({
 
   return (
     <div
-      className={`flex space-x-4 font-semibold ${size === "sm" ? "text-sm" : "text-lg"}`}
+      className={`flex font-semibold ${size === "sm" ? "gap-3 text-sm" : "gap-4 text-lg"}`}
     >
       <div className="flex flex-col items-center">
         <span>{timeLeft.days}</span>

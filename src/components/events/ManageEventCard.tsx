@@ -41,38 +41,44 @@ export default function ManageEventCard({
     <Card className="mb-4">
       <CardContent className="relative p-4">
         <div className="mb-2 flex items-start justify-between">
-          <div className="flex flex-1 flex-col">
-            <div className="mb-1 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="mb-1 flex w-full flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex items-center justify-between">
               <h3 className="mr-4 font-medium">{event.title}</h3>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                <span className="flex items-center gap-2 text-xs text-gray-500">
-                  <Calendar
-                    className="h-4 w-4 text-gray-500"
-                    aria-hidden="true"
-                  />
-                  {new Date(eventDate).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+              {eventStatus === "upcoming" && (
+                <span className="w-fit whitespace-nowrap text-xs font-semibold text-[#E43226] sm:hidden">
+                  {!spotsLeft
+                    ? "No Spots left"
+                    : spotsLeft === 1
+                      ? "1 Spot Left"
+                      : `${spotsLeft} Spots Left`}
                 </span>
-                <span className="flex items-center gap-2 text-xs text-gray-500">
-                  <ClockIcon className="h-4 w-4 text-gray-500" />
-                  {eventTime}
-                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <span className="flex items-center gap-2 text-xs text-gray-500">
+                <Calendar
+                  className="h-4 w-4 text-gray-500"
+                  aria-hidden="true"
+                />
+                {new Date(eventDate).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+              <span className="flex items-center gap-2 text-xs text-gray-500">
+                <ClockIcon className="h-4 w-4 text-gray-500" />
+                {eventTime}
+              </span>
 
-                <span className="flex items-center gap-2 text-xs text-gray-500">
-                  <MapPin
-                    className="h-4 w-4 text-gray-500"
-                    aria-hidden="true"
-                  />
-                  {event.location}
-                </span>
-              </div>
+              <span className="flex items-center gap-2 text-xs text-gray-500">
+                <MapPin className="h-4 w-4 text-gray-500" aria-hidden="true" />
+                {event.location}
+              </span>
             </div>
           </div>
           {eventStatus === "upcoming" && (
-            <span className="w-fit text-xs font-semibold text-[#E43226]">
+            <span className="hidden w-fit whitespace-nowrap text-xs font-semibold text-[#E43226] sm:block">
               {!spotsLeft
                 ? "No Spots left"
                 : spotsLeft === 1
@@ -138,25 +144,50 @@ export default function ManageEventCard({
               </div>
             </>
           ) : (
-            <Link to={`/edit-results/${event.id}`}>
-              <Button
-                variant="outline"
-                size="sm"
-                className="hidden items-center sm:flex"
-              >
-                <Trophy className="mr-2 h-4 w-4" />
-                {event.resultsEntered ? "Edit Results" : "Enter Results"}
-              </Button>
-            </Link>
+            <div className="flex gap-4">
+              <Link to={`/edit-results/${event.id}`} className="hidden sm:flex">
+                <Button variant="outline" size="sm" className="items-center">
+                  <Trophy className="mr-2 h-4 w-4" />
+                  {event.resultsEntered ? "Edit Results" : "Enter Results"}
+                </Button>
+              </Link>
+              {!event.resultsEntered && (
+                <Link to={`/events/${event.id}/edit`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
+                </Link>
+              )}
+            </div>
           )}
         </div>
 
-        <div className="flex items-end justify-between gap-4">
-          {isRsvpOpen && (
-            <div className="bottom-4 right-4">
-              <CountdownClock deadline={rsvpDeadline} size="sm" />
-            </div>
+        <div
+          className={`flex items-end justify-between gap-2.5 sm:gap-4 ${!event.resultsEntered ? "mt-4" : ""}`}
+        >
+          {isRsvpOpen ? (
+            <CountdownClock deadline={rsvpDeadline} size="sm" />
+          ) : (
+            eventStatus === "upcoming" && (
+              <p className="text-sm font-medium text-red-500">Rsvp Expired</p>
+            )
           )}
+          {/* {!event.resultsEntered && eventStatus !== "upcoming" && (
+            <Link
+              to={`/events/${event.id}/edit`}
+              className={eventStatus === "past" ? "" : "sm:hidden"}
+            >
+              <Button variant="outline" size="sm" className="flex items-center">
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </Button>
+            </Link>
+          )} */}
           {eventStatus === "past" && (
             <Link to={`/edit-results/${event.id}`}>
               <Button
@@ -169,15 +200,6 @@ export default function ManageEventCard({
               </Button>
             </Link>
           )}
-          <Link
-            to={`/events/${event.id}/edit`}
-            className={eventStatus === "past" ? "" : "sm:hidden"}
-          >
-            <Button variant="outline" size="sm" className="flex items-center">
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </Button>
-          </Link>
           <span className="bottom-4 left-4 ml-auto text-xs font-bold text-accent-orange">
             {event.league.name}
           </span>
