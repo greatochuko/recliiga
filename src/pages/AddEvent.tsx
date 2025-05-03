@@ -33,7 +33,7 @@ const initialEventData: EventDataType = {
   draftType: "alternating",
   numTeams: 2,
   rosterSpots: 1,
-  rsvpDeadline: 2,
+  rsvpDeadline: 24,
   startTime: initialStartTime,
   endTime: new Date(initialStartTime.getTime() + 2 * 60 * 60 * 1000),
   eventDates: [],
@@ -46,7 +46,7 @@ const isDateInPast = (date: Date) => {
 export default function AddEvent() {
   const [eventData, setEventData] = useState<EventDataType>(initialEventData);
   const [submitting, setSubmitting] = useState(false);
-  const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("1h");
+  const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("24h");
   const [repeatFrequency, setRepeatFrequency] = useState<
     "daily" | "weekly" | "bi-weekly" | "monthly" | undefined
   >();
