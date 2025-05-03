@@ -10,7 +10,8 @@ export type NotificationType = {
     | "PLAYER_DRAFTED"
     | "RESULT_READY"
     | "RATE_TEAMMATES"
-    | "SELECT_CAPTAIN";
+    | "SELECT_CAPTAIN"
+    | "CAPTAIN_SELECTED";
   isRead: boolean;
   scheduleTime: string;
   initiator: UserType;

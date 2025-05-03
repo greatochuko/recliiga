@@ -38,6 +38,9 @@ export function NotificationsPopover() {
   const ratingNotifications = notifications.filter(
     (n) => n.type === "RATE_TEAMMATES",
   );
+  const captainSelectedNotifications = notifications.filter(
+    (n) => n.type === "CAPTAIN_SELECTED",
+  );
   const selectCaptainNotifications = notifications.filter(
     (n) => n.type === "SELECT_CAPTAIN",
   );
@@ -211,6 +214,26 @@ export function NotificationsPopover() {
                         <div className="flex-1">
                           <p className="text-sm">
                             Game on! Select the Captain for{" "}
+                            <span className="font-medium">
+                              {notif.event.title}.
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {captainSelectedNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+                      >
+                        <SparklesIcon className="mr-2 mt-1 h-4 w-4 self-start text-accent-orange" />
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            You have been selected as the captain for{" "}
+                            <span className="font-medium">
+                              {notif.team.name}
+                            </span>
+                            {" in "}
                             <span className="font-medium">
                               {notif.event.title}.
                             </span>
