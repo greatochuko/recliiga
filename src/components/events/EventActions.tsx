@@ -155,7 +155,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
         variant="secondary"
         className="absolute bottom-4 left-4 mt-2 self-start text-xs text-red-600 sm:mt-0 sm:hidden sm:self-auto"
       >
-        {spotsLeft} spots left
+        {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
       </Badge>
     </div>
   );

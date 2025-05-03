@@ -53,7 +53,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
             variant="secondary"
             className="mt-2 hidden self-start text-xs text-red-600 sm:mt-0 sm:block sm:self-auto"
           >
-            {spotsLeft} spots left
+            {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
           </Badge>
         ))}
     </div>
