@@ -151,12 +151,22 @@ export const EventActions: React.FC<EventActionsProps> = ({
         ))
       )}
 
-      <Badge
-        variant="secondary"
-        className="absolute bottom-4 left-4 mt-2 self-start text-xs text-red-600 sm:mt-0 sm:hidden sm:self-auto"
-      >
-        {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
-      </Badge>
+      {!isPastEvent &&
+        (attendanceStatus === "attending" ? (
+          <Badge
+            variant="secondary"
+            className="absolute bottom-4 left-4 mt-2 self-start bg-accent-orange/20 text-xs text-accent-orange sm:mt-0 sm:hidden sm:self-auto"
+          >
+            Attending
+          </Badge>
+        ) : (
+          <Badge
+            variant="secondary"
+            className="absolute bottom-4 left-4 mt-2 self-start text-xs text-red-600 sm:mt-0 sm:hidden sm:self-auto"
+          >
+            {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
+          </Badge>
+        ))}
     </div>
   );
 };

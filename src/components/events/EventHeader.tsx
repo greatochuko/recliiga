@@ -44,7 +44,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({
         (attendanceStatus === "attending" ? (
           <Badge
             variant="secondary"
-            className="mt-2 self-start bg-accent-orange bg-opacity-20 text-xs text-accent-orange sm:mt-0 sm:self-auto"
+            className="mt-2 hidden self-start bg-accent-orange bg-opacity-20 text-xs text-accent-orange sm:mt-0 sm:block sm:self-auto"
           >
             Attending
           </Badge>
