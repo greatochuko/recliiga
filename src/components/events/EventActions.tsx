@@ -6,6 +6,7 @@ import { attendEvent, declineEvent } from "@/api/events";
 import { useAuth } from "@/contexts/AuthContext";
 import CountdownClock from "./CountdownClock";
 import { Badge } from "../ui/badge";
+import { toast } from "sonner";
 
 interface EventActionsProps {
   event: EventType;
@@ -57,6 +58,8 @@ export const EventActions: React.FC<EventActionsProps> = ({
       else setSpotsRemaining((prev) => prev + 1);
       setAttendanceStatus(status);
       setIsEditing(false);
+    } else {
+      toast.error(response.error, { style: { color: "#ef4444" } });
     }
 
     setLoading(false);
