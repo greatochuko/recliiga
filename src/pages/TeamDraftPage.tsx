@@ -163,11 +163,16 @@ export default function TeamDraftPage() {
     const round = Math.floor(totalPicks / 2);
     const isEvenRound = round % 2 === 0;
 
-    const isTeam0Turn = isEvenRound
-      ? teams[0].players.length === teams[1].players.length
-      : teams[0].players.length > teams[1].players.length;
+    const team0Picks = teams[0].players.length;
+    const team1Picks = teams[1].players.length;
 
-    currentTeam = isTeam0Turn ? teams[0] : teams[1];
+    if (isEvenRound) {
+      // Normal order: team 0 picks first
+      currentTeam = team0Picks <= team1Picks ? teams[0] : teams[1];
+    } else {
+      // Reversed order: team 1 picks first
+      currentTeam = team1Picks <= team0Picks ? teams[1] : teams[0];
+    }
   }
 
   return (
