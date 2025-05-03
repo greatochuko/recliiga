@@ -111,7 +111,7 @@ export function NotificationsPopover() {
               )}
               {otherNotifications.length > 0 && (
                 <>
-                  <div className="border-b border-gray-100 p-4 font-medium">
+                  <div className="sticky top-0 border-b border-gray-100 bg-white p-4 font-medium">
                     Updates
                   </div>
                   <div className="max-h-[400px] overflow-y-auto">
@@ -222,7 +222,7 @@ export function NotificationsPopover() {
                 </>
               )}
 
-              <div className="border-t border-gray-100 p-2">
+              <div className="sticky bottom-0 border-t border-gray-100 bg-white p-2">
                 <button
                   onClick={markAllAsRead}
                   disabled={!unreadNotifications.length || loading}
