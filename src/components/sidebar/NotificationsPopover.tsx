@@ -44,6 +44,9 @@ export function NotificationsPopover() {
   const selectCaptainNotifications = notifications.filter(
     (n) => n.type === "SELECT_CAPTAIN",
   );
+  const inputResultNotifications = notifications.filter(
+    (n) => n.type === "INPUT_RESULTS",
+  );
 
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
 
@@ -236,6 +239,24 @@ export function NotificationsPopover() {
                             <span className="font-medium">
                               {notif.event.title}.
                             </span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {inputResultNotifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className="flex cursor-default items-center border-b border-gray-100 px-4 py-3 duration-200 hover:bg-gray-50"
+                      >
+                        <SparklesIcon className="mr-2 mt-1 h-4 w-4 self-start text-accent-orange" />
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            It ain&apos;t over till the fat lady sings. Did she?
+                            Input your results for{" "}
+                            <span className="font-medium">
+                              {notif.event.title}.
+                            </span>{" "}
+                            if it has ended.
                           </p>
                         </div>
                       </div>

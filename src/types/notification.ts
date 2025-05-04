@@ -11,7 +11,8 @@ export type NotificationType = {
     | "RESULT_READY"
     | "RATE_TEAMMATES"
     | "SELECT_CAPTAIN"
-    | "CAPTAIN_SELECTED";
+    | "CAPTAIN_SELECTED"
+    | "INPUT_RESULTS";
   isRead: boolean;
   scheduleTime: string;
   initiator: UserType;

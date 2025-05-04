@@ -59,7 +59,6 @@ export default function EditEvent() {
         ...prev,
         ...event,
       }));
-      console.log(event.rsvpDeadline);
       setRsvpDeadlineHours(
         event.rsvpDeadline > 0 ? `${event.rsvpDeadline}h` : "custom",
       );
@@ -134,12 +133,13 @@ export default function EditEvent() {
       const updatedEndTime = new Date(prev.endTime);
 
       switch (field) {
-        case "date":
-          // Preserve the original time
-          updatedEndTime.setFullYear((value as Date).getFullYear());
-          updatedEndTime.setMonth((value as Date).getMonth());
-          updatedEndTime.setDate((value as Date).getDate());
+        case "date": {
+          const date = value as Date;
+          updatedEndTime.setFullYear(date.getFullYear());
+          updatedEndTime.setMonth(date.getMonth());
+          updatedEndTime.setDate(date.getDate());
           break;
+        }
 
         case "hour": {
           const hour = value as number;
@@ -398,7 +398,10 @@ export default function EditEvent() {
                     <Calendar
                       mode="single"
                       selected={eventData.startTime}
-                      onSelect={(date) => updateEventStartTime("date", date)}
+                      onSelect={(date) => {
+                        updateEventStartTime("date", date);
+                        updateEventEndTime("date", date);
+                      }}
                       disabled={(date) =>
                         isBefore(date, startOfDay(new Date()))
                       }

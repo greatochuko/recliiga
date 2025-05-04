@@ -78,7 +78,6 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
     setLoading(true);
     let url: string;
     if (logoUrl !== team.logo) {
-      console.log("Uploading logo");
       const uploadData = await uploadImage(logo);
       url = uploadData.url;
     }

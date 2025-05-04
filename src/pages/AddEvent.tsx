@@ -26,6 +26,10 @@ const initialStartTime = new Date();
 initialStartTime.setDate(initialStartTime.getDate() + 1);
 initialStartTime.setHours(12, 0, 0, 0);
 
+const initialEndTime = new Date();
+initialEndTime.setDate(initialEndTime.getDate() + 1);
+initialEndTime.setHours(14, 0, 0, 0);
+
 const initialEventData: EventDataType = {
   leagueId: "",
   title: "",
@@ -35,7 +39,9 @@ const initialEventData: EventDataType = {
   rosterSpots: 1,
   rsvpDeadline: 24,
   startTime: initialStartTime,
-  endTime: new Date(initialStartTime.getTime() + 2 * 60 * 60 * 1000),
+  endTime: new Date(
+    new Date(initialStartTime).setHours(initialStartTime.getHours() + 2),
+  ),
   eventDates: [],
 };
 
@@ -118,12 +124,14 @@ export default function AddEvent() {
       const updatedStartTime = new Date(prev.startTime);
 
       switch (field) {
-        case "date":
+        case "date": {
           // Preserve the original time
-          updatedStartTime.setFullYear((value as Date).getFullYear());
-          updatedStartTime.setMonth((value as Date).getMonth());
-          updatedStartTime.setDate((value as Date).getDate());
+          const dateValue = value as Date;
+          updatedStartTime.setFullYear(dateValue.getFullYear());
+          updatedStartTime.setMonth(dateValue.getMonth());
+          updatedStartTime.setDate(dateValue.getDate());
           break;
+        }
 
         case "hour": {
           const hour = value as number;
@@ -166,12 +174,13 @@ export default function AddEvent() {
       const updatedEndTime = new Date(prev.endTime);
 
       switch (field) {
-        case "date":
-          // Preserve the original time
-          updatedEndTime.setFullYear((value as Date).getFullYear());
-          updatedEndTime.setMonth((value as Date).getMonth());
-          updatedEndTime.setDate((value as Date).getDate());
+        case "date": {
+          const dateValue = value as Date;
+          updatedEndTime.setFullYear(dateValue.getFullYear());
+          updatedEndTime.setMonth(dateValue.getMonth());
+          updatedEndTime.setDate(dateValue.getDate());
           break;
+        }
 
         case "hour": {
           const hour = value as number;
@@ -397,7 +406,10 @@ export default function AddEvent() {
                     <Calendar
                       mode="single"
                       selected={eventData.startTime}
-                      onSelect={(date) => updateEventStartTime("date", date)}
+                      onSelect={(date) => {
+                        updateEventStartTime("date", date);
+                        updateEventEndTime("date", date);
+                      }}
                       disabled={(date) =>
                         isBefore(date, startOfDay(new Date()))
                       }
