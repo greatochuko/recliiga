@@ -3,6 +3,7 @@ import { getUpcomingEvents, getPastEvents } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EventCard from "@/components/events/EventCard";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 export default function Events() {
   const { data, isLoading, refetch } = useQuery({
@@ -26,8 +27,8 @@ export default function Events() {
           <TabsTrigger value="past">Past Events</TabsTrigger>
         </TabsList>
 
-        {isLoading || !data ? (
-          <div className="py-10 text-center text-gray-500">Loading...</div>
+        {isLoading ? (
+          <FullScreenLoader />
         ) : (
           <>
             <TabsContent value="upcoming">
@@ -52,7 +53,17 @@ export default function Events() {
               )}
             </TabsContent>
             <TabsContent value="past">
-              {pastEvents.length === 0 ? (
+              {error ? (
+                <div className="py-10 text-center text-gray-500">
+                  An error occurred while fetching events{" "}
+                  <button
+                    onClick={() => refetch()}
+                    className="text-accent-orange hover:underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : pastEvents.length === 0 ? (
                 <div className="py-10 text-center text-gray-500">
                   No past events found
                 </div>

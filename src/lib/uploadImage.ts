@@ -1,6 +1,8 @@
 const cloudinaryCloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
-export async function uploadImage(file: File) {
+export async function uploadImage(
+  file: File,
+): Promise<{ url: string; error: null } | { url: null; error: string }> {
   const formData = new FormData();
 
   formData.append("file", file);
@@ -14,8 +16,8 @@ export async function uploadImage(file: File) {
       { method: "POST", body: formData },
     );
     const data = await res.json();
-    return { url: data.secure_url };
+    return { url: data.secure_url, error: null };
   } catch (err) {
-    return { error: err.message };
+    return { url: null, error: err.message };
   }
 }

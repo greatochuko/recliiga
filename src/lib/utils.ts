@@ -218,3 +218,44 @@ export function getUserRating(leagueId: string, userRatings: UserRatingType[]) {
         filteredRatings.length
     : 0;
 }
+
+export function handleImageResize(
+  event: React.ChangeEvent<HTMLInputElement>,
+  maxWidth = 256,
+): Promise<{ dataUrl: string; resizedFile: File }> {
+  return new Promise((resolve, reject) => {
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) {
+      return reject(new Error("Please upload a valid image file."));
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((blob) => {
+          if (!blob) return reject(new Error("Image compression failed."));
+          const resizedFile = new File([blob], file.name, { type: file.type });
+          const dataUrl = canvas.toDataURL(file.type);
+          resolve({ dataUrl, resizedFile });
+        }, file.type);
+      };
+      img.onerror = () => reject(new Error("Failed to load image."));
+      if (typeof e.target.result === "string") {
+        img.src = e.target.result;
+      } else {
+        reject(new Error("Failed to read file as a string."));
+      }
+    };
+    reader.onerror = () => reject(new Error("Failed to read file."));
+    reader.readAsDataURL(file);
+  });
+}

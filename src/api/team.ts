@@ -1,10 +1,14 @@
 import { fetchApi } from "@/lib/utils";
 import { TeamType } from "@/types/events";
 
-export async function updateTeam(teamId: string, teamData: TeamType) {
+export async function updateTeam(
+  teamId: string,
+  teamData: Omit<TeamType, "logo"> & { logo?: string },
+  otherTeamId: string,
+) {
   const data = await fetchApi<TeamType>(`/team/${teamId}`, {
     method: "PATCH",
-    body: teamData,
+    body: { ...teamData, otherTeamId },
   });
   return data;
 }

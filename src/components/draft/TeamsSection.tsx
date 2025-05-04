@@ -44,6 +44,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
             canConfirmDraft={canConfirmDraft}
             isEditingTeam={teamEditing === team.id}
             team={team}
+            otherTeam={teams.find((t) => t.id !== team.id) || null}
             setTeams={setTeams}
             toggleEditMode={toggleEditMode}
             handleTeamNameChange={handleTeamNameChange}
@@ -69,6 +70,7 @@ export const TeamsSection: React.FC<TeamsSectionProps> = ({
                 canConfirmDraft={canConfirmDraft}
                 isEditingTeam={teamEditing === team.id}
                 team={team}
+                otherTeam={teams.find((t) => t.id !== team.id) || null}
                 event={event}
                 setTeams={setTeams}
                 toggleEditMode={toggleEditMode}

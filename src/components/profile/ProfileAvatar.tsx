@@ -23,8 +23,8 @@ export function ProfileAvatar({
     <div className="mb-8 flex flex-col items-center">
       <div className="relative">
         <Avatar className="h-32 w-32 border-2 border-gray-200">
-          <AvatarImage src={avatarUrl} />
-          <AvatarFallback className="text-accent-orange bg-orange-100 text-xl">
+          <AvatarImage src={avatarUrl} className="object-cover" />
+          <AvatarFallback className="bg-orange-100 text-xl text-accent-orange">
             {fullName
               ?.split(" ")
               .map((n) => n[0])

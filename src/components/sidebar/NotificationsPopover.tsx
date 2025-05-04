@@ -27,7 +27,7 @@ export function NotificationsPopover() {
     (n) => n.type === "JOIN_LEAGUE",
   );
   const otherNotifications = notifications.filter(
-    (n) => n.type !== "JOIN_LEAGUE",
+    (n) => n.type !== "LEAGUE_REQUEST",
   );
   const draftNotifications = notifications.filter(
     (n) => n.type === "PLAYER_DRAFTED",
@@ -139,7 +139,6 @@ export function NotificationsPopover() {
                             </div>
                           )}
                         </div>
-
                         <div className="flex-1">
                           <p className="text-sm font-medium">
                             {notif.initiator.full_name}{" "}

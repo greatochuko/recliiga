@@ -5,16 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Edit2 } from "lucide-react";
+import { CameraIcon, Edit2 } from "lucide-react";
 import { JerseyIcon, PlayerRating } from "./DraftUIComponents";
 import { EventType, TeamType } from "@/types/events";
 import { confirmRoster, updateTeam } from "@/api/team";
 import { useAuth } from "@/contexts/AuthContext";
 import ConfirmRosterModal from "./ConfirmRosterModal";
-import { getUserRating } from "@/lib/utils";
+import { getUserRating, handleImageResize } from "@/lib/utils";
+import { uploadImage } from "@/lib/uploadImage";
+import { toast } from "sonner";
 
 interface TeamColumnProps {
   team: TeamType;
+  otherTeam: TeamType;
   toggleEditMode: (teamId: string) => void;
   handleTeamNameChange: (teamId: string, name: string) => void;
   handleTeamColorChange: (teamId: string, color: string) => void;
@@ -41,6 +44,7 @@ const colorOptions = [
 export const TeamColumn: React.FC<TeamColumnProps> = ({
   event,
   team,
+  otherTeam,
   setTeams,
   toggleEditMode,
   handleTeamNameChange,
@@ -54,12 +58,39 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [logoPreview, setLogoPreview] = useState("");
+  const [logo, setLogo] = useState<File>();
   const [confirmingRoster, setConfirmingRoster] = useState(false);
+
+  const logoUrl = logoPreview || team.logo;
+
+  async function handleChangeTeamLogo(e: React.ChangeEvent<HTMLInputElement>) {
+    try {
+      const { dataUrl, resizedFile } = await handleImageResize(e);
+      setLogoPreview(dataUrl);
+      setLogo(resizedFile);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   async function handleUpdateTeam() {
     setLoading(true);
-    const { error } = await updateTeam(team.id, team);
-    if (error === null) {
+    let url: string;
+    if (logoUrl !== team.logo) {
+      console.log("Uploading logo");
+      const uploadData = await uploadImage(logo);
+      url = uploadData.url;
+    }
+
+    const { error } = await updateTeam(
+      team.id,
+      { ...team, logo: url },
+      otherTeam.id,
+    );
+    if (error) {
+      toast.error(error, { style: { color: "#ef4444" } });
+    } else {
       toggleEditMode(team.id);
       refetchEvent();
     }
@@ -84,9 +115,55 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
     <>
       <Card className="flex h-full flex-col">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-start justify-between">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
+                {isEditingTeam ? (
+                  <Label
+                    htmlFor={`team-logo-${team.id}`}
+                    className="group relative cursor-pointer"
+                  >
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={team.name}
+                        className="h-14 w-14 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-base font-medium">
+                        {team.name
+                          .split(" ")
+                          .slice(0, 2)
+                          .map((n) => n[0])}
+                      </div>
+                    )}
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      id={`team-logo-${team.id}`}
+                      onChange={handleChangeTeamLogo}
+                    />
+
+                    {/* <CameraIcon className="absolute left-1/2 top-full h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-orange p-1 text-white duration-200 group-hover:scale-125" /> */}
+                    <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-full bg-black/50">
+                      <CameraIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </Label>
+                ) : logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt={team.name}
+                    className="h-14 w-14 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-base font-medium">
+                    {team.name
+                      .split(" ")
+                      .slice(0, 2)
+                      .map((n) => n[0])}
+                  </div>
+                )}
                 <span>Team: {team.name}</span>
                 <JerseyIcon color={team.color} size={24} />
               </div>
@@ -118,6 +195,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => toggleEditMode(team.id)}
+                  className="mt-4"
                 >
                   <Edit2 className="h-4 w-4" />
                   <span className="sr-only">Edit team</span>
