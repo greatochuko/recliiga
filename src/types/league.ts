@@ -29,6 +29,7 @@ export type LeagueType = {
   id: string;
   name: string;
   sport: string;
+  updatedAt: string;
   is_private: boolean;
   leagueCode: string;
   players: UserType[];

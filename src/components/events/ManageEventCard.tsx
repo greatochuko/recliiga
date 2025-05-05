@@ -113,17 +113,23 @@ export default function ManageEventCard({
         </div>
 
         <div className="mt-4 flex flex-wrap justify-center gap-2">
-          {!isRsvpOpen && !event.resultsEntered && (
-            <Link to={`/${event.id}/select-captains`}>
-              <Button variant="outline" size="sm" className="flex items-center">
-                <UserPlus className="mr-2 h-4 w-4" />
-                {event.teams.every((team) => team.captain)
-                  ? "Change"
-                  : "Select"}{" "}
-                Captains
-              </Button>
-            </Link>
-          )}
+          {!isRsvpOpen &&
+            !event.resultsEntered &&
+            eventStatus === "upcoming" && (
+              <Link to={`/${event.id}/select-captains`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center"
+                >
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  {event.teams.every((team) => team.captain)
+                    ? "Change"
+                    : "Select"}{" "}
+                  Captains
+                </Button>
+              </Link>
+            )}
           {eventStatus === "upcoming" ? (
             <>
               <div className="flex gap-4">
