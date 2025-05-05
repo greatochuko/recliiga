@@ -1,6 +1,7 @@
 import { joinLeague } from "@/api/league";
 import ModalContainer from "./ModalContainer";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function JoinLeagueModal({
   open,
@@ -18,7 +19,9 @@ export default function JoinLeagueModal({
     e.preventDefault();
     setLoading(true);
     const { error } = await joinLeague(leagueCode);
-    if (error === null) {
+    if (error) {
+      toast.error(error, { style: { color: "#ef4444" } });
+    } else {
       refetchLeagues();
       closeModal();
     }
