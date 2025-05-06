@@ -1,12 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import Index from "./pages/Index";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import AppLayout from "./pages/AppLayout";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -29,136 +27,73 @@ import HelpAndSupport from "./pages/HelpAndSupport";
 import AddEvent from "./pages/AddEvent";
 import SelectCaptains from "./pages/SelectCaptains";
 import EditResults from "./pages/EditResults";
-import TeamDraftPage from './pages/TeamDraftPage';
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import TeamDraftPage from "./pages/TeamDraftPage";
+import AuthWrapper from "./components/AuthWrapper";
+import { HomeScreen } from "./components/dashboard/HomeScreen";
+import EditEvent from "./pages/EditEvent";
+import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
+import ErrorPage from "./pages/ErrorPage";
+import LeagueInvitationPage from "./pages/LeagueInvitationPage";
 
 const queryClient = new QueryClient();
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
-  const [checkingProfile, setCheckingProfile] = useState(true);
-  
-  useEffect(() => {
-    async function checkProfileCompletion() {
-      if (!user) return;
-      
-      try {
-        // Check if the user has completed registration based on their role
-        if (user.user_metadata?.role === 'organizer') {
-          // Check if league organizer has created a league
-          const { data: leagues, error } = await supabase
-            .from('leagues')
-            .select('id')
-            .eq('owner_id', user.id)
-            .limit(1);
-          
-          setIsProfileComplete(leagues && leagues.length > 0);
-        } else {
-          // Check if player has completed profile setup
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('id, nickname')
-            .eq('id', user.id)
-            .limit(1);
-          
-          setIsProfileComplete(profile && profile.length > 0 && profile[0].nickname !== null);
-        }
-      } catch (error) {
-        console.error('Error checking profile completion:', error);
-        // Default to false if there's an error
-        setIsProfileComplete(false);
-      } finally {
-        setCheckingProfile(false);
-      }
-    }
-    
-    if (user) {
-      checkProfileCompletion();
-    } else {
-      setCheckingProfile(false);
-    }
-  }, [user]);
-  
-  if (loading || checkingProfile) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/sign-in" />;
-  }
-
-  // If the user hasn't completed their profile, redirect to the appropriate registration page
-  if (isProfileComplete === false) {
-    if (user.user_metadata?.role === 'organizer') {
-      return <Navigate to="/create-league" />;
-    } else {
-      return <Navigate to="/complete-registration" />;
-    }
-  }
-
-  return <>{children}</>;
-}
-
-function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-  
-  if (user) {
-    return <Navigate to="/" />;
-  }
-
-  return <>{children}</>;
-}
-
-const AppRoutes = () => (
-  <div className="min-h-screen w-full">
-    <Routes>
-      {/* Public routes */}
-      <Route path="/sign-in" element={<PublicRoute><SignIn /></PublicRoute>} />
-      <Route path="/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
-      <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-      
-      {/* Registration flows (protected but not requiring a complete profile) */}
-      <Route path="/complete-registration" element={<PlayerRegistration />} />
-      <Route path="/create-league" element={<CreateLeague />} />
-      <Route path="/league-setup" element={<LeagueSetupPage />} />
-      
-      {/* Private routes requiring complete profiles */}
-      <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
-      <Route path="/leagues" element={<PrivateRoute><Leagues /></PrivateRoute>} />
-      <Route path="/leagues/:id" element={<PrivateRoute><LeagueDetails /></PrivateRoute>} />
-      <Route path="/events" element={<PrivateRoute><Events /></PrivateRoute>} />
-      <Route path="/events/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
-      <Route path="/events/:id/results" element={<PrivateRoute><EventResults /></PrivateRoute>} />
-      <Route path="/results" element={<PrivateRoute><Results /></PrivateRoute>} />
-      <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
-      <Route path="/rate-teammates" element={<PrivateRoute><RateTeammates /></PrivateRoute>} />
-      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-      <Route path="/player-profile" element={<PrivateRoute><PlayerProfile /></PrivateRoute>} />
-      <Route path="/manage-events" element={<PrivateRoute><ManageEvents /></PrivateRoute>} />
-      <Route path="/add-event" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
-      <Route path="/help" element={<PrivateRoute><HelpAndSupport /></PrivateRoute>} />
-      <Route path="/select-captains/:eventId" element={<PrivateRoute><SelectCaptains /></PrivateRoute>} />
-      <Route path="/edit-results/:eventId" element={<PrivateRoute><EditResults /></PrivateRoute>} />
-      <Route path="/team-draft/:eventId" element={<PrivateRoute><TeamDraftPage /></PrivateRoute>} />
-      
-      {/* Catch-all route */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </div>
+const router = createBrowserRouter(
+  [
+    {
+      element: (
+        <AuthProvider>
+          <AuthWrapper />
+        </AuthProvider>
+      ),
+      errorElement: <ErrorPage />,
+      children: [
+        { path: "/sign-in", element: <SignIn /> },
+        { path: "/sign-up", element: <SignUp /> },
+        { path: "/forgot-password", element: <ForgotPassword /> },
+        { path: "/complete-registration", element: <PlayerRegistration /> },
+        { path: "/league-setup", element: <LeagueSetupPage /> },
+        {
+          element: <AppLayout />,
+          errorElement: <ErrorPage />,
+          children: [
+            { path: "/", element: <HomeScreen /> },
+            { path: "/create-league", element: <CreateLeague /> },
+            { path: "/leagues", element: <Leagues /> },
+            { path: "/leagues/:id", element: <LeagueDetails /> },
+            { path: "/events", element: <Events /> },
+            { path: "/events/:id", element: <EventDetails /> },
+            { path: "/events/:id/edit", element: <EditEvent /> },
+            { path: "/events/:id/results", element: <EventResults /> },
+            { path: "/events/:id/team-draft", element: <TeamDraftPage /> },
+            { path: "/results", element: <Results /> },
+            { path: "/chat", element: <Chat /> },
+            { path: "/rate-teammates", element: <RateTeammates /> },
+            { path: "/profile", element: <Profile /> },
+            { path: "/profile/:userId", element: <PlayerProfile /> },
+            { path: "/manage-events", element: <ManageEvents /> },
+            { path: "/add-event", element: <AddEvent /> },
+            { path: "/help", element: <HelpAndSupport /> },
+            { path: "/:eventId/select-captains", element: <SelectCaptains /> },
+            { path: "/edit-results/:eventId", element: <EditResults /> },
+            { path: "/invite/:leagueCode", element: <LeagueInvitationPage /> },
+            {
+              path: "/rate-teammates/:eventId",
+              element: <RateTeammatesByEvent />,
+            },
+            { path: "*", element: <NotFound /> },
+          ],
+        },
+      ],
+    },
+    { path: "*", element: <NotFound /> },
+  ],
+  {
+    future: {
+      v7_fetcherPersist: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+    },
+  },
 );
 
 const App = () => (
@@ -166,13 +101,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <SidebarProvider>
-            <AppRoutes />
-          </SidebarProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </TooltipProvider>
   </QueryClientProvider>
 );

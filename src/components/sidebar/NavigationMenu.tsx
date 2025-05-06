@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Home, Trophy, Calendar, BarChart, MessageSquare } from "lucide-react";
 import {
@@ -31,14 +30,18 @@ const menuItems = [
     icon: BarChart,
     url: "/results",
   },
-  {
-    title: "Chat",
-    icon: MessageSquare,
-    url: "/chat",
-  },
+  // {
+  //   title: "Chat",
+  //   icon: MessageSquare,
+  //   url: "/chat",
+  // },
 ];
 
-export function NavigationMenu() {
+export function NavigationMenu({
+  toggleSidebar,
+}: {
+  toggleSidebar: () => void;
+}) {
   const location = useLocation();
 
   return (
@@ -50,16 +53,23 @@ export function NavigationMenu() {
               const isActive = location.pathname === item.url;
               return (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title} isActive={isActive}>
-                    <Link 
-                      to={item.url} 
-                      className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm ${
-                        isActive 
-                          ? "text-[#FF7A00] bg-orange-50 font-medium" 
-                          : "text-gray-600 hover:bg-gray-50 hover:text-[#FF7A00]"
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.title}
+                    isActive={isActive}
+                  >
+                    <Link
+                      to={item.url}
+                      onClick={toggleSidebar}
+                      className={`flex items-center gap-3 rounded-lg px-4 py-2 text-sm ${
+                        isActive
+                          ? "bg-orange-50 font-medium text-accent-orange"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-accent-orange"
                       }`}
                     >
-                      <item.icon className={`w-5 h-5 ${isActive ? "text-[#FF7A00]" : "text-gray-500"}`} />
+                      <item.icon
+                        className={`h-5 w-5 ${isActive ? "text-accent-orange" : "text-gray-500"}`}
+                      />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

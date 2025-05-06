@@ -1,46 +1,61 @@
-
-import React from 'react';
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin } from 'lucide-react';
-import { Event } from '@/types/events';
+import { Calendar, ClockIcon, MapPin } from "lucide-react";
+import { EventType } from "@/types/events";
+import { format } from "date-fns";
 
 interface EventHeaderProps {
-  event: Event;
-  attendanceStatus: 'attending' | 'declined' | null;
-  isEditing: boolean;
-  isPastEvent?: boolean;
+  event: EventType;
+  attendanceStatus: "attending" | "not-attending" | null;
+  isPastEvent: boolean;
+  spotsLeft: number;
 }
 
-export const EventHeader: React.FC<EventHeaderProps> = ({ 
-  event, 
-  attendanceStatus, 
-  isEditing, 
-  isPastEvent = false 
+export const EventHeader: React.FC<EventHeaderProps> = ({
+  event,
+  attendanceStatus,
+  isPastEvent,
+  spotsLeft,
 }) => {
+  const eventDate = new Date(event.startTime);
+
+  const eventTime = format(event.startTime, "h:mm a");
+
   return (
-    <div className="flex justify-between items-start mb-4">
-      <div className="flex items-center">
-        <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-        <span className="text-xs text-gray-500 mr-4">{event.date}</span>
-        <span className="text-xs text-gray-500 mr-4">{event.time}</span>
-        <MapPin className="w-4 h-4 text-gray-500 mr-2" />
-        <span className="text-xs text-gray-500">{event.location}</span>
+    <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center">
+        <h3 className="mr-4 text-base font-medium">{event.title}</h3>
+        <div className="flex flex-wrap gap-2">
+          <div className="flex items-center text-gray-500">
+            <Calendar className="mr-1 h-4 w-4" />
+            <span className="text-xs">{eventDate.toDateString()}</span>
+          </div>
+          <span className="flex items-center text-xs text-gray-500">
+            <ClockIcon className="mr-1 h-4 w-4" />
+            {eventTime}
+          </span>
+          <div className="flex items-center text-gray-500">
+            <MapPin className="mr-1 h-4 w-4" />
+            <span className="text-xs">{event.location}</span>
+          </div>
+        </div>
       </div>
-      {attendanceStatus === 'attending' && !isEditing && (
-        <Badge variant="secondary" className="bg-[#FF7A00] bg-opacity-20 text-[#FF7A00] text-xs">
-          Attending
-        </Badge>
-      )}
-      {attendanceStatus === 'declined' && !isEditing && (
-        <Badge variant="secondary" className="bg-red-100 text-red-600 text-xs">
-          Declined
-        </Badge>
-      )}
-      {!isPastEvent && event.spotsLeft && !attendanceStatus && (
-        <span className="text-[#E43226] text-xs font-semibold">
-          {event.spotsLeft === 1 ? '1 Spot Left' : `${event.spotsLeft} Spots Left`}
-        </span>
-      )}
+      {!isPastEvent &&
+        (attendanceStatus === "attending" ? (
+          <Badge
+            variant="secondary"
+            className="mt-2 hidden self-start bg-accent-orange bg-opacity-20 text-xs text-accent-orange sm:mt-0 sm:block sm:self-auto"
+          >
+            Attending
+          </Badge>
+        ) : (
+          <Badge
+            variant="secondary"
+            className="mt-2 hidden self-start text-xs text-red-600 sm:mt-0 sm:block sm:self-auto"
+          >
+            {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
+          </Badge>
+        ))}
     </div>
   );
 };

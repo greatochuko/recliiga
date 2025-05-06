@@ -1,60 +1,97 @@
-
-import React from 'react';
+import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Player, Team } from './types';
-import { PlayerRating } from './DraftUIComponents';
+import { PlayerRating } from "./DraftUIComponents";
+import { EventType, TeamType } from "@/types/events";
+import { useAuth, UserType } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
+import { getUserRating } from "@/lib/utils";
 
 interface PlayersListProps {
-  availablePlayers: Player[];
-  teams: Team[];
-  currentTeam: number;
-  isTeamSetupComplete: boolean;
-  handlePlayerDraft: (playerId: number) => void;
+  availablePlayers: UserType[];
+  currentTeam: TeamType;
+  teams: TeamType[];
+  handlePlayerDraft: (teamId: string, playerId: string) => void;
+  isDrafting: boolean;
+  event: EventType;
 }
 
 export const PlayersList: React.FC<PlayersListProps> = ({
   availablePlayers,
-  teams,
   currentTeam,
-  isTeamSetupComplete,
+  teams,
   handlePlayerDraft,
+  isDrafting,
+  event,
 }) => {
+  const { user } = useAuth();
+
   return (
-    <Card className="flex-1 flex flex-col h-full">
+    <Card className="flex h-full flex-1 flex-col">
       <CardHeader>
         <CardTitle>Available Players ({availablePlayers.length})</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          {availablePlayers.map((player) => (
-            <div key={player.id} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
-              <div className="flex items-center space-x-2">
-                <Avatar>
-                  <AvatarImage src={player.avatar} alt={player.name} />
-                  <AvatarFallback>{player.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <p className="font-medium">{player.name}</p>
-                    <PlayerRating rating={player.rating} />
-                  </div>
-                  <p className="text-sm text-gray-500">{player.position}</p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => handlePlayerDraft(player.id)}
-                disabled={!isTeamSetupComplete}
-                className="bg-black text-white hover:bg-gray-800"
+          {availablePlayers.map((player) => {
+            const playerIsDrafted =
+              teams.some((team) =>
+                team.players.some((pl) => pl.id === player.id),
+              ) || teams.some((team) => team.captainId === player.id);
+            return (
+              <div
+                key={player.id}
+                className="flex items-center justify-between rounded p-2 hover:bg-gray-100"
               >
-                Draft to {teams[currentTeam]?.name || `Team ${currentTeam + 1}`}
-              </Button>
-            </div>
-          ))}
+                <Link
+                  to={`/profile/${player.id}`}
+                  className="group flex items-center space-x-2"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={player.avatar_url}
+                      alt={player.full_name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback>
+                      {player.full_name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <p className="font-medium group-hover:text-accent-orange group-hover:underline">
+                        {player.full_name}
+                      </p>
+                      <PlayerRating
+                        rating={getUserRating(event.leagueId, player.ratings)}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      {player.positions[0]}
+                    </p>
+                  </div>
+                </Link>
+                <Button
+                  onClick={() => handlePlayerDraft(currentTeam.id, player.id)}
+                  className="bg-black text-white hover:bg-gray-800"
+                  disabled={
+                    currentTeam.captainId !== user.id ||
+                    playerIsDrafted ||
+                    isDrafting
+                  }
+                >
+                  {playerIsDrafted ? "Drafted" : `Draft to ${currentTeam.name}`}
+                </Button>
+              </div>
+            );
+          })}
           {availablePlayers.length === 0 && (
-            <div className="flex justify-center items-center h-24 text-gray-500">
+            <div className="flex h-24 items-center justify-center text-gray-500">
               No players available
             </div>
           )}

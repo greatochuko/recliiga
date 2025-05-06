@@ -1,276 +1,317 @@
-
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useMemo } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+
+import { ArrowLeftIcon, ChevronLeft } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchEventById } from "@/api/events";
+import FullScreenLoader from "@/components/FullScreenLoader";
+import { format } from "date-fns";
+import CountdownClock from "@/components/events/CountdownClock";
+import TeamInfo from "@/components/events/TeamInfo";
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
-import { ChevronLeft } from "lucide-react";
+import { StarRating } from "@/components/rating/StarRating";
+import { getUserRating } from "@/lib/utils";
 
-function CountdownClock({ deadline }: { deadline: Date }) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      const difference = deadline.getTime() - now.getTime();
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60)
-        });
-      } else {
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [deadline]);
-
-  return (
-    <div className="text-lg font-semibold flex space-x-4">
-      <div className="flex flex-col items-center">
-        <span>{timeLeft.days}</span>
-        <span className="text-xs text-gray-500">days</span>
-      </div>
-      <div className="flex flex-col items-center">
-        <span>{timeLeft.hours}</span>
-        <span className="text-xs text-gray-500">hours</span>
-      </div>
-      <div className="flex flex-col items-center">
-        <span>{timeLeft.minutes}</span>
-        <span className="text-xs text-gray-500">minutes</span>
-      </div>
-    </div>
-  );
-}
-
-interface Player {
-  id: number;
-  name: string;
-  avatar: string;
-  position?: string;
-  isCaptain?: boolean;
-}
-
-function AttendingList({ players, teamColor, teamName, uniformColor }: { 
-  players: Player[], 
-  teamColor: string, 
-  teamName: string, 
-  uniformColor: string 
-}) {
-  return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-medium">{teamName}</h3>
-          <JerseyIcon color={uniformColor} size={23} />
-        </div>
-      </div>
-      <div className="space-y-4">
-        {players.map((player) => (
-          <div key={player.id} className="flex items-center gap-4">
-            <Avatar className="w-10 h-10" style={player.isCaptain ? { backgroundColor: teamColor } : {}}>
-              <AvatarImage src={player.avatar} alt={player.name} />
-              <AvatarFallback>{player.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">{player.name}</span>
-                {player.isCaptain && (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#FF7A00]"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
-                )}
-              </div>
-              <span className="text-sm text-muted-foreground">{player.position}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function EventDetailsContent() {
+export default function EventDetails() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  
-  // Mock data for upcoming event
-  const eventData = {
-    date: '15-Aug-2024',
-    time: '8:00 PM',
-    location: 'Old Trafford',
-    league: 'Premier League',
-    team1: {
-      name: 'Red Devils',
-      avatar: '/placeholder.svg?height=64&width=64',
-      color: '#DA291C',
-      uniformColor: '#FF0000',
-      players: [
-        { id: 1, name: 'John Smith', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward', isCaptain: true },
-        { id: 2, name: 'Alex Johnson', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder' },
-        { id: 3, name: 'Sarah Williams', avatar: '/placeholder.svg?height=48&width=48', position: 'Defender' },
-        { id: 4, name: 'Chris Lee', avatar: '/placeholder.svg?height=48&width=48', position: 'Goalkeeper' },
-        { id: 5, name: 'Pat Taylor', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward' },
-        { id: 6, name: 'Jamie Brown', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder' },
-        { id: 7, name: 'Sam Green', avatar: '/placeholder.svg?height=48&width=48', position: 'Defender' }
-      ]
-    },
-    team2: {
-      name: 'Sky Blues',
-      avatar: '/placeholder.svg?height=64&width=64',
-      color: '#6CABDD',
-      uniformColor: '#0000FF',
-      players: [
-        { id: 8, name: 'Mike Davis', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder', isCaptain: true },
-        { id: 9, name: 'Tom Wilson', avatar: '/placeholder.svg?height=48&width=48', position: 'Defender' },
-        { id: 10, name: 'Casey Morgan', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward' },
-        { id: 11, name: 'Jordan Riley', avatar: '/placeholder.svg?height=48&width=48', position: 'Goalkeeper' },
-        { id: 12, name: 'Emma Thompson', avatar: '/placeholder.svg?height=48&width=48', position: 'Midfielder' },
-        { id: 13, name: 'Olivia Chen', avatar: '/placeholder.svg?height=48&width=48', position: 'Forward' },
-        { id: 14, name: 'Ryan Patel', avatar: '/placeholder.svg?height=48&width=48', position: 'Defender' }
-      ]
-    },
-    draftStatus: 'completed',
-    rsvpDeadline: new Date('2024-08-14T20:00:00')
-  };
+  const { id: eventId } = useParams();
+
+  const { data, isLoading } = useQuery({
+    queryKey: [`event-${eventId}`],
+    queryFn: () => fetchEventById(eventId),
+  });
+
+  const event = data?.data;
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(-1); // This ensures we go back to the previous page in history
+    navigate(-1);
   };
 
-  const renderTeamInfo = (team: any) => (
-    <div className="flex flex-col items-center space-y-2">
-      <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
-        <AvatarImage src={team.avatar} alt={team.name} />
-        <AvatarFallback>{team.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
-      </Avatar>
-      <span className="text-sm font-semibold">{team.name}</span>
-      <div className="flex flex-col items-center mt-2">
-        <JerseyIcon color={team.uniformColor} size={48} />
+  const rsvpDeadline = useMemo(() => {
+    if (!event?.startTime) {
+      return { isPassed: false, time: new Date() };
+    }
+
+    const eventStartTime = new Date(event.startTime);
+
+    const rsvpDeadlineTime = new Date(
+      eventStartTime.getTime() - event.rsvpDeadline * 60 * 60 * 1000,
+    );
+
+    return { isPassed: new Date() > rsvpDeadlineTime, time: rsvpDeadlineTime };
+  }, [event]);
+
+  if (isLoading) {
+    return <FullScreenLoader />;
+  }
+
+  if (!event) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-4xl font-bold text-gray-800">Event Not Found</h1>
+        <p className="mt-4 text-gray-600">
+          The event you are looking for does not exist or has been removed.
+        </p>
+        <Link
+          to="/events"
+          className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+        >
+          <ArrowLeftIcon className="h-5 w-5" />
+          Go Back to Events
+        </Link>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline flex items-center"
-        onClick={handleBackClick}
-      >
-        <ChevronLeft className="mr-1 h-4 w-4" />
-        Previous
-      </Button>
-      <div className="container mx-auto px-4 py-8 pt-16">
-        <Card className="max-w-3xl mx-auto">
+    <main className="relative flex flex-1 flex-col gap-4 bg-background sm:gap-6">
+      <div className="flex items-center justify-between pl-8">
+        <h1 className="text-2xl font-bold">Event Details</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={handleBackClick}
+        >
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
+      </div>
+      <div className="mx-auto w-full">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">Upcoming Match</CardTitle>
+            <CardTitle className="text-center text-2xl font-bold">
+              {event.title}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 sm:p-6">
             <div className="space-y-8">
-              <div className="flex items-center justify-center gap-8 mb-8">
-                {renderTeamInfo(eventData.team1)}
+              <div className="mb-8 flex items-center justify-center gap-8">
+                <TeamInfo team={event.teams[0]} />
                 <div className="flex flex-col items-center justify-center">
-                  <div className="flex flex-col items-center mb-4 text-center">
-                    <span className="text-xs text-gray-500">{eventData.date}</span>
-                    <span className="text-xs text-gray-500">{eventData.location}</span>
-                    <span className="text-xs text-gray-500">{eventData.time}</span>
-                    <span className="text-xs font-bold text-[#FF7A00]">{eventData.league}</span>
+                  <div className="mb-4 hidden flex-col items-center text-center sm:flex">
+                    <span className="text-sm font-medium text-gray-500">
+                      {new Date(event.startTime).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span className="text-sm font-medium text-gray-500">
+                      {event.location}
+                    </span>
+                    <span className="text-sm font-medium text-gray-500">
+                      {format(event.startTime, "h:mm a")}
+                    </span>
+                    <span className="text-sm font-bold text-accent-orange">
+                      {event.league.name}
+                    </span>
                   </div>
                   <span className="text-2xl font-bold">vs</span>
                 </div>
-                {renderTeamInfo(eventData.team2)}
+                <TeamInfo team={event.teams[1]} />
               </div>
 
-              {eventData.draftStatus === 'completed' ? (
+              <div className="flex flex-col items-center text-center sm:hidden">
+                <span className="text-sm font-medium text-gray-500">
+                  {new Date(event.startTime).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "2-digit",
+                    year: "numeric",
+                  })}
+                  {", "}
+                  {format(event.startTime, "h:mm a")}
+                </span>
+                <span className="text-sm font-medium text-gray-500">
+                  {event.location}
+                </span>
+                <span className="text-sm font-medium text-gray-500"></span>
+                <span className="text-sm font-bold text-accent-orange">
+                  {event.league.name}
+                </span>
+              </div>
+
+              {rsvpDeadline.isPassed ? (
                 <>
                   <div className="text-center">
-                    <h2 className="text-xl font-bold mb-2">Match Details</h2>
+                    <h2 className="mb-2 text-xl font-bold">Match Details</h2>
                     <p className="text-lg">
-                      {eventData.team1.name} vs {eventData.team2.name}
+                      {event.teams[0].name} vs {event.teams[1].name}
                     </p>
                     <p className="text-md mt-2">
                       Join us for an exciting match!
                     </p>
                   </div>
-
-                  <h2 className="text-2xl font-bold mb-4">Drafted Teams</h2>
-                  <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
-                    <AttendingList 
-                      players={eventData.team1.players}
-                      teamColor={eventData.team1.color}
-                      teamName={eventData.team1.name}
-                      uniformColor={eventData.team1.uniformColor}
-                    />
-                    <AttendingList 
-                      players={eventData.team2.players}
-                      teamColor={eventData.team2.color}
-                      teamName={eventData.team2.name}
-                      uniformColor={eventData.team2.uniformColor}
-                    />
-                  </div>
                 </>
               ) : (
                 <>
                   <div className="flex flex-col items-center space-y-4">
-                    <h2 className="text-xl font-bold">RSVP Countdown</h2>
-                    <CountdownClock deadline={eventData.rsvpDeadline} />
-                  </div>
-
-                  <div className="pt-8 border-t">
-                    <h3 className="text-lg font-semibold mb-4">Attending Players ({eventData.team1.players.length + eventData.team2.players.length})</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {[...eventData.team1.players, ...eventData.team2.players].map((player) => (
-                        <div 
-                          key={player.id} 
-                          className="flex items-center gap-2 hover:bg-gray-50 p-2 rounded-md cursor-pointer transition-colors"
-                        >
-                          <Avatar className="w-10 h-10">
-                            <AvatarImage src={player.avatar} alt={player.name} />
-                            <AvatarFallback>{player.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1">
-                              <span className="font-semibold truncate">{player.name}</span>
-                              {player.isCaptain && (
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#FF7A00]"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
-                              )}
-                            </div>
-                            <span className="text-sm text-muted-foreground truncate">{player.position || 'Unassigned'}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <h2 className="text-xl font-bold">Event Countdown</h2>
+                    <CountdownClock deadline={new Date(event.startTime)} />
                   </div>
                 </>
+              )}
+              {event.teams.every((team) => team.draftCompleted) ? (
+                <div>
+                  <h3 className="mb-4 text-xl font-semibold">Drafted Teams</h3>
+                  <div className="flex justify-between gap-4 border-t pt-6">
+                    {event.teams.map((team) => (
+                      <div className="flex flex-1 flex-col gap-4">
+                        <h4 className="flex items-center gap-2 font-medium">
+                          {team.name}{" "}
+                          <JerseyIcon color={team.color} size={24} />
+                        </h4>
+                        <div
+                          key={team.captainId}
+                          className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={team.captain?.avatar_url}
+                              alt={team.captain?.full_name}
+                              className="object-cover"
+                            />
+                            <AvatarFallback>
+                              {team.captain?.full_name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1">
+                              <p className="truncate font-semibold">
+                                {team.captain?.full_name}
+                              </p>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="h-4 w-4 text-accent-orange"
+                              >
+                                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                              </svg>
+                            </div>
+                            <span className="truncate text-sm text-muted-foreground">
+                              {team.captain?.positions[0] || "Unassigned"}
+                            </span>
+                          </div>
+                        </div>
+                        {[...team.players]
+                          .sort((a, b) =>
+                            a.full_name.localeCompare(b.full_name),
+                          )
+                          .map((player) => (
+                            <div
+                              key={player.id}
+                              className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
+                            >
+                              <Avatar className="h-10 w-10">
+                                <AvatarImage
+                                  src={player.avatar_url}
+                                  alt={player.full_name}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback>
+                                  {player.full_name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate font-semibold">
+                                  {player.full_name}
+                                </p>
+                                <span className="truncate text-sm text-muted-foreground">
+                                  {player.positions[0] || "Unassigned"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="border-t pt-8">
+                  <h3 className="mb-4 text-lg font-semibold">
+                    Attending Players ({event.players.length})
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    {event.players.map((player) => (
+                      <div
+                        key={player.id}
+                        className="flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                      >
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={player.avatar_url}
+                            alt={player.full_name}
+                            className="object-cover"
+                          />
+                          <AvatarFallback>
+                            {player.full_name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1">
+                            <Link
+                              to={`/profile/${player.id}`}
+                              className="truncate font-semibold hover:text-accent-orange hover:underline"
+                            >
+                              {player.full_name}
+                            </Link>
+                            {event.teams.some(
+                              (team) => team.captainId === player.id,
+                            ) && (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="h-4 w-4 text-accent-orange"
+                              >
+                                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                              </svg>
+                            )}
+                            <div className="ml-1">
+                              <StarRating
+                                rating={getUserRating(
+                                  event.leagueId,
+                                  player.ratings,
+                                )}
+                                displayValue
+                              />
+                            </div>
+                          </div>
+                          <span className="truncate text-sm text-muted-foreground">
+                            {player.positions[0] || "Unassigned"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </CardContent>
         </Card>
       </div>
-    </>
-  );
-}
-
-export default function EventDetails() {
-  return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Event Details</h1>
-          </div>
-          <EventDetailsContent />
-        </main>
-      </div>
-    </SidebarProvider>
+    </main>
   );
 }

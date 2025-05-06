@@ -1,69 +1,86 @@
-
-import React from 'react';
-import { TeamColumn } from './TeamColumn';
-import { Team } from './types';
+import React from "react";
+import { TeamColumn } from "./TeamColumn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EventType, TeamType } from "@/types/events";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TeamsSectionProps {
-  teams: Team[];
-  toggleEditMode: (teamId: number) => void;
-  handleTeamNameChange: (teamId: number, name: string) => void;
-  handleTeamColorChange: (teamId: number, color: string) => void;
+  numEventPlayers: number;
+  teams: TeamType[];
+  setTeams: React.Dispatch<React.SetStateAction<TeamType[]>>;
+  toggleEditMode: (teamId: string) => void;
+  handleTeamNameChange: (teamId: string, name: string) => void;
+  handleTeamColorChange: (teamId: string, color: string) => void;
+  teamEditing: string;
+  cancelTeamEditing: () => void;
+  refetchEvent: () => void;
+  event: EventType;
 }
 
 export const TeamsSection: React.FC<TeamsSectionProps> = ({
+  numEventPlayers,
   teams,
+  event,
+  setTeams,
   toggleEditMode,
   handleTeamNameChange,
   handleTeamColorChange,
+  teamEditing,
+  cancelTeamEditing,
+  refetchEvent,
 }) => {
+  const { user } = useAuth();
+  const canConfirmDraft =
+    teams.reduce((prev, curr) => prev + curr.players.length, 0) + 2 ===
+    numEventPlayers;
+
   return (
     <>
       {/* Desktop view (side by side) */}
-      <div className="hidden lg:block">
-        <TeamColumn
-          team={teams[0]}
-          index={0}
-          toggleEditMode={toggleEditMode}
-          handleTeamNameChange={handleTeamNameChange}
-          handleTeamColorChange={handleTeamColorChange}
-        />
-      </div>
-      <div className="hidden lg:block">
-        <TeamColumn
-          team={teams[1]}
-          index={1}
-          toggleEditMode={toggleEditMode}
-          handleTeamNameChange={handleTeamNameChange}
-          handleTeamColorChange={handleTeamColorChange}
-        />
-      </div>
+      {teams.map((team) => (
+        <div key={team.id} className="hidden flex-1 lg:block">
+          <TeamColumn
+            event={event}
+            canConfirmDraft={canConfirmDraft}
+            isEditingTeam={teamEditing === team.id}
+            team={team}
+            otherTeam={teams.find((t) => t.id !== team.id) || null}
+            setTeams={setTeams}
+            toggleEditMode={toggleEditMode}
+            handleTeamNameChange={handleTeamNameChange}
+            handleTeamColorChange={handleTeamColorChange}
+            cancelTeamEditing={cancelTeamEditing}
+            refetchEvent={refetchEvent}
+          />
+        </div>
+      ))}
 
       {/* Mobile view (tabs) */}
-      <div className="lg:hidden col-span-2">
-        <Tabs defaultValue="team1">
+      <div className="col-span-2 flex-1 lg:hidden">
+        <Tabs
+          defaultValue={teams[0].captain.id === user.id ? "team1" : "team2"}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="team1">Team 1</TabsTrigger>
             <TabsTrigger value="team2">Team 2</TabsTrigger>
           </TabsList>
-          <TabsContent value="team1">
-            <TeamColumn
-              team={teams[0]}
-              index={0}
-              toggleEditMode={toggleEditMode}
-              handleTeamNameChange={handleTeamNameChange}
-              handleTeamColorChange={handleTeamColorChange}
-            />
-          </TabsContent>
-          <TabsContent value="team2">
-            <TeamColumn
-              team={teams[1]}
-              index={1}
-              toggleEditMode={toggleEditMode}
-              handleTeamNameChange={handleTeamNameChange}
-              handleTeamColorChange={handleTeamColorChange}
-            />
-          </TabsContent>
+          {teams.map((team, i) => (
+            <TabsContent value={`team${i + 1}`} key={team.id}>
+              <TeamColumn
+                canConfirmDraft={canConfirmDraft}
+                isEditingTeam={teamEditing === team.id}
+                team={team}
+                otherTeam={teams.find((t) => t.id !== team.id) || null}
+                event={event}
+                setTeams={setTeams}
+                toggleEditMode={toggleEditMode}
+                handleTeamNameChange={handleTeamNameChange}
+                handleTeamColorChange={handleTeamColorChange}
+                cancelTeamEditing={cancelTeamEditing}
+                refetchEvent={refetchEvent}
+              />
+            </TabsContent>
+          ))}
         </Tabs>
       </div>
     </>

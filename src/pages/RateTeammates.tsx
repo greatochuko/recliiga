@@ -1,80 +1,85 @@
-
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { AppSidebar } from "@/components/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { RatingDialog } from "@/components/rating/RatingDialog";
-import { Player } from "@/components/rating/types";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
+import FullScreenLoader from "@/components/FullScreenLoader";
+import { fetchEventsByUser } from "@/api/events";
+import { getPastEvents } from "@/lib/utils";
+import EventRatingCard from "@/components/events/EventRatingCard";
+import { ChevronLeftIcon } from "lucide-react";
 
 export default function RateTeammates() {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  
-  const [players, setPlayers] = useState<Player[]>([
-    { id: 1, name: 'John Smith', position: 'Midfielder', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 2, name: 'Emma Johnson', position: 'Forward', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 3, name: 'Michael Brown', position: 'Defender', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 4, name: 'Sarah Davis', position: 'Goalkeeper', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 5, name: 'David Wilson', position: 'Midfielder', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 6, name: 'Lisa Anderson', position: 'Forward', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 7, name: 'Robert Taylor', position: 'Defender', avatar: '/placeholder.svg?height=32&width=32' },
-    { id: 8, name: 'Jennifer Martinez', position: 'Midfielder', avatar: '/placeholder.svg?height=32&width=32' },
-  ]);
 
-  const handleRatingSubmit = (playerId: number) => {
-    setPlayers(players.filter(player => player.id !== playerId));
+  const { data, isLoading } = useQuery({
+    queryKey: ["upcomingEvents"],
+    queryFn: fetchEventsByUser,
+  });
+
+  const events = data?.data || [];
+
+  const pastEvents = getPastEvents(events);
+
+  const eventsToRate = pastEvents.filter(
+    (event) =>
+      event.resultsEntered &&
+      event.players.some((player) => player.id === user.id),
+  );
+
+  if (isLoading) {
+    return <FullScreenLoader />;
+  }
+
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(-1);
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50 flex items-center">
-            <SidebarTrigger className="bg-white shadow-md" />
-            <h1 className="ml-4 text-2xl font-bold">Rate Teammates</h1>
-          </div>
-          
-          <div className="pt-16">
-            <div className="max-w-4xl mx-auto p-4">
-              <div className="flex justify-between items-center mb-4">
-                <Button 
-                  variant="ghost" 
-                  className="text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-                  onClick={() => navigate(-1)}
-                >
-                  Previous
-                </Button>
-              </div>
-              {players.length > 0 ? (
-                <>
-                  <p className="text-gray-600 mb-6">Click on the player or star icons to rate your teammates' performance.</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {players.map((player) => (
-                      <RatingDialog 
-                        key={player.id} 
-                        player={player} 
-                        onRatingSubmit={handleRatingSubmit}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <h2 className="text-2xl font-bold text-[#FF7A00] mb-4">All Teammates Rated!</h2>
-                  <p className="text-gray-600 mb-6">Thank you for providing feedback on all your teammates. Your input is valuable for improving team performance.</p>
-                  <Button 
-                    className="bg-[#FF7A00] hover:bg-[#E66C00] text-white font-bold py-3 px-6 rounded-lg text-lg"
-                    onClick={() => navigate('/')}
-                  >
-                    Return to Dashboard
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </main>
+    <main className="flex flex-1 flex-col gap-4">
+      <div className="flex items-center justify-between pl-8">
+        <h1 className="text-2xl font-bold">Rate Teammates</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={handleBackClick}
+        >
+          <ChevronLeftIcon className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
       </div>
-    </SidebarProvider>
+
+      {eventsToRate.length > 0 ? (
+        <>
+          <p className="text-gray-600">
+            Click on the player or star icons to rate your teammates'
+            performance.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            {eventsToRate.map((event) => (
+              <EventRatingCard key={event.id} event={event} />
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="py-12 text-center">
+          <h2 className="mb-4 text-2xl font-bold text-accent-orange">
+            All Teammates Rated!
+          </h2>
+          <p className="mb-6 text-gray-600">
+            Thank you for providing feedback on all your teammates. Your input
+            is valuable for improving team performance.
+          </p>
+          <Button
+            className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
+            onClick={() => navigate("/")}
+          >
+            Return to Dashboard
+          </Button>
+        </div>
+      )}
+    </main>
   );
 }

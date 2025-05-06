@@ -1,14 +1,30 @@
-
-import { useState, useRef, useEffect } from 'react';
-import { format, isBefore, startOfDay, addDays, addWeeks, addMonths } from 'date-fns';
-import { CalendarIcon, CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import {
+  format,
+  isBefore,
+  startOfDay,
+  addDays,
+  addWeeks,
+  addMonths,
+} from "date-fns";
+import { CalendarIcon, CheckCircle, AlertCircle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -41,31 +57,38 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
   const [showAddedAlert, setShowAddedAlert] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
   const [currentEvent, setCurrentEvent] = useState<Event>({
-    title: '',
-    location: '',
-    numTeams: '',
-    rosterSpots: '',
+    title: "",
+    location: "",
+    numTeams: "",
+    rosterSpots: "",
     isRepeatingEvent: false,
-    repeatFrequency: '',
+    repeatFrequency: "",
     repeatStartDate: undefined,
     repeatEndDate: undefined,
-    rsvpDeadlineOption: '24h',
-    customRsvpHours: '24',
-    eventDates: [{
-      date: undefined,
-      startHour: '12',
-      startMinute: '00',
-      startAmPm: 'AM',
-      endHour: '12',
-      endMinute: '00',
-      endAmPm: 'AM',
-    }]
+    rsvpDeadlineOption: "24h",
+    customRsvpHours: "24",
+    eventDates: [
+      {
+        date: undefined,
+        startHour: "12",
+        startMinute: "00",
+        startAmPm: "AM",
+        endHour: "12",
+        endMinute: "00",
+        endAmPm: "AM",
+      },
+    ],
   });
 
   const [totalSpots, setTotalSpots] = useState(0);
 
   useEffect(() => {
-    if (currentEvent.isRepeatingEvent && currentEvent.repeatStartDate && currentEvent.repeatEndDate && currentEvent.repeatFrequency) {
+    if (
+      currentEvent.isRepeatingEvent &&
+      currentEvent.repeatStartDate &&
+      currentEvent.repeatEndDate &&
+      currentEvent.repeatFrequency
+    ) {
       const dates: Date[] = [];
       let currentDate = new Date(currentEvent.repeatStartDate);
 
@@ -73,24 +96,24 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
         dates.push(new Date(currentDate));
 
         switch (currentEvent.repeatFrequency) {
-          case 'every-day':
+          case "every-day":
             currentDate = addDays(currentDate, 1);
             break;
-          case 'every-week':
+          case "every-week":
             currentDate = addWeeks(currentDate, 1);
             break;
-          case 'every-2-weeks':
+          case "every-2-weeks":
             currentDate = addWeeks(currentDate, 2);
             break;
-          case 'every-month':
+          case "every-month":
             currentDate = addMonths(currentDate, 1);
             break;
         }
       }
 
-      setCurrentEvent(prev => ({
+      setCurrentEvent((prev) => ({
         ...prev,
-        eventDates: dates.map(date => ({
+        eventDates: dates.map((date) => ({
           date,
           startHour: prev.eventDates[0].startHour,
           startMinute: prev.eventDates[0].startMinute,
@@ -98,10 +121,15 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           endHour: prev.eventDates[0].endHour,
           endMinute: prev.eventDates[0].endMinute,
           endAmPm: prev.eventDates[0].endAmPm,
-        }))
+        })),
       }));
     }
-  }, [currentEvent.isRepeatingEvent, currentEvent.repeatStartDate, currentEvent.repeatEndDate, currentEvent.repeatFrequency]);
+  }, [
+    currentEvent.isRepeatingEvent,
+    currentEvent.repeatStartDate,
+    currentEvent.repeatEndDate,
+    currentEvent.repeatFrequency,
+  ]);
 
   useEffect(() => {
     const teams = parseInt(currentEvent.numTeams);
@@ -117,20 +145,23 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
     return isBefore(date, startOfDay(new Date()));
   };
 
-  const handlePositiveNumberInput = (value: string, field: 'numTeams' | 'rosterSpots' | 'customRsvpHours') => {
+  const handlePositiveNumberInput = (
+    value: string,
+    field: "numTeams" | "rosterSpots" | "customRsvpHours",
+  ) => {
     const numValue = parseInt(value, 10);
     if (!isNaN(numValue) && numValue > 0) {
-      setCurrentEvent(prev => ({ ...prev, [field]: numValue.toString() }));
-    } else if (value === '') {
-      setCurrentEvent(prev => ({ ...prev, [field]: '' }));
+      setCurrentEvent((prev) => ({ ...prev, [field]: numValue.toString() }));
+    } else if (value === "") {
+      setCurrentEvent((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const handleRepeatToggle = (checked: boolean) => {
-    setCurrentEvent(prev => ({
+    setCurrentEvent((prev) => ({
       ...prev,
       isRepeatingEvent: checked,
-      repeatFrequency: checked ? prev.repeatFrequency : '',
+      repeatFrequency: checked ? prev.repeatFrequency : "",
       repeatStartDate: checked ? prev.eventDates[0].date : undefined,
       repeatEndDate: checked ? undefined : undefined,
     }));
@@ -140,8 +171,12 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
     return `${hour}:${minute} ${ampm}`;
   };
 
-  const updateEventDate = (index: number, field: keyof EventDate, value: any) => {
-    setCurrentEvent(prev => {
+  const updateEventDate = (
+    index: number,
+    field: keyof EventDate,
+    value: any,
+  ) => {
+    setCurrentEvent((prev) => {
       const updatedDates = [...prev.eventDates];
       updatedDates[index] = { ...updatedDates[index], [field]: value };
       return { ...prev, eventDates: updatedDates };
@@ -149,25 +184,35 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
   };
 
   const scrollToTop = () => {
-    topRef.current?.scrollIntoView({ behavior: 'smooth' });
+    topRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const cannotAddEvent =
+    !currentEvent.title.trim() ||
+    !currentEvent.location.trim() ||
+    !currentEvent.numTeams ||
+    !currentEvent.rosterSpots ||
+    !currentEvent.eventDates.length;
+
   const addAnotherEvent = () => {
+    if (cannotAddEvent) return;
     updateLeagueData({ events: [...leagueData.events, currentEvent] });
     setCurrentEvent({
       ...currentEvent,
-      title: '',
-      eventDates: [{
-        date: undefined,
-        startHour: '12',
-        startMinute: '00',
-        startAmPm: 'AM',
-        endHour: '12',
-        endMinute: '00',
-        endAmPm: 'AM',
-      }],
+      title: "",
+      eventDates: [
+        {
+          date: undefined,
+          startHour: "12",
+          startMinute: "00",
+          startAmPm: "AM",
+          endHour: "12",
+          endMinute: "00",
+          endAmPm: "AM",
+        },
+      ],
       isRepeatingEvent: false,
-      repeatFrequency: '',
+      repeatFrequency: "",
       repeatStartDate: undefined,
       repeatEndDate: undefined,
     });
@@ -179,7 +224,9 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">Add Event</CardTitle>
+        <CardTitle className="text-center text-2xl font-semibold text-gray-800">
+          Add Event
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div ref={topRef} />
@@ -188,28 +235,46 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
             <CheckCircle className="h-4 w-4" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>
-              Event{leagueData.events.length > 1 ? 's' : ''} Added
+              Event{leagueData.events.length > 1 ? "s" : ""} Added
             </AlertDescription>
           </Alert>
         )}
 
         {leagueData.events.length > 0 && (
-          <div className="space-y-4 mb-8">
+          <div className="mb-8 space-y-4">
             <h3 className="text-lg font-semibold">Created Events</h3>
             {leagueData.events.map((event, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-md">
+              <div key={index} className="rounded-md bg-gray-50 p-4">
                 <h4 className="font-medium">{event.title}</h4>
                 <p>Location: {event.location}</p>
-                <p>Teams: {event.numTeams}, Roster Spots: {event.rosterSpots} (Total number of spots available: {parseInt(event.numTeams) * parseInt(event.rosterSpots)})</p>
-                <p>RSVP Deadline: {event.rsvpDeadlineOption} (hours before event)</p>
+                <p>
+                  Teams: {event.numTeams}, Roster Spots: {event.rosterSpots}{" "}
+                  (Total number of spots available:{" "}
+                  {parseInt(event.numTeams) * parseInt(event.rosterSpots)})
+                </p>
+                <p>
+                  RSVP Deadline: {event.rsvpDeadlineOption} (hours before event)
+                </p>
                 <div className="mt-2">
                   <h5 className="font-medium">Event Dates:</h5>
-                  <ul className="list-disc list-inside">
+                  <ul className="list-inside list-disc">
                     {event.eventDates.map((date, dateIndex) => (
                       <li key={dateIndex}>
                         {date.date && (
                           <>
-                            {format(date.date, "MMMM d yyyy")}, {formatTime(date.startHour, date.startMinute, date.startAmPm)} - {formatTime(date.endHour, date.endMinute, date.endAmPm)}, {format(date.date, "EEEE")}
+                            {format(date.date, "MMMM d yyyy")},{" "}
+                            {formatTime(
+                              date.startHour,
+                              date.startMinute,
+                              date.startAmPm,
+                            )}{" "}
+                            -{" "}
+                            {formatTime(
+                              date.endHour,
+                              date.endMinute,
+                              date.endAmPm,
+                            )}
+                            , {format(date.date, "EEEE")}
                           </>
                         )}
                       </li>
@@ -225,14 +290,17 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Next Step</AlertTitle>
               <AlertDescription>
-                When you're finished adding events, press the "Next" button below to move to the next step.
+                When you're finished adding events, press the "Next" button
+                below to move to the next step.
               </AlertDescription>
             </Alert>
           </div>
         )}
 
-        <div className="text-lg font-semibold mb-4">
-          {leagueData.events.length > 0 ? "Create Another Event" : "Create Your First Event"}
+        <div className="mb-4 text-lg font-semibold">
+          {leagueData.events.length > 0
+            ? "Create Another Event"
+            : "Create Your First Event"}
         </div>
 
         <div className="space-y-2">
@@ -240,7 +308,9 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           <Input
             id="eventTitle"
             value={currentEvent.title}
-            onChange={(e) => setCurrentEvent(prev => ({ ...prev, title: e.target.value }))}
+            onChange={(e) =>
+              setCurrentEvent((prev) => ({ ...prev, title: e.target.value }))
+            }
             placeholder="Enter event title"
           />
         </div>
@@ -250,7 +320,9 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           <Input
             id="location"
             value={currentEvent.location}
-            onChange={(e) => setCurrentEvent(prev => ({ ...prev, location: e.target.value }))}
+            onChange={(e) =>
+              setCurrentEvent((prev) => ({ ...prev, location: e.target.value }))
+            }
             placeholder="Enter event location"
           />
         </div>
@@ -261,7 +333,9 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
             id="teams"
             type="number"
             value={currentEvent.numTeams}
-            onChange={(e) => handlePositiveNumberInput(e.target.value, 'numTeams')}
+            onChange={(e) =>
+              handlePositiveNumberInput(e.target.value, "numTeams")
+            }
             placeholder="Enter number of teams"
             min="1"
           />
@@ -273,7 +347,9 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
             id="rosterSpots"
             type="number"
             value={currentEvent.rosterSpots}
-            onChange={(e) => handlePositiveNumberInput(e.target.value, 'rosterSpots')}
+            onChange={(e) =>
+              handlePositiveNumberInput(e.target.value, "rosterSpots")
+            }
             placeholder="Enter number of roster spots"
             min="1"
           />
@@ -285,7 +361,7 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           </div>
         )}
 
-        <div className="space-y-4 p-4 bg-gray-50 rounded-md">
+        <div className="space-y-4 rounded-md bg-gray-50 p-4">
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Popover>
@@ -295,18 +371,22 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !currentEvent.eventDates[0].date && "text-muted-foreground"
+                    !currentEvent.eventDates[0].date && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {currentEvent.eventDates[0].date ? format(currentEvent.eventDates[0].date, "PPP") : <span>Pick a date</span>}
+                  {currentEvent.eventDates[0].date ? (
+                    format(currentEvent.eventDates[0].date, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
                   selected={currentEvent.eventDates[0].date}
-                  onSelect={(date) => updateEventDate(0, 'date', date)}
+                  onSelect={(date) => updateEventDate(0, "date", date)}
                   initialFocus
                 />
               </PopoverContent>
@@ -317,27 +397,88 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
             <div className="space-y-2">
               <Label>Start Time</Label>
               <div className="flex space-x-2">
-                <Select value={currentEvent.eventDates[0].startHour} onValueChange={(value) => updateEventDate(0, 'startHour', value)}>
+                {/* <Select
+                  value={currentEvent.eventDates[0].startHour}
+                  onValueChange={(value) =>
+                    updateEventDate(0, "startHour", value)
+                  }
+                >
                   <SelectTrigger className="w-[70px]">
                     <SelectValue placeholder="HH" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                      <SelectItem key={hour} value={hour.toString().padStart(2, '0')}>{hour.toString().padStart(2, '0')}</SelectItem>
+                      <SelectItem
+                        key={hour}
+                        value={hour.toString().padStart(2, "0")}
+                      >
+                        {hour.toString().padStart(2, "0")}
+                      </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].startMinute} onValueChange={(value) => updateEventDate(0, 'startMinute', value)}>
+                </Select> */}
+                <select
+                  name="startHour"
+                  id="startHour"
+                  className="block rounded-md border p-2"
+                  value={currentEvent.eventDates[0].startHour}
+                  onChange={(e) =>
+                    updateEventDate(0, "startHour", e.target.value)
+                  }
+                >
+                  <option hidden>HH</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                    <option key={hour} value={hour.toString().padStart(2, "0")}>
+                      {hour.toString().padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+                {/* <Select
+                  value={currentEvent.eventDates[0].startMinute}
+                  onValueChange={(value) =>
+                    updateEventDate(0, "startMinute", value)
+                  }
+                >
                   <SelectTrigger className="w-[70px]">
                     <SelectValue placeholder="MM" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                      <SelectItem key={minute} value={minute.toString().padStart(2, '0')}>{minute.toString().padStart(2, '0')}</SelectItem>
+                      <SelectItem
+                        key={minute}
+                        value={minute.toString().padStart(2, "0")}
+                      >
+                        {minute.toString().padStart(2, "0")}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <Select value={currentEvent.eventDates[0].startAmPm} onValueChange={(value) => updateEventDate(0, 'startAmPm', value)}>
+                 */}
+                <select
+                  name="startMinute"
+                  id="startMinute"
+                  className="block rounded-md border p-2"
+                  value={currentEvent.eventDates[0].startMinute}
+                  onChange={(e) =>
+                    updateEventDate(0, "startMinute", e.target.value)
+                  }
+                >
+                  <option hidden>HH</option>
+                  {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                    <option
+                      key={minute}
+                      value={minute.toString().padStart(2, "0")}
+                    >
+                      {minute.toString().padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+                {/* <Select
+                  value={currentEvent.eventDates[0].startAmPm}
+                  onValueChange={(value) =>
+                    updateEventDate(0, "startAmPm", value)
+                  }
+                >
                   <SelectTrigger className="w-[70px]">
                     <SelectValue placeholder="AM/PM" />
                   </SelectTrigger>
@@ -345,33 +486,106 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                     <SelectItem value="AM">AM</SelectItem>
                     <SelectItem value="PM">PM</SelectItem>
                   </SelectContent>
-                </Select>
+                </Select> */}
+                <select
+                  name="startAmPm"
+                  id="startAmPm"
+                  className="block rounded-md border p-2"
+                  value={currentEvent.eventDates[0].startAmPm}
+                  onChange={(e) =>
+                    updateEventDate(0, "startAmPm", e.target.value)
+                  }
+                >
+                  <option hidden>AM/PM</option>
+                  <option value={"AM"}>AM</option>
+                  <option value={"PM"}>PM</option>
+                </select>
               </div>
             </div>
             <div className="space-y-2">
               <Label>End Time</Label>
               <div className="flex space-x-2">
-                <Select value={currentEvent.eventDates[0].endHour} onValueChange={(value) => updateEventDate(0, 'endHour', value)}>
+                {/* <Select
+                  value={currentEvent.eventDates[0].endHour}
+                  onValueChange={(value) =>
+                    updateEventDate(0, "endHour", value)
+                  }
+                >
                   <SelectTrigger className="w-[70px]">
                     <SelectValue placeholder="HH" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                      <SelectItem key={hour} value={hour.toString().padStart(2, '0')}>{hour.toString().padStart(2, '0')}</SelectItem>
+                      <SelectItem
+                        key={hour}
+                        value={hour.toString().padStart(2, "0")}
+                      >
+                        {hour.toString().padStart(2, "0")}
+                      </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].endMinute} onValueChange={(value) => updateEventDate(0, 'endMinute', value)}>
+                </Select> */}
+                <select
+                  name="endHour"
+                  id="endHour"
+                  className="block rounded-md border p-2"
+                  value={currentEvent.eventDates[0].endHour}
+                  onChange={(e) =>
+                    updateEventDate(0, "endHour", e.target.value)
+                  }
+                >
+                  <option hidden>HH</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                    <option key={hour} value={hour.toString().padStart(2, "0")}>
+                      {hour.toString().padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+                {/* <Select
+                  value={currentEvent.eventDates[0].endMinute}
+                  onValueChange={(value) =>
+                    updateEventDate(0, "endMinute", value)
+                  }
+                >
                   <SelectTrigger className="w-[70px]">
                     <SelectValue placeholder="MM" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                      <SelectItem key={minute} value={minute.toString().padStart(2, '0')}>{minute.toString().padStart(2, '0')}</SelectItem>
+                      <SelectItem
+                        key={minute}
+                        value={minute.toString().padStart(2, "0")}
+                      >
+                        {minute.toString().padStart(2, "0")}
+                      </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].endAmPm} onValueChange={(value) => updateEventDate(0, 'endAmPm', value)}>
+                </Select> */}
+                <select
+                  name="endMinute"
+                  id="endMinute"
+                  className="block rounded-md border p-2"
+                  value={currentEvent.eventDates[0].endMinute}
+                  onChange={(e) =>
+                    updateEventDate(0, "endMinute", e.target.value)
+                  }
+                >
+                  <option hidden>HH</option>
+                  {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                    <option
+                      key={minute}
+                      value={minute.toString().padStart(2, "0")}
+                    >
+                      {minute.toString().padStart(2, "0")}
+                    </option>
+                  ))}
+                </select>
+                {/* <Select
+                  value={currentEvent.eventDates[0].endAmPm}
+                  onValueChange={(value) =>
+                    updateEventDate(0, "endAmPm", value)
+                  }
+                >
                   <SelectTrigger className="w-[70px]">
                     <SelectValue placeholder="AM/PM" />
                   </SelectTrigger>
@@ -379,7 +593,20 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                     <SelectItem value="AM">AM</SelectItem>
                     <SelectItem value="PM">PM</SelectItem>
                   </SelectContent>
-                </Select>
+                </Select> */}
+                <select
+                  name="endAmPm"
+                  id="endAmPm"
+                  className="block rounded-md border p-2"
+                  value={currentEvent.eventDates[0].endAmPm}
+                  onChange={(e) =>
+                    updateEventDate(0, "endAmPm", e.target.value)
+                  }
+                >
+                  <option hidden>AM/PM</option>
+                  <option value={"AM"}>AM</option>
+                  <option value={"PM"}>PM</option>
+                </select>
               </div>
             </div>
           </div>
@@ -400,7 +627,12 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
               <Label htmlFor="repeat-frequency">Repeat Frequency</Label>
               <Select
                 value={currentEvent.repeatFrequency}
-                onValueChange={(value) => setCurrentEvent(prev => ({ ...prev, repeatFrequency: value }))}
+                onValueChange={(value) =>
+                  setCurrentEvent((prev) => ({
+                    ...prev,
+                    repeatFrequency: value,
+                  }))
+                }
               >
                 <SelectTrigger id="repeat-frequency">
                   <SelectValue placeholder="Select frequency" />
@@ -423,18 +655,27 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
                     variant={"outline"}
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !currentEvent.repeatEndDate && "text-muted-foreground"
+                      !currentEvent.repeatEndDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {currentEvent.repeatEndDate ? format(currentEvent.repeatEndDate, "PPP") : <span>Pick a date</span>}
+                    {currentEvent.repeatEndDate ? (
+                      format(currentEvent.repeatEndDate, "PPP")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
                     selected={currentEvent.repeatEndDate}
-                    onSelect={(date) => setCurrentEvent(prev => ({ ...prev, repeatEndDate: date }))}
+                    onSelect={(date) =>
+                      setCurrentEvent((prev) => ({
+                        ...prev,
+                        repeatEndDate: date,
+                      }))
+                    }
                     initialFocus
                   />
                 </PopoverContent>
@@ -447,7 +688,12 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           <Label htmlFor="rsvp-deadline">RSVP Deadline</Label>
           <Select
             value={currentEvent.rsvpDeadlineOption}
-            onValueChange={(value) => setCurrentEvent(prev => ({ ...prev, rsvpDeadlineOption: value }))}
+            onValueChange={(value) =>
+              setCurrentEvent((prev) => ({
+                ...prev,
+                rsvpDeadlineOption: value,
+              }))
+            }
           >
             <SelectTrigger id="rsvp-deadline">
               <SelectValue placeholder="Select RSVP deadline" />
@@ -460,14 +706,18 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           </Select>
         </div>
 
-        {currentEvent.rsvpDeadlineOption === 'custom' && (
+        {currentEvent.rsvpDeadlineOption === "custom" && (
           <div className="space-y-2">
-            <Label htmlFor="custom-rsvp-hours">Custom RSVP Deadline (hours before event)</Label>
+            <Label htmlFor="custom-rsvp-hours">
+              Custom RSVP Deadline (hours before event)
+            </Label>
             <Input
               id="custom-rsvp-hours"
               type="number"
               value={currentEvent.customRsvpHours}
-              onChange={(e) => handlePositiveNumberInput(e.target.value, 'customRsvpHours')}
+              onChange={(e) =>
+                handlePositiveNumberInput(e.target.value, "customRsvpHours")
+              }
               placeholder="Enter hours"
               min="1"
             />
@@ -479,10 +729,17 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
             <Label>Event Dates</Label>
             <div className="space-y-2">
               {currentEvent.eventDates.map((date, index) => (
-                <div key={index} className="p-2 bg-gray-50 rounded-md">
+                <div key={index} className="rounded-md bg-gray-50 p-2">
                   {date.date && (
                     <>
-                      {format(date.date, "MMMM d yyyy")}, {formatTime(date.startHour, date.startMinute, date.startAmPm)} - {formatTime(date.endHour, date.endMinute, date.endAmPm)}, {format(date.date, "EEEE")}
+                      {format(date.date, "MMMM d yyyy")},{" "}
+                      {formatTime(
+                        date.startHour,
+                        date.startMinute,
+                        date.startAmPm,
+                      )}{" "}
+                      - {formatTime(date.endHour, date.endMinute, date.endAmPm)}
+                      , {format(date.date, "EEEE")}
                       {isDateInPast(date.date) && (
                         <span className="ml-2 text-red-500">(Past date)</span>
                       )}
@@ -494,7 +751,11 @@ export function TeamSetupStep({ leagueData, updateLeagueData }) {
           </div>
         )}
 
-        <Button onClick={addAnotherEvent} className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white">
+        <Button
+          onClick={addAnotherEvent}
+          className="bg-accent-orange hover:bg-accent-orange/90 w-full text-white"
+          disabled={cannotAddEvent}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Event
         </Button>

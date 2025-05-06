@@ -1,56 +1,51 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-} from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
+import { Sidebar, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { ConditionalNavigationMenu } from "./sidebar/ConditionalNavigationMenu";
 import { UserMenu } from "./sidebar/UserMenu";
 import { NotificationsPopover } from "./sidebar/NotificationsPopover";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AppSidebar() {
-  const navigate = useNavigate();
-  
-  const handleLogoClick = () => {
-    navigate('/');
-  };
+  const { toggleSidebar } = useSidebar();
+
+  function closeSidebar() {
+    if (window.innerWidth > 767) return;
+    toggleSidebar();
+  }
 
   return (
-    <Sidebar className="border-r border-gray-200 bg-white">
-      <div className="flex flex-col h-full">
-        {/* Logo */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h1 
-              className="text-[#FF7A00] text-2xl font-bold cursor-pointer hover:text-[#FF9A30] transition-colors" 
-              onClick={handleLogoClick}
+    <div className="relative">
+      <Sidebar className="border-r border-gray-200 bg-white">
+        <div className="flex h-full flex-col">
+          <div className="border-b border-gray-200 p-4">
+            <Link
+              to={"/"}
+              className="w-fit cursor-pointer text-2xl font-bold text-accent-orange transition-colors hover:text-[#FF9A30]"
+              onClick={toggleSidebar}
             >
               REC LiiGA
-            </h1>
+            </Link>
+          </div>
+
+          {/* User Profile */}
+          <div className="border-b border-gray-200 p-2">
+            <div className="flex items-center justify-between">
+              <NotificationsPopover />
+              <UserMenu />
+            </div>
+          </div>
+
+          {/* Navigation Menu */}
+          <ConditionalNavigationMenu toggleSidebar={closeSidebar} />
+
+          {/* Footer */}
+          <div className="border-t border-gray-200 p-4 text-sm text-gray-500">
+            &copy; {new Date().getFullYear()} REC LiiGA. All rights reserved.
           </div>
         </div>
-
-        {/* User Profile */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <NotificationsPopover />
-            <UserMenu />
-          </div>
-        </div>
-
-        {/* Navigation Menu */}
-        <ConditionalNavigationMenu />
-
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-200 text-sm text-gray-500">
-          © 2024 REC LiiGA. All rights reserved.
-        </div>
+      </Sidebar>
+      <div className="absolute -right-10 top-4 z-50 flex items-center">
+        <SidebarTrigger className="z-[20] bg-white shadow-md" />
       </div>
-    </Sidebar>
-  )
+    </div>
+  );
 }

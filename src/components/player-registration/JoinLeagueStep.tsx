@@ -1,9 +1,8 @@
-
-import { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Loader2, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,18 +14,18 @@ interface JoinLeagueStepProps {
 
 export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
   const { user } = useAuth();
-  const [leagueCode, setLeagueCode] = useState('');
-  const [error, setError] = useState('');
+  const [leagueCode, setLeagueCode] = useState("");
+  const [error, setError] = useState("");
 
   const { data: league, isLoading } = useQuery({
-    queryKey: ['league', leagueCode],
+    queryKey: ["league", leagueCode],
     queryFn: async () => {
       if (!leagueCode) return null;
-      
+
       const { data, error } = await supabase
-        .from('leagues')
-        .select('*')
-        .eq('league_code', leagueCode)
+        .from("leagues")
+        .select("*")
+        .eq("league_code", leagueCode)
         .maybeSingle();
 
       if (error) throw error;
@@ -37,30 +36,29 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!league) {
-      setError('No league found with this code. Please check and try again.');
+      setError("No league found with this code. Please check and try again.");
       return;
     }
 
     if (!user) {
-      setError('You must be logged in to join a league.');
+      setError("You must be logged in to join a league.");
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('league_members')
-        .insert({
-          league_id: league.id,
-          player_id: user.id,
-          status: league.requires_approval ? 'pending' : 'approved'
-        });
+      const { error } = await supabase.from("league_members").insert({
+        league_id: league.id,
+        player_id: user.id,
+        status: league.requires_approval ? "pending" : "approved",
+      });
 
       if (error) {
-        if (error.code === '23505') { // Unique violation
-          setError('You have already requested to join this league.');
+        if (error.code === "23505") {
+          // Unique violation
+          setError("You have already requested to join this league.");
         } else {
           throw error;
         }
@@ -68,14 +66,16 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
       }
 
       if (league.requires_approval) {
-        toast.success('Your request to join has been submitted and is pending approval.');
+        toast.success(
+          "Your request to join has been submitted and is pending approval.",
+        );
       } else {
-        toast.success('Successfully joined the league!');
+        toast.success("Successfully joined the league!");
       }
 
       onJoinLeague(league.id);
     } catch (error: any) {
-      console.error('Error joining league:', error);
+      console.error("Error joining league:", error);
       setError(error.message);
     }
   };
@@ -97,7 +97,7 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
 
       {isLoading && (
         <div className="flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#FF7A00]" />
+          <Loader2 className="text-accent-orange h-6 w-6 animate-spin" />
         </div>
       )}
 
@@ -105,10 +105,13 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
         <Alert>
           <AlertDescription className="flex items-center gap-2">
             {league.is_private && <Lock className="h-4 w-4" />}
-            You are about to join: <strong>{league.name}</strong> in {league.city}
-            {league.requires_approval && 
-              <span className="text-xs text-muted-foreground">(Requires approval)</span>
-            }
+            You are about to join: <strong>{league.name}</strong> in{" "}
+            {league.city}
+            {league.requires_approval && (
+              <span className="text-xs text-muted-foreground">
+                (Requires approval)
+              </span>
+            )}
           </AlertDescription>
         </Alert>
       )}
@@ -119,12 +122,12 @@ export default function JoinLeagueStep({ onJoinLeague }: JoinLeagueStepProps) {
         </Alert>
       )}
 
-      <Button 
-        type="submit" 
-        className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90"
+      <Button
+        type="submit"
+        className="bg-accent-orange hover:bg-accent-orange/90 w-full"
         disabled={!league || isLoading}
       >
-        {league?.requires_approval ? 'Request to Join' : 'Join League'}
+        {league?.requires_approval ? "Request to Join" : "Join League"}
       </Button>
     </form>
   );

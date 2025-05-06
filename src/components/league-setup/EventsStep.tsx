@@ -1,19 +1,40 @@
-
-import React from 'react';
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Event, LeagueFormData } from './types';
-import { EventDateInput } from './EventDateInput';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LeagueFormData } from "./types";
+import { EventDateInput } from "./EventDateInput";
+import { Input } from "../ui/input";
 
 interface EventsStepProps {
   leagueData: LeagueFormData;
-  onEventChange: (e: React.ChangeEvent<HTMLInputElement>, eventIndex: number) => void;
+  onEventChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    eventIndex: number
+  ) => void;
   onRsvpDeadlineChange: (value: string, eventIndex: number) => void;
-  onDateChange: (date: Date | undefined, eventIndex: number, dateIndex: number) => void;
-  onTimeChange: (e: React.ChangeEvent<HTMLInputElement>, eventIndex: number, dateIndex: number) => void;
-  onAmPmChange: (value: string, field: 'startAmPm' | 'endAmPm', eventIndex: number, dateIndex: number) => void;
+  onDateChange: (
+    date: Date | undefined,
+    eventIndex: number,
+    dateIndex: number
+  ) => void;
+  onTimeChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    eventIndex: number,
+    dateIndex: number
+  ) => void;
+  onAmPmChange: (
+    value: string,
+    field: "startAmPm" | "endAmPm",
+    eventIndex: number,
+    dateIndex: number
+  ) => void;
   onAddEventDate: (eventIndex: number) => void;
   onRemoveEventDate: (eventIndex: number, dateIndex: number) => void;
   onAddEvent: () => void;
@@ -28,7 +49,7 @@ export function EventsStep({
   onAmPmChange,
   onAddEventDate,
   onRemoveEventDate,
-  onAddEvent
+  onAddEvent,
 }: EventsStepProps) {
   return (
     <div>
@@ -70,7 +91,9 @@ export function EventsStep({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor={`rosterSpots-${index}`}>Roster Spots per Team</Label>
+              <Label htmlFor={`rosterSpots-${index}`}>
+                Roster Spots per Team
+              </Label>
               <Input
                 type="number"
                 id={`rosterSpots-${index}`}
@@ -82,9 +105,14 @@ export function EventsStep({
             </div>
             <div className="grid gap-2">
               <Label>RSVP Deadline</Label>
-              <Select onValueChange={(value) => onRsvpDeadlineChange(value, index)}>
+              <Select
+                onValueChange={(value) => onRsvpDeadlineChange(value, index)}
+              >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select RSVP Deadline" defaultValue="24" />
+                  <SelectValue
+                    placeholder="Select RSVP Deadline"
+                    defaultValue="24"
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="24">24 Hours Before</SelectItem>
@@ -94,9 +122,11 @@ export function EventsStep({
                 </SelectContent>
               </Select>
             </div>
-            {event.rsvpDeadlineOption === 'custom' && (
+            {event.rsvpDeadlineOption === "custom" && (
               <div className="grid gap-2">
-                <Label htmlFor={`customRsvpHours-${index}`}>Custom RSVP Hours</Label>
+                <Label htmlFor={`customRsvpHours-${index}`}>
+                  Custom RSVP Hours
+                </Label>
                 <Input
                   type="number"
                   id={`customRsvpHours-${index}`}
@@ -115,17 +145,25 @@ export function EventsStep({
                 date={date}
                 onDateChange={(date) => onDateChange(date, index, dateIndex)}
                 onTimeChange={(e) => onTimeChange(e, index, dateIndex)}
-                onAmPmChange={(value, field) => onAmPmChange(value, field, index, dateIndex)}
+                onAmPmChange={(value, field) =>
+                  onAmPmChange(value, field, index, dateIndex)
+                }
                 onRemove={() => onRemoveEventDate(index, dateIndex)}
               />
             ))}
-            <Button onClick={() => onAddEventDate(index)} variant="secondary" size="sm">
+            <Button
+              onClick={() => onAddEventDate(index)}
+              variant="secondary"
+              size="sm"
+            >
               Add Date
             </Button>
           </div>
         </div>
       ))}
-      <Button onClick={onAddEvent} variant="secondary">Add Event</Button>
+      <Button onClick={onAddEvent} variant="secondary">
+        Add Event
+      </Button>
     </div>
   );
 }

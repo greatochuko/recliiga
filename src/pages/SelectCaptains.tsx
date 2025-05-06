@@ -1,72 +1,102 @@
-
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Crown, Star, Loader2 } from 'lucide-react';
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { selectEventCaptains } from '@/api/captains';
-import { fetchEventById } from '@/api/events';
-import { getAttendingPlayers } from '@/api/events';
-import { useAuth } from '@/contexts/AuthContext';
+import { Crown, Star, Loader2, ChevronLeftIcon } from "lucide-react";
 
-interface Player {
-  id: string;
-  name: string;
-  avatar: string;
-  position: string;
-  rating: number;
-  isCaptain: boolean;
-}
+import { useQuery } from "@tanstack/react-query";
+import { fetchEventById, selectCaptains } from "@/api/events";
+import { TeamType } from "@/types/events";
+import { UserType } from "@/contexts/AuthContext";
+import { format } from "date-fns";
 
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-1">
-      <span className="text-[#FF7A00] font-medium">{rating.toFixed(2)}</span>
-      <Star className="h-4 w-4 fill-[#FF7A00] text-[#FF7A00]" />
+      <span className="font-medium text-accent-orange">
+        {rating.toFixed(2)}
+      </span>
+      <Star className="h-4 w-4 fill-accent-orange text-accent-orange" />
     </div>
   );
 }
 
-function AttendingList({ 
-  players, 
-  selectableCaptains, 
-  onCaptainSelect 
-}: { 
-  players: Player[], 
-  selectableCaptains: boolean, 
-  onCaptainSelect: (playerId: string, checked: boolean) => void 
+function AttendingList({
+  players,
+  captainIds,
+  selectableCaptains,
+  onCaptainSelect,
+  teams,
+}: {
+  players: UserType[];
+  captainIds: string[];
+  selectableCaptains: boolean;
+  onCaptainSelect: (playerId: string, checked: boolean) => void;
+  teams: TeamType[];
 }) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {players.map((player) => (
-          <div key={player.id} className="flex items-center gap-2">
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={player.avatar} alt={player.name} />
-              <AvatarFallback>{player.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold truncate">{player.name}</span>
-                <StarRating rating={player.rating} />
-                {player.isCaptain && <Crown className="h-4 w-4 text-yellow-500" />}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {players.map((player) => {
+          const playerIsCaptain = captainIds.includes(player.id);
+          const playerCaptainIndex = captainIds.findIndex(
+            (capId) => capId === player.id,
+          );
+
+          return (
+            <label
+              htmlFor={player.id}
+              key={player.id}
+              className={`flex cursor-pointer items-center gap-3 rounded-md border p-2 aria-disabled:pointer-events-none ${playerIsCaptain ? "border-accent-orange" : "aria-disabled:bg-gray-50"} `}
+              aria-disabled={captainIds.length > 1 && !playerIsCaptain}
+            >
+              {selectableCaptains && (
+                <Checkbox
+                  checked={playerIsCaptain}
+                  onCheckedChange={(checked) =>
+                    onCaptainSelect(player.id, !!checked)
+                  }
+                  aria-label={`Select ${player.full_name} as captain`}
+                  id={player.id}
+                  className="bg-white"
+                />
+              )}
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={player.avatar_url}
+                  alt={player.full_name}
+                  className="object-cover"
+                />
+                <AvatarFallback>
+                  {player.full_name
+                    .split(" ")
+                    .map((n: string) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="truncate font-semibold">
+                    {player.full_name}
+                  </span>
+                  <StarRating rating={player.rating} />
+                  {playerIsCaptain && (
+                    <Crown
+                      className="h-4 w-4"
+                      style={{ color: teams[playerCaptainIndex].color }}
+                    />
+                  )}
+                </div>
+                <span className="truncate text-sm text-muted-foreground">
+                  {player.positions[0] || "Unassigned"}
+                </span>
               </div>
-              <span className="text-sm text-muted-foreground truncate">{player.position || 'Unassigned'}</span>
-            </div>
-            {selectableCaptains && (
-              <Checkbox
-                checked={player.isCaptain}
-                onCheckedChange={(checked) => onCaptainSelect(player.id, !!checked)}
-                aria-label={`Select ${player.name} as captain`}
-              />
-            )}
-          </div>
-        ))}
+            </label>
+          );
+        })}
       </div>
     </div>
   );
@@ -75,178 +105,204 @@ function AttendingList({
 export default function SelectCaptains() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectingCaptains, setSelectingCaptains] = useState(false);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [event, setEvent] = useState<any>(null);
+  const [players, setPlayers] = useState<UserType[]>([]);
+  const [captainIds, setCaptainIds] = useState<string[]>([]);
+
+  const {
+    data,
+    isLoading,
+    refetch: refetchEvent,
+  } = useQuery({
+    queryKey: [`event-${eventId}`],
+    queryFn: () => fetchEventById(eventId),
+  });
+
+  const event = data?.data;
 
   useEffect(() => {
-    const loadEventData = async () => {
-      if (!eventId) return;
-
-      setIsLoading(true);
-      try {
-        // Fetch event details
-        const eventData = await fetchEventById(eventId);
-        if (eventData) {
-          setEvent(eventData);
-        }
-
-        // Fetch attending players
-        const attendingPlayersData = await getAttendingPlayers(eventId);
-        setPlayers(attendingPlayersData);
-
-        setSelectingCaptains(true);
-      } catch (error) {
-        console.error("Error loading event data:", error);
-        toast.error("Failed to load event data");
-      } finally {
-        setIsLoading(false);
+    if (event) {
+      setPlayers(event.players);
+      if (event.teams[0].captain && event.teams[1].captain) {
+        setCaptainIds(event.teams.map((team) => team.captainId));
       }
-    };
-
-    loadEventData();
-  }, [eventId]);
+    }
+  }, [event]);
 
   const handleCaptainSelect = (playerId: string, isSelected: boolean) => {
-    const captainCount = players.filter(p => p.isCaptain).length;
-    
-    if (isSelected && captainCount >= 2) {
+    if (isSelected && captainIds.length >= 2) {
       toast.error("You can only select two captains");
       return;
     }
-    
-    setPlayers(players.map(player => 
-      player.id === playerId ? { ...player, isCaptain: isSelected } : player
-    ));
+    if (isSelected) {
+      setCaptainIds((curr) => [...curr, playerId]);
+    } else {
+      setCaptainIds((curr) => curr.filter((id) => id !== playerId));
+    }
+  };
+
+  const handleCancelEditing = () => {
+    setCaptainIds(event ? event.teams.map((team) => team.captainId) : []);
+    setSelectingCaptains(false);
   };
 
   const handleConfirmCaptains = async () => {
-    const selectedCaptains = players.filter(p => p.isCaptain);
-    
-    if (selectedCaptains.length !== 2) {
+    if (captainIds.length !== 2) {
       toast.error("Please select exactly two captains");
       return;
     }
 
     setIsSubmitting(true);
-    try {
-      const success = await selectEventCaptains(
-        eventId!,
-        selectedCaptains[0].id, 
-        selectedCaptains[1].id
-      );
 
-      if (success) {
-        toast.success("Captains selected successfully");
-        navigate(`/events/${eventId}`);
-      } else {
-        toast.error("Failed to select captains");
-      }
-    } catch (error) {
-      console.error("Error selecting captains:", error);
-      toast.error("An error occurred while selecting captains");
-    } finally {
-      setIsSubmitting(false);
+    const { error } = await selectCaptains(eventId, captainIds);
+
+    if (error === null) {
+      toast.success("Captains selected successfully", {
+        style: { color: "#16a34a" },
+      });
+      setSelectingCaptains(false);
+      refetchEvent();
+    } else {
+      toast.error("An error occured selecting captains", {
+        style: { color: "#ef4444" },
+      });
     }
+
+    setIsSubmitting(false);
   };
 
-  const renderTeamInfo = (team: any, teamNumber: number) => (
+  const renderTeamInfo = (team: TeamType, teamNumber: number) => (
     <div className="flex flex-col items-center space-y-2">
-      <Avatar className="w-16 h-16" style={{ backgroundColor: team.color }}>
-        <AvatarImage src={team.avatar} alt={`Team ${teamNumber}`} />
+      <Avatar
+        className="h-16 w-16 border-2"
+        style={{ borderColor: team.color }}
+      >
+        <AvatarImage
+          src={team.logo}
+          alt={`Team ${teamNumber}`}
+          className="object-cover"
+        />
         <AvatarFallback>{`T${teamNumber}`}</AvatarFallback>
       </Avatar>
-      <span className="text-sm font-semibold">{team.name || `Team ${teamNumber}`}</span>
+      <span className="text-sm font-semibold">
+        {team.name || `Team ${teamNumber}`}
+      </span>
     </div>
   );
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 text-[#FF7A00] animate-spin" />
+      <div className="flex min-h-dvh w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-accent-orange" />
       </div>
     );
   }
 
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(-1);
+  };
+
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <main className="flex-1 bg-background relative">
-          <div className="absolute top-4 left-4 z-50">
-            <SidebarTrigger className="bg-white shadow-md" />
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="fixed top-4 right-4 z-10 text-[#FF7A00] hover:text-[#FF7A00] hover:bg-transparent p-0 hover:underline"
-            onClick={() => navigate('/events')}
-          >
-            Back to Events
-          </Button>
-          <div className="container mx-auto px-4 py-8 pt-16">
-            <Card className="max-w-3xl mx-auto">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-center">Upcoming Match</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-8">
-                  {event && (
-                    <div className="flex items-center justify-center gap-8 mb-8">
-                      {renderTeamInfo(event.team1, 1)}
-                      <div className="flex flex-col items-center justify-center">
-                        <div className="flex flex-col items-center mb-4 text-center">
-                          <span className="text-xs text-gray-500">{event.date}</span>
-                          <span className="text-xs text-gray-500">{event.location}</span>
-                          <span className="text-xs text-gray-500">{event.time}</span>
-                          <span className="text-xs font-bold text-[#FF7A00]">{event.league}</span>
-                        </div>
-                        <span className="text-2xl font-bold">vs</span>
-                      </div>
-                      {renderTeamInfo(event.team2, 2)}
-                    </div>
-                  )}
-
-                  <div className="flex flex-col items-center space-y-4">
-                    {!selectingCaptains ? (
-                      <Button onClick={() => setSelectingCaptains(true)}>
-                        Select Captains
-                      </Button>
-                    ) : (
-                      <Button 
-                        onClick={handleConfirmCaptains} 
-                        disabled={isSubmitting}
-                        className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Confirming...
-                          </>
-                        ) : (
-                          "Confirm Captains"
-                        )}
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="pt-8 border-t">
-                    <h3 className="text-lg font-semibold mb-4">Attending Players ({players.length})</h3>
-                    <AttendingList 
-                      players={players} 
-                      selectableCaptains={selectingCaptains}
-                      onCaptainSelect={handleCaptainSelect}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+    <main className="relative flex flex-1 flex-col gap-4 bg-background sm:gap-6">
+      <div className="flex items-center justify-between pl-8">
+        <h1 className="text-2xl font-bold">Upcoming Match</h1>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-accent-orange"
+          onClick={handleBackClick}
+        >
+          <ChevronLeftIcon className="mr-1 h-4 w-4" />
+          Previous
+        </Button>
       </div>
-    </SidebarProvider>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-center text-2xl font-bold">
+            {event.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            {event && (
+              <div className="mb-8 flex items-center justify-center gap-8">
+                {renderTeamInfo(event.teams[0], 1)}
+                <div className="flex flex-col items-center justify-center">
+                  <div className="mb-4 flex flex-col items-center text-center">
+                    <span className="text-xs text-gray-500">
+                      {new Date(event.startTime).toLocaleDateString()}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {event.location}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {format(event.startTime, "h:mm a")}
+                    </span>
+                    <span className="text-xs font-bold text-accent-orange">
+                      {event.league.name}
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold">vs</span>
+                </div>
+                {renderTeamInfo(event.teams[1], 2)}
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-4">
+              {!selectingCaptains ? (
+                <Button
+                  disabled={event.teams.some((team) => team.players.length > 0)}
+                  onClick={() => setSelectingCaptains(true)}
+                >
+                  {event.teams.every((team) => team.captain)
+                    ? "Change"
+                    : "Select"}{" "}
+                  Captains
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleConfirmCaptains}
+                    disabled={isSubmitting}
+                    className="bg-accent-orange text-white hover:bg-accent-orange/90"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Confirming...
+                      </>
+                    ) : (
+                      "Confirm Captains"
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleCancelEditing}
+                    disabled={isSubmitting}
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
+            </div>
+
+            <div className="border-t pt-8">
+              <h3 className="mb-4 text-lg font-semibold">
+                Attending Players ({players.length})
+              </h3>
+              <AttendingList
+                players={players}
+                captainIds={captainIds}
+                selectableCaptains={selectingCaptains}
+                onCaptainSelect={handleCaptainSelect}
+                teams={event?.teams || []}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </main>
   );
 }

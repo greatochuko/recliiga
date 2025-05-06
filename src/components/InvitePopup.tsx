@@ -1,106 +1,154 @@
+import { useState } from "react";
+import { Copy, Send, AlertCircle, CheckCircle, Info } from "lucide-react";
+import ModalContainer from "./ModalContainer";
+import { fetchLeaguesByUser } from "@/api/league";
+import { useQuery } from "@tanstack/react-query";
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Copy, Send, AlertCircle, CheckCircle, Info } from 'lucide-react'
-import { Label } from "@/components/ui/label"
+export default function InvitePopup({
+  closeModal,
+  open,
+}: {
+  open: boolean;
+  closeModal: () => void;
+}) {
+  const { data: leaguesData, isLoading } = useQuery({
+    queryKey: ["teammates"],
+    queryFn: fetchLeaguesByUser,
+  });
 
-export default function InvitePopup() {
-  const [inviteLink, setInviteLink] = useState("https://recliiga.com/invite/abc123")
-  const [email, setEmail] = useState("")
-  const [invitedEmails, setInvitedEmails] = useState<string[]>([])
-  const [copied, setCopied] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isOpen, setIsOpen] = useState(true)
+  const leagues = leaguesData?.leagues || [];
+
+  const [email, setEmail] = useState("");
+  const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false);
+  const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>();
+  const [error, setError] = useState<string | null>(null);
+
+  const inviteLink = `${window.location.origin}/invite/${selectedLeagueCode || ""}`;
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(inviteLink)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleSendInvite = () => {
     if (email && !invitedEmails.includes(email)) {
-      setInvitedEmails([...invitedEmails, email])
-      setEmail("")
-      setError(null)
+      setInvitedEmails([...invitedEmails, email]);
+      setEmail("");
+      setError(null);
       // In a real application, you would send an API request here to invite the user
     } else if (invitedEmails.includes(email)) {
-      setError("This email has already been invited.")
+      setError("This email has already been invited.");
     } else {
-      setError("Please enter a valid email address.")
+      setError("Please enter a valid email address.");
     }
-  }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="space-y-4">
+    <ModalContainer open={open} closeModal={closeModal}>
+      <div className="mx-auto w-[90%] max-w-md rounded-lg bg-white p-6 shadow-md sm:max-w-md">
+        <div className="space-y-4">
           <div className="flex justify-center">
-            <span className="text-4xl font-bold text-[#FF7A00]">REC LiiGA</span>
+            <span className="text-4xl font-bold text-accent-orange">
+              REC LiiGA
+            </span>
           </div>
-          <DialogTitle className="text-2xl font-semibold text-center text-gray-800">Share Invite Link</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 mt-4">
-          <Alert className="bg-[#FF7A00]/10 border-[#FF7A00] text-[#FF7A00]">
-            <Info className="h-4 w-4 mr-2" />
-            <AlertDescription>
-              This invite link will expire in 7 days. Share it with your team members soon!
-            </AlertDescription>
-          </Alert>
+          <h2 className="text-center text-2xl font-semibold text-gray-800">
+            Share Invite Link
+          </h2>
+        </div>
+
+        <div className="mt-4 space-y-4">
+          <div className="flex items-start gap-2 rounded-md border border-accent-orange bg-accent-orange/10 p-3 text-sm text-accent-orange">
+            <Info className="mt-0.5 h-4 w-4" />
+            <p>
+              This invite link will expire in 7 days. Share it with your team
+              members soon!
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="league" className="text-sm text-gray-700">
+              Select League
+            </label>
+            <select
+              name="league"
+              id="league"
+              className="rounded-md border p-2 text-sm"
+              value={selectedLeagueCode}
+              disabled={isLoading}
+              onChange={(e) => setSelectedLeagueCode(e.target.value)}
+            >
+              <option hidden>Select League</option>
+              {leagues.map((league) => (
+                <option key={league.id} value={league.leagueCode}>
+                  {league.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="space-y-2">
-            <Label htmlFor="invite-link" className="text-sm text-gray-700">Shareable Invite Link</Label>
+            <label htmlFor="invite-link" className="text-sm text-gray-700">
+              Shareable Invite Link
+            </label>
             <div className="flex space-x-2">
-              <Input
+              <input
                 id="invite-link"
                 value={inviteLink}
                 readOnly
-                className="flex-grow"
+                disabled={!selectedLeagueCode}
+                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange disabled:bg-gray-100 disabled:opacity-70"
               />
-              <Button onClick={handleCopyLink} className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white">
-                <Copy className="h-4 w-4 mr-2" />
+              <button
+                onClick={handleCopyLink}
+                disabled={!selectedLeagueCode}
+                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90 disabled:pointer-events-none disabled:opacity-50"
+              >
+                <Copy className="mr-2 h-4 w-4" />
                 {copied ? "Copied!" : "Copy"}
-              </Button>
+              </button>
             </div>
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="email-invite" className="text-sm text-gray-700">Invite by Email</Label>
+            <label htmlFor="email-invite" className="text-sm text-gray-700">
+              Invite by Email
+            </label>
             <div className="flex space-x-2">
-              <Input
+              <input
                 id="email-invite"
                 type="email"
                 placeholder="Enter email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-grow"
+                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange"
               />
-              <Button onClick={handleSendInvite} className="bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white">
-                <Send className="h-4 w-4 mr-2" />
+              <button
+                onClick={handleSendInvite}
+                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+              >
+                <Send className="mr-2 h-4 w-4" />
                 Send
-              </Button>
+              </button>
             </div>
           </div>
-          
+
           {error && (
-            <Alert variant="destructive" className="border-0 bg-transparent p-0">
-              <div className="flex items-center">
-                <AlertCircle className="h-4 w-4 text-red-600 mr-2" />
-                <AlertDescription className="text-red-600">{error}</AlertDescription>
-              </div>
-            </Alert>
+            <div className="flex items-center text-sm text-red-600">
+              <AlertCircle className="mr-2 h-4 w-4" />
+              <p>{error}</p>
+            </div>
           )}
-          
+
           {invitedEmails.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-sm text-gray-700">Invited Members</Label>
-              <ul className="text-sm space-y-1 text-[#707B81]">
+              <label className="text-sm text-gray-700">Invited Members</label>
+              <ul className="space-y-1 text-sm text-[#707B81]">
                 {invitedEmails.map((email, index) => (
                   <li key={index} className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
                     {email}
                   </li>
                 ))}
@@ -108,7 +156,7 @@ export default function InvitePopup() {
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
-  )
+      </div>
+    </ModalContainer>
+  );
 }
