@@ -205,34 +205,38 @@ export default function EventDetails() {
                             </span>
                           </div>
                         </div>
-                        {team.players.map((player) => (
-                          <div
-                            key={player.id}
-                            className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
-                          >
-                            <Avatar className="h-10 w-10">
-                              <AvatarImage
-                                src={player.avatar_url}
-                                alt={player.full_name}
-                                className="object-cover"
-                              />
-                              <AvatarFallback>
-                                {player.full_name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate font-semibold">
-                                {player.full_name}
-                              </p>
-                              <span className="truncate text-sm text-muted-foreground">
-                                {player.positions[0] || "Unassigned"}
-                              </span>
+                        {[...team.players]
+                          .sort((a, b) =>
+                            a.full_name.localeCompare(b.full_name),
+                          )
+                          .map((player) => (
+                            <div
+                              key={player.id}
+                              className="flex cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-gray-50"
+                            >
+                              <Avatar className="h-10 w-10">
+                                <AvatarImage
+                                  src={player.avatar_url}
+                                  alt={player.full_name}
+                                  className="object-cover"
+                                />
+                                <AvatarFallback>
+                                  {player.full_name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate font-semibold">
+                                  {player.full_name}
+                                </p>
+                                <span className="truncate text-sm text-muted-foreground">
+                                  {player.positions[0] || "Unassigned"}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     ))}
                   </div>

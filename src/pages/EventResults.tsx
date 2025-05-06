@@ -26,7 +26,7 @@ function TeamRoster({
       </div>
       <div className="space-y-4">
         <div className="flex items-center gap-4 rounded-lg bg-gray-100 p-2 transition-colors hover:bg-gray-200">
-          <Avatar className="h-12 w-12" style={{ backgroundColor: team.color }}>
+          <Avatar className="h-12 w-12">
             <AvatarImage
               src={team.captain.avatar_url}
               alt={team.captain.full_name}
@@ -76,44 +76,46 @@ function TeamRoster({
               : "Absent"}
           </Badge>
         </div>
-        {team.players.map((player) => (
-          <div
-            key={player.id}
-            className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
-          >
-            <Avatar className="h-12 w-12">
-              <AvatarImage src={player.avatar_url} alt={player.full_name} />
-              <AvatarFallback>
-                {player.full_name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <Link
-                to={`/profile/${player.id}`}
-                className="font-semibold hover:text-accent-orange hover:underline"
-              >
-                {player.full_name}
-              </Link>
-              <p className="text-sm text-muted-foreground">
-                {player.positions[0]}
-              </p>
-            </div>
-            <Badge
-              variant={
-                attendance.some((pl) => pl.id === player.id)
-                  ? "default"
-                  : "secondary"
-              }
+        {[...team.players]
+          .sort((a, b) => a.full_name.localeCompare(b.full_name))
+          .map((player) => (
+            <div
+              key={player.id}
+              className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
             >
-              {attendance.some((pl) => pl.id === player.id)
-                ? "Present"
-                : "Absent"}
-            </Badge>
-          </div>
-        ))}
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={player.avatar_url} alt={player.full_name} />
+                <AvatarFallback>
+                  {player.full_name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <Link
+                  to={`/profile/${player.id}`}
+                  className="font-semibold hover:text-accent-orange hover:underline"
+                >
+                  {player.full_name}
+                </Link>
+                <p className="text-sm text-muted-foreground">
+                  {player.positions[0]}
+                </p>
+              </div>
+              <Badge
+                variant={
+                  attendance.some((pl) => pl.id === player.id)
+                    ? "default"
+                    : "secondary"
+                }
+              >
+                {attendance.some((pl) => pl.id === player.id)
+                  ? "Present"
+                  : "Absent"}
+              </Badge>
+            </div>
+          ))}
       </div>
     </div>
   );
@@ -274,16 +276,18 @@ export default function EventResults() {
               </p>
             </div>
 
-            <h2 className="mb-4 text-2xl font-bold">Attendance</h2>
-            <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
-              <TeamRoster
-                team={event.teams[0]}
-                attendance={event.result.attendingPlayers}
-              />
-              <TeamRoster
-                team={event.teams[1]}
-                attendance={event.result.attendingPlayers}
-              />
+            <div className="">
+              <h2 className="mb-4 text-2xl font-bold">Attendance</h2>
+              <div className="grid gap-8 border-t pt-4 md:grid-cols-2">
+                <TeamRoster
+                  team={event.teams[0]}
+                  attendance={event.result.attendingPlayers}
+                />
+                <TeamRoster
+                  team={event.teams[1]}
+                  attendance={event.result.attendingPlayers}
+                />
+              </div>
             </div>
           </div>
         </CardContent>
