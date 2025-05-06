@@ -1,11 +1,10 @@
-
 export const StarRating = ({ rating }: { rating: number }) => {
   return (
     <div className="flex">
       {[1, 2, 3].map((star) => (
         <svg
           key={star}
-          className={`h-6 w-6 ${star <= rating ? "text-[#FF7A00]" : "text-gray-300"}`}
+          className={`h-6 w-6 ${star <= rating ? "text-accent-orange" : "text-gray-300"}`}
           fill="currentColor"
           viewBox="0 0 24 24"
         >

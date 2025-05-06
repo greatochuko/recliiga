@@ -1,31 +1,32 @@
-
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { League } from "@/types/dashboard";
+import { LeagueType } from "@/types/league";
 
 interface LeagueSelectorProps {
-  leagues: League[];
+  leagues: LeagueType[];
+  selectedLeague: LeagueType;
   onLeagueChange: (leagueId: string) => void;
 }
 
-export function LeagueSelector({ leagues, onLeagueChange }: LeagueSelectorProps) {
+export function LeagueSelector({
+  leagues,
+  onLeagueChange,
+  selectedLeague,
+}: LeagueSelectorProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Select League</h2>
-      <Select
-        defaultValue={leagues[0].id}
-        onValueChange={onLeagueChange}
+      <select
+        name="league"
+        id="league"
+        value={selectedLeague?.id}
+        onChange={(e) => onLeagueChange(e.target.value)}
+        className="w-full rounded-md border p-2 text-sm"
       >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select League" />
-        </SelectTrigger>
-        <SelectContent>
-          {leagues.map((league) => (
-            <SelectItem key={league.id} value={league.id}>
-              {league.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        <option hidden>Select League</option>
+        {leagues.map((league) => (
+          <option key={league.id} value={league.id}>
+            {league.name}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

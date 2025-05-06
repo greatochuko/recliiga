@@ -1,23 +1,38 @@
-
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LeaguesData } from "./types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { LeagueType } from "@/types/league";
+import React from "react";
 
 type LeagueSelectorProps = {
-  leaguesData: LeaguesData;
-  selectedLeague: string;
-  setSelectedLeague: (value: string) => void;
+  leagues: LeagueType[];
+  selectedLeagueId: string;
+  setSelectedLeagueId: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const LeagueSelector = ({ leaguesData, selectedLeague, setSelectedLeague }: LeagueSelectorProps) => {
+export const LeagueSelector = ({
+  leagues,
+  selectedLeagueId,
+  setSelectedLeagueId,
+}: LeagueSelectorProps) => {
   return (
-    <div className="flex justify-end mb-4">
-      <Select onValueChange={setSelectedLeague} defaultValue={selectedLeague}>
+    <div className="flex justify-end">
+      <Select
+        onValueChange={setSelectedLeagueId}
+        defaultValue={selectedLeagueId}
+      >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select a league" />
         </SelectTrigger>
         <SelectContent>
-          {Object.entries(leaguesData).map(([key, league]) => (
-            <SelectItem key={key} value={key}>{league.name}</SelectItem>
+          {leagues.map((league) => (
+            <SelectItem key={league.id} value={league.id}>
+              {league.name}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>

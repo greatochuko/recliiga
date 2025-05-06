@@ -1,61 +1,82 @@
-import { Star } from 'lucide-react';
+import { useState } from "react";
+import { Star } from "lucide-react";
 
 interface StarRatingProps {
   rating: number;
   onRatingChange?: (rating: number) => void;
   displayValue?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
-export function StarRating({ 
-  rating, 
-  onRatingChange, 
+export function StarRating({
+  rating,
+  onRatingChange,
   displayValue = false,
-  size = 'md' 
+  size = "md",
 }: StarRatingProps) {
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+
   const sizeClass = {
-    'sm': 'w-4 h-4',
-    'md': 'w-12 h-12',
-    'lg': 'w-16 h-16'
+    sm: "w-4 h-4",
+    md: "w-12 h-12",
+    lg: "w-16 h-16",
   };
 
-  // Only render the clickable version when onRatingChange is provided
+  const activeRating = hoverRating ?? rating;
+
   if (onRatingChange) {
     return (
-      <div className="flex justify-center space-x-4">
-        {[1, 2, 3].map((star) => (
-          <div
-            key={star}
-            className={`relative ${sizeClass[size]} cursor-pointer`}
-            onClick={() => onRatingChange(star)}
-          >
-            <Star className={`${sizeClass[size]} text-gray-300 absolute`} />
+      <div className="flex justify-center">
+        {[1, 2, 3].map((star) => {
+          const fillPercentage =
+            activeRating >= star ? 100 : activeRating >= star - 0.5 ? 50 : 0;
+
+          const isHoveredStar =
+            hoverRating !== null &&
+            (hoverRating === star || hoverRating === star - 0.5);
+
+          return (
             <div
-              className="absolute inset-0 overflow-hidden"
-              style={{
-                width:
-                  rating >= star
-                    ? '100%'
-                    : rating > star - 1
-                    ? `${((rating % 1) * 100)}%`
-                    : '0%',
+              key={star}
+              className={`relative ${sizeClass[size]} cursor-pointer`}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const newHoverRating = x < rect.width / 2 ? star - 0.5 : star;
+                setHoverRating(newHoverRating);
               }}
+              onMouseLeave={() => setHoverRating(null)}
+              onClick={() => onRatingChange(hoverRating ?? star)}
             >
-              <Star className={`${sizeClass[size]} text-[#FF7A00]`} fill="#FF7A00" />
+              <Star className={`${sizeClass[size]} absolute text-gray-300`} />
+              <div
+                className="absolute inset-0 overflow-hidden"
+                style={{
+                  width: `${fillPercentage}%`,
+                }}
+              >
+                <Star
+                  className={`${sizeClass[size]} ${
+                    isHoveredStar ? "text-[#FFA94D]" : "text-accent-orange"
+                  }`}
+                  fill={isHoveredStar ? "#FFA94D" : "#FF7A00"}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   }
 
-  // Otherwise render the display-only version
   return (
     <div className="flex items-center gap-1">
       {displayValue && (
-        <span className="text-[#FF7A00] font-medium">{rating.toFixed(2)}</span>
+        <span className="font-medium text-accent-orange">
+          {rating.toFixed(2)}
+        </span>
       )}
-      <Star className="h-4 w-4 fill-[#FF7A00] text-[#FF7A00]" />
+      <Star className="h-4 w-4 fill-accent-orange text-accent-orange" />
     </div>
   );
 }

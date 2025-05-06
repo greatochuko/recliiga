@@ -1,49 +1,34 @@
-
-import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Event } from '@/types/events';
+import { EventType } from "@/types/events";
+import React from "react";
 
 interface TeamsDisplayProps {
-  event: Event;
-  isRsvpOpen: boolean;
+  event: EventType;
 }
 
-export const TeamsDisplay: React.FC<TeamsDisplayProps> = ({ event, isRsvpOpen }) => {
-  const getTeamName = (team: { name: string; }, index: number) => {
-    if (isRsvpOpen) {
-      return `Team ${index + 1}`;
-    }
-    return team.name;
-  };
-
-  const getTeamAvatarFallback = (team: { name: string; }, index: number) => {
-    if (isRsvpOpen) {
-      return `T${index + 1}`;
-    }
-    return team.name.split(' ').map(n => n[0]).join('');
-  };
-
+export default function TeamsDisplay({ event }: TeamsDisplayProps) {
   return (
-    <div className="grid grid-cols-3 items-center justify-items-center mb-4">
-      <div className="flex flex-col items-center">
-        <Avatar className="w-16 h-16" style={{
-          backgroundColor: event.team1.color
-        }}>
-          <AvatarImage src={event.team1.avatar} alt={getTeamName(event.team1, 0)} />
-          <AvatarFallback>{getTeamAvatarFallback(event.team1, 0)}</AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-semibold mt-2">{getTeamName(event.team1, 0)}</span>
-      </div>
-      <span className="text-lg font-semibold">vs</span>
-      <div className="flex flex-col items-center">
-        <Avatar className="w-16 h-16" style={{
-          backgroundColor: event.team2.color
-        }}>
-          <AvatarImage src={event.team2.avatar} alt={getTeamName(event.team2, 1)} />
-          <AvatarFallback>{getTeamAvatarFallback(event.team2, 1)}</AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-semibold mt-2">{getTeamName(event.team2, 1)}</span>
-      </div>
+    <div className="mb-4 grid grid-cols-3 items-center justify-items-center">
+      {event.teams.map((team) => (
+        <React.Fragment key={team.id}>
+          <div className="flex flex-col items-center">
+            <Avatar
+              className="h-16 w-16 border-2"
+              style={{ borderColor: team.color }}
+            >
+              <AvatarImage src={team.logo} alt={team.name} />
+              <AvatarFallback>
+                {team.name
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((n) => n[0])}
+              </AvatarFallback>
+            </Avatar>
+            <span className="mt-2 text-sm font-semibold">{team.name}</span>
+          </div>
+          <span className="text-lg font-semibold last:hidden">vs</span>
+        </React.Fragment>
+      ))}
     </div>
   );
-};
+}

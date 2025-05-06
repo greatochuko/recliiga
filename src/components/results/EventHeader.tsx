@@ -1,25 +1,33 @@
-
-import { Calendar, MapPin } from 'lucide-react'
-import { Event } from './types'
+import { EventType } from "@/types/events";
+import { format } from "date-fns";
+import { Calendar, MapPin } from "lucide-react";
 
 interface EventHeaderProps {
-  event: Event
+  event: EventType;
+  type: "small" | "large";
 }
 
-export function EventHeader({ event }: EventHeaderProps) {
+export function EventHeader({ event, type }: EventHeaderProps) {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="flex items-center mb-1">
-        <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-        <span className="text-xs text-gray-500 mr-2">{event.date}</span>
-        <span className="text-xs text-gray-500">{event.time}</span>
+    <div
+      className={`flex flex-col items-center justify-center gap-2 ${type === "small" ? "min-[900px]:hidden" : "hidden min-[900px]:flex"}`}
+    >
+      <div className="flex items-center gap-2">
+        <Calendar className="h-4 w-4 text-gray-500" />
+        <span className="text-xs text-gray-500">
+          {format(new Date(event.startTime), "MMM d, yyyy")}
+        </span>
+        <span className="text-xs text-gray-500">
+          {format(new Date(event.startTime), "h:mm aa")}
+        </span>
       </div>
-      <div className="flex items-center mb-1">
-        <MapPin className="w-4 h-4 text-gray-500 mr-2" />
+      <div className="flex items-center">
+        <MapPin className="mr-2 h-4 w-4 text-gray-500" />
         <span className="text-xs text-gray-500">{event.location}</span>
       </div>
-      <span className="text-xs font-bold text-[#FF7A00] mb-2">{event.league}</span>
-      <span className="text-2xl font-bold">vs</span>
+      <span className="text-xs font-bold text-accent-orange">
+        {event.league.name}
+      </span>
     </div>
-  )
+  );
 }

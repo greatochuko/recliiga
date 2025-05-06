@@ -1,527 +1,706 @@
+"use client";
 
-'use client'
-
-import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarIcon, CheckCircle, AlertCircle } from 'lucide-react'
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Switch } from "@/components/ui/switch"
-import { cn } from "@/lib/utils"
-import { format, isBefore, startOfDay, addDays, addWeeks, addMonths, isAfter } from "date-fns"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn, getDateIncrement } from "@/lib/utils";
+import { format, isBefore, startOfDay } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { fetchLeaguesByCreator } from "@/api/league";
+import { EventDataType, createEvent } from "@/api/events";
+import { EventTimeDataType } from "@/types/events";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import PageHeader from "@/components/PageHeader";
 
-interface EventDate {
-  date: Date | undefined;
-  startHour: string;
-  startMinute: string;
-  startAmPm: string;
-  endHour: string;
-  endMinute: string;
-  endAmPm: string;
-}
+const initialStartTime = new Date();
+initialStartTime.setDate(initialStartTime.getDate() + 1);
+initialStartTime.setHours(12, 0, 0, 0);
 
-interface Event {
-  title: string;
-  location: string;
-  numTeams: string;
-  rosterSpots: string;
-  isRepeatingEvent: boolean;
-  repeatFrequency: string;
-  repeatStartDate: Date | undefined;
-  repeatEndDate: Date | undefined;
-  rsvpDeadlineOption: string;
-  customRsvpHours: string;
-  eventDates: EventDate[];
-}
+const initialEndTime = new Date();
+initialEndTime.setDate(initialEndTime.getDate() + 1);
+initialEndTime.setHours(14, 0, 0, 0);
+
+const initialEventData: EventDataType = {
+  leagueId: "",
+  title: "",
+  location: "",
+  draftType: "alternating",
+  numTeams: 2,
+  rosterSpots: 1,
+  rsvpDeadline: 24,
+  startTime: initialStartTime,
+  endTime: new Date(
+    new Date(initialStartTime).setHours(initialStartTime.getHours() + 2),
+  ),
+  eventDates: [],
+};
+
+const isDateInPast = (date: Date) => {
+  return isBefore(date, startOfDay(new Date()));
+};
 
 export default function AddEvent() {
-  const [showAddedAlert, setShowAddedAlert] = useState(false)
-  const topRef = useRef<HTMLDivElement>(null)
-  const [currentEvent, setCurrentEvent] = useState<Event>({
-    title: '',
-    location: '',
-    numTeams: '',
-    rosterSpots: '',
-    isRepeatingEvent: false,
-    repeatFrequency: '',
-    repeatStartDate: undefined,
-    repeatEndDate: undefined,
-    rsvpDeadlineOption: '2h',
-    customRsvpHours: '24',
-    eventDates: [{
-      date: undefined,
-      startHour: '12',
-      startMinute: '00',
-      startAmPm: 'AM',
-      endHour: '12',
-      endMinute: '00',
-      endAmPm: 'AM',
-    }]
-  })
+  const [eventData, setEventData] = useState<EventDataType>(initialEventData);
+  const [submitting, setSubmitting] = useState(false);
+  const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("24h");
+  const [repeatFrequency, setRepeatFrequency] = useState<
+    "daily" | "weekly" | "bi-weekly" | "monthly" | undefined
+  >();
+  const [repeatEndDate, setRepeatEndDate] = useState<Date | undefined>();
+  const [isRepeatingEvent, setIsRepeatingEvent] = useState(false);
 
-  const [totalSpots, setTotalSpots] = useState(0)
-  const [events, setEvents] = useState<Event[]>([])
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (currentEvent.isRepeatingEvent && currentEvent.repeatStartDate && currentEvent.repeatEndDate && currentEvent.repeatFrequency) {
-      const dates: Date[] = []
-      let currentDate = new Date(currentEvent.repeatStartDate)
+  const { data, isLoading: isLoadingLeagues } = useQuery({
+    queryKey: ["leaguesByCreator"],
+    queryFn: fetchLeaguesByCreator,
+  });
 
-      while (currentDate <= currentEvent.repeatEndDate) {
-        dates.push(new Date(currentDate))
+  const leagues = data?.leagues || [];
 
-        switch (currentEvent.repeatFrequency) {
-          case 'every-day':
-            currentDate = addDays(currentDate, 1)
-            break
-          case 'every-week':
-            currentDate = addWeeks(currentDate, 1)
-            break
-          case 'every-2-weeks':
-            currentDate = addWeeks(currentDate, 2)
-            break
-          case 'every-month':
-            currentDate = addMonths(currentDate, 1)
-            break
+  const eventDates = useMemo(() => {
+    if (!eventData.startTime || !repeatEndDate || !repeatFrequency) return [];
+
+    const dates: { startTime: Date; endTime: Date }[] = [];
+
+    // Convert start and end times to proper Date objects
+    const baseStartTime = new Date(eventData.startTime);
+    const baseEndTime = new Date(eventData.endTime);
+
+    // Set the repeat end time to the Date object
+    const end = new Date(repeatEndDate);
+    end.setHours(23, 59, 59, 999);
+
+    const currentStartTime = new Date(baseStartTime);
+    const currentEndTime = new Date(baseEndTime);
+
+    while (currentStartTime <= end) {
+      dates.push({
+        startTime: new Date(currentStartTime),
+        endTime: new Date(currentEndTime),
+      });
+
+      // Increment the date based on repeat frequency
+      const increment = getDateIncrement(repeatFrequency);
+      currentStartTime.setDate(currentStartTime.getDate() + increment);
+      currentEndTime.setDate(currentEndTime.getDate() + increment);
+    }
+
+    return dates;
+  }, [eventData.startTime, eventData.endTime, repeatEndDate, repeatFrequency]);
+
+  // Utility functions
+
+  const handlePositiveNumberInput = (
+    value: string,
+    field: "numTeams" | "rosterSpots" | "customRsvpHours",
+  ) => {
+    const numValue = parseInt(value, 10);
+    if (value === "") {
+      setEventData((prev) => ({ ...prev, [field]: 0 }));
+      return;
+    }
+
+    if (!isNaN(numValue) && numValue >= 1) {
+      setEventData((prev) => ({ ...prev, [field]: numValue }));
+    }
+  };
+
+  function updateEventStartTime<T extends keyof EventTimeDataType>(
+    field: T,
+    value: EventTimeDataType[T],
+  ) {
+    setEventData((prev) => {
+      const updatedStartTime = new Date(prev.startTime);
+
+      switch (field) {
+        case "date": {
+          // Preserve the original time
+          const dateValue = value as Date;
+          updatedStartTime.setFullYear(dateValue.getFullYear());
+          updatedStartTime.setMonth(dateValue.getMonth());
+          updatedStartTime.setDate(dateValue.getDate());
+          break;
         }
+
+        case "hour": {
+          const hour = value as number;
+          const isPM = updatedStartTime.getHours() >= 12;
+          updatedStartTime.setHours(
+            isPM ? (hour % 12) + 12 : hour % 12, // convert to 24-hour format
+          );
+          break;
+        }
+
+        case "minute":
+          updatedStartTime.setMinutes(value as number);
+          break;
+
+        case "meridiem": {
+          const meridiem = value as "AM" | "PM";
+          const currentHour = updatedStartTime.getHours();
+          const isCurrentlyPM = currentHour >= 12;
+          if (meridiem === "AM" && isCurrentlyPM) {
+            updatedStartTime.setHours(currentHour - 12);
+          } else if (meridiem === "PM" && !isCurrentlyPM) {
+            updatedStartTime.setHours(currentHour + 12);
+          }
+          break;
+        }
+
+        default:
+          break;
       }
 
-      setCurrentEvent(prev => ({
+      return { ...prev, startTime: updatedStartTime };
+    });
+  }
+
+  function updateEventEndTime<T extends keyof EventTimeDataType>(
+    field: T,
+    value: EventTimeDataType[T],
+  ) {
+    setEventData((prev) => {
+      const updatedEndTime = new Date(prev.endTime);
+
+      switch (field) {
+        case "date": {
+          const dateValue = value as Date;
+          updatedEndTime.setFullYear(dateValue.getFullYear());
+          updatedEndTime.setMonth(dateValue.getMonth());
+          updatedEndTime.setDate(dateValue.getDate());
+          break;
+        }
+
+        case "hour": {
+          const hour = value as number;
+          const isPM = updatedEndTime.getHours() >= 12;
+          updatedEndTime.setHours(
+            isPM ? (hour % 12) + 12 : hour % 12, // convert to 24-hour format
+          );
+          break;
+        }
+
+        case "minute":
+          updatedEndTime.setMinutes(value as number);
+          break;
+
+        case "meridiem": {
+          const meridiem = value as "AM" | "PM";
+          const currentHour = updatedEndTime.getHours();
+          const isCurrentlyPM = currentHour >= 12;
+          if (meridiem === "AM" && isCurrentlyPM) {
+            updatedEndTime.setHours(currentHour - 12);
+          } else if (meridiem === "PM" && !isCurrentlyPM) {
+            updatedEndTime.setHours(currentHour + 12);
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+
+      return { ...prev, endTime: updatedEndTime };
+    });
+  }
+
+  function handleChangeRsvpDeadline(e: React.ChangeEvent<HTMLSelectElement>) {
+    setRsvpDeadlineHours(e.target.value);
+    if (e.target.value === "custom") {
+      setEventData((prev) => ({
         ...prev,
-        eventDates: dates.map(date => ({
-          date,
-          startHour: prev.eventDates[0].startHour,
-          startMinute: prev.eventDates[0].startMinute,
-          startAmPm: prev.eventDates[0].startAmPm,
-          endHour: prev.eventDates[0].endHour,
-          endMinute: prev.eventDates[0].endMinute,
-          endAmPm: prev.eventDates[0].endAmPm,
-        }))
-      }))
-    }
-  }, [currentEvent.isRepeatingEvent, currentEvent.repeatStartDate, currentEvent.repeatEndDate, currentEvent.repeatFrequency])
-
-  useEffect(() => {
-    const teams = parseInt(currentEvent.numTeams)
-    const spots = parseInt(currentEvent.rosterSpots)
-    if (!isNaN(teams) && !isNaN(spots)) {
-      setTotalSpots(teams * spots)
+        rsvpDeadline: 0,
+      }));
     } else {
-      setTotalSpots(0)
-    }
-  }, [currentEvent.numTeams, currentEvent.rosterSpots])
-
-  const isDateInPast = (date: Date) => {
-    return isBefore(date, startOfDay(new Date()))
-  }
-
-  const handlePositiveNumberInput = (value: string, field: 'numTeams' | 'rosterSpots' | 'customRsvpHours') => {
-    const numValue = parseInt(value, 10)
-    if (!isNaN(numValue) && numValue > 0) {
-      setCurrentEvent(prev => ({ ...prev, [field]: numValue.toString() }))
-    } else if (value === '') {
-      setCurrentEvent(prev => ({ ...prev, [field]: '' }))
+      setEventData((prev) => ({
+        ...prev,
+        rsvpDeadline: parseInt(e.target.value.split("h")[0], 10),
+      }));
     }
   }
 
-  const handleRepeatToggle = (checked: boolean) => {
-    setCurrentEvent(prev => ({
-      ...prev,
-      isRepeatingEvent: checked,
-      repeatFrequency: checked ? prev.repeatFrequency : '',
-      repeatStartDate: checked ? prev.eventDates[0].date : undefined,
-      repeatEndDate: checked ? undefined : undefined,
-    }))
-  }
-
-  const formatTime = (hour: string, minute: string, ampm: string) => {
-    return `${hour}:${minute} ${ampm}`
-  }
-
-  const updateEventDate = (index: number, field: keyof EventDate, value: any) => {
-    setCurrentEvent(prev => {
-      const updatedDates = [...prev.eventDates]
-      updatedDates[index] = { ...updatedDates[index], [field]: value }
-      return { ...prev, eventDates: updatedDates }
+  const cannotSubmit = Object.entries(eventData)
+    .map(([key, value]) => {
+      if (key === "eventDates") return false;
+      if (isRepeatingEvent) {
+        if (!repeatFrequency || !repeatEndDate) return true;
+      }
+      return value === "" || value === undefined || value === null;
     })
-  }
+    .some((isInvalid) => isInvalid);
 
-  const scrollToTop = () => {
-    topRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const handleCreateEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const addAnotherEvent = () => {
-    setEvents([...events, currentEvent])
-    setCurrentEvent({
-      ...currentEvent,
-      title: '',
-      eventDates: [{
-        date: undefined,
-        startHour: '12',
-        startMinute: '00',
-        startAmPm: 'AM',
-        endHour: '12',
-        endMinute: '00',
-        endAmPm: 'AM',
-      }],
-      isRepeatingEvent: false,
-      repeatFrequency: '',
-      repeatStartDate: undefined,
-      repeatEndDate: undefined,
-    })
-    setShowAddedAlert(true)
-    setTimeout(() => setShowAddedAlert(false), 3000)
-    scrollToTop()
-  }
+    setSubmitting(true);
+    const { error } = await createEvent({ ...eventData, eventDates });
+
+    if (error === null) {
+      navigate("/manage-events");
+    } else {
+      setSubmitting(false);
+    }
+  };
+
+  const eventStartHour = new Date(eventData.startTime).getHours();
+  const eventEndHour = new Date(eventData.endTime).getHours();
 
   return (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-gray-800">Add Event</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex justify-end mb-4">
-          <Button 
-            variant="link" 
-            className="text-[#FF7A00] underline" 
-            asChild
-          >
-            <Link to="/manage-events">Previous</Link>
-          </Button>
-        </div>
-        
-        <div ref={topRef} />
-        {showAddedAlert && (
-          <Alert className="mb-4">
-            <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Success</AlertTitle>
-            <AlertDescription>
-              Event{events.length > 1 ? 's' : ''} Added
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {events.length > 0 && (
-          <div className="space-y-4 mb-8">
-            <h3 className="text-lg font-semibold">Created Events</h3>
-            {events.map((event, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-md">
-                <h4 className="font-medium">{event.title}</h4>
-                <p>Location: {event.location}</p>
-                <p>Teams: {event.numTeams}, Roster Spots: {event.rosterSpots} (Total number of spots available: {parseInt(event.numTeams) * parseInt(event.rosterSpots)})</p>
-                <p>RSVP Deadline: {event.rsvpDeadlineOption} (hours before event)</p>
-                <div className="mt-2">
-                  <h5 className="font-medium">Event Dates:</h5>
-                  <ul className="list-disc list-inside">
-                    {event.eventDates.map((date, dateIndex) => (
-                      <li key={dateIndex}>
-                        {date.date && (
-                          <>
-                            {format(date.date, "MMMM d yyyy")}, {formatTime(date.startHour, date.startMinute, date.startAmPm)} - {formatTime(date.endHour, date.endMinute, date.endAmPm)}, {format(date.date, "EEEE")}
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Total events: {event.eventDates.length}
-                </p>
-              </div>
-            ))}
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Next Step</AlertTitle>
-              <AlertDescription>
-                When you're finished adding events, press the "Finalize" button below to confirm the events.
-              </AlertDescription>
-            </Alert>
-          </div>
-        )}
-
-        <div className="text-lg font-semibold mb-4">
-          {events.length > 0 ? "Create Another Event" : "Create Your First Event"}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="eventTitle">Event Title</Label>
-          <Input
-            id="eventTitle"
-            value={currentEvent.title}
-            onChange={(e) => setCurrentEvent(prev => ({ ...prev, title: e.target.value }))}
-            placeholder="Enter event title"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            value={currentEvent.location}
-            onChange={(e) => setCurrentEvent(prev => ({ ...prev, location: e.target.value }))}
-            placeholder="Enter event location"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="teams">Number of Teams</Label>
-          <Input
-            id="teams"
-            type="number"
-            value={currentEvent.numTeams}
-            onChange={(e) => handlePositiveNumberInput(e.target.value, 'numTeams')}
-            placeholder="Enter number of teams"
-            min="1"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="rosterSpots">Number of Roster Spots Per Team</Label>
-          <Input
-            id="rosterSpots"
-            type="number"
-            value={currentEvent.rosterSpots}
-            onChange={(e) => handlePositiveNumberInput(e.target.value, 'rosterSpots')}
-            placeholder="Enter number of roster spots"
-            min="1"
-          />
-        </div>
-
-        {totalSpots > 0 && (
-          <div className="text-sm text-muted-foreground">
-            Total number of spots available: {totalSpots}
-          </div>
-        )}
-
-        <div className="space-y-4 p-4 bg-gray-50 rounded-md">
-          <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="date"
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !currentEvent.eventDates[0].date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {currentEvent.eventDates[0].date ? format(currentEvent.eventDates[0].date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={currentEvent.eventDates[0].date}
-                  onSelect={(date) => updateEventDate(0, 'date', date)}
-                  disabled={(date) => isBefore(date, startOfDay(new Date()))}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Start Time</Label>
-              <div className="flex space-x-2">
-                <Select value={currentEvent.eventDates[0].startHour} onValueChange={(value) => updateEventDate(0, 'startHour', value)}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue placeholder="HH" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                      <SelectItem key={hour} value={hour.toString().padStart(2, '0')}>{hour.toString().padStart(2, '0')}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].startMinute} onValueChange={(value) => updateEventDate(0, 'startMinute', value)}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue placeholder="MM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                      <SelectItem key={minute} value={minute.toString().padStart(2, '0')}>{minute.toString().padStart(2, '0')}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].startAmPm} onValueChange={(value) => updateEventDate(0, 'startAmPm', value)}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue placeholder="AM/PM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>End Time</Label>
-              <div className="flex space-x-2">
-                <Select value={currentEvent.eventDates[0].endHour} onValueChange={(value) => updateEventDate(0, 'endHour', value)}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue placeholder="HH" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                      <SelectItem key={hour} value={hour.toString().padStart(2, '0')}>{hour.toString().padStart(2, '0')}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].endMinute} onValueChange={(value) => updateEventDate(0, 'endMinute', value)}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue placeholder="MM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                      <SelectItem key={minute} value={minute.toString().padStart(2, '0')}>{minute.toString().padStart(2, '0')}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={currentEvent.eventDates[0].endAmPm} onValueChange={(value) => updateEventDate(0, 'endAmPm', value)}>
-                  <SelectTrigger className="w-[70px]">
-                    <SelectValue placeholder="AM/PM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="repeat-event"
-            checked={currentEvent.isRepeatingEvent}
-            onCheckedChange={handleRepeatToggle}
-          />
-          <Label htmlFor="repeat-event">Repeat Event</Label>
-        </div>
-
-        {currentEvent.isRepeatingEvent && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="repeat-frequency">Repeat Frequency</Label>
-              <Select
-                value={currentEvent.repeatFrequency}
-                onValueChange={(value) => setCurrentEvent(prev => ({ ...prev, repeatFrequency: value }))}
+    <main className="flex-1">
+      <PageHeader title="Add Event" />
+      <Card className="my-2">
+        <CardContent className="p-4 sm:p-6">
+          <form onSubmit={handleCreateEvent} className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="league-id">League</Label>
+              <select
+                value={eventData.leagueId}
+                onChange={(e) =>
+                  setEventData((prev) => ({
+                    ...prev,
+                    leagueId: e.target.value,
+                  }))
+                }
+                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-default disabled:bg-gray-100"
+                id="league-id"
+                name="league-id"
+                disabled={isLoadingLeagues}
               >
-                <SelectTrigger id="repeat-frequency">
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="every-day">Every day</SelectItem>
-                  <SelectItem value="every-week">Every week</SelectItem>
-                  <SelectItem value="every-2-weeks">Every 2 weeks</SelectItem>
-                  <SelectItem value="every-month">Every month</SelectItem>
-                </SelectContent>
-              </Select>
+                <option hidden>Select League</option>
+                {leagues.map((league) => (
+                  <option key={league.id} value={league.id}>
+                    {league.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="repeat-end-date">Repeat Until</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="repeat-end-date"
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !currentEvent.repeatEndDate && "text-muted-foreground"
-                    )}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="eventTitle">Event Title</Label>
+              <Input
+                id="eventTitle"
+                value={eventData.title}
+                onChange={(e) =>
+                  setEventData((prev) => ({
+                    ...prev,
+                    title: e.target.value,
+                  }))
+                }
+                placeholder="Enter event title"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                value={eventData.location}
+                onChange={(e) =>
+                  setEventData((prev) => ({
+                    ...prev,
+                    location: e.target.value,
+                  }))
+                }
+                placeholder="Enter event location"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="teams">Number of Teams</Label>
+              <Input
+                id="teams"
+                type="number"
+                value={eventData.numTeams}
+                onChange={(e) =>
+                  handlePositiveNumberInput(e.target.value, "numTeams")
+                }
+                placeholder="Enter number of teams"
+                min="1"
+                disabled
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="rosterSpots">
+                Number of Roster Spots Per Team
+              </Label>
+              <Input
+                id="rosterSpots"
+                value={eventData.rosterSpots || ""}
+                onChange={(e) =>
+                  handlePositiveNumberInput(e.target.value, "rosterSpots")
+                }
+                autoComplete="off"
+                placeholder="Enter number of roster spots"
+                min="1"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="rosterSpots">Draft Type</Label>
+              <RadioGroup
+                value={eventData.draftType}
+                onValueChange={(value) =>
+                  setEventData((prev) => ({
+                    ...prev,
+                    draftType: value,
+                  }))
+                }
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="alternating" id="alternating" />
+                  <Label htmlFor="alternating" className="text-sm">
+                    Alternating
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="snake" id="snake" />
+                  <Label htmlFor="snake" className="text-sm">
+                    Snake
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {eventData.rosterSpots > 0 && (
+              <div className="text-sm text-muted-foreground">
+                Total number of spots available:{" "}
+                {eventData.rosterSpots * eventData.numTeams}
+              </div>
+            )}
+
+            <div className="space-y-4 rounded-md bg-gray-50 p-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="date">Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="date"
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !eventData.startTime && "text-muted-foreground",
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {eventData.startTime ? (
+                        format(eventData.startTime, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={eventData.startTime}
+                      onSelect={(date) => {
+                        updateEventStartTime("date", date);
+                        updateEventEndTime("date", date);
+                      }}
+                      disabled={(date) =>
+                        isBefore(date, startOfDay(new Date()))
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <Label>Start Time</Label>
+                  <div className="flex gap-2">
+                    <select
+                      value={
+                        eventStartHour > 12
+                          ? (eventStartHour - 12).toString().padStart(2, "0")
+                          : eventStartHour.toString().padStart(2, "0")
+                      }
+                      onChange={(e) =>
+                        updateEventStartTime("hour", Number(e.target.value))
+                      }
+                      className="w-[70px] rounded-md border px-3 py-2 text-sm"
+                    >
+                      <option hidden>HH</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(
+                        (hour) => (
+                          <option
+                            key={hour}
+                            value={hour.toString().padStart(2, "0")}
+                          >
+                            {hour.toString().padStart(2, "0")}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                    <select
+                      value={eventData.startTime
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, "0")}
+                      onChange={(e) =>
+                        updateEventStartTime("minute", Number(e.target.value))
+                      }
+                      className="w-[70px] rounded-md border px-3 py-2 text-sm"
+                    >
+                      <option hidden>MM</option>
+                      {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                        <option
+                          key={minute}
+                          value={minute.toString().padStart(2, "0")}
+                        >
+                          {minute.toString().padStart(2, "0")}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={eventStartHour >= 12 ? "PM" : "AM"}
+                      onChange={(e) =>
+                        updateEventStartTime(
+                          "meridiem",
+                          e.target.value as "AM" | "PM",
+                        )
+                      }
+                      className="w-[70px] rounded-md border px-3 py-2 text-sm"
+                    >
+                      <option hidden>AM/PM</option>
+                      <option value={"AM"}>AM</option>
+                      <option value={"PM"}>PM</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label>End Time</Label>
+                  <div className="flex gap-2">
+                    <select
+                      value={
+                        eventEndHour > 12
+                          ? (eventEndHour - 12).toString().padStart(2, "0")
+                          : eventEndHour.toString().padStart(2, "0")
+                      }
+                      onChange={(e) =>
+                        updateEventEndTime("hour", Number(e.target.value))
+                      }
+                      className="w-[70px] rounded-md border px-3 py-2 text-sm"
+                    >
+                      <option hidden>HH</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(
+                        (hour) => (
+                          <option
+                            key={hour}
+                            value={hour.toString().padStart(2, "0")}
+                          >
+                            {hour.toString().padStart(2, "0")}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                    <select
+                      value={eventData.endTime
+                        .getMinutes()
+                        .toString()
+                        .padStart(2, "0")}
+                      onChange={(e) =>
+                        updateEventEndTime("minute", Number(e.target.value))
+                      }
+                      className="w-[70px] rounded-md border px-3 py-2 text-sm"
+                    >
+                      <option hidden>MM</option>
+                      {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                        <option
+                          key={minute}
+                          value={minute.toString().padStart(2, "0")}
+                        >
+                          {minute.toString().padStart(2, "0")}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={eventData.endTime.getHours() >= 12 ? "PM" : "AM"}
+                      onChange={(e) =>
+                        updateEventEndTime(
+                          "meridiem",
+                          e.target.value as "AM" | "PM",
+                        )
+                      }
+                      className="w-[70px] rounded-md border px-3 py-2 text-sm"
+                    >
+                      <option hidden>AM/PM</option>
+                      <option value={"AM"}>AM</option>
+                      <option value={"PM"}>PM</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              {/* <Switch
+              id="repeat-event"
+              checked={currentEvent.isRepeatingEvent}
+              onCheckedChange={handleRepeatToggle}
+            /> */}
+              <input
+                type="checkbox"
+                checked={isRepeatingEvent}
+                onChange={() => {
+                  if (isRepeatingEvent) {
+                    setRepeatEndDate(undefined);
+                    setRepeatFrequency(undefined);
+                  }
+                  setIsRepeatingEvent((prev) => !prev);
+                }}
+                name="repeat-event"
+                id="repeat-event"
+                className="accent-gray-700"
+              />
+              <Label htmlFor="repeat-event">Repeat Event</Label>
+            </div>
+
+            {isRepeatingEvent && (
+              <div className="space-y-4">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="repeat-frequency">Repeat Frequency</Label>
+                  <select
+                    value={repeatFrequency}
+                    onChange={(e) =>
+                      setRepeatFrequency(
+                        e.target.value as typeof repeatFrequency,
+                      )
+                    }
+                    className="rounded-md border px-3 py-2 text-sm"
+                    id="repeat-frequency"
+                    name="repeat-frequency"
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {currentEvent.repeatEndDate ? format(currentEvent.repeatEndDate, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={currentEvent.repeatEndDate}
-                    onSelect={(date) => setCurrentEvent(prev => ({ ...prev, repeatEndDate: date }))}
-                    disabled={(date) => isBefore(date, startOfDay(new Date()))}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+                    <option hidden>Select frequency</option>
+                    <option value="daily">Every day</option>
+                    <option value="weekly">Every week</option>
+                    <option value="bi-weekly">Every 2 weeks</option>
+                    <option value="monthly">Every month</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="repeat-end-date">Repeat Until</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="repeat-end-date"
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !repeatEndDate && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {repeatEndDate ? (
+                          format(repeatEndDate, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={repeatEndDate}
+                        onSelect={(date) => setRepeatEndDate(date)}
+                        disabled={(date) =>
+                          isBefore(date, startOfDay(new Date()))
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="rsvp-deadline">RSVP Deadline</Label>
+              <select
+                value={rsvpDeadlineHours}
+                onChange={handleChangeRsvpDeadline}
+                className="rounded-md border px-3 py-2 text-sm"
+                id="rsvp-deadline"
+                name="rsvp-deadline"
+              >
+                <option hidden>Select RSVP deadline</option>
+                <option value="1h">1 hour before event</option>
+                <option value="2h">2 hours before event</option>
+                <option value="24h">24 hours before event</option>
+                <option value="48h">48 hours before event</option>
+                <option value="custom">Custom</option>
+              </select>
             </div>
-          </div>
-        )}
 
-        <div className="space-y-2">
-          <Label htmlFor="rsvp-deadline">RSVP Deadline</Label>
-          <Select
-            value={currentEvent.rsvpDeadlineOption}
-            onValueChange={(value) => setCurrentEvent(prev => ({ ...prev, rsvpDeadlineOption: value }))}
-          >
-            <SelectTrigger id="rsvp-deadline">
-              <SelectValue placeholder="Select RSVP deadline" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1h">1 hour before event</SelectItem>
-              <SelectItem value="2h">2 hours before event</SelectItem>
-              <SelectItem value="24h">24 hours before event</SelectItem>
-              <SelectItem value="48h">48 hours before event</SelectItem>
-              <SelectItem value="custom">Custom</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+            {rsvpDeadlineHours === "custom" && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="custom-rsvp-hours">
+                  Custom RSVP Deadline (hours before event)
+                </Label>
+                <Input
+                  id="custom-rsvp-hours"
+                  type="number"
+                  value={eventData.rsvpDeadline}
+                  onChange={(e) =>
+                    setEventData((prev) => ({
+                      ...prev,
+                      rsvpDeadline: parseInt(e.target.value, 10),
+                    }))
+                  }
+                  placeholder="Enter hours"
+                  min="0"
+                />
+              </div>
+            )}
 
-        {currentEvent.rsvpDeadlineOption === 'custom' && (
-          <div className="space-y-2">
-            <Label htmlFor="custom-rsvp-hours">Custom RSVP Deadline (hours before event)</Label>
-            <Input
-              id="custom-rsvp-hours"
-              type="number"
-              value={currentEvent.customRsvpHours}
-              onChange={(e) => handlePositiveNumberInput(e.target.value, 'customRsvpHours')}
-              placeholder="Enter hours"
-              min="1"
-            />
-          </div>
-        )}
-
-        {currentEvent.eventDates.length > 0 && (
-          <div className="space-y-2">
-            <Label>Event Dates</Label>
-            <div className="space-y-2">
-              {currentEvent.eventDates.map((date, index) => (
-                <div key={index} className="p-2 bg-gray-50 rounded-md">
-                  {date.date && (
-                    <>
-                      {format(date.date, "MMMM d yyyy")}, {formatTime(date.startHour, date.startMinute, date.startAmPm)} - {formatTime(date.endHour, date.endMinute, date.endAmPm)}, {format(date.date, "EEEE")}
-                      {isDateInPast(date.date) && (
+            {eventDates.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label>Event Dates</Label>
+                <div className="flex flex-col gap-2">
+                  {eventDates.map((date, index) => (
+                    <div
+                      key={index}
+                      className="rounded-md bg-gray-50 p-2 text-sm"
+                    >
+                      {format(date.startTime, "MMMM d yyyy, hh:mm a")}
+                      {" - "}
+                      {format(date.endTime, "hh:mm a")}
+                      {", "}
+                      {format(date.startTime, "EEEE")}
+                      {isDateInPast(date.startTime) && (
                         <span className="ml-2 text-red-500">(Past date)</span>
                       )}
-                    </>
-                  )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
+            )}
 
-        <Button onClick={addAnotherEvent} className="w-full bg-[#FF7A00] hover:bg-[#FF7A00]/90 text-white">
-          Add Event
-        </Button>
-      </CardContent>
-    </Card>
-  )
+            <Button
+              type="submit"
+              className="w-full bg-accent-orange text-white hover:bg-accent-orange/90"
+              disabled={submitting || cannotSubmit}
+            >
+              {submitting ? "Adding Event..." : "Add Event"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </main>
+  );
 }

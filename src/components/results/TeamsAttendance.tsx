@@ -1,26 +1,37 @@
-
-import { TeamRoster } from './TeamRoster'
-import { TeamData } from './types'
+import { TeamType } from "@/types/events";
+import { TeamRoster } from "./TeamRoster";
 
 interface TeamsAttendanceProps {
-  teamData: TeamData
-  attendance: Record<string, boolean>
-  onAttendanceChange: (attendance: Record<string, boolean>) => void
+  teams: TeamType[];
+  attendingPlayers: string[];
+  setAttendingPlayers: React.Dispatch<React.SetStateAction<string[]>>;
+  captainSelected: boolean;
 }
 
-export function TeamsAttendance({ teamData, attendance, onAttendanceChange }: TeamsAttendanceProps) {
+export function TeamsAttendance({
+  teams,
+  attendingPlayers,
+  setAttendingPlayers,
+  captainSelected,
+}: TeamsAttendanceProps) {
+  if (!captainSelected) {
+    return (
+      <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
+        No teams available for attendance.
+      </div>
+    );
+  }
+
   return (
-    <div className="grid md:grid-cols-2 gap-8 pt-8 border-t">
-      <TeamRoster 
-        team={teamData.team1}
-        attendance={attendance}
-        onAttendanceChange={onAttendanceChange}
-      />
-      <TeamRoster 
-        team={teamData.team2}
-        attendance={attendance}
-        onAttendanceChange={onAttendanceChange}
-      />
+    <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
+      {teams.map((team) => (
+        <TeamRoster
+          key={team.id}
+          team={team}
+          attendingPlayers={attendingPlayers}
+          setAttendingPlayers={setAttendingPlayers}
+        />
+      ))}
     </div>
-  )
+  );
 }

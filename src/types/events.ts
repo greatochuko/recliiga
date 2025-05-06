@@ -1,8 +1,15 @@
+import { UserType } from "@/contexts/AuthContext";
+import { LeagueType } from "./league";
 
-export interface Team {
+export interface TeamType {
+  id: string;
   name: string;
-  avatar: string;
+  logo: string;
   color: string;
+  captainId: string;
+  captain?: UserType;
+  players: UserType[];
+  draftCompleted: boolean;
 }
 
 export interface Captain {
@@ -11,29 +18,63 @@ export interface Captain {
   avatar: string;
 }
 
-export interface Event {
-  id: number;
-  leagueId: number;
-  date: string;
-  time: string;
+export type EventTimeDataType = {
+  date: Date;
+  hour: number;
+  minute: number;
+  meridiem: "AM" | "PM";
+};
+
+export interface EventType {
+  id: string;
+  leagueId: string;
+  league: LeagueType;
+  title: string;
   location: string;
-  team1: Team;
-  team2: Team;
-  rsvpDeadline?: Date;
-  status?: 'upcoming' | 'past' | 'attending' | 'declined';
-  spotsLeft?: number;
-  resultsEntered?: boolean;
-  league?: string;
-  hasResults?: boolean;
-  captains?: {
-    [key: string]: Captain | undefined;
-    team1?: Captain;
-    team2?: Captain;
-  };
-  draftStatus?: 'not_started' | 'in_progress' | 'completed';
+  numTeams: number;
+  ratings: UserRatingType[];
+  rosterSpots: number;
+  startTime: Date;
+  endTime: Date;
+  rsvpDeadline: number;
+  teams: TeamType[];
+  creatorId: string;
+  draftType: "alternating" | "snake";
+  resultsEntered: boolean;
+  players: UserType[];
+  result?: ResultType;
 }
 
-export interface League {
-  id: number;
-  name: string;
-}
+export type ResultType = {
+  id: string;
+  team1Score: number;
+  team2Score: number;
+  leagueId: string;
+  league: LeagueType;
+  attendingPlayers: UserType[];
+  events: EventType[];
+};
+
+export type LeaderboardDataType = {
+  player: UserType;
+  gamesPlayed: number;
+  gamesWon: number;
+  gamesLost: number;
+  gamesTied: number;
+  gamesWonAsCaptain: number;
+  attendance: number;
+  nonAttendance: number;
+  points: number;
+};
+
+export type UserRatingType = {
+  id: string;
+  score: number;
+  createdAt: string;
+  userId: string;
+  ratedById: string;
+  leagueId: string;
+  league: LeagueType;
+  eventId: string;
+  event: EventType;
+};

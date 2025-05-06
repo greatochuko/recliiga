@@ -1,83 +1,98 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { deleteUser, getSession, login, registerUser } from "@/api/auth";
+import { UserRatingType } from "@/types/events";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+export type UserType = {
+  avatar_url: string | null;
+  city: string | null;
+  created_at: string;
+  date_of_birth: string | null;
+  full_name: string | null;
+  rating: number;
+  id: string;
+  ratings: UserRatingType[];
+  nickname: string | null;
+  phone: string | null;
+  positions: string[] | null;
+  role: string | null;
+  sports: string[] | null;
+  updated_at: string;
+  email: string;
+};
+
+export type SignupDataType = {
+  email: string;
+  password: string;
+  full_name: string;
+  role: string;
+  phone: string;
+};
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  signUp: (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => Promise<void>;
+  user: UserType | null;
+  signUp: (signupData: SignupDataType) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
   loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
-      } catch (error) {
-        console.error('Error checking auth session:', error);
-      } finally {
-        setLoading(false);
-      }
+      const profile = await getSession();
+      setUser(profile);
+      setLoading(false);
     };
 
     initializeAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      navigate('/');
-      toast.success('Successfully signed in!');
-    } catch (error: any) {
+      const { data: profile, error, token } = await login(email, password);
+
+      if (error !== null) {
+        throw new Error(error);
+      }
+
+      localStorage.setItem("token", token);
+
+      setUser(profile);
+      toast.success("Successfully signed in!");
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
   };
 
-  const signUp = async (email: string, password: string, metadata: { full_name: string; role: string; phone: string }) => {
+  const signUp = async (signupData: SignupDataType) => {
     try {
-      const { error, data } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: metadata }
-      });
-      if (error) throw error;
-      
-      // Handle different registrations based on role
-      if (metadata.role === 'organizer') {
-        toast.success('Registration successful! Please sign in to complete your league setup.');
-      } else {
-        toast.success('Registration successful! Please sign in to complete your player profile.');
+      const { data: profile, error, token } = await registerUser(signupData);
+
+      if (error !== null) {
+        throw new Error(error);
       }
-      
-      // Redirect to sign-in so they can authenticate first
-      navigate('/sign-in');
-    } catch (error: any) {
+
+      localStorage.setItem("token", token);
+
+      toast.success(
+        "Registration successful! Please complete your player profile.",
+      );
+
+      setUser(profile);
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
@@ -85,22 +100,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Clear local storage and session storage
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Sign out from Supabase
-      await supabase.auth.signOut();
-      
-      // Clear state
+      localStorage.removeItem("token");
       setUser(null);
-      setSession(null);
-      
-      toast.success('Successfully signed out');
-      
-      // Navigate with window.location to force a full page refresh
-      window.location.href = '/sign-in';
-    } catch (error: any) {
+
+      toast.success("Successfully signed out");
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
@@ -112,65 +117,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
-      toast.success('Password reset instructions have been sent to your email.');
-    } catch (error: any) {
+      toast.success(
+        "Password reset instructions have been sent to your email.",
+      );
+    } catch (err) {
+      const error = err as Error;
       toast.error(error.message);
       throw error;
     }
   };
 
   const deleteAccount = async () => {
-    if (!user?.id) {
-      toast.error('No user found to delete');
-      return;
-    }
-
     try {
       // Show a loading toast
-      toast.loading('Deleting your account...');
+      toast.loading("Deleting your account...");
 
-      // Call the Supabase Edge Function to delete user data
-      const { error: deleteFunctionError } = await supabase.functions.invoke('delete-user', {
-        body: { user_id: user.id }
-      });
+      const { error } = await deleteUser();
 
-      if (deleteFunctionError) {
-        throw new Error(deleteFunctionError.message || 'Failed to delete account data');
+      if (error) {
+        throw new Error(error || "Failed to delete account data");
       }
 
-      // Clear local storage and session storage
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Sign out from Supabase
-      await supabase.auth.signOut();
-      
+      localStorage.removeItem("token");
+      setUser(null);
+
       // Clear state
       setUser(null);
-      setSession(null);
 
-      toast.success('Your account has been deleted successfully');
-      
-      // Use window.location for a full page refresh
-      window.location.href = '/sign-in';
-    } catch (error: any) {
-      console.error('Error in deletion process:', error);
-      toast.error(error.message || 'Failed to delete account');
+      toast.success("Your account has been deleted successfully");
+      toast.dismiss();
+
+      // redirect("/sign-in");
+    } catch (err) {
+      const error = err as Error;
+      toast.error(error.message || "Failed to delete account");
       throw error;
     }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session, 
-      signUp, 
-      signIn, 
-      signOut, 
-      resetPassword,
-      deleteAccount, 
-      loading 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        signUp,
+        signIn,
+        signOut,
+        resetPassword,
+        deleteAccount,
+        setUser,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -179,7 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

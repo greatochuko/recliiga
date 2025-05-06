@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { EventCard } from "./EventCard";
 import { Event } from "@/types/dashboard";
@@ -50,9 +49,14 @@ export function UpcomingEvents() {
 
   return (
     <section className="mb-8">
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Upcoming Events</h2>
-        <Link to="/events" className="text-[#FF7A00] hover:underline text-sm">View all</Link>
+        <Link
+          to="/events"
+          className="text-accent-orange text-sm hover:underline"
+        >
+          View all
+        </Link>
       </div>
       <div className="space-y-4">
         {events.map((event) => (

@@ -1,13 +1,10 @@
-
-import { useAuth } from '@/contexts/AuthContext';
-import PlayerDashboard from './PlayerDashboardContent';
+import PlayerDashboard from "./PlayerDashboard";
 
 export function HomeScreen() {
-  const { user } = useAuth();
-  
   return (
-    <div className="pt-20 p-4 max-w-6xl mx-auto">
+    <main className="relative flex-1 bg-background">
+      <div className="absolute left-4 top-1 z-50 flex items-center"></div>
       <PlayerDashboard />
-    </div>
+    </main>
   );
 }
