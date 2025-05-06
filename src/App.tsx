@@ -33,6 +33,7 @@ import { HomeScreen } from "./components/dashboard/HomeScreen";
 import EditEvent from "./pages/EditEvent";
 import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
 import ErrorPage from "./pages/ErrorPage";
+import LeagueInvitationPage from "./pages/LeagueInvitationPage";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,7 @@ const router = createBrowserRouter(
             { path: "/help", element: <HelpAndSupport /> },
             { path: "/:eventId/select-captains", element: <SelectCaptains /> },
             { path: "/edit-results/:eventId", element: <EditResults /> },
+            { path: "/invite/:leagueCode", element: <LeagueInvitationPage /> },
             {
               path: "/rate-teammates/:eventId",
               element: <RateTeammatesByEvent />,

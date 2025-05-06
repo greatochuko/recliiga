@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { deleteUser, getSession, login, registerUser } from "@/api/auth";
 import { UserRatingType } from "@/types/events";
@@ -47,7 +46,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -93,7 +91,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
 
       setUser(profile);
-      navigate("/complete-registration");
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);

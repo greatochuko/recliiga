@@ -10,6 +10,14 @@ export async function fetchLeaguesByUser(): Promise<{
   return { leagues: data.data || [], error: data.error };
 }
 
+export async function fetchLeaguesByCode(leagueCode: string): Promise<{
+  league: LeagueType;
+  error: string | null;
+}> {
+  const data = await fetchApi<LeagueType>(`/league/code/${leagueCode}`);
+  return { league: data.data, error: data.error };
+}
+
 export async function fetchLeaguesByCreator(): Promise<{
   leagues: LeagueType[];
   error: string | null;

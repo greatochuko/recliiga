@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Copy, Send, AlertCircle, CheckCircle, Info } from "lucide-react";
 import ModalContainer from "./ModalContainer";
+import { fetchLeaguesByUser } from "@/api/league";
+import { useQuery } from "@tanstack/react-query";
 
 export default function InvitePopup({
   closeModal,
@@ -9,13 +11,20 @@ export default function InvitePopup({
   open: boolean;
   closeModal: () => void;
 }) {
-  const [inviteLink, setInviteLink] = useState(
-    "https://recliiga.com/invite/abc123",
-  );
+  const { data: leaguesData, isLoading } = useQuery({
+    queryKey: ["teammates"],
+    queryFn: fetchLeaguesByUser,
+  });
+
+  const leagues = leaguesData?.leagues || [];
+
   const [email, setEmail] = useState("");
   const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
+  const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>();
   const [error, setError] = useState<string | null>(null);
+
+  const inviteLink = `${window.location.origin}/invite/${selectedLeagueCode || ""}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(inviteLink);
@@ -59,6 +68,27 @@ export default function InvitePopup({
             </p>
           </div>
 
+          <div className="flex flex-col gap-2">
+            <label htmlFor="league" className="text-sm text-gray-700">
+              Select League
+            </label>
+            <select
+              name="league"
+              id="league"
+              className="rounded-md border p-2 text-sm"
+              value={selectedLeagueCode}
+              disabled={isLoading}
+              onChange={(e) => setSelectedLeagueCode(e.target.value)}
+            >
+              <option hidden>Select League</option>
+              {leagues.map((league) => (
+                <option key={league.id} value={league.leagueCode}>
+                  {league.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="space-y-2">
             <label htmlFor="invite-link" className="text-sm text-gray-700">
               Shareable Invite Link
@@ -68,11 +98,13 @@ export default function InvitePopup({
                 id="invite-link"
                 value={inviteLink}
                 readOnly
-                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange"
+                disabled={!selectedLeagueCode}
+                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange disabled:bg-gray-100 disabled:opacity-70"
               />
               <button
                 onClick={handleCopyLink}
-                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+                disabled={!selectedLeagueCode}
+                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90 disabled:pointer-events-none disabled:opacity-50"
               >
                 <Copy className="mr-2 h-4 w-4" />
                 {copied ? "Copied!" : "Copy"}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import RoleSelect from "@/components/auth/RoleSelect";
 import CountryCodeSelect, {
@@ -10,6 +10,10 @@ import { AlertCircle } from "lucide-react";
 
 export default function SignUpPage() {
   const { signUp } = useAuth();
+
+  const [searchParams] = useSearchParams();
+  const inviteCode = searchParams.get("code");
+
   const [role, setRole] = useState<"player" | "organizer" | null>(null);
   const [countryCode, setCountryCode] = useState(popularCountryCodes[1]);
   const [customCountryCode, setCustomCountryCode] = useState("");
@@ -84,7 +88,7 @@ export default function SignUpPage() {
         REC LiiGA
       </h1>
 
-      <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white shadow-md">
+      <div className="w-full max-w-lg rounded-lg border border-gray-200 bg-white shadow-md">
         <form onSubmit={handleSignUp} className="p-6">
           <h2 className="mb-6 text-center text-2xl font-semibold text-gray-800">
             Register your Account
@@ -178,7 +182,7 @@ export default function SignUpPage() {
             <p className="text-center text-sm text-[#707B81]">
               Already have an account?{" "}
               <Link
-                to="/sign-in"
+                to={inviteCode ? `/sign-in?code=${inviteCode}` : "/sign-in"}
                 className="text-accent-orange hover:underline"
               >
                 Sign in

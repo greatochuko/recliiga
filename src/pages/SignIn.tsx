@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,12 +15,14 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignInPage() {
   const { signIn } = useAuth();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const inviteCode = searchParams.get("code");
 
   const cannotSubmit =
     !email.trim().length || !password.trim().length || isLoading;
@@ -33,8 +35,6 @@ export default function SignInPage() {
 
     try {
       await signIn(email, password);
-
-      navigate("/");
     } catch (err) {
       const error = err as Error;
       setError(error.message);
@@ -49,7 +49,7 @@ export default function SignInPage() {
         REC LiiGA
       </h1>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-lg">
         <form onSubmit={handleSignIn}>
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-gray-800">
@@ -114,14 +114,14 @@ export default function SignInPage() {
                 </div>
               </Alert>
             )}
-            <div className="text-right">
+            {/* <div className="text-right">
               <Link
                 to="/forgot-password"
                 className="text-sm text-[#707B81] hover:underline"
               >
                 Forget Password?
               </Link>
-            </div>
+            </div> */}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button
@@ -134,7 +134,7 @@ export default function SignInPage() {
             <p className="text-center text-sm text-[#707B81]">
               Don't have an account?{" "}
               <Link
-                to="/sign-up"
+                to={inviteCode ? `/sign-up?code=${inviteCode}` : "/sign-up"}
                 className="text-accent-orange hover:underline"
               >
                 Sign up
