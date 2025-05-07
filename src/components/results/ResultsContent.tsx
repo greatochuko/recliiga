@@ -36,9 +36,9 @@ export const ResultsContent = ({ leagues }: { leagues: LeagueType[] }) => {
   const results = data.data;
 
   return (
-    <div className="flex flex-1 flex-col gap-6">
+    <div className="flex w-full flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="ml-6 text-2xl font-bold">Results</h1>
+        <h1 className="ml-8 text-2xl font-bold">Results</h1>
         <LeagueSelector
           leagues={leagues}
           selectedLeagueId={selectedLeagueId}

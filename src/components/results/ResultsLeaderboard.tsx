@@ -22,6 +22,8 @@ import {
   ChevronsUpDownIcon,
   ChevronUpIcon,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type ResultsLeaderboardProps = {
   league: LeagueType;
@@ -171,71 +173,106 @@ export const ResultsLeaderboard = ({
   );
 
   return (
-    <div>
+    <div className="w-full">
       <h2 className="mb-4 text-2xl font-bold">Results Leaderboard</h2>
-      <Card>
-        <CardContent className="p-0">
-          <TooltipProvider delayDuration={300}>
-            <Table>
-              <TableHeader className="bg-gray-100">
-                <TableRow>
-                  <TableHead className="w-16 text-center">Rank</TableHead>
-                  <TableHead className="w-48 min-w-36 border-l">Name</TableHead>
-                  {tableHeaders.map((stat) => (
-                    <TableHead
-                      key={stat.abbr}
-                      className="relative w-16 whitespace-nowrap border-l text-center"
+
+      <div className="w-full overflow-x-auto rounded-md border text-sm">
+        <table className="min-w-full table-auto">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-4 font-medium text-gray-500">Rank</th>
+              <th className="border-l p-4 text-left font-medium text-gray-500">
+                Name
+              </th>
+              {tableHeaders.map((stat) => (
+                <th
+                  key={stat.abbr}
+                  className="whitespace-nowrap border-l p-4 font-medium text-gray-500"
+                >
+                  <Tooltip>
+                    <TooltipTrigger
+                      onClick={() => toggleSortBy(stat.abbr)}
+                      className="flex w-full cursor-pointer items-center gap-1"
                     >
-                      <Tooltip>
-                        <TooltipTrigger
-                          onClick={() => toggleSortBy(stat.abbr)}
-                          className="flex w-full cursor-pointer items-center gap-1"
-                        >
-                          {stat.abbr}{" "}
-                          {sortBy.name === stat.abbr ? (
-                            sortBy.type === "desc" ? (
-                              <ChevronDownIcon
-                                className="h-4 w-4 text-gray-700"
-                                strokeWidth={3}
-                              />
-                            ) : (
-                              <ChevronUpIcon
-                                className="h-4 w-4 text-gray-700"
-                                strokeWidth={3}
-                              />
-                            )
-                          ) : (
-                            <ChevronsUpDownIcon className="h-4 w-4" />
-                          )}
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="top"
-                          align="center"
-                          className="z-50"
-                          sideOffset={5}
-                        >
-                          <p>
-                            {stat.name} {stat.points && `(${stat.points})`}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedLeaderboardData.map((data, index) => (
-                  <LeaderboradDataRow
-                    key={index}
-                    data={data}
-                    rank={index + 1}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </TooltipProvider>
-        </CardContent>
-      </Card>
+                      {stat.abbr}{" "}
+                      {sortBy.name === stat.abbr ? (
+                        sortBy.type === "desc" ? (
+                          <ChevronDownIcon
+                            className="h-4 w-4 text-gray-700"
+                            strokeWidth={3}
+                          />
+                        ) : (
+                          <ChevronUpIcon
+                            className="h-4 w-4 text-gray-700"
+                            strokeWidth={3}
+                          />
+                        )
+                      ) : (
+                        <ChevronsUpDownIcon className="h-4 w-4" />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      align="center"
+                      className="z-50"
+                      sideOffset={5}
+                    >
+                      <p>
+                        {stat.name} {stat.points && `(${stat.points})`}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sortedLeaderboardData.map((data, index) => (
+              <tr key={data.player.id} className="border-b last:border-b-0">
+                <td className="p-3 text-center font-medium">{index + 1}</td>
+                <td className="border-l p-3 font-medium">
+                  <Link
+                    to={`/profile/${data.player.id}`}
+                    className="group flex cursor-pointer items-center whitespace-nowrap transition-colors"
+                  >
+                    <Avatar className="mr-2 h-8 w-8">
+                      <AvatarImage
+                        src={data.player.avatar_url}
+                        alt={data.player.full_name}
+                        className="object-cover"
+                      />
+                      <AvatarFallback>
+                        {data.player.full_name
+                          .split(" ")
+                          .slice(0, 2)
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="group-hover:text-accent-orange group-hover:underline">
+                      {data.player.full_name}
+                    </span>
+                  </Link>
+                </td>
+                <td className="border-l p-3 text-center">{data.gamesPlayed}</td>
+                <td className="border-l p-3 text-center">{data.gamesWon}</td>
+                <td className="border-l p-3 text-center">{data.gamesLost}</td>
+                <td className="border-l p-3 text-center">{data.gamesTied}</td>
+                <td className="border-l p-3 text-center">
+                  {data.gamesWonAsCaptain}
+                </td>
+                <td className="border-l p-3 text-center">{data.attendance}</td>
+                <td className="border-l p-3 text-center">
+                  {data.nonAttendance}
+                </td>
+                <td className="border-l p-3 text-center font-bold">
+                  {data.points}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
