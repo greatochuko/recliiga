@@ -1,20 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { LeagueType } from "@/types/league";
 import { ResultType } from "@/types/events";
-import LeaderboradDataRow from "./LeaderboradDataRow";
 import { getLeaderBoardData } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import {
@@ -181,13 +171,13 @@ export const ResultsLeaderboard = ({
           <thead className="bg-gray-100">
             <tr>
               <th className="p-4 font-medium text-gray-500">Rank</th>
-              <th className="border-l p-4 text-left font-medium text-gray-500">
-                Name
+              <th className="sticky left-0 border-l bg-gray-100 text-left font-medium text-gray-500">
+                <div className="border-r p-4">Name</div>
               </th>
               {tableHeaders.map((stat) => (
                 <th
                   key={stat.abbr}
-                  className="whitespace-nowrap border-l p-4 font-medium text-gray-500"
+                  className="whitespace-nowrap border-r p-4 font-medium text-gray-500 last:border-r-0"
                 >
                   <Tooltip>
                     <TooltipTrigger
@@ -230,10 +220,10 @@ export const ResultsLeaderboard = ({
             {sortedLeaderboardData.map((data, index) => (
               <tr key={data.player.id} className="border-b last:border-b-0">
                 <td className="p-3 text-center font-medium">{index + 1}</td>
-                <td className="border-l p-3 font-medium">
+                <td className="sticky left-0 border-l font-medium">
                   <Link
                     to={`/profile/${data.player.id}`}
-                    className="group flex cursor-pointer items-center whitespace-nowrap transition-colors"
+                    className="group flex cursor-pointer items-center whitespace-nowrap border-r bg-white p-3 transition-colors"
                   >
                     <Avatar className="mr-2 h-8 w-8">
                       <AvatarImage
@@ -254,7 +244,7 @@ export const ResultsLeaderboard = ({
                     </span>
                   </Link>
                 </td>
-                <td className="border-l p-3 text-center">{data.gamesPlayed}</td>
+                <td className="p-3 text-center">{data.gamesPlayed}</td>
                 <td className="border-l p-3 text-center">{data.gamesWon}</td>
                 <td className="border-l p-3 text-center">{data.gamesLost}</td>
                 <td className="border-l p-3 text-center">{data.gamesTied}</td>
