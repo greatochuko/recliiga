@@ -244,7 +244,7 @@ export default function EventDetails() {
                     {event.players.map((player) => (
                       <div
                         key={player.id}
-                        className="flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                        className="flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage
