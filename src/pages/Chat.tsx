@@ -4,6 +4,8 @@ import ChatArea from "@/components/chat/ChatArea";
 import ProfileSidebar from "@/components/chat/ProfileSidebar";
 import { conversations, groupMessages, individualMessages } from "@/lib/data";
 import { getInitials } from "@/lib/utils";
+import { fetchLeaguesByUser } from "@/api/league";
+import { useQuery } from "@tanstack/react-query";
 
 // Mock data for conversations
 export type ChatType = {
@@ -26,10 +28,26 @@ function ChatContent() {
   const [activeConversation, setActiveConversation] = useState<ChatType>();
   const [messageInput, setMessageInput] = useState("");
   const [isProfileVisible, setIsProfileVisible] = useState(false);
-  const [isNewChatDialogOpen, setIsNewChatDialogOpen] = useState(false);
-  const [newChatName, setNewChatName] = useState("");
-  const [newChatType, setNewChatType] = useState("individual");
-  const [chats, setChats] = useState(conversations);
+  const [chats, setChats] = useState([]);
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["leagues"],
+    queryFn: fetchLeaguesByUser,
+  });
+
+  const leagues = data?.leagues || [];
+
+  const uniquePlayers = Array.from(
+    new Map(
+      leagues
+        .flatMap((league) => league.players)
+        .map((player) => [player.id, player]),
+    ).values(),
+  );
+
+  console.clear();
+  console.log(uniquePlayers);
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (messageInput.trim()) {
@@ -37,35 +55,10 @@ function ChatContent() {
       setMessageInput("");
     }
   };
+
   const handleChatSelect = (chat: ChatType) => {
     setActiveConversation(chat);
     setIsProfileVisible(false);
-  };
-
-  const handleDeleteChat = (chatId: number) => {
-    const updatedChats = chats.filter((chat) => chat.id !== chatId);
-    setChats(updatedChats);
-    if (activeConversation && activeConversation.id === chatId) {
-      setActiveConversation(updatedChats[0] || null);
-    }
-  };
-
-  const handleCreateNewChat = () => {
-    const newChat = {
-      id: chats.length + 1,
-      name: newChatName,
-      type: newChatType,
-      lastMessage: "",
-      timestamp: "Just now",
-      unread: 0,
-      avatar: "/placeholder.svg?height=48&width=48",
-      role: "player" as ChatType["role"],
-    };
-    setChats([newChat, ...chats]);
-    setNewChatName("");
-    setNewChatType("individual");
-    setIsNewChatDialogOpen(false);
-    setActiveConversation(newChat);
   };
 
   const getMessageData = (conversation: any) => {
@@ -89,17 +82,9 @@ function ChatContent() {
   return (
     <div className="flex h-[calc(100vh-80px)] overflow-hidden rounded-lg border">
       <ChatSidebar
-        handleCreateNewChat={handleCreateNewChat}
-        isNewChatDialogOpen={isNewChatDialogOpen}
-        setIsNewChatDialogOpen={setIsNewChatDialogOpen}
-        newChatName={newChatName}
-        setNewChatName={setNewChatName}
-        newChatType={newChatType}
-        setNewChatType={setNewChatType}
         activeConversation={activeConversation}
         chats={chats}
         handleChatSelect={handleChatSelect}
-        handleDeleteChat={handleDeleteChat}
       />
 
       <ChatArea

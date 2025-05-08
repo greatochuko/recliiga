@@ -12,6 +12,7 @@ import { fetchEventById, selectCaptains } from "@/api/events";
 import { TeamType } from "@/types/events";
 import { UserType } from "@/contexts/AuthContext";
 import { format } from "date-fns";
+import { getUserRating } from "@/lib/utils";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -30,12 +31,14 @@ function AttendingList({
   selectableCaptains,
   onCaptainSelect,
   teams,
+  leagueId,
 }: {
   players: UserType[];
   captainIds: string[];
   selectableCaptains: boolean;
   onCaptainSelect: (playerId: string, checked: boolean) => void;
   teams: TeamType[];
+  leagueId: string;
 }) {
   return (
     <div className="w-full">
@@ -82,7 +85,9 @@ function AttendingList({
                   <span className="truncate font-semibold">
                     {player.full_name}
                   </span>
-                  <StarRating rating={player.rating} />
+                  <StarRating
+                    rating={getUserRating(leagueId, player.ratings)}
+                  />
                   {playerIsCaptain && (
                     <Crown
                       className="h-4 w-4"
@@ -298,6 +303,7 @@ export default function SelectCaptains() {
                 selectableCaptains={selectingCaptains}
                 onCaptainSelect={handleCaptainSelect}
                 teams={event?.teams || []}
+                leagueId={event.leagueId}
               />
             </div>
           </div>
