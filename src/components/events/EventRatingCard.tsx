@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { getUnratedTeammates } from "@/lib/utils";
+import { getInitials, getUnratedTeammates } from "@/lib/utils";
 import { EventType } from "@/types/events";
 import { MapPinIcon } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -43,10 +43,7 @@ export default function EventRatingCard({ event }: { event: EventType }) {
               />
             ) : (
               <div className="flex h-8 w-8 items-center justify-center rounded-full border bg-gray-100 text-xs font-medium text-gray-700">
-                {player.full_name
-                  .split(" ")
-                  .slice(0, 2)
-                  .map((name) => name[0])}
+                {getInitials(player.full_name)}
               </div>
             )}
           </div>

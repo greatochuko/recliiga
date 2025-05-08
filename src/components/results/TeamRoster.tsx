@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Crown } from "lucide-react";
 import { TeamType } from "@/types/events";
+import { getInitials } from "@/lib/utils";
 
 interface TeamRosterProps {
   team: TeamType;
@@ -74,10 +75,7 @@ export function TeamRoster({
               className="object-cover"
             />
             <AvatarFallback>
-              {team.captain.full_name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
+              {getInitials(team.captain.full_name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
@@ -103,12 +101,7 @@ export function TeamRoster({
                 alt={player.full_name}
                 className="object-cover"
               />
-              <AvatarFallback>
-                {player.full_name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(player.full_name)}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <span className="font-semibold">{player.full_name}</span>

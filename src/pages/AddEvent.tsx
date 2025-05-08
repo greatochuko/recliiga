@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { cn, getDateIncrement } from "@/lib/utils";
 import { format, isBefore, startOfDay } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchLeaguesByCreator } from "@/api/league";
 import { EventDataType, createEvent } from "@/api/events";
 import { EventTimeDataType } from "@/types/events";
@@ -50,6 +50,8 @@ const isDateInPast = (date: Date) => {
 };
 
 export default function AddEvent() {
+  const queryClient = useQueryClient();
+
   const [eventData, setEventData] = useState<EventDataType>(initialEventData);
   const [submitting, setSubmitting] = useState(false);
   const [rsvpDeadlineHours, setRsvpDeadlineHours] = useState("24h");
@@ -247,6 +249,8 @@ export default function AddEvent() {
     const { error } = await createEvent({ ...eventData, eventDates });
 
     if (error === null) {
+      queryClient.invalidateQueries({ queryKey: ["eventsByCreator"] });
+
       navigate("/manage-events");
     } else {
       setSubmitting(false);

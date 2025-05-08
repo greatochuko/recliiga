@@ -52,7 +52,11 @@ export default function TeamDraftPage() {
 
     channel.bind("draft", (data: { message: TeamType }) => {
       setTeams((prev) =>
-        prev.map((team) => (team.id === data.message.id ? data.message : team)),
+        prev.map((team) =>
+          team.id === data.message.id && data.message.captainId !== user.id
+            ? data.message
+            : team,
+        ),
       );
     });
 
@@ -60,7 +64,7 @@ export default function TeamDraftPage() {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [eventId]);
+  }, [eventId, user.id]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);
@@ -101,11 +105,19 @@ export default function TeamDraftPage() {
 
   async function handlePlayerDraft(teamId: string, playerId: string) {
     setIsDrafting(true);
-    await draftPlayer({
+    const { data } = await draftPlayer({
       teamId,
       playerId,
       eventId: event.id,
     });
+
+    if (data) {
+      setTeams((prev) =>
+        prev.map((team) =>
+          team.id === data.id && data.captainId === user.id ? data : team,
+        ),
+      );
+    }
 
     setIsDrafting(false);
   }

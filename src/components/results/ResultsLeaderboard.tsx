@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/tooltip";
 import { LeagueType } from "@/types/league";
 import { ResultType } from "@/types/events";
-import { getLeaderBoardData } from "@/lib/utils";
+import { getInitials, getLeaderBoardData } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import {
   ChevronDownIcon,
@@ -232,11 +232,7 @@ export const ResultsLeaderboard = ({
                         className="object-cover"
                       />
                       <AvatarFallback>
-                        {data.player.full_name
-                          .split(" ")
-                          .slice(0, 2)
-                          .map((n) => n[0])
-                          .join("")}
+                        {getInitials(data.player.full_name)}
                       </AvatarFallback>
                     </Avatar>
                     <span className="group-hover:text-accent-orange group-hover:underline">

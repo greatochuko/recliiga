@@ -7,7 +7,7 @@ import { PlayerRating } from "./DraftUIComponents";
 import { EventType, TeamType } from "@/types/events";
 import { useAuth, UserType } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
-import { getUserRating } from "@/lib/utils";
+import { getInitials, getUserRating } from "@/lib/utils";
 
 interface PlayersListProps {
   availablePlayers: UserType[];
@@ -56,10 +56,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                       className="object-cover"
                     />
                     <AvatarFallback>
-                      {player.full_name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {getInitials(player.full_name)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
