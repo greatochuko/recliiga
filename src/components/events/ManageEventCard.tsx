@@ -15,6 +15,7 @@ import { EventType } from "@/types/events";
 import { format, isPast } from "date-fns";
 import DeleteEventButton from "./DeleteEventButton";
 import CountdownClock from "./CountdownClock";
+import { getInitials } from "@/lib/utils";
 
 interface ManageEventCardProps {
   event: EventType;
@@ -97,9 +98,7 @@ export default function ManageEventCard({
                   style={{ borderColor: team.color }}
                 >
                   <AvatarImage src={team.logo} alt={`${team.name} logo`} />
-                  <AvatarFallback>
-                    {team.name.split(" ").map((n) => n[0])}
-                  </AvatarFallback>
+                  <AvatarFallback>{getInitials(team.name)}</AvatarFallback>
                 </Avatar>
                 <span className="mt-2 text-center text-sm font-semibold">
                   {team.name}

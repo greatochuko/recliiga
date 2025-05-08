@@ -11,7 +11,7 @@ import { EventType, TeamType } from "@/types/events";
 import { confirmRoster, updateTeam } from "@/api/team";
 import { useAuth } from "@/contexts/AuthContext";
 import ConfirmRosterModal from "./ConfirmRosterModal";
-import { getUserRating, handleImageResize } from "@/lib/utils";
+import { getInitials, getUserRating, handleImageResize } from "@/lib/utils";
 import { uploadImage } from "@/lib/uploadImage";
 import { toast } from "sonner";
 
@@ -130,10 +130,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                       />
                     ) : (
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-base font-medium">
-                        {team.name
-                          .split(" ")
-                          .slice(0, 2)
-                          .map((n) => n[0])}
+                        {getInitials(team.name)}
                       </div>
                     )}
                     <Input
@@ -157,10 +154,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                   />
                 ) : (
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-base font-medium">
-                    {team.name
-                      .split(" ")
-                      .slice(0, 2)
-                      .map((n) => n[0])}
+                    {getInitials(team.name)}
                   </div>
                 )}
                 <span>Team: {team.name}</span>
@@ -175,10 +169,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                       className="object-cover"
                     />
                     <AvatarFallback className="text-sm">
-                      {team.captain.full_name
-                        ?.split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {getInitials(team.captain.full_name)}?
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-base font-medium">
@@ -284,10 +275,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                           className="object-cover"
                         />
                         <AvatarFallback>
-                          {player.full_name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
+                          {getInitials(player.full_name)}
                         </AvatarFallback>
                       </Avatar>
                       <div>

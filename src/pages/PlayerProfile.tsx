@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { fetchUserProfile } from "@/api/user";
 import ProfilePlayerStats from "@/components/profile/ProfilePlayerStats";
+import { getInitials } from "@/lib/utils";
 
 export default function PlayerProfile() {
   const navigate = useNavigate();
@@ -63,12 +64,7 @@ export default function PlayerProfile() {
               alt={`${profile.full_name} Profile picture`}
               className="object-cover"
             />
-            <AvatarFallback>
-              {profile.full_name
-                .split(" ")
-                .slice(0, 2)
-                .map((n) => n[0])}
-            </AvatarFallback>
+            <AvatarFallback>{getInitials(profile.full_name)}</AvatarFallback>
           </Avatar>
         </div>
         <div className="text-center">

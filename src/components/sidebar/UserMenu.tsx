@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import InvitePopup from "@/components/InvitePopup";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { getInitials } from "@/lib/utils";
 export function UserMenu() {
   const { user, signOut, deleteAccount } = useAuth();
   const navigate = useNavigate();
@@ -69,10 +70,7 @@ export function UserMenu() {
                   sizes="64px"
                 />
                 <AvatarFallback className="text-gray-800">
-                  {user.full_name
-                    .split(" ")
-                    .slice(0, 2)
-                    .map((n) => n[0])}
+                  {getInitials(user.full_name)}
                 </AvatarFallback>
               </Avatar>
             ) : (

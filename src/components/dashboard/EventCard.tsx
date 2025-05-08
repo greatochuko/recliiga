@@ -8,6 +8,7 @@ import { CountdownClock } from "./CountdownClock";
 import { Event } from "@/types/dashboard";
 import { useNavigate } from "react-router-dom";
 import { getLeagueName } from "@/types/dashboard";
+import { getInitials } from "@/lib/utils";
 
 interface EventCardProps {
   event: Event;
@@ -38,10 +39,7 @@ export function EventCard({
     if (isRsvpOpen) {
       return `T${index + 1}`;
     }
-    return team.name
-      .split(" ")
-      .map((n) => n[0])
-      .join("");
+    return getInitials(team.name);
   };
 
   const handleAttend = () => {

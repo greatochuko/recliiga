@@ -30,11 +30,11 @@ const menuItems = [
     icon: BarChart,
     url: "/results",
   },
-  // {
-  //   title: "Chat",
-  //   icon: MessageSquare,
-  //   url: "/chat",
-  // },
+  {
+    title: "Chat",
+    icon: MessageSquare,
+    url: "/chat",
+  },
 ];
 
 export function NavigationMenu({

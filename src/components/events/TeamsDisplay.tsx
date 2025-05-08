@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/lib/utils";
 import { EventType } from "@/types/events";
 import React from "react";
 
@@ -17,12 +18,7 @@ export default function TeamsDisplay({ event }: TeamsDisplayProps) {
               style={{ borderColor: team.color }}
             >
               <AvatarImage src={team.logo} alt={team.name} />
-              <AvatarFallback>
-                {team.name
-                  .split(" ")
-                  .slice(0, 2)
-                  .map((n) => n[0])}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(team.name)}</AvatarFallback>
             </Avatar>
             <span className="mt-2 text-sm font-semibold">{team.name}</span>
           </div>
