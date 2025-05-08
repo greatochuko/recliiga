@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement } from "react";
+import { cloneElement, ReactElement, useEffect } from "react";
 
 interface ModalContainerProps {
   open: boolean;
@@ -11,6 +11,14 @@ export default function ModalContainer({
   closeModal,
   children,
 }: ModalContainerProps) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [open]);
+
   return (
     <div
       className={`fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black/50 backdrop-blur-sm duration-200 ${
