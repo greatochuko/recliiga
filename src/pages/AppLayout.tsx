@@ -21,7 +21,7 @@ export default function AppLayout() {
         className={`flex min-h-dvh w-full ${isInvitePage ? "bg-gradient-to-b from-accent-orange/10 to-white" : ""}`}
       >
         <AppSidebar />
-        <div className="relative mx-auto flex w-full max-w-6xl flex-1 px-4 py-4 sm:px-6">
+        <div className="relative mx-auto flex w-[calc(100%-224px)] max-w-6xl flex-1 px-4 py-4 sm:px-6">
           <Outlet />
         </div>
       </div>
