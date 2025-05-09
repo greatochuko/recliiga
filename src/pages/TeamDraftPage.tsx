@@ -48,23 +48,35 @@ export default function TeamDraftPage() {
       cluster: "eu",
     });
 
-    const channel = pusher.subscribe(`event`);
+    const channel = pusher.subscribe(`event-${event.id}`);
 
-    channel.bind("draft", (data: { message: TeamType }) => {
-      setTeams((prev) =>
-        prev.map((team) =>
-          team.id === data.message.id && data.message.captainId !== user.id
-            ? data.message
-            : team,
-        ),
-      );
-    });
+    channel.bind(
+      "draft",
+      (data: {
+        message: { teamId: string; captainId: string; playerId: string };
+      }) => {
+        setTeams((prev) =>
+          prev.map((team) =>
+            team.id === data.message.teamId &&
+            data.message.captainId !== user.id
+              ? {
+                  ...team,
+                  players: [
+                    ...team.players,
+                    event.players.find((pl) => pl.id === data.message.playerId),
+                  ],
+                }
+              : team,
+          ),
+        );
+      },
+    );
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [eventId, user.id]);
+  }, [event.id, event.players, eventId, user.id]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);
