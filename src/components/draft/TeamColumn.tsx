@@ -170,7 +170,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                       className="object-cover"
                     />
                     <AvatarFallback className="text-sm">
-                      {getInitials(team.captain.full_name)}?
+                      {getInitials(team.captain.full_name)}
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-base font-medium">
