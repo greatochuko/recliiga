@@ -96,7 +96,9 @@ export default function TeamDraftPage() {
                   ...team,
                   players: [
                     ...team.players,
-                    event.players.find((pl) => pl.id === data.message.playerId),
+                    event?.players.find(
+                      (pl) => pl.id === data.message.playerId,
+                    ),
                   ],
                 }
               : team,
@@ -109,7 +111,7 @@ export default function TeamDraftPage() {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [eventId, event.players, user.id]);
+  }, [event?.players, eventId, user.id]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);
