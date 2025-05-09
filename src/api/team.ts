@@ -5,10 +5,11 @@ export async function updateTeam(
   teamId: string,
   teamData: Omit<TeamType, "logo"> & { logo?: string },
   otherTeamId: string,
+  eventId: string,
 ) {
   const data = await fetchApi<TeamType>(`/team/${teamId}`, {
     method: "PATCH",
-    body: { ...teamData, otherTeamId },
+    body: { ...teamData, otherTeamId, eventId },
   });
   return data;
 }
