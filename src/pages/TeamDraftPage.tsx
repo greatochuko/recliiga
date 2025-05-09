@@ -48,7 +48,7 @@ export default function TeamDraftPage() {
       cluster: "eu",
     });
 
-    const channel = pusher.subscribe(`event-${event?.id}`);
+    const channel = pusher.subscribe(`event-${eventId}`);
 
     channel.bind(
       "updateTeam",
@@ -74,14 +74,14 @@ export default function TeamDraftPage() {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [event?.id]);
+  }, [eventId]);
 
   useEffect(() => {
     const pusher = new Pusher(PUSHER_API_KEY, {
       cluster: "eu",
     });
 
-    const channel = pusher.subscribe(`event-${event?.id}`);
+    const channel = pusher.subscribe(`event-${eventId}`);
 
     channel.bind(
       "draft",
@@ -109,7 +109,7 @@ export default function TeamDraftPage() {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [event?.id, event.players, user.id]);
+  }, [eventId, event.players, user.id]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);
