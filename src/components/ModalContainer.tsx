@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, useEffect } from "react";
+import { cloneElement, ReactElement } from "react";
 
 interface ModalContainerProps {
   open: boolean;
@@ -11,13 +11,13 @@ export default function ModalContainer({
   closeModal,
   children,
 }: ModalContainerProps) {
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [open]);
+  // useEffect(() => {
+  //   if (open) {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "auto";
+  //   }
+  // }, [open]);
 
   return (
     <div
