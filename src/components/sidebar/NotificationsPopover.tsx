@@ -9,6 +9,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotifications, readAllNotifications } from "@/api/notification";
 import JoinRequestNotification from "../notifications/JoinRequestNotification";
+import { getInitials } from "@/lib/utils";
 
 export function NotificationsPopover() {
   const [isOpen, setIsOpen] = useState(false);
@@ -135,10 +136,7 @@ export function NotificationsPopover() {
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-xs font-medium text-gray-700">
-                              {notif.initiator.full_name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                              {getInitials(notif.initiator.full_name)}
                             </div>
                           )}
                         </div>

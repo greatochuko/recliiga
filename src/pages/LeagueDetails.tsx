@@ -7,7 +7,7 @@ import { fetchLeagueById } from "@/api/league";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import EventCard from "@/components/events/EventCard";
-import { getUpcomingEvents } from "@/lib/utils";
+import { getInitials, getUpcomingEvents } from "@/lib/utils";
 
 export default function LeagueDetails() {
   const navigate = useNavigate();
@@ -69,12 +69,7 @@ export default function LeagueDetails() {
             <div className="flex items-start">
               <Avatar className="mr-4 h-14 w-14">
                 <AvatarImage src={league.image} alt={`${league.name} logo`} />
-                <AvatarFallback>
-                  {league.name
-                    .split(" ")
-                    .map((n) => n[0].toUpperCase())
-                    .join("")}
-                </AvatarFallback>
+                <AvatarFallback>{getInitials(league.name)}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
                 <div className="flex items-start justify-between">
@@ -126,10 +121,7 @@ export default function LeagueDetails() {
                               className="object-cover"
                             />
                             <AvatarFallback>
-                              {player.full_name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                              {getInitials(player.full_name)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="ml-2 flex-grow">

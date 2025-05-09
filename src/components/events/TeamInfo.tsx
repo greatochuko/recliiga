@@ -1,6 +1,7 @@
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
 import { TeamType } from "@/types/events";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { getInitials } from "@/lib/utils";
 
 export default function TeamInfo({ team }: { team: TeamType }) {
   return (
@@ -10,12 +11,7 @@ export default function TeamInfo({ team }: { team: TeamType }) {
         style={{ borderColor: team.color }}
       >
         <AvatarImage src={team.logo} alt={team.name} />
-        <AvatarFallback>
-          {team.name
-            .split(" ")
-            .map((n: string) => n[0])
-            .join("")}
-        </AvatarFallback>
+        <AvatarFallback>{getInitials(team.name)}</AvatarFallback>
       </Avatar>
       <span className="text-sm font-semibold">{team.name}</span>
       <div className="mt-2 flex flex-col items-center">

@@ -48,19 +48,68 @@ export default function TeamDraftPage() {
       cluster: "eu",
     });
 
-    const channel = pusher.subscribe(`event`);
+    const channel = pusher.subscribe(`event-${eventId}`);
 
-    channel.bind("draft", (data: { message: TeamType }) => {
-      setTeams((prev) =>
-        prev.map((team) => (team.id === data.message.id ? data.message : team)),
-      );
-    });
+    channel.bind(
+      "updateTeam",
+      (data: {
+        message: { teamId: string; name: string; color: string; logo: string };
+      }) => {
+        setTeams((prev) =>
+          prev.map((team) =>
+            team.id === data.message.teamId
+              ? {
+                  ...team,
+                  name: data.message.name,
+                  color: data.message.color,
+                  logo: data.message.logo,
+                }
+              : team,
+          ),
+        );
+      },
+    );
 
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
   }, [eventId]);
+
+  useEffect(() => {
+    const pusher = new Pusher(PUSHER_API_KEY, {
+      cluster: "eu",
+    });
+
+    const channel = pusher.subscribe(`event-${eventId}`);
+
+    channel.bind(
+      "draft",
+      (data: {
+        message: { teamId: string; captainId: string; playerId: string };
+      }) => {
+        setTeams((prev) =>
+          prev.map((team) =>
+            team.id === data.message.teamId &&
+            data.message.captainId !== user.id
+              ? {
+                  ...team,
+                  players: [
+                    ...team.players,
+                    event.players.find((pl) => pl.id === data.message.playerId),
+                  ],
+                }
+              : team,
+          ),
+        );
+      },
+    );
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [eventId, event.players, user.id]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);
@@ -101,11 +150,19 @@ export default function TeamDraftPage() {
 
   async function handlePlayerDraft(teamId: string, playerId: string) {
     setIsDrafting(true);
-    await draftPlayer({
+    const { data } = await draftPlayer({
       teamId,
       playerId,
       eventId: event.id,
     });
+
+    if (data) {
+      setTeams((prev) =>
+        prev.map((team) =>
+          team.id === data.id && data.captainId === user.id ? data : team,
+        ),
+      );
+    }
 
     setIsDrafting(false);
   }

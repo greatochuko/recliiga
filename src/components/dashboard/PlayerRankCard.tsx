@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth, UserType } from "@/contexts/AuthContext";
 import { LeagueType } from "@/types/league";
-import { getCardinalSuffix, getUserRating } from "@/lib/utils";
+import { getCardinalSuffix, getInitials, getUserRating } from "@/lib/utils";
 import { useMemo } from "react";
 
 export function PlayerRankCard({
@@ -38,10 +38,7 @@ export function PlayerRankCard({
               className="object-cover"
             />
             <AvatarFallback className="text-gray-800">
-              {user.full_name
-                .split(" ")
-                .slice(0, 2)
-                .map((n) => n[0])}
+              {getInitials(user.full_name)}
             </AvatarFallback>
           </Avatar>
           <h3 className="mb-1 text-sm font-semibold">{user.full_name}</h3>

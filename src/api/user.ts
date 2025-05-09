@@ -26,6 +26,7 @@ export type ProfileRegistrationDataType = {
 export async function completeProfileRegistration(
   updateProfileData: ProfileRegistrationDataType,
 ) {
+  console.log(updateProfileData);
   const data = await fetchApi<UserType>("/user/complete-profile", {
     body: updateProfileData,
     method: "POST",

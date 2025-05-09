@@ -9,6 +9,7 @@ import { ArrowLeftIcon, ChevronLeftIcon } from "lucide-react";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { TeamType } from "@/types/events";
 import { UserType } from "@/contexts/AuthContext";
+import { getInitials } from "@/lib/utils";
 
 function TeamRoster({
   team,
@@ -33,10 +34,7 @@ function TeamRoster({
               className="object-cover"
             />
             <AvatarFallback>
-              {team.captain.full_name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
+              {getInitials(team.captain.full_name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
@@ -85,12 +83,7 @@ function TeamRoster({
             >
               <Avatar className="h-12 w-12">
                 <AvatarImage src={player.avatar_url} alt={player.full_name} />
-                <AvatarFallback>
-                  {player.full_name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
+                <AvatarFallback>{getInitials(player.full_name)}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <Link
@@ -192,10 +185,7 @@ export default function EventResults() {
                     alt={event.teams[0].name}
                   />
                   <AvatarFallback>
-                    {event.teams[0].name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {getInitials(event.teams[0].name)}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm font-semibold">
@@ -239,10 +229,7 @@ export default function EventResults() {
                     alt={event.teams[1].name}
                   />
                   <AvatarFallback>
-                    {event.teams[1].name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {getInitials(event.teams[1].name)}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm font-semibold">

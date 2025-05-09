@@ -1,4 +1,5 @@
 import { acceptLeagueRequest, declineLeagueRequest } from "@/api/league";
+import { getInitials } from "@/lib/utils";
 import { NotificationType } from "@/types/notification";
 import { useState } from "react";
 
@@ -58,10 +59,7 @@ export default function JoinRequestNotification({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs font-medium text-gray-700">
-            {notification.initiator.full_name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+            {getInitials(notification.initiator.full_name)}
           </div>
         )}
       </div>

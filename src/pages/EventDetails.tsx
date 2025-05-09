@@ -13,7 +13,7 @@ import CountdownClock from "@/components/events/CountdownClock";
 import TeamInfo from "@/components/events/TeamInfo";
 import { JerseyIcon } from "@/components/draft/DraftUIComponents";
 import { StarRating } from "@/components/rating/StarRating";
-import { getUserRating } from "@/lib/utils";
+import { getInitials, getUserRating } from "@/lib/utils";
 
 export default function EventDetails() {
   const navigate = useNavigate();
@@ -176,10 +176,7 @@ export default function EventDetails() {
                               className="object-cover"
                             />
                             <AvatarFallback>
-                              {team.captain?.full_name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                              {getInitials(team.captain?.full_name)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0 flex-1">
@@ -221,10 +218,7 @@ export default function EventDetails() {
                                   className="object-cover"
                                 />
                                 <AvatarFallback>
-                                  {player.full_name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
+                                  {getInitials(player.full_name)}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="min-w-0 flex-1">
@@ -250,7 +244,7 @@ export default function EventDetails() {
                     {event.players.map((player) => (
                       <div
                         key={player.id}
-                        className="flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                        className="flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage
@@ -259,10 +253,7 @@ export default function EventDetails() {
                             className="object-cover"
                           />
                           <AvatarFallback>
-                            {player.full_name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                            {getInitials(player.full_name)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1">

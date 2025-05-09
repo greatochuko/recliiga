@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRef } from "react";
+import { getInitials } from "@/lib/utils";
 
 interface ProfileAvatarProps {
   avatarUrl?: string;
@@ -25,10 +26,7 @@ export function ProfileAvatar({
         <Avatar className="h-32 w-32 border-2 border-gray-200">
           <AvatarImage src={avatarUrl} className="object-cover" />
           <AvatarFallback className="bg-orange-100 text-xl text-accent-orange">
-            {fullName
-              ?.split(" ")
-              .map((n) => n[0])
-              .join("")}
+            {getInitials(fullName)}
           </AvatarFallback>
         </Avatar>
         {isEditing && (

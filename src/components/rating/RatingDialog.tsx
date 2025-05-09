@@ -5,6 +5,7 @@ import { UserType } from "@/contexts/AuthContext";
 import ModalContainer from "../ModalContainer";
 import { Link } from "react-router-dom";
 import { rateTeammate } from "@/api/events";
+import { getInitials } from "@/lib/utils";
 
 interface RatingDialogProps {
   eventId: string;
@@ -53,10 +54,7 @@ export function RatingDialog({
               />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 text-neutral-600">
-                {player.full_name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {getInitials(player.full_name)}
               </div>
             )}
             <div className="ml-2">
@@ -91,10 +89,7 @@ export function RatingDialog({
               />
             ) : (
               <div className="flex h-24 w-24 items-center justify-center rounded-full bg-neutral-200 text-3xl text-neutral-600">
-                {player.full_name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {getInitials(player.full_name)}
               </div>
             )}
             <Link

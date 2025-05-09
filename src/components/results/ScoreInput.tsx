@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getInitials } from "@/lib/utils";
 import { TeamType } from "@/types/events";
 
 interface ScoreInputProps {
@@ -36,12 +37,7 @@ export function ScoreInput({ team, score, setScore }: ScoreInputProps) {
         style={{ borderColor: team.color }}
       >
         <AvatarImage src={team.logo} alt={team.name} />
-        <AvatarFallback>
-          {team.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")}
-        </AvatarFallback>
+        <AvatarFallback>{getInitials(team.name)}</AvatarFallback>
       </Avatar>
       <span className="text-sm font-semibold">{team.name}</span>
       <Input

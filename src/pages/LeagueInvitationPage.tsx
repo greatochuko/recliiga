@@ -11,6 +11,7 @@ import { fetchLeaguesByCode, joinLeague } from "@/api/league";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { toast } from "sonner";
 import { useState } from "react";
+import { getInitials } from "@/lib/utils";
 
 export default function LeagueInvitationPage() {
   const navigate = useNavigate();
@@ -76,10 +77,7 @@ export default function LeagueInvitationPage() {
             />
           ) : (
             <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-accent-orange bg-white text-2xl font-bold text-accent-orange">
-              {league.name
-                .split(" ")
-                .slice(0, 2)
-                .map((n) => n[0])}
+              {getInitials(league.name)}
             </div>
           )}
           <h1 className="text-2xl font-bold text-gray-800">

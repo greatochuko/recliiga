@@ -58,9 +58,12 @@ export default function PlayerRegistration() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const profilePositions = playerData.sports.map((sport) =>
-      playerData.positions[sport] ? playerData.positions[sport].join(",") : "",
-    );
+    let profilePositions = [];
+    playerData.sports.forEach((sport) => {
+      if (playerData.positions[sport])
+        profilePositions.push(playerData.positions[sport]);
+    });
+    profilePositions = profilePositions.flatMap((a) => a);
 
     const profileData = {
       ...playerData,

@@ -8,6 +8,7 @@ import { Edit } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { getInitials } from "@/lib/utils";
 
 interface Event {
   id: string;
@@ -114,7 +115,7 @@ export const EventCard = ({
           {attendanceStatus === "attending" && !isEditing && (
             <Badge
               variant="secondary"
-              className="bg-accent-orange text-accent-orange bg-opacity-20 text-xs"
+              className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
             >
               Attending
             </Badge>
@@ -136,12 +137,7 @@ export const EventCard = ({
               style={{ backgroundColor: event.team1.color }}
             >
               <AvatarImage src={event.team1.avatar} alt={event.team1.name} />
-              <AvatarFallback>
-                {event.team1.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(event.team1.name)}</AvatarFallback>
             </Avatar>
             <span className="mt-2 text-sm font-semibold">
               {event.team1.name}
@@ -154,12 +150,7 @@ export const EventCard = ({
               style={{ backgroundColor: event.team2.color }}
             >
               <AvatarImage src={event.team2.avatar} alt={event.team2.name} />
-              <AvatarFallback>
-                {event.team2.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(event.team2.name)}</AvatarFallback>
             </Avatar>
             <span className="mt-2 text-sm font-semibold">
               {event.team2.name}
@@ -169,14 +160,14 @@ export const EventCard = ({
 
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
-            <span className="text-accent-orange font-bold">{event.league}</span>
+            <span className="font-bold text-accent-orange">{event.league}</span>
           </div>
         )}
 
         <div className="mt-2 flex justify-center space-x-2">
           <Button
             variant="outline"
-            className="text-accent-orange border-accent-orange hover:bg-accent-orange transition-colors hover:text-white"
+            className="border-accent-orange text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
           >
             {event.hasResults ? "View Results" : "View Details"}
           </Button>
@@ -188,7 +179,7 @@ export const EventCard = ({
               {(isEditing || !attendanceStatus) && (
                 <>
                   <Button
-                    className="bg-accent-orange hover:bg-accent-orange/90 text-white"
+                    className="bg-accent-orange text-white hover:bg-accent-orange/90"
                     onClick={handleAttend}
                   >
                     Attend

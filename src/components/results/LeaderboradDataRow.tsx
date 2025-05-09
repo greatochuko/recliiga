@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LeaderboardDataType } from "@/types/events";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { getInitials } from "@/lib/utils";
 
 export default function LeaderboradDataRow({
   data,
@@ -25,11 +26,7 @@ export default function LeaderboradDataRow({
               className="object-cover"
             />
             <AvatarFallback>
-              {data.player.full_name
-                .split(" ")
-                .slice(0, 2)
-                .map((n) => n[0])
-                .join("")}
+              {getInitials(data.player.full_name)}
             </AvatarFallback>
           </Avatar>
           <span className="group-hover:text-accent-orange group-hover:underline">
