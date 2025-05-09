@@ -48,7 +48,40 @@ export default function TeamDraftPage() {
       cluster: "eu",
     });
 
-    const channel = pusher.subscribe(`event-${event.id}`);
+    const channel = pusher.subscribe(`event-${event?.id}`);
+
+    channel.bind(
+      "updateTeam",
+      (data: {
+        message: { teamId: string; name: string; color: string; logo: string };
+      }) => {
+        setTeams((prev) =>
+          prev.map((team) =>
+            team.id === data.message.teamId
+              ? {
+                  ...team,
+                  name: data.message.name,
+                  color: data.message.color,
+                  logo: data.message.logo,
+                }
+              : team,
+          ),
+        );
+      },
+    );
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [event?.id]);
+
+  useEffect(() => {
+    const pusher = new Pusher(PUSHER_API_KEY, {
+      cluster: "eu",
+    });
+
+    const channel = pusher.subscribe(`event-${event?.id}`);
 
     channel.bind(
       "draft",
@@ -76,7 +109,7 @@ export default function TeamDraftPage() {
       channel.unbind_all();
       channel.unsubscribe();
     };
-  }, [event.id, event.players, eventId, user.id]);
+  }, [event?.id, event.players, user.id]);
 
   function handleChangeDraftType(newDraftType: DraftType) {
     setDraftType(newDraftType);

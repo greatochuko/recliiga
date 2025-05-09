@@ -86,6 +86,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
       team.id,
       { ...team, logo: url },
       otherTeam.id,
+      event.id,
     );
     if (error) {
       toast.error(error, { style: { color: "#ef4444" } });
