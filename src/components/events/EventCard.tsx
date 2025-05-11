@@ -27,7 +27,7 @@ export default function EventCard({
   );
 
   return (
-    <Card className="mb-4">
+    <Card>
       <CardContent className="relative p-4">
         <EventHeader
           spotsLeft={spotsLeft}

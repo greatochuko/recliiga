@@ -1,106 +1,201 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatArea from "@/components/chat/ChatArea";
 import ProfileSidebar from "@/components/chat/ProfileSidebar";
-import { conversations, groupMessages, individualMessages } from "@/lib/data";
-import { getInitials } from "@/lib/utils";
+
 import { fetchLeaguesByUser } from "@/api/league";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth, UserType } from "@/contexts/AuthContext";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
-// Mock data for conversations
-export type ChatType = {
-  id: number;
-  name: string;
-  type: string;
-  avatar: string;
-  lastMessage: string;
-  timestamp: string;
-  unread: number;
-  members?: {
-    name: string;
-    initials: string;
-    image: string;
-  }[];
-  role?: "player" | "organizer";
+export type MessageType = {
+  id: string;
+  fromUser: UserType;
+  toUser: UserType;
+  text: string;
+  time: Date;
 };
 
-function ChatContent() {
-  const [activeConversation, setActiveConversation] = useState<ChatType>();
-  const [messageInput, setMessageInput] = useState("");
-  const [isProfileVisible, setIsProfileVisible] = useState(false);
-  const [chats, setChats] = useState([]);
+const initialMessages: MessageType[] = [
+  {
+    id: "1",
+    fromUser: {
+      id: "cma6j5fq30000uomswzxhb60j",
+      full_name: "John Doe",
+    } as UserType,
+    toUser: {
+      id: "cma6mbp6e000muoeomnp6itwi",
+      full_name: "David Smith",
+    } as UserType,
+    text: "Hey coach, I wanted to discuss our strategy for the upcoming game. Do you have any specific plays in mind?",
+    time: new Date(),
+  },
+  {
+    id: "2",
+    fromUser: {
+      id: "cma6j5fq30000uomswzxhb60j",
+      full_name: "John Doe",
+    } as UserType,
+    toUser: {
+      id: "cma6mbp6e000muoeomnp6itwi",
+      full_name: "David Smith",
+    } as UserType,
+    text: "Hey coach, I wanted to discuss our strategy for the upcoming game. Do you have any specific plays in mind?",
+    time: new Date(),
+  },
+  {
+    id: "3",
+    fromUser: {
+      id: "cma6j5fq30000uomswzxhb60j",
+      full_name: "John Doe",
+    } as UserType,
+    toUser: {
+      id: "cma6mbp6e000muoeomnp6itwi",
+      full_name: "David Smith",
+    } as UserType,
+    text: "Hey coach, I wanted to discuss our strategy for the upcoming game. Do you have any specific plays in mind?",
+    time: new Date(),
+  },
+  {
+    id: "4",
+    toUser: {
+      id: "cma6j5fq30000uomswzxhb60j",
+      full_name: "John Doe",
+    } as UserType,
+    fromUser: {
+      id: "cma6mbp6e000muoeomnp6itwi",
+      full_name: "David Smith",
+    } as UserType,
+    text: "Hey coach, I wanted to discuss our strategy for the upcoming game. Do you have any specific plays in mind?",
+    time: new Date(),
+  },
+  {
+    id: "5",
+    toUser: {
+      id: "cma6j5fq30000uomswzxhb60j",
+      full_name: "John Doe",
+    } as UserType,
+    fromUser: {
+      id: "cma6mbp6e000muoeomnp6itwi",
+      full_name: "David Smith",
+    } as UserType,
+    text: "Hey coach, I wanted to discuss our strategy for the upcoming game. Do you have any specific plays in mind?",
+    time: new Date(),
+  },
+  {
+    id: "6",
+    toUser: {
+      id: "cma6j5fq30000uomswzxhb60j",
+      full_name: "John Doe",
+    } as UserType,
+    fromUser: {
+      id: "cma6mbp6e000muoeomnp6itwi",
+      full_name: "David Smith",
+    } as UserType,
+    text: "Hey coach, I wanted to discuss our strategy for the upcoming game. Do you have any specific plays in mind?",
+    time: new Date(),
+  },
+];
 
-  const { data, isLoading, error, refetch } = useQuery({
+export type ChatType = {
+  user: UserType;
+  lastMessage?: MessageType;
+  messages: MessageType[];
+  timestamp: string;
+  unreadMessages: number;
+};
+
+function createChatFromPlayers(
+  players: UserType[],
+  messages: MessageType[],
+  userId: string,
+): ChatType[] {
+  return players
+    .filter((pl) => pl.id !== userId)
+    .map((pl, i) => {
+      const playerMessages = messages
+        .filter(
+          (msg) =>
+            (msg.fromUser.id === userId && msg.toUser.id === pl.id) ||
+            (msg.toUser.id === userId && msg.fromUser.id === pl.id),
+        )
+        .sort(
+          (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime(),
+        );
+
+      return {
+        user: pl,
+        lastMessage: playerMessages[0],
+        messages: playerMessages,
+        timestamp: "2:40 pm",
+        unreadMessages: i,
+      };
+    });
+}
+
+function ChatContent() {
+  const { user } = useAuth();
+
+  const [activeChat, setActiveChat] = useState<ChatType>();
+  const [isProfileVisible, setIsProfileVisible] = useState(false);
+  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
+
+  const { data, isLoading } = useQuery({
     queryKey: ["leagues"],
     queryFn: fetchLeaguesByUser,
   });
 
-  const leagues = data?.leagues || [];
+  const leagues = useMemo(() => data?.leagues || [], [data?.leagues]);
 
-  const uniquePlayers = Array.from(
-    new Map(
-      leagues
-        .flatMap((league) => league.players)
-        .map((player) => [player.id, player]),
-    ).values(),
+  const uniquePlayers = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          leagues
+            .flatMap((league) => league.players)
+            .map((player) => [player.id, player]),
+        ).values(),
+      ),
+    [leagues],
   );
 
-  console.clear();
-  console.log(uniquePlayers);
+  // useEffect(() => {
+  //   if (uniquePlayers.length) {
+  //   }
+  // }, [messages, uniquePlayers, user.id]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (messageInput.trim()) {
-      // In a real app, we would add the message to the conversation
-      setMessageInput("");
-    }
-  };
+  if (isLoading) {
+    return <FullScreenLoader />;
+  }
 
   const handleChatSelect = (chat: ChatType) => {
-    setActiveConversation(chat);
+    setActiveChat(chat);
     setIsProfileVisible(false);
   };
 
-  const getMessageData = (conversation: any) => {
-    if (conversation.type === "group") {
-      return groupMessages;
-    } else {
-      // Update the contact name in individual messages
-      return individualMessages.map((msg) => {
-        if (msg.name === "Contact") {
-          return {
-            ...msg,
-            name: conversation.name,
-            initials: getInitials(conversation.name),
-          };
-        }
-        return msg;
-      });
-    }
-  };
+  const chats = createChatFromPlayers(uniquePlayers, messages, user.id);
 
   return (
     <div className="flex h-[calc(100vh-80px)] overflow-hidden rounded-lg border">
       <ChatSidebar
-        activeConversation={activeConversation}
+        activeChat={activeChat}
         chats={chats}
         handleChatSelect={handleChatSelect}
       />
 
       <ChatArea
-        activeConversation={activeConversation}
-        getMessageData={getMessageData}
-        handleSendMessage={handleSendMessage}
+        setMessages={setMessages}
+        key={activeChat?.user.id}
+        activeChat={activeChat}
+        closeChatArea={() => setActiveChat(undefined)}
+        messages={messages}
         isProfileVisible={isProfileVisible}
-        messageInput={messageInput}
         setIsProfileVisible={setIsProfileVisible}
-        setMessageInput={setMessageInput}
-        closeChatArea={() => setActiveConversation(undefined)}
       />
 
-      {isProfileVisible && activeConversation && (
+      {isProfileVisible && activeChat && (
         <ProfileSidebar
-          activeConversation={activeConversation}
+          activeConversation={activeChat}
           closeProfileView={() => setIsProfileVisible(false)}
         />
       )}
@@ -114,9 +209,7 @@ export default function Chat() {
       <h1 className="ml-8 text-2xl font-bold">Chat</h1>
 
       {/* Chat content starting below the header */}
-      <div className="">
-        <ChatContent />
-      </div>
+      <ChatContent />
     </main>
   );
 }

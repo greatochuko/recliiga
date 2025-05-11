@@ -1,14 +1,7 @@
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChatType } from "@/pages/Chat";
-import {
-  ArrowLeftIcon,
-  PaperclipIcon,
-  SendIcon,
-  UserIcon,
-  UsersIcon,
-} from "lucide-react";
+import { ChatType, MessageType } from "@/pages/Chat";
+import { ArrowLeftIcon, PaperclipIcon, SendIcon, UserIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -17,38 +10,85 @@ import {
 } from "../ui/tooltip";
 import { getInitials } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { format } from "date-fns";
+// import { individualMessages } from "@/lib/data";
 
 export default function ChatArea({
-  activeConversation,
+  activeChat,
   isProfileVisible,
   setIsProfileVisible,
-  getMessageData,
-  messageInput,
-  setMessageInput,
-  handleSendMessage,
   closeChatArea,
+  messages,
+  setMessages,
 }: {
-  activeConversation: ChatType;
+  activeChat: ChatType;
   isProfileVisible: boolean;
   setIsProfileVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  getMessageData: (conversation: any) => {
-    name: string;
-    initials: string;
-    message: string;
-    time: string;
-  }[];
-  messageInput: string;
-  setMessageInput: React.Dispatch<React.SetStateAction<string>>;
-  handleSendMessage: (e: React.FormEvent) => void;
   closeChatArea: () => void;
+  messages: MessageType[];
+  setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
 }) {
+  const { user } = useAuth();
+
   const { open } = useSidebar();
+
+  const [messageInput, setMessageInput] = useState("");
+
+  const messageAreaRef = useRef<HTMLDivElement>();
+
+  const chatMessages = useMemo(
+    () =>
+      messages
+        .filter(
+          (msg) =>
+            (msg.fromUser.id === user.id &&
+              msg.toUser.id === activeChat?.user.id) ||
+            (msg.toUser.id === user.id &&
+              msg.fromUser.id === activeChat?.user.id),
+        )
+        .sort(
+          (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime(),
+        ),
+    [activeChat?.user.id, messages, user.id],
+  );
+
+  useEffect(() => {
+    if (messageAreaRef.current) {
+      messageAreaRef.current.scrollTop = messageAreaRef.current.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => {
+    messageAreaRef.current?.scroll({
+      top: messageAreaRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [chatMessages]);
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (messageInput.trim()) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          fromUser: user,
+          id: `asdf-${prev.length}`,
+          text: messageInput,
+          time: new Date(),
+          toUser: activeChat.user,
+        },
+      ]);
+      setMessageInput("");
+    }
+  };
 
   return (
     <section
-      className={`flex flex-1 flex-col ${activeConversation ? (isProfileVisible ? (open ? "hidden xl:flex" : "hidden lg:flex") : "flex") : open ? "hidden lg:flex" : "hidden md:flex"}`}
+      className={`flex flex-1 flex-col ${activeChat ? (isProfileVisible ? (open ? "hidden xl:flex" : "hidden lg:flex") : "flex") : open ? "hidden lg:flex" : "hidden md:flex"}`}
     >
-      {activeConversation ? (
+      {activeChat ? (
         <>
           <div className="flex items-center justify-between gap-4 border-b border-gray-200 p-4">
             <button
@@ -60,27 +100,28 @@ export default function ChatArea({
             <div className="mr-auto flex items-center">
               <Avatar className="mr-3 h-10 w-10">
                 <AvatarImage
-                  src={activeConversation.avatar}
-                  alt={activeConversation.name}
+                  src={activeChat.user.avatar_url}
+                  alt={activeChat.user.full_name}
+                  className="object-cover"
                 />
                 <AvatarFallback>
-                  {activeConversation.type === "group" ? (
+                  {/* {activeConversation.user.type === "group" ? (
                     <UsersIcon className="h-6 w-6 text-accent-orange" />
                   ) : (
-                    getInitials(activeConversation.name)
-                  )}
+                  )} */}
+                  {getInitials(activeChat.user.full_name)}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <h3 className="text-lg font-bold text-inherit">
-                  {activeConversation.name}
+                  {activeChat.user.full_name}
                 </h3>
                 <p className="text-sm text-[#707B81]">
-                  {activeConversation.type === "group"
-                    ? "Group Chat"
-                    : activeConversation.role === "organizer"
-                      ? "League Organizer"
-                      : "Player"}
+                  {/* {activeConversation.user.type === "group"
+                    ? "Group Chat" :*/}
+                  {activeChat.user.role === "organizer"
+                    ? "League Organizer"
+                    : "Player"}
                 </p>
               </div>
             </div>
@@ -103,53 +144,49 @@ export default function ChatArea({
               </TooltipProvider>
             </div>
           </div>
-          <div className="flex-1 space-y-4 overflow-y-auto p-4">
-            {getMessageData(activeConversation).map((message, index) => (
-              <div
-                key={index}
-                className={`flex items-start space-x-2 ${
-                  message.name === "John Doe" ? "justify-end" : ""
-                }`}
-              >
-                {message.name !== "John Doe" && (
-                  <Avatar>
-                    <AvatarFallback>{message.initials}</AvatarFallback>
-                  </Avatar>
-                )}
+          <div
+            ref={messageAreaRef}
+            className="flex-1 space-y-4 overflow-y-auto p-4"
+          >
+            {chatMessages.map((message) => {
+              const isSender = message.fromUser.id === user.id;
+
+              return (
                 <div
-                  className={`max-w-[70%] ${
-                    message.name === "John Doe"
-                      ? "bg-accent-orange text-white"
-                      : "bg-gray-100"
-                  } rounded-lg p-3`}
+                  key={message.id}
+                  className={`flex items-start space-x-2 ${
+                    isSender ? "justify-end" : ""
+                  }`}
                 >
-                  <p className="text-sm font-medium">
-                    {message.name}{" "}
-                    <span className="text-xs font-normal opacity-70">
-                      {message.time}
+                  <div
+                    className={`flex max-w-[70%] items-end gap-2 rounded-2xl p-3 ${
+                      isSender
+                        ? "rounded-br-none bg-accent-orange text-white"
+                        : "rounded-bl-none bg-gray-100"
+                    }`}
+                  >
+                    <p className="text-sm">{message.text}</p>
+                    <span
+                      className={`whitespace-nowrap text-[10px] font-medium ${isSender ? "text-white/70" : "text-gray-800/70"}`}
+                    >
+                      {format(message.time, "p")}
                     </span>
-                  </p>
-                  <p className="mt-1 text-sm">{message.message}</p>
+                  </div>
                 </div>
-                {message.name === "John Doe" && (
-                  <Avatar>
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="border-t border-gray-200 p-4">
             <form
               onSubmit={handleSendMessage}
-              className="flex items-center space-x-2"
+              className="flex items-center gap-2"
             >
-              <Input
+              <input
                 type="text"
                 placeholder="Type your message..."
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
-                className="flex-1 border-[#707B81] focus:border-accent-orange focus:ring-accent-orange"
+                className="flex-1 rounded-md border border-gray-300 p-2 text-sm outline-none outline outline-offset-2 duration-100 focus-visible:outline-accent-orange/50"
               />
               <Button variant="ghost" size="icon" type="button">
                 <PaperclipIcon className="h-5 w-5 text-[#707B81]" />
