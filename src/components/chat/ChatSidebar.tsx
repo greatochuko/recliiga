@@ -82,7 +82,7 @@ export default function ChatSidebar({
                 </p>
                 {chat.lastMessage && (
                   <p className="text-xs text-[#707B81]">
-                    {formatMessageTime(chat.lastMessage.time)}
+                    {formatMessageTime(chat.lastMessage.createdAt)}
                   </p>
                 )}
               </div>

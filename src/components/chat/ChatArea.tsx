@@ -1,6 +1,5 @@
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChatType, MessageType } from "@/pages/Chat";
 import { ArrowLeftIcon, PaperclipIcon, SendIcon, UserIcon } from "lucide-react";
 import {
   Tooltip,
@@ -13,6 +12,9 @@ import { useSidebar } from "../ui/sidebar";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
+import { ChatType, MessageType } from "@/types/message";
+import { sendMessage } from "@/api/message";
+import { toast } from "sonner";
 // import { individualMessages } from "@/lib/data";
 
 export default function ChatArea({
@@ -34,6 +36,7 @@ export default function ChatArea({
 
   const { open } = useSidebar();
 
+  const [loading, setLoading] = useState(false);
   const [messageInput, setMessageInput] = useState("");
 
   const messageAreaRef = useRef<HTMLDivElement>();
@@ -49,7 +52,8 @@ export default function ChatArea({
               msg.fromUser.id === activeChat?.user.id),
         )
         .sort(
-          (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime(),
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         ),
     [activeChat?.user.id, messages, user.id],
   );
@@ -67,22 +71,20 @@ export default function ChatArea({
     });
   }, [chatMessages]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  async function handleSendMessage(e: React.FormEvent) {
     e.preventDefault();
-    if (messageInput.trim()) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          fromUser: user,
-          id: `asdf-${prev.length}`,
-          text: messageInput,
-          time: new Date(),
-          toUser: activeChat.user,
-        },
-      ]);
+    if (!messageInput.trim()) return;
+
+    setLoading(true);
+    const { data, error } = await sendMessage(messageInput, activeChat.user.id);
+    if (data) {
+      setMessages((prev) => [...prev, data]);
       setMessageInput("");
+    } else {
+      toast.error(error, { style: { color: "#ef4444" } });
     }
-  };
+    setLoading(false);
+  }
 
   return (
     <section
@@ -169,7 +171,7 @@ export default function ChatArea({
                     <span
                       className={`whitespace-nowrap text-[10px] font-medium ${isSender ? "text-white/70" : "text-gray-800/70"}`}
                     >
-                      {format(message.time, "p")}
+                      {format(message.createdAt, "p")}
                     </span>
                   </div>
                 </div>
@@ -184,6 +186,7 @@ export default function ChatArea({
               <input
                 type="text"
                 placeholder="Type your message..."
+                disabled={loading}
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 className="flex-1 rounded-md border border-gray-300 p-2 text-sm outline-none outline outline-offset-2 duration-100 focus-visible:outline-accent-orange/50"
@@ -193,6 +196,7 @@ export default function ChatArea({
               </Button>
               <Button
                 type="submit"
+                disabled={loading}
                 className="bg-accent-orange hover:bg-accent-orange/90"
               >
                 <SendIcon className="h-5 w-5" />
