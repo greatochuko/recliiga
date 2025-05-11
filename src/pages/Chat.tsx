@@ -10,10 +10,10 @@ function ChatContent() {
   const [activeChat, setActiveChat] = useState<ChatType>();
   const [isProfileVisible, setIsProfileVisible] = useState(false);
 
-  const handleChatSelect = (chat: ChatType) => {
+  async function handleChatSelect(chat: ChatType) {
     setActiveChat(chat);
     setIsProfileVisible(false);
-  };
+  }
 
   return (
     <div className="flex h-[calc(100vh-80px)] overflow-hidden rounded-lg border">

@@ -8,6 +8,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useChatContext } from "@/contexts/ChatContext";
+import { Badge } from "../ui/badge";
 
 const menuItems = [
   {
@@ -43,6 +45,7 @@ export function NavigationMenu({
   toggleSidebar: () => void;
 }) {
   const location = useLocation();
+  const { unreadMessages } = useChatContext();
 
   return (
     <SidebarContent className="flex-none">
@@ -71,6 +74,11 @@ export function NavigationMenu({
                         className={`h-5 w-5 ${isActive ? "text-accent-orange" : "text-gray-500"}`}
                       />
                       <span>{item.title}</span>
+                      {item.title === "Chat" && unreadMessages.length > 0 && (
+                        <Badge className="bg-accent-orange">
+                          {unreadMessages.length}
+                        </Badge>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

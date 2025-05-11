@@ -12,8 +12,9 @@ const PUSHER_API_KEY = import.meta.env.VITE_PUSHER_API_KEY;
 const ChatContext = createContext<{
   chats: ChatType[];
   messages: MessageType[];
+  unreadMessages: MessageType[];
   setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
-}>({ chats: [], messages: [], setMessages: () => {} });
+}>({ chats: [], messages: [], setMessages: () => {}, unreadMessages: [] });
 
 function createChatFromPlayers(
   players: UserType[],
@@ -40,7 +41,7 @@ function createChatFromPlayers(
         messages: playerMessages,
         unreadMessages: playerMessages.filter(
           (msg) => msg.fromUser.id !== userId && !msg.isRead,
-        ).length,
+        ),
       };
     })
     .sort(
@@ -83,12 +84,26 @@ export default function ChatProvider({
 
     const channel = pusher.subscribe(`chat`);
 
-    channel.bind("incomingMessage", (data: { message: MessageType }) => {
-      const newMessage = data.message;
-      if (newMessage.toUserId === user.id) {
-        setMessages((prev) => [...prev, newMessage]);
-      }
-    });
+    channel.bind(
+      `incomingMessage-${user?.id}`,
+      (data: { message: MessageType }) => {
+        setMessages((prev) => [...prev, data.message]);
+      },
+    );
+
+    channel.bind(
+      `updatingMessage`,
+      (data: { updatedMessages: MessageType[] }) => {
+        setMessages((prev) =>
+          prev.map(
+            (msg) =>
+              data.updatedMessages.find(
+                (updatedMsg) => updatedMsg.id === msg.id,
+              ) || msg,
+          ),
+        );
+      },
+    );
 
     return () => {
       channel.unbind_all();
@@ -116,8 +131,14 @@ export default function ChatProvider({
 
   const chats = createChatFromPlayers(uniquePlayers, messages, user?.id);
 
+  const unreadMessages = messages.filter(
+    (msg) => msg.toUserId === user.id && !msg.isRead,
+  );
+
   return (
-    <ChatContext.Provider value={{ chats, messages, setMessages }}>
+    <ChatContext.Provider
+      value={{ chats, messages, setMessages, unreadMessages }}
+    >
       {children}
     </ChatContext.Provider>
   );

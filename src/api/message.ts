@@ -16,3 +16,11 @@ export async function sendMessage(text: string, toUserId: string) {
   });
   return { data: data.data, error: data.error };
 }
+
+export async function markMessagesAsRead(messageIds: string[]) {
+  const data = await fetchApi<MessageType>("/message/markAsRead", {
+    method: "POST",
+    body: { messageIds },
+  });
+  return { data: data.data, error: data.error };
+}

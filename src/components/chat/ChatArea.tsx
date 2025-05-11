@@ -1,6 +1,13 @@
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ArrowLeftIcon, PaperclipIcon, SendIcon, UserIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  CheckCheckIcon,
+  CheckIcon,
+  PaperclipIcon,
+  SendIcon,
+  UserIcon,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -13,7 +20,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ChatType, MessageType } from "@/types/message";
-import { sendMessage } from "@/api/message";
+import { markMessagesAsRead, sendMessage } from "@/api/message";
 import { toast } from "sonner";
 // import { individualMessages } from "@/lib/data";
 
@@ -69,7 +76,15 @@ export default function ChatArea({
       top: messageAreaRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [chatMessages]);
+
+    const unreadMessages = chatMessages
+      .filter((msg) => msg.toUserId === user?.id && !msg.isRead)
+      .map((m) => m.id);
+
+    if (unreadMessages.length) {
+      markMessagesAsRead(unreadMessages);
+    }
+  }, [chatMessages, user?.id]);
 
   async function handleSendMessage(e: React.FormEvent) {
     e.preventDefault();
@@ -173,6 +188,12 @@ export default function ChatArea({
                     >
                       {format(message.createdAt, "p")}
                     </span>
+                    {isSender &&
+                      (message.isRead ? (
+                        <CheckCheckIcon className={`h-3.5 w-3.5 text-white`} />
+                      ) : (
+                        <CheckIcon className={`h-3.5 w-3.5 text-white/60`} />
+                      ))}
                   </div>
                 </div>
               );

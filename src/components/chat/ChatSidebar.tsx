@@ -2,9 +2,9 @@ import { Input } from "../ui/input";
 import { SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChatType } from "@/pages/Chat";
 import { formatMessageTime, getInitials } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
+import { ChatType } from "@/types/message";
 
 export default function ChatSidebar({
   activeChat,
@@ -60,12 +60,12 @@ export default function ChatSidebar({
                   {getInitials(chat.user.full_name)}
                 </AvatarFallback>
               </Avatar>
-              {chat.unreadMessages > 0 && (
+              {chat.unreadMessages.length > 0 && (
                 <Badge
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center bg-accent-orange p-0 text-xs"
-                  aria-label={`${chat.unreadMessages} unread messages`}
+                  aria-label={`${chat.unreadMessages.length} unread messages`}
                 >
-                  {chat.unreadMessages}
+                  {chat.unreadMessages.length}
                 </Badge>
               )}
             </div>

@@ -16,5 +16,5 @@ export type ChatType = {
   user: UserType;
   lastMessage?: MessageType;
   messages: MessageType[];
-  unreadMessages: number;
+  unreadMessages: MessageType[];
 };
