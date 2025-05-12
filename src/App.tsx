@@ -34,6 +34,7 @@ import EditEvent from "./pages/EditEvent";
 import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
 import ErrorPage from "./pages/ErrorPage";
 import LeagueInvitationPage from "./pages/LeagueInvitationPage";
+import ChatProvider from "./contexts/ChatContext";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +43,9 @@ const router = createBrowserRouter(
     {
       element: (
         <AuthProvider>
-          <AuthWrapper />
+          <ChatProvider>
+            <AuthWrapper />
+          </ChatProvider>
         </AuthProvider>
       ),
       errorElement: <ErrorPage />,
@@ -101,7 +104,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <RouterProvider router={router} />
+      <RouterProvider router={router} future={{ v7_startTransition: true }} />
     </TooltipProvider>
   </QueryClientProvider>
 );

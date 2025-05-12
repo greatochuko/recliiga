@@ -70,19 +70,6 @@ export default function TeamDraftPage() {
       },
     );
 
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    };
-  }, [eventId]);
-
-  useEffect(() => {
-    const pusher = new Pusher(PUSHER_API_KEY, {
-      cluster: "eu",
-    });
-
-    const channel = pusher.subscribe(`event-${eventId}`);
-
     channel.bind(
       "draft",
       (data: {
