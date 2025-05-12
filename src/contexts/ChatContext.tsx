@@ -60,12 +60,12 @@ export default function ChatProvider({
   const [messages, setMessages] = useState<MessageType[]>([]);
 
   const { data, isLoading: isLoadingLeagues } = useQuery({
-    queryKey: ["leagues-for-messages"],
+    queryKey: ["leagues-for-messages", user?.id],
     queryFn: fetchLeaguesByUser,
   });
 
   const { data: messageData, isLoading: isLoadingMessages } = useQuery({
-    queryKey: ["messages"],
+    queryKey: ["messages", user?.id],
     queryFn: fetchMessagesByUser,
   });
 
