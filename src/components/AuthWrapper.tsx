@@ -5,13 +5,12 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router-dom";
-import FullScreenLoader from "./FullScreenLoader";
 
 const authRoutes = ["/sign-in", "/sign-up"];
 const completeProfileRoutes = ["/complete-registration"];
 
 export default function AuthWrapper() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -24,10 +23,6 @@ export default function AuthWrapper() {
   const isCompleteProfileRoute = completeProfileRoutes.some((route) =>
     pathname.startsWith(route),
   );
-
-  if (loading) {
-    return <FullScreenLoader className="h-dvh" />;
-  }
 
   if (user) {
     if (
