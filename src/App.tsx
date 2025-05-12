@@ -2,8 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import AuthWrapper from "./components/AuthWrapper";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import ChatProvider from "./contexts/ChatContext";
+
 import AppLayout from "./pages/AppLayout";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
@@ -28,13 +32,11 @@ import AddEvent from "./pages/AddEvent";
 import SelectCaptains from "./pages/SelectCaptains";
 import EditResults from "./pages/EditResults";
 import TeamDraftPage from "./pages/TeamDraftPage";
-import AuthWrapper from "./components/AuthWrapper";
 import { HomeScreen } from "./components/dashboard/HomeScreen";
 import EditEvent from "./pages/EditEvent";
 import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
 import ErrorPage from "./pages/ErrorPage";
 import LeagueInvitationPage from "./pages/LeagueInvitationPage";
-import ChatProvider from "./contexts/ChatContext";
 
 const queryClient = new QueryClient();
 
