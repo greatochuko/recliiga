@@ -8,6 +8,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useChatContext } from "@/contexts/ChatContext";
+import { Badge } from "../ui/badge";
 
 const menuItems = [
   {
@@ -30,11 +32,11 @@ const menuItems = [
     icon: BarChart,
     url: "/results",
   },
-  // {
-  //   title: "Chat",
-  //   icon: MessageSquare,
-  //   url: "/chat",
-  // },
+  {
+    title: "Chat",
+    icon: MessageSquare,
+    url: "/chat",
+  },
 ];
 
 export function NavigationMenu({
@@ -43,6 +45,7 @@ export function NavigationMenu({
   toggleSidebar: () => void;
 }) {
   const location = useLocation();
+  const { unreadMessages } = useChatContext();
 
   return (
     <SidebarContent className="flex-none">
@@ -71,6 +74,13 @@ export function NavigationMenu({
                         className={`h-5 w-5 ${isActive ? "text-accent-orange" : "text-gray-500"}`}
                       />
                       <span>{item.title}</span>
+                      {item.title === "Chat" && unreadMessages.length > 0 && (
+                        <Badge className="bg-accent-orange hover:bg-accent-orange">
+                          {unreadMessages.length > 9
+                            ? `9+`
+                            : unreadMessages.length}
+                        </Badge>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -1,6 +1,4 @@
-import { ChatType } from "@/pages/Chat";
-
-export const conversations: ChatType[] = [
+export const conversations = [
   {
     id: 1,
     name: "Team Chat",

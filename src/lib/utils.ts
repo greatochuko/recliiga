@@ -6,7 +6,7 @@ import {
 } from "@/types/events";
 import { LeagueType } from "@/types/league";
 import { clsx, type ClassValue } from "clsx";
-import { isPast } from "date-fns";
+import { format, isPast, isToday, isYesterday } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -267,4 +267,18 @@ export function getInitials(name: string) {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
+}
+
+export function formatMessageTime(time: string | Date) {
+  const date = new Date(time);
+
+  if (isToday(date)) {
+    return format(date, "p"); // e.g., "1:45 PM"
+  }
+
+  if (isYesterday(date)) {
+    return "Yesterday";
+  }
+
+  return format(date, "dd/MM/yy"); // e.g., "12/10/24"
 }

@@ -20,7 +20,7 @@ export default function PlayerStatsOverview({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="ml-8 text-2xl font-bold">Your Stats</h2>
+        <h2 className="ml-8 text-2xl font-bold">Dashboard</h2>
         <LeagueSelector
           leagues={leagues}
           onLeagueChange={(leagueId) => setSelectedLeagueId(leagueId)}
