@@ -60,7 +60,7 @@ export default function ChatProvider({
   const [messages, setMessages] = useState<MessageType[]>([]);
 
   const { data, isLoading: isLoadingLeagues } = useQuery({
-    queryKey: ["leagues"],
+    queryKey: ["leagues-for-messages"],
     queryFn: fetchLeaguesByUser,
   });
 
@@ -125,15 +125,23 @@ export default function ChatProvider({
     [leagues],
   );
 
+  const unreadMessages = messages.filter(
+    (msg) => msg.toUserId === user?.id && !msg.isRead,
+  );
+
+  useEffect(() => {
+    if (unreadMessages.length > 0) {
+      document.title = `${unreadMessages.length} New Message${unreadMessages.length === 1 ? "" : "s"} - Recliiga`;
+    } else {
+      document.title = "Recliiga";
+    }
+  }, [unreadMessages]);
+
   if (isLoadingLeagues || isLoadingMessages) {
-    return <FullScreenLoader />;
+    return <FullScreenLoader className="h-dvh" />;
   }
 
   const chats = createChatFromPlayers(uniquePlayers, messages, user?.id);
-
-  const unreadMessages = messages.filter(
-    (msg) => msg.toUserId === user.id && !msg.isRead,
-  );
 
   return (
     <ChatContext.Provider

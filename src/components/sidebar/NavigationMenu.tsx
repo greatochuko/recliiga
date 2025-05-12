@@ -75,8 +75,10 @@ export function NavigationMenu({
                       />
                       <span>{item.title}</span>
                       {item.title === "Chat" && unreadMessages.length > 0 && (
-                        <Badge className="bg-accent-orange">
-                          {unreadMessages.length}
+                        <Badge className="bg-accent-orange hover:bg-accent-orange">
+                          {unreadMessages.length > 9
+                            ? `9+`
+                            : unreadMessages.length}
                         </Badge>
                       )}
                     </Link>

@@ -4,9 +4,11 @@ import {
   ArrowLeftIcon,
   CheckCheckIcon,
   CheckIcon,
+  LoaderIcon,
   PaperclipIcon,
   SendIcon,
   UserIcon,
+  XCircleIcon,
 } from "lucide-react";
 import {
   Tooltip,
@@ -16,13 +18,34 @@ import {
 } from "../ui/tooltip";
 import { getInitials } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ChatType, MessageType } from "@/types/message";
 import { markMessagesAsRead, sendMessage } from "@/api/message";
 import { toast } from "sonner";
 // import { individualMessages } from "@/lib/data";
+
+const imageFileExtensions = ["jpg", "jpeg", "png"];
+
+const readFilesAsDataUrls = async (files: File[]): Promise<string[]> => {
+  const previews = await Promise.all(
+    files.map((f) => {
+      const ext = f.name.split(".").at(-1)?.toLowerCase();
+      if (!imageFileExtensions.includes(ext)) return Promise.resolve("");
+
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (typeof e.target?.result === "string") resolve(e.target.result);
+          else resolve("");
+        };
+        reader.readAsDataURL(f);
+      });
+    }),
+  );
+  return previews;
+};
 
 export default function ChatArea({
   activeChat,
@@ -45,6 +68,9 @@ export default function ChatArea({
 
   const [loading, setLoading] = useState(false);
   const [messageInput, setMessageInput] = useState("");
+  const [attachments, setAttachments] = useState<
+    { previewUrl: string; file: File; id: string }[]
+  >([]);
 
   const messageAreaRef = useRef<HTMLDivElement>();
 
@@ -95,19 +121,58 @@ export default function ChatArea({
     if (data) {
       setMessages((prev) => [...prev, data]);
       setMessageInput("");
+      setAttachments([]);
     } else {
       toast.error(error, { style: { color: "#ef4444" } });
     }
     setLoading(false);
   }
 
+  async function handleSelectAttachment(
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const files = e.target.files;
+    if (!files) return;
+
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size <= 5 * 1024 * 1024) {
+        validFiles.push(files[i]);
+      } else {
+        toast.error(`${files[i].name} exceeds the 5MB size limit`, {
+          style: { color: "#ef4444" },
+        });
+      }
+    }
+
+    if (validFiles.length) {
+      const newPreviewUrls = await readFilesAsDataUrls(validFiles);
+
+      setAttachments((prev) => [
+        ...prev,
+        ...validFiles.map((f, i) => ({
+          id: Date.toString() + i,
+          file: f,
+          previewUrl: newPreviewUrls[i],
+        })),
+      ]);
+    }
+
+    e.target.value = "";
+    e.target.files = null;
+  }
+
+  function handleDeleteAttachment(id: string) {
+    setAttachments((prev) => prev.filter((att) => att.id !== id));
+  }
+
   return (
     <section
-      className={`flex flex-1 flex-col ${activeChat ? (isProfileVisible ? (open ? "hidden xl:flex" : "hidden lg:flex") : "flex") : open ? "hidden lg:flex" : "hidden md:flex"}`}
+      className={`flex w-full flex-1 flex-col ${activeChat ? (isProfileVisible ? (open ? "hidden xl:flex" : "hidden lg:flex") : "flex") : open ? "hidden lg:flex" : "hidden md:flex"}`}
     >
       {activeChat ? (
         <>
-          <div className="flex items-center justify-between gap-4 border-b border-gray-200 p-4">
+          <div className="flex items-center justify-between gap-2 border-b border-gray-200 p-2 sm:gap-4 sm:p-4">
             <button
               onClick={closeChatArea}
               className="p-2 duration-200 hover:text-accent-orange lg:hidden"
@@ -130,10 +195,10 @@ export default function ChatArea({
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-lg font-bold text-inherit">
+                <h3 className="font-semibold text-inherit sm:text-lg">
                   {activeChat.user.full_name}
                 </h3>
-                <p className="text-sm text-[#707B81]">
+                <p className="text-xs text-[#707B81] sm:text-sm">
                   {/* {activeConversation.user.type === "group"
                     ? "Group Chat" :*/}
                   {activeChat.user.role === "organizer"
@@ -199,7 +264,29 @@ export default function ChatArea({
               );
             })}
           </div>
-          <div className="border-t border-gray-200 p-4">
+          <div className="flex w-full flex-col gap-2 border-t border-gray-200 p-2 sm:p-4">
+            {attachments.length > 0 && (
+              <ul className="flex w-full items-center gap-2 overflow-x-auto">
+                {attachments.map((att) => (
+                  <li
+                    key={att.id}
+                    className="relative aspect-square min-w-14 rounded border"
+                  >
+                    <img
+                      src={att.previewUrl}
+                      alt={att.file.name}
+                      className="absolute left-0 top-0 h-full w-full object-cover"
+                    />
+                    <button
+                      onClick={() => handleDeleteAttachment(att.id)}
+                      className="absolute right-0 top-0 p-1 text-neutral-500 duration-200 hover:text-red-500"
+                    >
+                      <XCircleIcon className="h-3 w-3" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
             <form
               onSubmit={handleSendMessage}
               className="flex items-center gap-2"
@@ -210,17 +297,34 @@ export default function ChatArea({
                 disabled={loading}
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 p-2 text-sm outline-none outline outline-offset-2 duration-100 focus-visible:outline-accent-orange/50"
+                className="flex-1 rounded-md border border-gray-300 p-2 text-sm ring-accent-orange/50 ring-offset-2 duration-100 focus-visible:ring-2 disabled:bg-gray-100"
               />
-              <Button variant="ghost" size="icon" type="button">
+              <label
+                htmlFor="attachment"
+                role="button"
+                className="cursor-pointer rounded-md px-2.5 py-2.5 duration-200 hover:bg-gray-100"
+                title="Attach files (Max size: 5MB)"
+              >
+                <input
+                  type="file"
+                  multiple
+                  name="attachment"
+                  id="attachment"
+                  onChange={handleSelectAttachment}
+                  hidden
+                />
                 <PaperclipIcon className="h-5 w-5 text-[#707B81]" />
-              </Button>
+              </label>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-accent-orange hover:bg-accent-orange/90"
+                className="h-fit bg-accent-orange px-2.5 py-2.5 hover:bg-accent-orange/90"
               >
-                <SendIcon className="h-5 w-5" />
+                {loading ? (
+                  <LoaderIcon className="h-5 w-5 animate-spin" />
+                ) : (
+                  <SendIcon className="h-5 w-5" />
+                )}
               </Button>
             </form>
           </div>

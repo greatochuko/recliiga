@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { deleteUser, getSession, login, registerUser } from "@/api/auth";
 import { UserRatingType } from "@/types/events";
@@ -35,7 +34,6 @@ interface AuthContextType {
   signUp: (signupData: SignupDataType) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
   setUser: React.Dispatch<React.SetStateAction<UserType>>;
   loading: boolean;
@@ -111,22 +109,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resetPassword = async (email: string) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) throw error;
-      toast.success(
-        "Password reset instructions have been sent to your email.",
-      );
-    } catch (err) {
-      const error = err as Error;
-      toast.error(error.message);
-      throw error;
-    }
-  };
-
   const deleteAccount = async () => {
     try {
       // Show a loading toast
@@ -162,7 +144,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signIn,
         signOut,
-        resetPassword,
         deleteAccount,
         setUser,
         loading,

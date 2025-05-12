@@ -27,10 +27,10 @@ export default function ChatSidebar({
         </div>
         <div className="relative w-full">
           <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-[#707B81]" />
-          <Input
+          <input
             type="search"
-            placeholder="Search"
-            className="w-full border-[#707B81] pl-10 pr-4 focus:border-accent-orange focus:ring-accent-orange"
+            placeholder="Search groups and teammates..."
+            className="w-full rounded-md border border-[#707B81] py-2 pl-10 pr-4 ring-accent-orange/50 ring-offset-2 focus:ring-2"
           />
         </div>
       </div>
