@@ -4,11 +4,11 @@ import {
   ArrowLeftIcon,
   CheckCheckIcon,
   CheckIcon,
-  LoaderIcon,
-  PaperclipIcon,
+  EllipsisIcon,
+  ImageIcon,
   SendIcon,
+  TrashIcon,
   UserIcon,
-  XCircleIcon,
 } from "lucide-react";
 import {
   Tooltip,
@@ -24,7 +24,7 @@ import { format } from "date-fns";
 import { ChatType, MessageType } from "@/types/message";
 import { markMessagesAsRead, sendMessage } from "@/api/message";
 import { toast } from "sonner";
-// import { individualMessages } from "@/lib/data";
+import { uploadImage } from "@/lib/uploadImage";
 
 const imageFileExtensions = ["jpg", "jpeg", "png"];
 
@@ -66,7 +66,7 @@ export default function ChatArea({
 
   const { open } = useSidebar();
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [attachments, setAttachments] = useState<
     { previewUrl: string; file: File; id: string }[]
@@ -114,18 +114,50 @@ export default function ChatArea({
 
   async function handleSendMessage(e: React.FormEvent) {
     e.preventDefault();
-    if (!messageInput.trim()) return;
+    if (!messageInput.trim() && attachments.length < 1) return;
+    const newMessage: MessageType = {
+      text: messageInput,
+      toUserId: activeChat.user.id,
+      toUser: activeChat.user,
+      fromUserId: user.id,
+      fromUser: user,
+      images: attachments.map((att) => att.previewUrl),
+      createdAt: new Date().toString(),
+      isRead: false,
+      id: new Date().getTime().toString(),
+      updatedAt: new Date().toString(),
+      notSent: true,
+    };
+    setMessages((prev) => [...prev, newMessage]);
+    setMessageInput("");
+    setAttachments([]);
 
-    setLoading(true);
-    const { data, error } = await sendMessage(messageInput, activeChat.user.id);
+    // setLoading(true);
+
+    const images = await Promise.all(
+      attachments.map(async (att) => {
+        const { url } = await uploadImage(att.file);
+        return url;
+      }),
+    );
+
+    const { data, error } = await sendMessage(
+      messageInput,
+      activeChat.user.id,
+      images.filter(Boolean),
+    );
+
     if (data) {
-      setMessages((prev) => [...prev, data]);
-      setMessageInput("");
-      setAttachments([]);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === newMessage.id ? { ...data, notSent: false } : msg,
+        ),
+      );
     } else {
       toast.error(error, { style: { color: "#ef4444" } });
     }
-    setLoading(false);
+
+    // setLoading(false);
   }
 
   async function handleSelectAttachment(
@@ -136,7 +168,11 @@ export default function ChatArea({
 
     const validFiles: File[] = [];
     for (let i = 0; i < files.length; i++) {
-      if (files[i].size <= 5 * 1024 * 1024) {
+      const ext = files[i].name.split(".").at(-1)?.toLowerCase();
+      if (
+        imageFileExtensions.includes(ext) &&
+        files[i].size <= 5 * 1024 * 1024
+      ) {
         validFiles.push(files[i]);
       } else {
         toast.error(`${files[i].name} exceeds the 5MB size limit`, {
@@ -165,6 +201,8 @@ export default function ChatArea({
   function handleDeleteAttachment(id: string) {
     setAttachments((prev) => prev.filter((att) => att.id !== id));
   }
+
+  // console.log(messages);
 
   return (
     <section
@@ -241,24 +279,51 @@ export default function ChatArea({
                   }`}
                 >
                   <div
-                    className={`flex max-w-[70%] items-end gap-2 rounded-2xl p-3 ${
+                    className={`flex max-w-[70%] flex-col gap-1 rounded-2xl p-2.5 ${
                       isSender
                         ? "rounded-br-none bg-accent-orange text-white"
                         : "rounded-bl-none bg-gray-100"
                     }`}
                   >
-                    <p className="text-sm">{message.text}</p>
-                    <span
-                      className={`whitespace-nowrap text-[10px] font-medium ${isSender ? "text-white/70" : "text-gray-800/70"}`}
-                    >
-                      {format(message.createdAt, "p")}
-                    </span>
-                    {isSender &&
-                      (message.isRead ? (
-                        <CheckCheckIcon className={`h-3.5 w-3.5 text-white`} />
-                      ) : (
-                        <CheckIcon className={`h-3.5 w-3.5 text-white/60`} />
-                      ))}
+                    {message.images.length > 0 && (
+                      <div className="flex w-full flex-wrap gap-1 rounded-md">
+                        {message.images.slice(0, 2).map((img, i) => (
+                          <div
+                            key={i}
+                            className="group relative aspect-square min-w-20 overflow-hidden rounded"
+                          >
+                            <img
+                              src={img}
+                              alt="message image"
+                              className="absolute left-0 top-0 h-full w-full bg-gray-100 object-cover"
+                            />
+                            {message.images.length > 2 && (
+                              <div className="absolute left-0 top-0 hidden h-full w-full items-center justify-center bg-black/50 font-bold group-last:flex">
+                                +{message.images.length - 2}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-end justify-end gap-2">
+                      <p className="text-sm">{message.text}</p>
+                      <span
+                        className={`whitespace-nowrap text-[10px] font-medium ${isSender ? "text-white/70" : "text-gray-800/70"}`}
+                      >
+                        {format(message.createdAt, "p")}
+                      </span>
+                      {isSender &&
+                        (message.notSent ? (
+                          <EllipsisIcon className="h-3.5 w-3.5 text-white/60" />
+                        ) : message.isRead ? (
+                          <CheckCheckIcon
+                            className={`h-3.5 w-3.5 text-white`}
+                          />
+                        ) : (
+                          <CheckIcon className={`h-3.5 w-3.5 text-white/60`} />
+                        ))}
+                    </div>
                   </div>
                 </div>
               );
@@ -270,19 +335,22 @@ export default function ChatArea({
                 {attachments.map((att) => (
                   <li
                     key={att.id}
-                    className="relative aspect-square min-w-14 rounded border"
+                    className="flex max-w-16 flex-col items-end gap-1"
                   >
+                    <div className="flex w-full items-center">
+                      <p className="flex-1 truncate text-xs">{att.file.name}</p>
+                      <button
+                        onClick={() => handleDeleteAttachment(att.id)}
+                        className="p-0.5 text-neutral-500 duration-200 hover:text-red-500"
+                      >
+                        <TrashIcon className="h-3 w-3" />
+                      </button>
+                    </div>
                     <img
                       src={att.previewUrl}
                       alt={att.file.name}
-                      className="absolute left-0 top-0 h-full w-full object-cover"
+                      className="aspect-square w-full rounded border object-cover"
                     />
-                    <button
-                      onClick={() => handleDeleteAttachment(att.id)}
-                      className="absolute right-0 top-0 p-1 text-neutral-500 duration-200 hover:text-red-500"
-                    >
-                      <XCircleIcon className="h-3 w-3" />
-                    </button>
                   </li>
                 ))}
               </ul>
@@ -294,7 +362,7 @@ export default function ChatArea({
               <input
                 type="text"
                 placeholder="Type your message..."
-                disabled={loading}
+                // disabled={loading}
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 className="flex-1 rounded-md border border-gray-300 p-2 text-sm ring-accent-orange/50 ring-offset-2 duration-100 focus-visible:ring-2 disabled:bg-gray-100"
@@ -307,24 +375,25 @@ export default function ChatArea({
               >
                 <input
                   type="file"
+                  accept="image/*"
                   multiple
                   name="attachment"
                   id="attachment"
                   onChange={handleSelectAttachment}
                   hidden
                 />
-                <PaperclipIcon className="h-5 w-5 text-[#707B81]" />
+                <ImageIcon className="h-5 w-5 text-[#707B81]" />
               </label>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={!messageInput.trim() && attachments.length < 1}
                 className="h-fit bg-accent-orange px-2.5 py-2.5 hover:bg-accent-orange/90"
               >
-                {loading ? (
+                {/* {loading ? (
                   <LoaderIcon className="h-5 w-5 animate-spin" />
-                ) : (
-                  <SendIcon className="h-5 w-5" />
-                )}
+                ) : ( */}
+                <SendIcon className="h-5 w-5" />
+                {/* )} */}
               </Button>
             </form>
           </div>

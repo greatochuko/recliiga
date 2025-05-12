@@ -7,9 +7,11 @@ export type MessageType = {
   toUserId: string;
   toUser: UserType;
   text: string;
+  images: string[];
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
+  notSent: boolean;
 };
 
 export type ChatType = {
