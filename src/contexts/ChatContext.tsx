@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth, UserType } from "./AuthContext";
 import { ChatType, MessageType } from "@/types/message";
-import FullScreenLoader from "@/components/FullScreenLoader";
 import Pusher from "pusher-js";
+import RootLoadingScreen from "@/components/RootLoadingScreen";
 
 const PUSHER_API_KEY = import.meta.env.VITE_PUSHER_API_KEY;
 
@@ -56,16 +56,16 @@ export default function ChatProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, loading: loadingAuth } = useAuth();
   const [messages, setMessages] = useState<MessageType[]>([]);
 
   const { data, isLoading: isLoadingLeagues } = useQuery({
-    queryKey: ["leagues-for-messages"],
+    queryKey: ["leagues-for-messages", user?.id],
     queryFn: fetchLeaguesByUser,
   });
 
   const { data: messageData, isLoading: isLoadingMessages } = useQuery({
-    queryKey: ["messages"],
+    queryKey: ["messages", user?.id],
     queryFn: fetchMessagesByUser,
   });
 
@@ -137,8 +137,8 @@ export default function ChatProvider({
     }
   }, [unreadMessages]);
 
-  if (isLoadingLeagues || isLoadingMessages) {
-    return <FullScreenLoader className="h-dvh" />;
+  if (loadingAuth || isLoadingLeagues || isLoadingMessages) {
+    return <RootLoadingScreen />;
   }
 
   const chats = createChatFromPlayers(uniquePlayers, messages, user?.id);
