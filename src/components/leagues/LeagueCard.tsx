@@ -18,7 +18,11 @@ export default function LeagueCard({ league }: { league: LeagueType }) {
       <CardContent className="flex flex-col gap-4 p-6">
         <div className="flex items-start gap-x-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={league.image} alt={league.name} />
+            <AvatarImage
+              src={league.image}
+              alt={league.name}
+              className="object-cover"
+            />
             <AvatarFallback>
               {league.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>

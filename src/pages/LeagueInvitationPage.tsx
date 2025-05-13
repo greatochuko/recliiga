@@ -25,7 +25,7 @@ export default function LeagueInvitationPage() {
   });
 
   if (isLoading) {
-    return <FullScreenLoader />;
+    return <FullScreenLoader className="h-full" />;
   }
 
   const league = data?.league;

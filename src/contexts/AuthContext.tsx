@@ -66,7 +66,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("token", token);
 
       setUser(profile);
-      toast.success("Successfully signed in!");
+      toast.success("Successfully signed in!", {
+        style: { color: "#16a34a" },
+      });
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -86,6 +88,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       toast.success(
         "Registration successful! Please complete your player profile.",
+        {
+          style: { color: "#16a34a" },
+        },
       );
 
       setUser(profile);
@@ -101,7 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("token");
       setUser(null);
 
-      toast.success("Successfully signed out");
+      toast.success("Successfully signed out", {
+        style: { color: "#16a34a" },
+      });
     } catch (err) {
       const error = err as Error;
       toast.error(error.message);
@@ -126,7 +133,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear state
       setUser(null);
 
-      toast.success("Your account has been deleted successfully");
+      toast.success("Your account has been deleted successfully", {
+        style: { color: "#16a34a" },
+      });
       toast.dismiss();
 
       // redirect("/sign-in");

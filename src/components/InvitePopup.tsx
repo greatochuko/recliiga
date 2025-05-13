@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Copy, Send, AlertCircle, CheckCircle, Info } from "lucide-react";
+import { Copy, Send, AlertCircle, Info, Loader2 } from "lucide-react";
 import ModalContainer from "./ModalContainer";
 import { fetchLeaguesByUser } from "@/api/league";
 import { useQuery } from "@tanstack/react-query";
+import { sendInvitationEmail } from "@/api/email";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function InvitePopup({
   closeModal,
@@ -11,6 +14,8 @@ export default function InvitePopup({
   open: boolean;
   closeModal: () => void;
 }) {
+  const { user } = useAuth();
+
   const { data: leaguesData, isLoading } = useQuery({
     queryKey: ["teammates"],
     queryFn: fetchLeaguesByUser,
@@ -19,8 +24,8 @@ export default function InvitePopup({
   const leagues = leaguesData?.leagues || [];
 
   const [email, setEmail] = useState("");
-  const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>();
   const [error, setError] = useState<string | null>(null);
 
@@ -32,17 +37,38 @@ export default function InvitePopup({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSendInvite = () => {
-    if (email && !invitedEmails.includes(email)) {
-      setInvitedEmails([...invitedEmails, email]);
-      setEmail("");
-      setError(null);
-      // In a real application, you would send an API request here to invite the user
-    } else if (invitedEmails.includes(email)) {
-      setError("This email has already been invited.");
-    } else {
-      setError("Please enter a valid email address.");
+  const handleSendInvite = async () => {
+    if (!email.trim() || !selectedLeagueCode) return;
+
+    const selectedLeague = leagues.find(
+      (lg) => lg.leagueCode === selectedLeagueCode,
+    );
+
+    if (!selectedLeague) {
+      setError("Please select a valid league");
+      return;
     }
+
+    setLoading(true);
+
+    const { error } = await sendInvitationEmail(email, {
+      invitationLink: inviteLink,
+      leagueName: selectedLeague.name,
+      leagueOrganizerFirstName: user.full_name.split(" ")[0],
+      leagueImage: selectedLeague.image,
+    });
+
+    if (error) {
+      setError("");
+    } else {
+      toast.success("Invitation sent successfully!", {
+        style: { color: "#16a34a" },
+      });
+      setError(null);
+      setEmail("");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -122,15 +148,26 @@ export default function InvitePopup({
                 type="email"
                 placeholder="Enter email address"
                 value={email}
+                disabled={loading}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange"
+                className="w-0 flex-grow rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-orange disabled:bg-gray-100 disabled:opacity-70"
               />
               <button
+                disabled={!selectedLeagueCode || !email.trim() || loading}
                 onClick={handleSendInvite}
-                className="flex items-center rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
+                className="flex items-center gap-2 rounded-md bg-accent-orange px-3 py-2 text-sm font-medium text-white hover:bg-accent-orange/90 disabled:pointer-events-none disabled:opacity-50"
               >
-                <Send className="mr-2 h-4 w-4" />
-                Send
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Sending
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    Send
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -139,20 +176,6 @@ export default function InvitePopup({
             <div className="flex items-center text-sm text-red-600">
               <AlertCircle className="mr-2 h-4 w-4" />
               <p>{error}</p>
-            </div>
-          )}
-
-          {invitedEmails.length > 0 && (
-            <div className="space-y-2">
-              <label className="text-sm text-gray-700">Invited Members</label>
-              <ul className="space-y-1 text-sm text-[#707B81]">
-                {invitedEmails.map((email, index) => (
-                  <li key={index} className="flex items-center">
-                    <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
-                    {email}
-                  </li>
-                ))}
-              </ul>
             </div>
           )}
         </div>

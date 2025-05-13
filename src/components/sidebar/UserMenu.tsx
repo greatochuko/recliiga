@@ -36,7 +36,9 @@ export function UserMenu() {
     try {
       await signOut();
       navigate("/sign-in");
-      toast.success("Successfully logged out");
+      toast.success("Successfully logged out", {
+        style: { color: "#16a34a" },
+      });
     } catch (error) {
       console.log(error.message);
       toast.error("Error logging out");

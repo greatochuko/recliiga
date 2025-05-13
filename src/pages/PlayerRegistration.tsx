@@ -88,7 +88,9 @@ export default function PlayerRegistration() {
       toast.error(error || "An error occurred while saving your profile");
       setLoading(false);
     } else {
-      toast.success("Profile updated successfully!");
+      toast.success("Profile updated successfully!", {
+        style: { color: "#16a34a" },
+      });
       setUser(data);
     }
   };
