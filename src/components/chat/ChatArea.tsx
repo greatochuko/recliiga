@@ -84,7 +84,6 @@ export default function ChatArea({
             chatMessages={chatMessages}
             messageAreaRef={messageAreaRef}
             setMessages={setMessages}
-            user={user}
           />
           <ChatInput
             activeChat={activeChat}
