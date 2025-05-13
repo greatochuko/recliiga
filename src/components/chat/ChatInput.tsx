@@ -40,6 +40,7 @@ export default function ChatInput({
         validFiles.push(files[i]);
       } else {
         toast.error(`${files[i].name} exceeds the 5MB size limit`, {
+          duration: 5000,
           style: { color: "#ef4444" },
         });
       }

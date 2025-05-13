@@ -12,7 +12,7 @@ export default function ChatImagesModal({
   closeModal: () => void;
   images: ImageType[];
 }) {
-  const sliderRef = useRef(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function ChatImagesModal({
 
   return (
     <ModalContainer open={open} closeModal={closeModal}>
-      <div className="relative h-[85%] w-[90%] max-w-3xl rounded-lg bg-black/50">
+      <div className="relative h-[90%] w-[90%] max-w-4xl rounded-lg bg-black/50">
         <div
           ref={sliderRef}
           className="hide-scrollbar h-full snap-x snap-mandatory overflow-hidden overflow-x-auto"
