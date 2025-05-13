@@ -9,8 +9,20 @@ export async function sendInvitationEmail(
     invitationLink: string;
   },
 ) {
-  return await fetchApi("/email", {
+  return await fetchApi("/email/invite", {
     method: "POST",
     body: { toEmail, ...args },
+  });
+}
+
+export async function sendSupportEmail(args: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  message: string;
+}) {
+  return await fetchApi("/email/support", {
+    method: "POST",
+    body: args,
   });
 }
