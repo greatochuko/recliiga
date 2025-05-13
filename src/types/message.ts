@@ -1,5 +1,14 @@
 import { UserType } from "@/contexts/AuthContext";
 
+export type ImageType = {
+  id: string;
+  filename: string;
+  url: string;
+  thumbnailUrl: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type MessageType = {
   id: string;
   fromUserId: string;
@@ -7,9 +16,11 @@ export type MessageType = {
   toUserId: string;
   toUser: UserType;
   text: string;
+  images: ImageType[];
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
+  status: "sent" | "sending" | "failed";
 };
 
 export type ChatType = {

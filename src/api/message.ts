@@ -9,10 +9,14 @@ export async function fetchMessagesByUser(): Promise<{
   return { data: data.data || [], error: data.error };
 }
 
-export async function sendMessage(text: string, toUserId: string) {
+export async function sendMessage(
+  text: string,
+  toUserId: string,
+  images: { filename: string; url: string; thumbnailUrl: string }[],
+) {
   const data = await fetchApi<MessageType>("/message", {
     method: "POST",
-    body: { text, toUserId },
+    body: { text, toUserId, images },
   });
   return { data: data.data, error: data.error };
 }
