@@ -66,7 +66,9 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
 
   async function handleChangeTeamLogo(e: React.ChangeEvent<HTMLInputElement>) {
     try {
-      const { dataUrl, resizedFile } = await handleImageResize(e);
+      const { dataUrl, resizedFile } = await handleImageResize(
+        e.target.files[0],
+      );
       setLogoPreview(dataUrl);
       setLogo(resizedFile);
     } catch (error) {

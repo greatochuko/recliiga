@@ -12,7 +12,7 @@ export async function fetchMessagesByUser(): Promise<{
 export async function sendMessage(
   text: string,
   toUserId: string,
-  images: string[],
+  images: { filename: string; url: string; thumbnailUrl: string }[],
 ) {
   const data = await fetchApi<MessageType>("/message", {
     method: "POST",

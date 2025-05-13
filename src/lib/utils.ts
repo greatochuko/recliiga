@@ -220,11 +220,10 @@ export function getUserRating(leagueId: string, userRatings: UserRatingType[]) {
 }
 
 export function handleImageResize(
-  event: React.ChangeEvent<HTMLInputElement>,
+  file: File,
   maxWidth = 256,
 ): Promise<{ dataUrl: string; resizedFile: File }> {
   return new Promise((resolve, reject) => {
-    const file = event.target.files?.[0];
     if (!file || !file.type.startsWith("image/")) {
       return reject(new Error("Please upload a valid image file."));
     }

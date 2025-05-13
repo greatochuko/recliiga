@@ -4,6 +4,7 @@ import {
   ArrowLeftIcon,
   CheckCheckIcon,
   CheckIcon,
+  CircleAlertIcon,
   EllipsisIcon,
   ImageIcon,
   SendIcon,
@@ -16,7 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { getInitials } from "@/lib/utils";
+import { getInitials, handleImageResize } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -69,7 +70,7 @@ export default function ChatArea({
   // const [loading, setLoading] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [attachments, setAttachments] = useState<
-    { previewUrl: string; file: File; id: string }[]
+    { previewUrl: string; file: File; thumbnailFile: File; id: string }[]
   >([]);
 
   const messageAreaRef = useRef<HTMLDivElement>();
@@ -121,12 +122,19 @@ export default function ChatArea({
       toUser: activeChat.user,
       fromUserId: user.id,
       fromUser: user,
-      images: attachments.map((att) => att.previewUrl),
+      images: attachments.map((att, i) => ({
+        url: att.previewUrl,
+        thumbnailUrl: att.previewUrl,
+        updatedAt: Date.now().toString(),
+        createdAt: Date.now().toString(),
+        filename: att.file.name,
+        id: i + new Date().toString(),
+      })),
       createdAt: new Date().toString(),
       isRead: false,
       id: new Date().getTime().toString(),
       updatedAt: new Date().toString(),
-      notSent: true,
+      status: "sending",
     };
     setMessages((prev) => [...prev, newMessage]);
     setMessageInput("");
@@ -134,14 +142,25 @@ export default function ChatArea({
 
     // setLoading(true);
 
-    const images = await Promise.all(
-      attachments.map(async (att) => {
-        const { url } = await uploadImage(att.file);
-        return url;
-      }),
+    const images: { filename: string; url: string; thumbnailUrl: string }[] =
+      await Promise.all(
+        attachments.map(async (att, i) => {
+          const { url } = await uploadImage(att.file);
+          const { url: thumbnailUrl } = await uploadImage(att.thumbnailFile);
+          newMessage.images = newMessage.images.map((msg, idx) =>
+            idx === i ? { ...msg, url, thumbnailUrl } : msg,
+          );
+          return { filename: att.file.name, url, thumbnailUrl };
+        }),
+      );
+
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.id === newMessage.id ? { ...msg, images: newMessage.images } : msg,
+      ),
     );
 
-    const { data, error } = await sendMessage(
+    const { data } = await sendMessage(
       messageInput,
       activeChat.user.id,
       images.filter(Boolean),
@@ -149,15 +168,43 @@ export default function ChatArea({
 
     if (data) {
       setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === newMessage.id ? { ...data, notSent: false } : msg,
-        ),
+        prev.map((msg) => (msg.id === newMessage.id ? data : msg)),
       );
     } else {
-      toast.error(error, { style: { color: "#ef4444" } });
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === newMessage.id ? { ...msg, status: "failed" } : msg,
+        ),
+      );
     }
 
     // setLoading(false);
+  }
+
+  async function hadleResendMessage(message: MessageType) {
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.id === message.id ? { ...msg, status: "sending" } : msg,
+      ),
+    );
+
+    const { data } = await sendMessage(
+      message.text,
+      message.toUserId,
+      message.images,
+    );
+
+    if (data) {
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === message.id ? data : msg)),
+      );
+    } else {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === message.id ? { ...msg, status: "failed" } : msg,
+        ),
+      );
+    }
   }
 
   async function handleSelectAttachment(
@@ -183,12 +230,19 @@ export default function ChatArea({
 
     if (validFiles.length) {
       const newPreviewUrls = await readFilesAsDataUrls(validFiles);
+      const thumbnailFiles = await Promise.all(
+        validFiles.map(async (file) => {
+          const { resizedFile } = await handleImageResize(file, 160);
+          return resizedFile;
+        }),
+      );
 
       setAttachments((prev) => [
         ...prev,
         ...validFiles.map((f, i) => ({
           id: Date.toString() + i,
           file: f,
+          thumbnailFile: thumbnailFiles[i],
           previewUrl: newPreviewUrls[i],
         })),
       ]);
@@ -201,8 +255,6 @@ export default function ChatArea({
   function handleDeleteAttachment(id: string) {
     setAttachments((prev) => prev.filter((att) => att.id !== id));
   }
-
-  // console.log(messages);
 
   return (
     <section
@@ -278,52 +330,66 @@ export default function ChatArea({
                     isSender ? "justify-end" : ""
                   }`}
                 >
-                  <div
-                    className={`flex max-w-[70%] flex-col gap-1 rounded-2xl p-2.5 ${
-                      isSender
-                        ? "rounded-br-none bg-accent-orange text-white"
-                        : "rounded-bl-none bg-gray-100"
-                    }`}
-                  >
-                    {message.images.length > 0 && (
-                      <div className="flex w-full flex-wrap gap-1 rounded-md">
-                        {message.images.slice(0, 2).map((img, i) => (
-                          <div
-                            key={i}
-                            className="group relative aspect-square min-w-20 overflow-hidden rounded"
-                          >
-                            <img
-                              src={img}
-                              alt="message image"
-                              className="absolute left-0 top-0 h-full w-full bg-gray-100 object-cover"
+                  <div className="flex max-w-[70%] flex-col items-end">
+                    <div
+                      className={`flex flex-col gap-1 rounded-2xl p-2.5 ${
+                        isSender
+                          ? "rounded-br-none bg-accent-orange text-white"
+                          : "rounded-bl-none bg-gray-100"
+                      }`}
+                    >
+                      {message.images.length > 0 && (
+                        <div className="flex w-full flex-wrap gap-1 rounded-md">
+                          {message.images.slice(0, 2).map((img) => (
+                            <div
+                              key={img.id}
+                              className="group relative aspect-square min-w-20 overflow-hidden rounded"
+                            >
+                              <img
+                                src={img.thumbnailUrl}
+                                alt="message image"
+                                className="absolute left-0 top-0 h-full w-full bg-gray-100 object-cover"
+                              />
+                              {message.images.length > 2 && (
+                                <div className="absolute left-0 top-0 hidden h-full w-full items-center justify-center bg-black/50 font-bold group-last:flex">
+                                  +{message.images.length - 2}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex items-end justify-end gap-2">
+                        <p className="text-sm">{message.text}</p>
+                        <span
+                          className={`whitespace-nowrap text-[10px] font-medium ${isSender ? "text-white/70" : "text-gray-800/70"}`}
+                        >
+                          {format(message.createdAt, "p")}
+                        </span>
+                        {isSender &&
+                          (message.status === "sending" ? (
+                            <EllipsisIcon className="h-3.5 w-3.5 text-white/60" />
+                          ) : message.status === "failed" ? (
+                            <CircleAlertIcon className="h-3.5 w-3.5 text-red-200" />
+                          ) : message.isRead ? (
+                            <CheckCheckIcon
+                              className={`h-3.5 w-3.5 text-white`}
                             />
-                            {message.images.length > 2 && (
-                              <div className="absolute left-0 top-0 hidden h-full w-full items-center justify-center bg-black/50 font-bold group-last:flex">
-                                +{message.images.length - 2}
-                              </div>
-                            )}
-                          </div>
-                        ))}
+                          ) : (
+                            <CheckIcon
+                              className={`h-3.5 w-3.5 text-white/60`}
+                            />
+                          ))}
                       </div>
-                    )}
-                    <div className="flex items-end justify-end gap-2">
-                      <p className="text-sm">{message.text}</p>
-                      <span
-                        className={`whitespace-nowrap text-[10px] font-medium ${isSender ? "text-white/70" : "text-gray-800/70"}`}
-                      >
-                        {format(message.createdAt, "p")}
-                      </span>
-                      {isSender &&
-                        (message.notSent ? (
-                          <EllipsisIcon className="h-3.5 w-3.5 text-white/60" />
-                        ) : message.isRead ? (
-                          <CheckCheckIcon
-                            className={`h-3.5 w-3.5 text-white`}
-                          />
-                        ) : (
-                          <CheckIcon className={`h-3.5 w-3.5 text-white/60`} />
-                        ))}
                     </div>
+                    {message.status === "failed" && (
+                      <button
+                        onClick={() => hadleResendMessage(message)}
+                        className="text-xs text-neutral-500 duration-200 hover:text-neutral-800 hover:underline"
+                      >
+                        Retry
+                      </button>
+                    )}
                   </div>
                 </div>
               );
