@@ -281,3 +281,19 @@ export function formatMessageTime(time: string | Date) {
 
   return format(date, "dd/MM/yy"); // e.g., "12/10/24"
 }
+
+export async function readFilesAsDataUrls(files: File[]): Promise<string[]> {
+  const previews = await Promise.all(
+    files.map((f) => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (typeof e.target?.result === "string") resolve(e.target.result);
+          else resolve("");
+        };
+        reader.readAsDataURL(f);
+      });
+    }),
+  );
+  return previews;
+}
