@@ -46,13 +46,15 @@ export function PlayerRankCard({
         <div className="flex flex-col items-center">
           <div className="flex items-start">
             <div className="flex items-start">
-              <span className="text-lg font-bold">{playerRank}</span>
-              <span className="mt-0.5 text-xs font-bold">
-                {getCardinalSuffix(playerRank)}
-              </span>
+              <span className="text-lg font-bold">{playerRank || "--"}</span>
+              {playerRank > 0 && (
+                <span className="mt-0.5 text-xs font-bold">
+                  {getCardinalSuffix(playerRank)}
+                </span>
+              )}
             </div>
             <span className="ml-0.5 text-lg font-bold">
-              /{league?.players.length || 0}
+              /{league?.players.length || "--"}
             </span>
           </div>
           <span className="mt-1 text-xs">{league?.name || "League"}</span>

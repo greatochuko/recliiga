@@ -220,11 +220,10 @@ export function getUserRating(leagueId: string, userRatings: UserRatingType[]) {
 }
 
 export function handleImageResize(
-  event: React.ChangeEvent<HTMLInputElement>,
+  file: File,
   maxWidth = 256,
 ): Promise<{ dataUrl: string; resizedFile: File }> {
   return new Promise((resolve, reject) => {
-    const file = event.target.files?.[0];
     if (!file || !file.type.startsWith("image/")) {
       return reject(new Error("Please upload a valid image file."));
     }
@@ -281,4 +280,20 @@ export function formatMessageTime(time: string | Date) {
   }
 
   return format(date, "dd/MM/yy"); // e.g., "12/10/24"
+}
+
+export async function readFilesAsDataUrls(files: File[]): Promise<string[]> {
+  const previews = await Promise.all(
+    files.map((f) => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (typeof e.target?.result === "string") resolve(e.target.result);
+          else resolve("");
+        };
+        reader.readAsDataURL(f);
+      });
+    }),
+  );
+  return previews;
 }
