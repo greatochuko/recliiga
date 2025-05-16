@@ -104,7 +104,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
 
       <div className="flex flex-col items-center justify-center gap-4">
         <Link
-          to={`/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
+          to={`/dashboard/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
           className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
         >
           {event.resultsEntered ? "View Results" : "View Details"}
@@ -136,7 +136,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
         teamCaptained &&
         (!teamCaptained.draftCompleted ? (
           <Link
-            to={`/events/${event.id}/team-draft`}
+            to={`/dashboard/events/${event.id}/team-draft`}
             className="ml-auto w-fit rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
           >
             {event.teams.some((team) => team.players?.length)

@@ -206,7 +206,7 @@ export default function EditEvent() {
     const { error } = await editEvent(id, { ...eventData });
 
     if (error === null) {
-      navigate("/manage-events");
+      navigate("/dashboard/manage-events");
     } else {
       setSubmitting(false);
     }
@@ -237,7 +237,7 @@ export default function EditEvent() {
           The event you are looking for does not exist or has been removed.
         </p>
         <Link
-          to="/manage-events"
+          to="/dashboard/manage-events"
           className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />

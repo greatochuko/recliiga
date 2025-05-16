@@ -115,7 +115,7 @@ export default function ManageEventCard({
           {!isRsvpOpen &&
             !event.resultsEntered &&
             eventStatus === "upcoming" && (
-              <Link to={`/${event.id}/select-captains`}>
+              <Link to={`/dashboard/${event.id}/select-captains`}>
                 <Button
                   variant="outline"
                   size="sm"
@@ -132,7 +132,7 @@ export default function ManageEventCard({
           {eventStatus === "upcoming" ? (
             <>
               <div className="flex gap-4">
-                <Link to={`/events/${event.id}/edit`}>
+                <Link to={`/dashboard/events/${event.id}/edit`}>
                   <Button
                     variant="outline"
                     size="sm"
@@ -150,14 +150,17 @@ export default function ManageEventCard({
             </>
           ) : (
             <div className="flex gap-4">
-              <Link to={`/edit-results/${event.id}`} className="hidden sm:flex">
+              <Link
+                to={`/dashboard/edit-results/${event.id}`}
+                className="hidden sm:flex"
+              >
                 <Button variant="outline" size="sm" className="items-center">
                   <Trophy className="mr-2 h-4 w-4" />
                   {event.resultsEntered ? "Edit Results" : "Enter Results"}
                 </Button>
               </Link>
               {!event.resultsEntered && (
-                <Link to={`/events/${event.id}/edit`}>
+                <Link to={`/dashboard/events/${event.id}/edit`}>
                   <Button
                     variant="outline"
                     size="sm"
@@ -184,7 +187,7 @@ export default function ManageEventCard({
           )}
           {/* {!event.resultsEntered && eventStatus !== "upcoming" && (
             <Link
-              to={`/events/${event.id}/edit`}
+              to={`/dashboard/events/${event.id}/edit`}
               className={eventStatus === "past" ? "" : "sm:hidden"}
             >
               <Button variant="outline" size="sm" className="flex items-center">
@@ -194,7 +197,7 @@ export default function ManageEventCard({
             </Link>
           )} */}
           {eventStatus === "past" && (
-            <Link to={`/edit-results/${event.id}`}>
+            <Link to={`/dashboard/edit-results/${event.id}`}>
               <Button
                 variant="outline"
                 size="sm"

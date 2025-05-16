@@ -40,7 +40,7 @@ function TeamRoster({
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <Link
-                to={`/profile/${team.captain.id}`}
+                to={`/dashboard/profile/${team.captain.id}`}
                 className="font-semibold hover:text-accent-orange hover:underline"
               >
                 {team.captain.full_name}
@@ -87,7 +87,7 @@ function TeamRoster({
               </Avatar>
               <div className="flex-1">
                 <Link
-                  to={`/profile/${player.id}`}
+                  to={`/dashboard/profile/${player.id}`}
                   className="font-semibold hover:text-accent-orange hover:underline"
                 >
                   {player.full_name}
@@ -137,7 +137,7 @@ export default function EventResults() {
           The event you are looking for does not exist or has been removed.
         </p>
         <Link
-          to="/events"
+          to="/dashboard/events"
           className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />

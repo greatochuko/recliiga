@@ -222,7 +222,7 @@ export const ResultsLeaderboard = ({
                 <td className="p-3 text-center font-medium">{index + 1}</td>
                 <td className="sticky left-0 border-l font-medium">
                   <Link
-                    to={`/profile/${data.player.id}`}
+                    to={`/dashboard/profile/${data.player.id}`}
                     className="group flex cursor-pointer items-center whitespace-nowrap border-r bg-white p-3 transition-colors"
                   >
                     <Avatar className="mr-2 h-8 w-8">

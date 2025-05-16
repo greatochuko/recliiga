@@ -64,7 +64,7 @@ export function LeagueSetup() {
       toast.success("League created successfully!", {
         style: { color: "#16a34a" },
       });
-      navigate("/leagues");
+      navigate("/dashboard/leagues");
     }
 
     setLoading(false);

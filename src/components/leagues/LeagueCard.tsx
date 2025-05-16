@@ -71,7 +71,7 @@ export default function LeagueCard({ league }: { league: LeagueType }) {
       <CardFooter className="p-6 pt-0">
         {isJoined ? (
           <Link
-            to={`/leagues/${league.id}`}
+            to={`/dashboard/leagues/${league.id}`}
             className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"border border-accent-orange bg-white text-accent-orange hover:bg-accent-orange/10"}`}
           >
             See More

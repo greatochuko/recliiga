@@ -28,7 +28,7 @@ export default function RatingSection({
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold">Rate Your Teammates</h2>
         <Link
-          to="/rate-teammates"
+          to="/dashboard/rate-teammates"
           className="text-sm text-accent-orange hover:underline"
         >
           View all

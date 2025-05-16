@@ -18,7 +18,7 @@ export function AppSidebar() {
         <div className="flex h-full flex-col">
           <div className="border-b border-gray-200 p-4">
             <Link
-              to={"/"}
+              to={"/dashboard"}
               className="w-fit cursor-pointer text-2xl font-bold text-accent-orange transition-colors hover:text-[#FF9A30]"
               onClick={toggleSidebar}
             >

@@ -58,9 +58,9 @@ export function EventCard({
 
   const handleViewDetails = () => {
     if (event.hasResults) {
-      navigate(`/events/${event.id}/results`);
+      navigate(`/dashboard/events/${event.id}/results`);
     } else {
-      navigate(`/events/${event.id}`);
+      navigate(`/dashboard/events/${event.id}`);
     }
   };
 

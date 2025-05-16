@@ -74,7 +74,7 @@ export default function RateTeammates() {
           </p>
           <Button
             className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
           >
             Return to Dashboard
           </Button>

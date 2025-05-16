@@ -21,6 +21,7 @@ export default {
     extend: {
       colors: {
         "accent-orange": "#FF7A00",
+        "accent-orange-2": "#F79602",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

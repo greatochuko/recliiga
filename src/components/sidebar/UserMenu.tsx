@@ -90,7 +90,7 @@ export function UserMenu() {
           </div>
           <DropdownMenuItem asChild>
             <Link
-              to="/profile"
+              to="/dashboard/profile"
               className="flex cursor-pointer items-center gap-2"
             >
               <User className="h-4 w-4" />

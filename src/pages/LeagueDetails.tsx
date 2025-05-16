@@ -34,7 +34,7 @@ export default function LeagueDetails() {
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
         <p>{data.error}</p>
         <button
-          onClick={() => navigate("/leagues")}
+          onClick={() => navigate("/dashboard/leagues")}
           className="flex items-center gap-2 rounded-md bg-accent-orange px-3 py-1.5 text-sm font-medium text-white"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Leagues
@@ -46,7 +46,7 @@ export default function LeagueDetails() {
   const league = data?.league;
 
   if (!league.players.some((player) => player.id === user.id)) {
-    return <Navigate to={"/leagues"} replace />;
+    return <Navigate to={"/dashboard/leagues"} replace />;
   }
 
   const upcomingEvents = getUpcomingEvents(league.events);
@@ -56,7 +56,7 @@ export default function LeagueDetails() {
       <div className="ml-8 flex justify-between">
         <h1 className="text-2xl font-bold">League Details</h1>
         <button
-          onClick={() => navigate("/leagues")}
+          onClick={() => navigate("/dashboard/leagues")}
           className="flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
         >
           <ArrowLeft className="h-4 w-4" /> Previous
@@ -111,7 +111,7 @@ export default function LeagueDetails() {
                 {league.players
                   .slice(0, showAllPlayers ? undefined : 8)
                   .map((player, index) => (
-                    <Link to={`/profile/${player.id}`} key={index}>
+                    <Link to={`/dashboard/profile/${player.id}`} key={index}>
                       <Card className="cursor-pointer overflow-hidden transition-colors hover:bg-gray-50">
                         <CardContent className="flex items-center p-2">
                           <Avatar className="h-10 w-10">
@@ -149,7 +149,7 @@ export default function LeagueDetails() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Upcoming Events</h2>
             {/* <Link
-              to="/events"
+              to="/dashboard/events"
               className="text-accent-orange hover:underline px-4 py-2 font-medium text-sm"
             >
               View all

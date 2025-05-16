@@ -52,8 +52,8 @@ export function UpcomingEvents() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Upcoming Events</h2>
         <Link
-          to="/events"
-          className="text-accent-orange text-sm hover:underline"
+          to="/dashboard/events"
+          className="text-sm text-accent-orange hover:underline"
         >
           View all
         </Link>
