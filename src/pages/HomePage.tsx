@@ -230,7 +230,7 @@ export default function HomePage() {
             <div className="relative h-10">
               <Link
                 to={"/sign-up"}
-                className="absolute z-40 w-fit whitespace-nowrap rounded-md bg-white px-4 py-2 font-medium text-neutral-800 duration-200 hover:shadow-lg hover:shadow-black/30"
+                className="absolute z-40 w-fit -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-4 py-2 font-medium text-neutral-800 duration-200 hover:shadow-lg hover:shadow-black/30 lg:translate-x-0"
               >
                 Get Started
               </Link>
@@ -303,7 +303,7 @@ export default function HomePage() {
             <div className="relative h-10">
               <Link
                 to={"/sign-up"}
-                className="absolute z-40 w-fit whitespace-nowrap rounded-md bg-white px-4 py-2 font-medium text-neutral-800 duration-200 hover:shadow-lg hover:shadow-black/30"
+                className="absolute z-40 w-fit -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-4 py-2 font-medium text-neutral-800 duration-200 hover:shadow-lg hover:shadow-black/30 lg:translate-x-0"
               >
                 Sign Up Now
               </Link>
