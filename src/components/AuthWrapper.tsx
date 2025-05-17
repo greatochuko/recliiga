@@ -29,7 +29,9 @@ export default function AuthWrapper() {
       (isAuthRoute && isProfileComplete) ||
       (isCompleteProfileRoute && isProfileComplete)
     ) {
-      return <Navigate to={inviteCode ? `/invite/${inviteCode}` : "/"} />;
+      return (
+        <Navigate to={inviteCode ? `/invite/${inviteCode}` : "/dashboard"} />
+      );
     }
 
     if (!isCompleteProfileRoute && !isProfileComplete) {

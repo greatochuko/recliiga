@@ -61,8 +61,10 @@ export function LeagueSetup() {
     if (error) {
       toast.error("Failed to create league: " + error);
     } else {
-      toast.success("League created successfully!");
-      navigate("/leagues");
+      toast.success("League created successfully!", {
+        style: { color: "#16a34a" },
+      });
+      navigate("/dashboard/leagues");
     }
 
     setLoading(false);

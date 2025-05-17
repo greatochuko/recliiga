@@ -32,16 +32,18 @@ import AddEvent from "./pages/AddEvent";
 import SelectCaptains from "./pages/SelectCaptains";
 import EditResults from "./pages/EditResults";
 import TeamDraftPage from "./pages/TeamDraftPage";
-import { HomeScreen } from "./components/dashboard/HomeScreen";
+import { Dashboard } from "./pages/Dashboard";
 import EditEvent from "./pages/EditEvent";
 import RateTeammatesByEvent from "./pages/RateTeammatesByEvent";
 import ErrorPage from "./pages/ErrorPage";
 import LeagueInvitationPage from "./pages/LeagueInvitationPage";
+import HomePage from "./pages/HomePage";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   [
+    { path: "/", element: <HomePage /> },
     {
       element: (
         <AuthProvider>
@@ -61,28 +63,43 @@ const router = createBrowserRouter(
           element: <AppLayout />,
           errorElement: <ErrorPage />,
           children: [
-            { path: "/", element: <HomeScreen /> },
-            { path: "/create-league", element: <CreateLeague /> },
-            { path: "/leagues", element: <Leagues /> },
-            { path: "/leagues/:id", element: <LeagueDetails /> },
-            { path: "/events", element: <Events /> },
-            { path: "/events/:id", element: <EventDetails /> },
-            { path: "/events/:id/edit", element: <EditEvent /> },
-            { path: "/events/:id/results", element: <EventResults /> },
-            { path: "/events/:id/team-draft", element: <TeamDraftPage /> },
-            { path: "/results", element: <Results /> },
-            { path: "/chat", element: <Chat /> },
-            { path: "/rate-teammates", element: <RateTeammates /> },
-            { path: "/profile", element: <Profile /> },
-            { path: "/profile/:userId", element: <PlayerProfile /> },
-            { path: "/manage-events", element: <ManageEvents /> },
-            { path: "/add-event", element: <AddEvent /> },
-            { path: "/help", element: <HelpAndSupport /> },
-            { path: "/:eventId/select-captains", element: <SelectCaptains /> },
-            { path: "/edit-results/:eventId", element: <EditResults /> },
-            { path: "/invite/:leagueCode", element: <LeagueInvitationPage /> },
+            { path: "/dashboard/", element: <Dashboard /> },
+            { path: "/dashboard/create-league", element: <CreateLeague /> },
+            { path: "/dashboard/leagues", element: <Leagues /> },
+            { path: "/dashboard/leagues/:id", element: <LeagueDetails /> },
+            { path: "/dashboard/events", element: <Events /> },
+            { path: "/dashboard/events/:id", element: <EventDetails /> },
+            { path: "/dashboard/events/:id/edit", element: <EditEvent /> },
             {
-              path: "/rate-teammates/:eventId",
+              path: "/dashboard/events/:id/results",
+              element: <EventResults />,
+            },
+            {
+              path: "/dashboard/events/:id/team-draft",
+              element: <TeamDraftPage />,
+            },
+            { path: "/dashboard/results", element: <Results /> },
+            { path: "/dashboard/chat", element: <Chat /> },
+            { path: "/dashboard/rate-teammates", element: <RateTeammates /> },
+            { path: "/dashboard/profile", element: <Profile /> },
+            { path: "/dashboard/profile/:userId", element: <PlayerProfile /> },
+            { path: "/dashboard/manage-events", element: <ManageEvents /> },
+            { path: "/dashboard/add-event", element: <AddEvent /> },
+            { path: "/dashboard/help", element: <HelpAndSupport /> },
+            {
+              path: "/dashboard/:eventId/select-captains",
+              element: <SelectCaptains />,
+            },
+            {
+              path: "/dashboard/edit-results/:eventId",
+              element: <EditResults />,
+            },
+            {
+              path: "/dashboard/invite/:leagueCode",
+              element: <LeagueInvitationPage />,
+            },
+            {
+              path: "/dashboard/rate-teammates/:eventId",
               element: <RateTeammatesByEvent />,
             },
             { path: "*", element: <NotFound /> },

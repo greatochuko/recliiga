@@ -37,7 +37,9 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
       }
 
       await createLeague(leagueData, user.id);
-      toast.success("League created successfully!");
+      toast.success("League created successfully!", {
+        style: { color: "#16a34a" },
+      });
       onCancel();
     } catch (error: any) {
       console.error("Error creating league:", error);
@@ -85,7 +87,7 @@ export default function LeagueSetup({ onCancel }: { onCancel: () => void }) {
         {step === 4 && (
           <Button
             onClick={handleCreateLeague}
-            className="bg-accent-orange hover:bg-accent-orange/90 ml-auto text-white"
+            className="ml-auto bg-accent-orange text-white hover:bg-accent-orange/90"
           >
             Create League
           </Button>

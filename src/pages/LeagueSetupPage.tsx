@@ -6,7 +6,7 @@ export default function LeagueSetupPage() {
     <div className="min-h-dvh bg-white">
       <header className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link to="/" className="inline-block">
+          <Link to="/dashboard" className="inline-block">
             <span className="text-3xl font-bold text-accent-orange">
               REC LiiGA
             </span>

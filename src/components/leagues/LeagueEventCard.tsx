@@ -39,9 +39,9 @@ export default function LeagueEventCard({
 
   const handleViewDetails = () => {
     if (event.hasResults) {
-      navigate(`/events/${event.id}/results`);
+      navigate(`/dashboard/events/${event.id}/results`);
     } else {
-      navigate(`/events/${event.id}`);
+      navigate(`/dashboard/events/${event.id}`);
     }
   };
 
@@ -59,7 +59,7 @@ export default function LeagueEventCard({
           {attendanceStatus === "attending" && !isEditing && (
             <Badge
               variant="secondary"
-              className="bg-accent-orange text-accent-orange bg-opacity-20 text-xs"
+              className="bg-accent-orange bg-opacity-20 text-xs text-accent-orange"
             >
               Attending
             </Badge>
@@ -99,13 +99,13 @@ export default function LeagueEventCard({
         </div>
         {showLeagueName && (
           <div className="absolute bottom-4 left-4 text-xs">
-            <span className="text-accent-orange font-bold">{event.league}</span>
+            <span className="font-bold text-accent-orange">{event.league}</span>
           </div>
         )}
         <div className="mt-2 flex justify-center space-x-2">
           <Button
             variant="outline"
-            className="text-accent-orange border-accent-orange hover:bg-accent-orange rounded-md px-4 py-2 text-sm transition-colors hover:text-white"
+            className="rounded-md border-accent-orange px-4 py-2 text-sm text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
             style={{ transform: "scale(1.1)" }}
             onClick={handleViewDetails}
           >
@@ -117,13 +117,13 @@ export default function LeagueEventCard({
             {(isEditing || !attendanceStatus) && (
               <>
                 <Button
-                  className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm text-white transition-colors"
+                  className="rounded-md bg-accent-orange px-4 py-2 text-sm text-white transition-colors hover:bg-accent-orange/90"
                   onClick={handleAttend}
                 >
                   Attend
                 </Button>
                 <Button
-                  className="bg-accent-orange hover:bg-accent-orange/90 rounded-md px-4 py-2 text-sm text-white transition-colors"
+                  className="rounded-md bg-accent-orange px-4 py-2 text-sm text-white transition-colors hover:bg-accent-orange/90"
                   onClick={handleDecline}
                 >
                   Decline
@@ -133,7 +133,7 @@ export default function LeagueEventCard({
             {attendanceStatus && !isEditing && (
               <Button
                 variant="outline"
-                className="text-accent-orange border-accent-orange hover:bg-accent-orange rounded-md px-4 py-2 text-sm transition-colors hover:text-white"
+                className="rounded-md border-accent-orange px-4 py-2 text-sm text-accent-orange transition-colors hover:bg-accent-orange hover:text-white"
                 onClick={toggleEdit}
               >
                 <Edit className="mr-2 h-4 w-4" />

@@ -46,7 +46,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                 className="flex items-center justify-between rounded p-2 hover:bg-gray-100"
               >
                 <Link
-                  to={`/profile/${player.id}`}
+                  to={`/dashboard/profile/${player.id}`}
                   className="group flex items-center space-x-2"
                 >
                   <Avatar>

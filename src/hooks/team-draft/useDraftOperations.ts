@@ -1,11 +1,19 @@
-
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Player, Team, DraftHistoryItem } from '@/components/draft/types';
-import { draftPlayer, updateDraftSessionStatus, finalizeDraft } from '@/api/draft';
-import { getNextTeamInAlternatingDraft, getNextTeamInSnakeDraft, getPreviousTeamInAlternatingDraft, getPreviousTeamInSnakeDraft } from './utils';
-import { DraftSession } from './types';
+import { Player, Team, DraftHistoryItem } from "@/components/draft/types";
+import {
+  draftPlayer,
+  updateDraftSessionStatus,
+  finalizeDraft,
+} from "@/api/draft";
+import {
+  getNextTeamInAlternatingDraft,
+  getNextTeamInSnakeDraft,
+  getPreviousTeamInAlternatingDraft,
+  getPreviousTeamInSnakeDraft,
+} from "./utils";
+import { DraftSession } from "./types";
 
 export const useDraftOperations = (
   draftSession: DraftSession | null,
@@ -24,7 +32,7 @@ export const useDraftOperations = (
   setTotalPicks: React.Dispatch<React.SetStateAction<number>>,
   draftHistory: DraftHistoryItem[],
   setDraftHistory: React.Dispatch<React.SetStateAction<DraftHistoryItem[]>>,
-  eventId?: string
+  eventId?: string,
 ) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,36 +56,51 @@ export const useDraftOperations = (
     }
 
     setDraftStarted(true);
-    setTotalPicks(prevTotalPicks => prevTotalPicks + 1);
-    
-    const player = availablePlayers.find(p => p.id.toString() === playerId.toString());
+    setTotalPicks((prevTotalPicks) => prevTotalPicks + 1);
+
+    const player = availablePlayers.find(
+      (p) => p.id.toString() === playerId.toString(),
+    );
     if (player) {
-      const updatedTeams = teams.map((team, index) => 
-        index === currentTeam 
+      const updatedTeams = teams.map((team, index) =>
+        index === currentTeam
           ? { ...team, players: [...team.players, player] }
-          : team
+          : team,
       );
       setTeams(updatedTeams);
-      setAvailablePlayers(availablePlayers.filter(p => p.id.toString() !== playerId.toString()));
+      setAvailablePlayers(
+        availablePlayers.filter((p) => p.id.toString() !== playerId.toString()),
+      );
       setDraftHistory([...draftHistory, { player, teamIndex: currentTeam }]);
-    
+
       // Update draft session status if just starting
-      if (draftSession.status === 'not_started') {
-        await updateDraftSessionStatus(draftSession.id, 'in_progress');
+      if (draftSession.status === "not_started") {
+        await updateDraftSessionStatus(draftSession.id, "in_progress");
       }
-      
+
       // Add pick to database
-      const teamId = currentTeam === 0 ? 'team1' : 'team2';
-      await draftPlayer(draftSession.id, teamId, playerId.toString(), totalPicks + 1);
-      
-      if (draftType === 'Alternating') {
-        setCurrentTeam(getNextTeamInAlternatingDraft(currentTeam, teams.length));
-      } else if (draftType === 'Snake') {
-        const { nextTeam, newRound } = getNextTeamInSnakeDraft(currentTeam, totalPicks, teams.length);
+      const teamId = currentTeam === 0 ? "team1" : "team2";
+      await draftPlayer(
+        draftSession.id,
+        teamId,
+        playerId.toString(),
+        totalPicks + 1,
+      );
+
+      if (draftType === "Alternating") {
+        setCurrentTeam(
+          getNextTeamInAlternatingDraft(currentTeam, teams.length),
+        );
+      } else if (draftType === "Snake") {
+        const { nextTeam, newRound } = getNextTeamInSnakeDraft(
+          currentTeam,
+          totalPicks,
+          teams.length,
+        );
         setDraftRound(newRound);
         setCurrentTeam(nextTeam);
       }
-      
+
       // Check if draft is complete
       checkDraftComplete(availablePlayers.length - 1);
     }
@@ -89,20 +112,31 @@ export const useDraftOperations = (
     // A more complete implementation would also update the database
     if (draftHistory.length > 0) {
       const lastDraft = draftHistory[draftHistory.length - 1];
-      const updatedTeams = teams.map((team, index) => 
+      const updatedTeams = teams.map((team, index) =>
         index === lastDraft.teamIndex
-          ? { ...team, players: team.players.filter(p => p.id.toString() !== lastDraft.player.id.toString()) }
-          : team
+          ? {
+              ...team,
+              players: team.players.filter(
+                (p) => p.id.toString() !== lastDraft.player.id.toString(),
+              ),
+            }
+          : team,
       );
       setTeams(updatedTeams);
       setAvailablePlayers([...availablePlayers, lastDraft.player]);
       setDraftHistory(draftHistory.slice(0, -1));
-      setTotalPicks(prevTotalPicks => prevTotalPicks - 1);
+      setTotalPicks((prevTotalPicks) => prevTotalPicks - 1);
 
-      if (draftType === 'Alternating') {
-        setCurrentTeam(getPreviousTeamInAlternatingDraft(currentTeam, teams.length));
-      } else if (draftType === 'Snake') {
-        const { previousTeam, newRound } = getPreviousTeamInSnakeDraft(currentTeam, totalPicks, teams.length);
+      if (draftType === "Alternating") {
+        setCurrentTeam(
+          getPreviousTeamInAlternatingDraft(currentTeam, teams.length),
+        );
+      } else if (draftType === "Snake") {
+        const { previousTeam, newRound } = getPreviousTeamInSnakeDraft(
+          currentTeam,
+          totalPicks,
+          teams.length,
+        );
         setDraftRound(newRound);
         setCurrentTeam(previousTeam);
       }
@@ -123,13 +157,15 @@ export const useDraftOperations = (
     setIsSubmitting(true);
     try {
       const success = await finalizeDraft(draftSession.id, eventId);
-      
+
       if (success) {
-        toast.success("Draft finalized successfully!");
+        toast.success("Draft finalized successfully!", {
+          style: { color: "#16a34a" },
+        });
       } else {
         toast.error("Failed to finalize draft");
       }
-      
+
       // Redirect after short delay regardless of result
       setTimeout(() => {
         setShowCompletionDialog(false);
@@ -149,6 +185,6 @@ export const useDraftOperations = (
     handleFinalizeDraft,
     isSubmitting,
     showCompletionDialog,
-    setShowCompletionDialog
+    setShowCompletionDialog,
   };
 };

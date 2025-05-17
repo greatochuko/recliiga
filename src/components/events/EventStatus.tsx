@@ -45,13 +45,13 @@ export function EventStatus({ event }: EventStatusProps) {
   const isRsvpOpen = event.rsvpDeadline && new Date() < event.rsvpDeadline;
 
   const handleSelectCaptains = () => {
-    navigate(`/${event.id}/select-captains`);
+    navigate(`/dashboard/${event.id}/select-captains`);
   };
 
   const handleBeginDraft = () => {
     console.log(`Navigating to team draft page for event ${event.id}`);
     // Pass the event data as state to avoid refetching
-    navigate(`/team-draft/${event.id}`, {
+    navigate(`/dashboard/team-draft/${event.id}`, {
       state: { eventData: event },
     });
   };

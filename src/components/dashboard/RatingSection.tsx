@@ -26,9 +26,9 @@ export default function RatingSection({
   return (
     <div className="flex h-full flex-col">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Rate Your Teammates</h2>
+        <h2 className="text-xl font-semibold">Rate Your Teammates</h2>
         <Link
-          to="/rate-teammates"
+          to="/dashboard/rate-teammates"
           className="text-sm text-accent-orange hover:underline"
         >
           View all
@@ -39,7 +39,7 @@ export default function RatingSection({
           <FullScreenLoader />
         </div>
       ) : eventsToRate.length > 0 ? (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid grid-cols-[repeat(auto-fill,_minmax(320px,_1fr))] gap-4">
           {eventsToRate.map((event) => (
             <EventRatingCard key={event.id} event={event} />
           ))}

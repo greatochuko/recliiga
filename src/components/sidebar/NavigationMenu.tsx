@@ -13,29 +13,29 @@ import { Badge } from "../ui/badge";
 
 const menuItems = [
   {
-    title: "Home",
+    title: "Dashboard",
     icon: Home,
-    url: "/",
+    url: "/dashboard",
   },
   {
     title: "Leagues",
     icon: Trophy,
-    url: "/leagues",
+    url: "/dashboard/leagues",
   },
   {
     title: "Events",
     icon: Calendar,
-    url: "/events",
+    url: "/dashboard/events",
   },
   {
     title: "Results",
     icon: BarChart,
-    url: "/results",
+    url: "/dashboard/results",
   },
   {
     title: "Chat",
     icon: MessageSquare,
-    url: "/chat",
+    url: "/dashboard/chat",
   },
 ];
 

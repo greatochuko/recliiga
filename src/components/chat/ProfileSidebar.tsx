@@ -48,7 +48,7 @@ export default function ProfileSidebar({
             : "7:08 PM EST"}
         </p> */}
         <Link
-          to={`/profile/${activeConversation.user.id}`}
+          to={`/dashboard/profile/${activeConversation.user.id}`}
           className="flex w-full items-center justify-center gap-2 rounded-md border border-accent-orange p-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange/10"
         >
           <Eye className="h-4 w-4" />

@@ -36,7 +36,9 @@ export function UserMenu() {
     try {
       await signOut();
       navigate("/sign-in");
-      toast.success("Successfully logged out");
+      toast.success("Successfully logged out", {
+        style: { color: "#16a34a" },
+      });
     } catch (error) {
       console.log(error.message);
       toast.error("Error logging out");
@@ -88,7 +90,7 @@ export function UserMenu() {
           </div>
           <DropdownMenuItem asChild>
             <Link
-              to="/profile"
+              to="/dashboard/profile"
               className="flex cursor-pointer items-center gap-2"
             >
               <User className="h-4 w-4" />

@@ -12,7 +12,7 @@ export default function EventRatingCard({ event }: { event: EventType }) {
   return (
     <Link
       key={event.id}
-      to={`/rate-teammates/${event.id}`}
+      to={`/dashboard/rate-teammates/${event.id}`}
       className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-4 shadow-sm duration-200 hover:bg-gray-50"
     >
       <div className="flex items-center justify-between">
