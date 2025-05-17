@@ -97,76 +97,128 @@ export const EventActions: React.FC<EventActionsProps> = ({
   );
 
   return (
-    <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-[8rem_1fr_8rem]">
-      <span className="absolute right-4 top-4 text-xs font-bold text-accent-orange sm:static sm:w-fit">
-        {event.league.name}
-      </span>
+    <>
+      <div className="hidden grid-cols-[8rem_1fr_8rem] items-end gap-4 sm:grid">
+        <span className="static w-fit text-xs font-bold text-accent-orange">
+          {event.league.name}
+        </span>
 
-      <div className="flex flex-col items-center justify-center gap-4">
-        <Link
-          to={`/dashboard/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
-          className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
-        >
-          {event.resultsEntered ? "View Results" : "View Details"}
-        </Link>
-        {!isPastEvent && isRsvpOpen && (
-          <>
-            {!attendanceStatus || isEditing ? (
-              renderRSVPControls()
-            ) : (
-              <div className="flex justify-center gap-2 sm:flex-row">
-                <button
-                  className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
-                  onClick={() => setIsEditing(true)}
-                >
-                  <Edit className="h-4 w-4" />
-                  Edit RSVP
-                </button>
-              </div>
-            )}
-          </>
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Link
+            to={`/dashboard/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
+            className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
+          >
+            {event.resultsEntered ? "View Results" : "View Details"}
+          </Link>
+          {!isPastEvent && isRsvpOpen && (
+            <>
+              {!attendanceStatus || isEditing ? (
+                renderRSVPControls()
+              ) : (
+                <div className="flex justify-center gap-2 sm:flex-row">
+                  <button
+                    className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit RSVP
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {isRsvpOpen ? (
+          <div className="flex justify-end">
+            <CountdownClock deadline={rsvpDeadline} size="sm" />
+          </div>
+        ) : (
+          teamCaptained &&
+          (!teamCaptained.draftCompleted ? (
+            <Link
+              to={`/dashboard/events/${event.id}/team-draft`}
+              className="ml-auto w-fit whitespace-nowrap rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+            >
+              {event.teams.some((team) => team.players?.length)
+                ? "Continue"
+                : "Begin"}{" "}
+              Draft
+            </Link>
+          ) : (
+            <span className="text-xs font-medium text-green-600">
+              Draft Completed
+            </span>
+          ))
         )}
       </div>
-
-      {isRsvpOpen ? (
-        <div className="flex justify-end">
-          <CountdownClock deadline={rsvpDeadline} size="sm" />
-        </div>
-      ) : (
-        teamCaptained &&
-        (!teamCaptained.draftCompleted ? (
+      <div className="grid grid-cols-1 items-end gap-4 sm:hidden">
+        <div className="flex flex-col items-center justify-center gap-4">
           <Link
-            to={`/dashboard/events/${event.id}/team-draft`}
-            className="ml-auto w-fit rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+            to={`/dashboard/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
+            className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"
           >
-            {event.teams.some((team) => team.players?.length)
-              ? "Continue"
-              : "Begin"}{" "}
-            Draft
+            {event.resultsEntered ? "View Results" : "View Details"}
           </Link>
-        ) : (
-          <span className="text-xs font-medium text-green-600">
-            Draft Completed
-          </span>
-        ))
-      )}
+          {!isPastEvent && isRsvpOpen && (
+            <>
+              {!attendanceStatus || isEditing ? (
+                renderRSVPControls()
+              ) : (
+                <div className="flex justify-center gap-2 sm:flex-row">
+                  <button
+                    className="flex items-center gap-2 rounded-md border border-accent-orange px-4 py-2 text-sm font-medium text-accent-orange hover:bg-accent-orange hover:text-white disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit RSVP
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
-      {!isPastEvent &&
-        (attendanceStatus === "attending" ? (
-          <Badge
-            variant="secondary"
-            className="absolute bottom-4 left-4 mt-2 self-start bg-accent-orange/20 text-xs text-accent-orange sm:mt-0 sm:hidden sm:self-auto"
-          >
-            Attending
-          </Badge>
+        {isRsvpOpen ? (
+          <div className="flex justify-end">
+            <CountdownClock deadline={rsvpDeadline} size="sm" />
+          </div>
         ) : (
-          <Badge
-            variant="secondary"
-            className="absolute bottom-4 left-4 mt-2 self-start text-xs text-red-600 sm:mt-0 sm:hidden sm:self-auto"
-          >
-            {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
-          </Badge>
-        ))}
-    </div>
+          teamCaptained &&
+          (!teamCaptained.draftCompleted ? (
+            <Link
+              to={`/dashboard/events/${event.id}/team-draft`}
+              className="ml-auto w-fit whitespace-nowrap rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
+            >
+              {event.teams.some((team) => team.players?.length)
+                ? "Continue"
+                : "Begin"}{" "}
+              Draft
+            </Link>
+          ) : (
+            <span className="text-xs font-medium text-green-600">
+              Draft Completed
+            </span>
+          ))
+        )}
+
+        {!isPastEvent &&
+          (attendanceStatus === "attending" ? (
+            <Badge
+              variant="secondary"
+              className="absolute bottom-4 left-4 mt-2 self-start bg-accent-orange/20 text-xs text-accent-orange"
+            >
+              Attending
+            </Badge>
+          ) : (
+            <Badge
+              variant="secondary"
+              className="absolute bottom-4 left-4 mt-2 self-start text-xs text-red-600"
+            >
+              {spotsLeft} spot{spotsLeft === 1 ? "" : "s"} left
+            </Badge>
+          ))}
+      </div>
+    </>
   );
 };

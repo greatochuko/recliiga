@@ -26,7 +26,7 @@ export default function RatingSection({
   return (
     <div className="flex h-full flex-col">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Rate Your Teammates</h2>
+        <h2 className="text-xl font-semibold">Rate Your Teammates</h2>
         <Link
           to="/dashboard/rate-teammates"
           className="text-sm text-accent-orange hover:underline"

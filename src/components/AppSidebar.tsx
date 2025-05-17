@@ -43,7 +43,7 @@ export function AppSidebar() {
           </div>
         </div>
       </Sidebar>
-      <div className="absolute -right-10 top-4 z-50 flex items-center">
+      <div className="absolute -right-11 top-4 z-50 flex items-center">
         <SidebarTrigger className="z-[20] bg-white shadow-md" />
       </div>
     </div>
