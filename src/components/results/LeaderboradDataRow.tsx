@@ -16,7 +16,7 @@ export default function LeaderboradDataRow({
       <TableCell className="p-3 text-center font-medium">{rank}</TableCell>
       <TableCell className="border-l p-3 font-medium">
         <Link
-          to={`/profile/${data.player.id}`}
+          to={`/dashboard/profile/${data.player.id}`}
           className="group flex cursor-pointer items-center transition-colors"
         >
           <Avatar className="mr-2 h-8 w-8">

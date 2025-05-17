@@ -93,7 +93,7 @@ export function RatingDialog({
               </div>
             )}
             <Link
-              to={`/profile/${player.id}`}
+              to={`/dashboard/profile/${player.id}`}
               className="text-xl font-semibold hover:text-accent-orange hover:underline"
             >
               {player.full_name}

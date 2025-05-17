@@ -14,10 +14,10 @@ const ErrorPage = () => {
         An unexpected error occurred.
       </p>
       <Link
-        to="/"
+        to="/dashboard"
         className="mt-6 inline-block rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white shadow-sm duration-200 hover:bg-accent-orange/90"
       >
-        Go Back Home
+        Back to Dashboard
       </Link>
     </div>
   );

@@ -76,7 +76,7 @@ export const EventsContent: React.FC = () => {
         </Select>
         {user.role === "organizer" && (
           <Link
-            to="/add-event"
+            to="/dashboard/add-event"
             className="flex items-center gap-1 rounded-md bg-accent-orange px-3 py-2 font-medium text-white hover:bg-[#E66900] sm:px-4"
           >
             <Plus className="h-4 w-4" /> Create New Event

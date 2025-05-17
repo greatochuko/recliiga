@@ -40,13 +40,13 @@ export function LONavigationMenu({
       id: "manage-events",
       label: "Manage Events",
       icon: Calendar,
-      url: "/manage-events",
+      url: "/dashboard/manage-events",
     },
     {
       id: "create-league",
       label: "Create League",
       icon: FolderPlus,
-      url: "/create-league",
+      url: "/dashboard/create-league",
     },
     {
       id: "invite-players",
@@ -59,7 +59,7 @@ export function LONavigationMenu({
       id: "help-support",
       label: "Help & Support",
       icon: HelpCircle,
-      url: "/help",
+      url: "/dashboard/help",
     },
   ];
 

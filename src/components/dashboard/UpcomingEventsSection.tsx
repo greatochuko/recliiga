@@ -13,9 +13,9 @@ export default function UpcomingEventsSection({
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Upcoming Events</h2>
+        <h2 className="text-xl font-semibold">Upcoming Events</h2>
         <Link
-          to="/events"
+          to="/dashboard/events"
           className="text-sm text-accent-orange hover:underline"
         >
           View all

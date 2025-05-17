@@ -25,7 +25,7 @@ export default function LeagueInvitationPage() {
   });
 
   if (isLoading) {
-    return <FullScreenLoader />;
+    return <FullScreenLoader className="h-full" />;
   }
 
   const league = data?.league;
@@ -40,11 +40,11 @@ export default function LeagueInvitationPage() {
           removed.
         </p>
         <Link
-          to={"/"}
+          to={"/dashboard"}
           className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />
-          Go Home
+          Back to Dashboard
         </Link>
       </div>
     );
@@ -57,11 +57,11 @@ export default function LeagueInvitationPage() {
       toast.error(error, { style: { color: "#ef4444" } });
     }
     setLoading(false);
-    navigate("/leagues");
+    navigate("/dashboard/leagues");
   };
 
   const handleReject = async () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (
@@ -117,7 +117,7 @@ export default function LeagueInvitationPage() {
       </div>
 
       <Link
-        to={"/"}
+        to={"/dashboard"}
         className="mt-6 flex items-center gap-1 text-sm font-medium text-accent-orange duration-200 hover:underline"
       >
         <ArrowLeftIcon className="h-4 w-4" />

@@ -18,7 +18,11 @@ export default function LeagueCard({ league }: { league: LeagueType }) {
       <CardContent className="flex flex-col gap-4 p-6">
         <div className="flex items-start gap-x-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={league.image} alt={league.name} />
+            <AvatarImage
+              src={league.image}
+              alt={league.name}
+              className="object-cover"
+            />
             <AvatarFallback>
               {league.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
@@ -67,7 +71,7 @@ export default function LeagueCard({ league }: { league: LeagueType }) {
       <CardFooter className="p-6 pt-0">
         {isJoined ? (
           <Link
-            to={`/leagues/${league.id}`}
+            to={`/dashboard/leagues/${league.id}`}
             className={`w-full rounded-md py-2 text-center text-sm font-medium duration-200 ${"border border-accent-orange bg-white text-accent-orange hover:bg-accent-orange/10"}`}
           >
             See More

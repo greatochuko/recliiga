@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageCircle, ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -74,14 +74,15 @@ export default function PlayerProfile() {
           <p className="mb-3 text-base text-gray-600">
             {profile.positions[0]}, {profile.city}
           </p>
-          <Button
-            variant="outline"
-            disabled
-            className="border-accent-orange text-accent-orange transition-colors duration-200 hover:bg-accent-orange hover:text-white"
-          >
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Message
-          </Button>
+          <Link to={"/dashboard/chat"}>
+            <Button
+              variant="outline"
+              className="border-accent-orange text-accent-orange transition-colors duration-200 hover:bg-accent-orange hover:text-white"
+            >
+              <MessageCircle className="mr-2 h-4 w-4" />
+              Message
+            </Button>
+          </Link>
         </div>
       </div>
 

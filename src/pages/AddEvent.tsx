@@ -251,7 +251,7 @@ export default function AddEvent() {
     if (error === null) {
       queryClient.invalidateQueries({ queryKey: ["eventsByCreator"] });
 
-      navigate("/manage-events");
+      navigate("/dashboard/manage-events");
     } else {
       setSubmitting(false);
     }

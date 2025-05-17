@@ -18,7 +18,7 @@ export function AppSidebar() {
         <div className="flex h-full flex-col">
           <div className="border-b border-gray-200 p-4">
             <Link
-              to={"/"}
+              to={"/dashboard"}
               className="w-fit cursor-pointer text-2xl font-bold text-accent-orange transition-colors hover:text-[#FF9A30]"
               onClick={toggleSidebar}
             >
@@ -43,7 +43,7 @@ export function AppSidebar() {
           </div>
         </div>
       </Sidebar>
-      <div className="absolute -right-10 top-4 z-50 flex items-center">
+      <div className="absolute -right-11 top-4 z-50 flex items-center">
         <SidebarTrigger className="z-[20] bg-white shadow-md" />
       </div>
     </div>

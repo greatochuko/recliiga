@@ -25,7 +25,13 @@ export function PlayerRankCard({
   );
 
   return (
-    <Card className="flex h-full w-full flex-col justify-between bg-accent-orange text-white">
+    <Card className="relative flex h-full w-full flex-col justify-between bg-accent-orange text-white">
+      <p className="absolute left-0 top-1/2 -translate-x-1/3 -translate-y-1/2 -rotate-90 text-2xl font-semibold opacity-20">
+        RECLiiGA.COM
+      </p>
+      <p className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 rotate-90 text-2xl font-semibold opacity-20">
+        RECLiiGA.COM
+      </p>
       <CardContent className="flex h-full flex-col items-center justify-between p-4">
         <div className="flex w-full flex-col items-center">
           <h2 className="mb-2 text-base font-bold">
@@ -57,7 +63,6 @@ export function PlayerRankCard({
               /{league?.players.length || "--"}
             </span>
           </div>
-          <span className="mt-1 text-xs">{league?.name || "League"}</span>
           <div className="mt-2 flex items-center">
             <span className="text-base font-bold">{userRating.toFixed(2)}</span>
             <Star className="ml-1 h-4 w-4 fill-white" />

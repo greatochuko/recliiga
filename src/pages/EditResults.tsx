@@ -56,7 +56,7 @@ export default function EditResults() {
           The event you are looking for does not exist or has been removed.
         </p>
         <Link
-          to="/events"
+          to="/dashboard/events"
           className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />
@@ -75,7 +75,7 @@ export default function EditResults() {
           this is a mistake, please contact support.
         </p>
         <Link
-          to="/events"
+          to="/dashboard/events"
           className="mt-6 flex items-center gap-1 rounded-md bg-accent-orange px-4 py-2 text-sm font-medium text-white hover:bg-accent-orange/90"
         >
           <ArrowLeftIcon className="h-5 w-5" />
@@ -126,7 +126,7 @@ export default function EditResults() {
     if (hasError) {
       toast.error("An error occured submitting scores");
     } else {
-      navigate("/manage-events");
+      navigate("/dashboard/manage-events");
     }
     setResultLoading(false);
   };

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import FullScreenLoader from "@/components/FullScreenLoader";
 import { fetchEventsByUser } from "@/api/events";
-import { getPastEvents } from "@/lib/utils";
+import { getPastEvents, getUnratedTeammates } from "@/lib/utils";
 import EventRatingCard from "@/components/events/EventRatingCard";
 import { ChevronLeftIcon } from "lucide-react";
 
@@ -24,7 +24,8 @@ export default function RateTeammates() {
   const eventsToRate = pastEvents.filter(
     (event) =>
       event.resultsEntered &&
-      event.players.some((player) => player.id === user.id),
+      event.players.some((player) => player.id === user.id) &&
+      getUnratedTeammates(event, user.id).length > 0,
   );
 
   if (isLoading) {
@@ -74,7 +75,7 @@ export default function RateTeammates() {
           </p>
           <Button
             className="rounded-lg bg-accent-orange px-6 py-3 text-lg font-bold text-white hover:bg-[#E66C00]"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
           >
             Return to Dashboard
           </Button>
