@@ -98,12 +98,12 @@ export const EventActions: React.FC<EventActionsProps> = ({
 
   return (
     <>
-      <div className="hidden grid-cols-[8rem_1fr_8rem] items-end gap-4 sm:grid">
+      <div className="hidden grid-cols-[10rem_1fr_10rem] items-end gap-4 sm:grid">
         <span className="static w-fit text-xs font-bold text-accent-orange">
           {event.league.name}
         </span>
 
-        <div className="flex flex-col items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4 whitespace-nowrap">
           <Link
             to={`/dashboard/events/${event.id}/${event.resultsEntered ? "results" : ""}`}
             className="self-center rounded-md border border-accent-orange bg-white px-4 py-2 text-sm font-medium text-accent-orange duration-200 hover:bg-accent-orange hover:text-white"

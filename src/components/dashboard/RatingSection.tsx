@@ -39,7 +39,7 @@ export default function RatingSection({
           <FullScreenLoader />
         </div>
       ) : eventsToRate.length > 0 ? (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid grid-cols-[repeat(auto-fill,_minmax(320px,_1fr))] gap-4">
           {eventsToRate.map((event) => (
             <EventRatingCard key={event.id} event={event} />
           ))}
