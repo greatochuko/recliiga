@@ -29,7 +29,7 @@ export default function InvitePopup({
   const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>();
   const [error, setError] = useState<string | null>(null);
 
-  const inviteLink = `${window.location.origin}/invite/${selectedLeagueCode || ""}`;
+  const inviteLink = `${window.location.origin}/dashboard/invite/${selectedLeagueCode || ""}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(inviteLink);

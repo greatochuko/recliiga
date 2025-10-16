@@ -143,9 +143,9 @@ export default function PersonalInformation({
                   className="w-full cursor-pointer rounded-md border px-3 py-2 text-sm outline-[3px] outline-offset-2 outline-gray-800 focus-visible:outline"
                 >
                   <option hidden>Month</option>
-                  {Array.from({ length: 12 }, (_, i) => i).map((month) => (
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                     <option key={month} value={month.toString()}>
-                      {new Date(2000, month, 1).toLocaleString("default", {
+                      {new Date(2000, month - 1, 1).toLocaleString("default", {
                         month: "long",
                       })}
                     </option>

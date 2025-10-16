@@ -30,7 +30,9 @@ export default function AuthWrapper() {
       (isCompleteProfileRoute && isProfileComplete)
     ) {
       return (
-        <Navigate to={inviteCode ? `/invite/${inviteCode}` : "/dashboard"} />
+        <Navigate
+          to={inviteCode ? `/dashboard/invite/${inviteCode}` : "/dashboard"}
+        />
       );
     }
 
