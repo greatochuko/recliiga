@@ -276,7 +276,7 @@ export default function AddEvent() {
                     leagueId: e.target.value,
                   }))
                 }
-                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-default disabled:bg-gray-100"
+                className="cursor-pointer rounded-md border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
                 id="league-id"
                 name="league-id"
                 disabled={isLoadingLeagues}

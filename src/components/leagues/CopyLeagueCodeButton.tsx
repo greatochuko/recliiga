@@ -10,7 +10,9 @@ export default function CopyLeagueCodeButton({
   const [copied, setCopied] = useState(false);
 
   function handleCopyCode() {
-    navigator.clipboard.writeText(leagueCode);
+    navigator.clipboard.writeText(
+      window.location.origin + "/dashboard/invite/" + leagueCode,
+    );
     setCopied(true);
     toast.success("Copied to clipboard", { style: { color: "#16a34a" } });
     setTimeout(() => {
