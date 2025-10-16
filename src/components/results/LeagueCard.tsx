@@ -33,7 +33,9 @@ export const LeagueCard = ({ league }: LeagueCardProps) => {
               <Users className="mr-1 h-4 w-4" />
               {league.players.length} Players
             </div>
-            <div className="mt-1 text-sm text-gray-500">Total Games: {23}</div>
+            <div className="mt-1 text-sm text-gray-500">
+              Total Games: {league?.results?.length || 0}
+            </div>
           </div>
         </div>
       </CardContent>
