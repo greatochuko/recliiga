@@ -21,6 +21,7 @@ import { EventDataType, createEvent } from "@/api/events";
 import { EventTimeDataType } from "@/types/events";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import PageHeader from "@/components/PageHeader";
+import { toast } from "sonner";
 
 const initialStartTime = new Date();
 initialStartTime.setDate(initialStartTime.getDate() + 1);
@@ -250,6 +251,9 @@ export default function AddEvent() {
 
     if (error === null) {
       queryClient.invalidateQueries({ queryKey: ["eventsByCreator"] });
+      toast.success("Event created successfully", {
+        style: { color: "#16a34a" },
+      });
 
       navigate("/dashboard/manage-events");
     } else {
