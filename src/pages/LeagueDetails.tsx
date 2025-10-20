@@ -128,7 +128,9 @@ export default function LeagueDetails() {
                             <p className="text-sm font-medium">
                               {player.full_name}
                             </p>
-                            <p className="text-xs text-gray-500">Midfielder</p>
+                            <p className="text-xs text-gray-500">
+                              {player.positions[0] || "N/A"}
+                            </p>
                           </div>
                         </CardContent>
                       </Card>
