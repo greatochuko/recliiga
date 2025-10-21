@@ -65,7 +65,7 @@ export default function LeagueInvitationPage() {
   };
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center">
+    <main className="flex flex-1 flex-col items-center justify-center text-center">
       <div className="w-full max-w-md rounded-lg px-6 py-10">
         <div className="mb-6 flex flex-col items-center gap-4">
           {/* <Users className="mb-4 h-12 w-12 text-accent-orange" /> */}
