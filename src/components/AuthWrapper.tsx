@@ -7,36 +7,36 @@ import {
 } from "react-router-dom";
 
 const authRoutes = ["/sign-in", "/sign-up"];
-const completeProfileRoutes = ["/complete-registration"];
+const completeProfileRoute = "/complete-registration";
 
 export default function AuthWrapper() {
   const { user } = useAuth();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
 
-  const isInvitePage = pathname.startsWith("/invite");
-  const leagueCode = isInvitePage ? pathname.split("/").at(-1) : "";
+  const isInvitePage = pathname.startsWith("/dashboard/invite");
+  const leagueCode = isInvitePage
+    ? pathname.replace("/dashboard/invite/", "")
+    : "";
   const inviteCode = searchParams.get("code");
 
-  const isProfileComplete = user?.nickname;
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
-  const isCompleteProfileRoute = completeProfileRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+  const isProfileComplete = Boolean(user?.nickname);
+  const isAuthRoute = authRoutes.includes(pathname);
+  const isCompleteProfile = pathname === completeProfileRoute;
 
   if (user) {
-    if (
-      (isAuthRoute && isProfileComplete) ||
-      (isCompleteProfileRoute && isProfileComplete)
-    ) {
+    // Authenticated users with complete profile shouldn't access auth routes
+    if (isProfileComplete && (isAuthRoute || isCompleteProfile)) {
       return (
         <Navigate
           to={inviteCode ? `/dashboard/invite/${inviteCode}` : "/dashboard"}
+          replace
         />
       );
     }
 
-    if (!isCompleteProfileRoute && !isProfileComplete) {
+    // Authenticated users with incomplete profile must complete profile
+    if (!isProfileComplete && !isCompleteProfile) {
       return (
         <Navigate
           to={
@@ -44,14 +44,17 @@ export default function AuthWrapper() {
               ? `/complete-registration?code=${inviteCode}`
               : "/complete-registration"
           }
+          replace
         />
       );
     }
   } else {
+    // Unauthenticated users trying to access protected routes
     if (!isAuthRoute) {
       return (
         <Navigate
           to={isInvitePage ? `/sign-in?code=${leagueCode}` : "/sign-in"}
+          replace
         />
       );
     }
