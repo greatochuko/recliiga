@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error);
       }
 
-      localStorage.setItem("token", token);
+      localStorage.setItem("auth-token", token);
 
       setUser(profile);
       toast.success("Successfully signed in!", {
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error);
       }
 
-      localStorage.setItem("token", token);
+      localStorage.setItem("auth-token", token);
 
       toast.success(
         "Registration successful! Please complete your player profile.",
@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      localStorage.removeItem("token");
+      localStorage.removeItem("auth-token");
       setUser(null);
 
       toast.success("Successfully signed out", {
@@ -127,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(error || "Failed to delete account data");
       }
 
-      localStorage.removeItem("token");
+      localStorage.removeItem("auth-token");
       setUser(null);
 
       // Clear state

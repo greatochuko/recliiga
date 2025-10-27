@@ -21,7 +21,7 @@ export async function fetchApi<T>(
   | { data: null; error: string; token: null }
 > {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("auth-token");
     const response = await fetch(`${import.meta.env.VITE_BASE_URL}${subURL}`, {
       ...options,
       credentials: "include",
