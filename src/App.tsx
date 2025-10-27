@@ -45,13 +45,7 @@ const router = createBrowserRouter(
   [
     { path: "/", element: <HomePage /> },
     {
-      element: (
-        <AuthProvider>
-          <ChatProvider>
-            <AuthWrapper />
-          </ChatProvider>
-        </AuthProvider>
-      ),
+      element: <AuthWrapper />,
       errorElement: <ErrorPage />,
       children: [
         { path: "/sign-in", element: <SignIn /> },
@@ -123,7 +117,14 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <RouterProvider router={router} future={{ v7_startTransition: true }} />
+      <AuthProvider>
+        <ChatProvider>
+          <RouterProvider
+            router={router}
+            future={{ v7_startTransition: true }}
+          />
+        </ChatProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

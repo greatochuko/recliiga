@@ -1,6 +1,7 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { ChevronLeft, ChevronRight, PlusIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const navLinks = [
   { text: "Home", href: "/" },
@@ -122,14 +123,36 @@ const faqs = [
 ];
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [faqsOpen, setFaqsOpen] = useState<string[]>([]);
 
   const navRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const faqsRef = useRef<HTMLDivElement>(null);
-
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (carouselRef.current) {
+        // Only auto-scroll if mouse is NOT over the carousel
+        const isHovered = carouselRef.current.matches(":hover");
+        if (!isHovered) {
+          const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+          if (scrollLeft + clientWidth >= scrollWidth - 5) {
+            carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+          } else {
+            handleNext();
+          }
+        }
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (user) {
+    return <Navigate to={"/dashboard"} replace />;
+  }
 
   const scrollToSection = (section: string) => {
     console.log(section);
@@ -162,24 +185,6 @@ export default function HomePage() {
     }
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (carouselRef.current) {
-        // Only auto-scroll if mouse is NOT over the carousel
-        const isHovered = carouselRef.current.matches(":hover");
-        if (!isHovered) {
-          const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-          if (scrollLeft + clientWidth >= scrollWidth - 5) {
-            carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
-          } else {
-            handleNext();
-          }
-        }
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <main>
       <header>
@@ -209,10 +214,10 @@ export default function HomePage() {
             ))}
           </ul>
           <Link
-            to={"/sign-up"}
+            to={"/sign-in"}
             className="rounded-md bg-accent-orange-2 px-4 py-2 text-sm font-medium text-white duration-200 hover:bg-accent-orange"
           >
-            Get Started
+            Log In
           </Link>
         </nav>
       </header>
