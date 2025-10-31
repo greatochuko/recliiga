@@ -1,7 +1,6 @@
-
-import { Input } from "@/components/ui/input"
-import { Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
+import { Input } from "@/components/ui/input";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 interface PasswordInputProps {
   id: string;
@@ -16,28 +15,35 @@ export default function PasswordInput({
   value,
   onChange,
   label,
-  placeholder = "********"
+  placeholder = "********",
 }: PasswordInputProps) {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="space-y-2">
-      <label htmlFor={id} className="text-sm text-gray-800">{label}</label>
+      <label htmlFor={id} className="text-sm text-gray-800">
+        {label}
+      </label>
       <div className="relative">
-        <Input 
-          id={id} 
-          type={showPassword ? "text" : "password"} 
+        <Input
+          id={id}
+          type={showPassword ? "text" : "password"}
           placeholder={placeholder}
-          className="w-full pr-10" 
+          className="w-full pr-10"
           value={value}
+          autoComplete="new-password"
           onChange={onChange}
         />
-        <button 
+        <button
           type="button"
-          onClick={() => setShowPassword(!showPassword)} 
-          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute inset-y-0 right-0 flex items-center pr-3"
         >
-          {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+          {showPassword ? (
+            <EyeOff className="h-5 w-5 text-gray-400" />
+          ) : (
+            <Eye className="h-5 w-5 text-gray-400" />
+          )}
         </button>
       </div>
     </div>

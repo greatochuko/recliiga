@@ -31,7 +31,7 @@ export default function Events() {
           <FullScreenLoader />
         ) : (
           <>
-            <TabsContent value="upcoming">
+            <TabsContent value="upcoming" className="flex flex-col gap-4">
               {error ? (
                 <div className="py-10 text-center text-gray-500">
                   An error occurred while fetching events{" "}
@@ -52,7 +52,7 @@ export default function Events() {
                 ))
               )}
             </TabsContent>
-            <TabsContent value="past">
+            <TabsContent value="past" className="flex flex-col gap-4">
               {error ? (
                 <div className="py-10 text-center text-gray-500">
                   An error occurred while fetching events{" "}
