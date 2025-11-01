@@ -155,7 +155,6 @@ export default function HomePage() {
   }
 
   const scrollToSection = (section: string) => {
-    console.log(section);
     if (section === "features") {
       featuresRef.current?.scrollIntoView({ behavior: "smooth" });
     } else if (section === "testimonials") {

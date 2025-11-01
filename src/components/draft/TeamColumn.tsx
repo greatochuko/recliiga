@@ -72,7 +72,7 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
       setLogoPreview(dataUrl);
       setLogo(resizedFile);
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   }
 

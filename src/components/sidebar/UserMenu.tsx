@@ -40,7 +40,7 @@ export function UserMenu() {
         style: { color: "#16a34a" },
       });
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error("Error logging out");
     }
   };
