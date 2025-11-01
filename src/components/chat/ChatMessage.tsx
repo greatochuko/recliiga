@@ -36,9 +36,9 @@ export default function ChatMessage({
                 : "rounded-bl-none bg-gray-100"
             }`}
           >
-            {message.images.length > 0 && (
+            {message.images?.length > 0 && (
               <div className="flex w-full flex-wrap gap-1 rounded-md">
-                {message.images.slice(0, 2).map((img) => (
+                {message.images?.slice(0, 2).map((img) => (
                   <div
                     key={img.id}
                     onClick={() => setModalIsOpen(true)}
@@ -49,7 +49,7 @@ export default function ChatMessage({
                       alt={img.filename}
                       className="absolute left-0 top-0 h-full w-full bg-gray-100 object-cover duration-200 group-hover:scale-110"
                     />
-                    {message.images.length > 2 && (
+                    {message.images?.length > 2 && (
                       <div className="absolute left-0 top-0 hidden h-full w-full items-center justify-center bg-black/50 font-bold group-last:flex">
                         +{message.images.length - 2}
                       </div>

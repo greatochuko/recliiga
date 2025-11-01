@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from "react";
 export default function ChatImagesModal({
   open,
   closeModal,
-  images,
+  images = [],
 }: {
   open: boolean;
   closeModal: () => void;
-  images: ImageType[];
+  images?: ImageType[];
 }) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,7 +30,7 @@ export default function ChatImagesModal({
       slider.addEventListener("scroll", handleScroll);
       return () => slider.removeEventListener("scroll", handleScroll);
     }
-  }, [images.length]);
+  }, [images?.length]);
 
   const scroll = (direction: "prev" | "next") => {
     if (sliderRef.current) {
