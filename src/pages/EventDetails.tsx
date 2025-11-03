@@ -234,8 +234,15 @@ export default function EventDetails() {
                                   {player.full_name}
                                 </p>
                                 <span className="truncate text-sm text-muted-foreground">
-                                  {Object.values(player.positions)?.[0]?.[0] ||
-                                    "Unassigned"}
+                                  {player.positions?.[event.league.sport]
+                                    ? player.positions[event.league.sport]
+                                        .slice(0, 2)
+                                        .join(", ") +
+                                      (player.positions[event.league.sport]
+                                        .length > 2
+                                        ? "..."
+                                        : "")
+                                    : "N/A"}
                                 </span>
                               </div>
                             </div>

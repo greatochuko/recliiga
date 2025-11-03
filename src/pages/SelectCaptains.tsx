@@ -13,6 +13,7 @@ import { TeamType } from "@/types/events";
 import { UserType } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { getUserRating } from "@/lib/utils";
+import { LeagueType } from "@/types/league";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -31,14 +32,14 @@ function AttendingList({
   selectableCaptains,
   onCaptainSelect,
   teams,
-  leagueId,
+  league,
 }: {
   players: UserType[];
   captainIds: string[];
   selectableCaptains: boolean;
   onCaptainSelect: (playerId: string, checked: boolean) => void;
   teams: TeamType[];
-  leagueId: string;
+  league: LeagueType;
 }) {
   return (
     <div className="w-full">
@@ -86,7 +87,7 @@ function AttendingList({
                     {player.full_name}
                   </span>
                   <StarRating
-                    rating={getUserRating(leagueId, player.ratings)}
+                    rating={getUserRating(league.id, player.ratings)}
                   />
                   {playerIsCaptain && (
                     <Crown
@@ -96,7 +97,10 @@ function AttendingList({
                   )}
                 </div>
                 <span className="truncate text-sm text-muted-foreground">
-                  {Object.values(player.positions)?.[0]?.[0] || "Unassigned"}
+                  {player.positions?.[league.sport]
+                    ? player.positions[league.sport].slice(0, 2).join(", ") +
+                      (player.positions[league.sport].length > 2 ? "..." : "")
+                    : "N/A"}
                 </span>
               </div>
             </label>
@@ -306,7 +310,7 @@ export default function SelectCaptains() {
                 selectableCaptains={selectingCaptains}
                 onCaptainSelect={handleCaptainSelect}
                 teams={event?.teams || []}
-                leagueId={event.leagueId}
+                league={event.league}
               />
             </div>
           </div>
