@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -96,7 +96,7 @@ function AttendingList({
                   )}
                 </div>
                 <span className="truncate text-sm text-muted-foreground">
-                  {player.positions[0] || "Unassigned"}
+                  {Object.values(player.positions)?.[0]?.[0] || "Unassigned"}
                 </span>
               </div>
             </label>
@@ -245,9 +245,12 @@ export default function SelectCaptains() {
                     <span className="text-xs text-gray-500">
                       {format(event.startTime, "h:mm a")}
                     </span>
-                    <span className="text-xs font-bold text-accent-orange">
+                    <Link
+                      to={`/dashboard/leagues/${event.league.id}`}
+                      className="text-xs font-bold text-accent-orange hover:underline"
+                    >
                       {event.league.name}
-                    </span>
+                    </Link>
                   </div>
                   <span className="text-2xl font-bold">vs</span>
                 </div>

@@ -72,7 +72,8 @@ export default function PlayerProfile() {
             {profile.full_name}
           </h2>
           <p className="mb-3 text-base text-gray-600">
-            {profile.positions[0]}, {profile.city}
+            {profile.positions ? Object.values(profile.positions)[0][0] : "N/A"}
+            , {profile.city}
           </p>
           <Link to={"/dashboard/chat"}>
             <Button

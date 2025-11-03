@@ -129,7 +129,14 @@ export default function LeagueDetails() {
                               {player.full_name}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {player.positions[0] || "N/A"}
+                              {player.positions?.[league.sport]
+                                ? player.positions[league.sport]
+                                    .slice(0, 2)
+                                    .join(", ") +
+                                  (player.positions[league.sport].length > 2
+                                    ? "..."
+                                    : "")
+                                : "N/A"}
                             </p>
                           </div>
                         </CardContent>

@@ -2,11 +2,11 @@ import React, { useState, useCallback } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 import PersonalInformation from "@/components/player-registration/PersonalInformation";
 import SportsAndPositions from "@/components/player-registration/SportsAndPositions";
-import { positions, sports } from "@/lib/constants";
+// import { positions, sports } from "@/lib/constants";
 import { ConfirmationAndLeagueCode } from "@/components/player-registration/ConfirmationAndLeagueCode";
 import { completeProfileRegistration } from "@/api/user";
 import { uploadImage } from "@/lib/uploadImage";
@@ -58,12 +58,12 @@ export default function PlayerRegistration() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    let profilePositions = [];
-    playerData.sports.forEach((sport) => {
-      if (playerData.positions[sport])
-        profilePositions.push(playerData.positions[sport]);
-    });
-    profilePositions = profilePositions.flatMap((a) => a);
+    // let profilePositions = [];
+    // playerData.sports.forEach((sport) => {
+    //   if (playerData.positions[sport])
+    //     profilePositions.push(playerData.positions[sport]);
+    // });
+    // profilePositions = profilePositions.flatMap((a) => a);
 
     const profileData = {
       ...playerData,
@@ -80,7 +80,7 @@ export default function PlayerRegistration() {
       date_of_birth: profileData.date_of_birth,
       city: profileData.city,
       sports: profileData.sports,
-      positions: profilePositions,
+      positions: profileData.positions,
       avatar_url: url,
     });
 
@@ -204,8 +204,6 @@ export default function PlayerRegistration() {
               <SportsAndPositions
                 playerData={playerData}
                 updatePlayerData={updatePlayerData}
-                sports={sports}
-                positions={positions}
               />
             )}
             {currentStep === 3 && (
@@ -221,15 +219,22 @@ export default function PlayerRegistration() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-accent-orange text-white hover:bg-accent-orange/90"
+                className="flex items-center gap-2 bg-accent-orange text-white hover:bg-accent-orange/90"
                 onClick={handleNext}
                 disabled={loading || cannotProceed}
               >
-                {currentStep === steps.length
-                  ? loading
-                    ? "Loading..."
-                    : "Complete Registration"
-                  : "Next"}
+                {currentStep === steps.length ? (
+                  loading ? (
+                    <>
+                      <Loader2Icon size={14} className="animate-spin" />{" "}
+                      Loading...
+                    </>
+                  ) : (
+                    "Complete Registration"
+                  )
+                ) : (
+                  "Next"
+                )}
               </Button>
             </div>
           </div>

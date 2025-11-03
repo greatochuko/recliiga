@@ -1,4 +1,3 @@
-import { Input } from "../ui/input";
 import { SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -52,7 +51,11 @@ export default function ChatSidebar({
                   alt={chat.user.full_name}
                   className="object-cover"
                 />
-                <AvatarFallback>
+                <AvatarFallback
+                  className={
+                    chat.user.id === activeChat?.user.id ? "bg-gray-200" : ""
+                  }
+                >
                   {/* {chat.user.type === "group" ? (
                     <UsersIcon className="h-5 w-5 text-accent-orange" />
                   ) : (

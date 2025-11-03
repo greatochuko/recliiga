@@ -198,7 +198,15 @@ export default function EventDetails() {
                               </svg>
                             </div>
                             <span className="truncate text-sm text-muted-foreground">
-                              {team.captain?.positions[0] || "Unassigned"}
+                              {team.captain.positions?.[event.league.sport]
+                                ? team.captain.positions[event.league.sport]
+                                    .slice(0, 2)
+                                    .join(", ") +
+                                  (team.captain.positions[event.league.sport]
+                                    .length > 2
+                                    ? "..."
+                                    : "")
+                                : "N/A"}
                             </span>
                           </div>
                         </div>
@@ -226,7 +234,8 @@ export default function EventDetails() {
                                   {player.full_name}
                                 </p>
                                 <span className="truncate text-sm text-muted-foreground">
-                                  {player.positions[0] || "Unassigned"}
+                                  {Object.values(player.positions)?.[0]?.[0] ||
+                                    "Unassigned"}
                                 </span>
                               </div>
                             </div>
@@ -260,7 +269,7 @@ export default function EventDetails() {
                           <div className="flex items-center gap-1">
                             <Link
                               to={`/dashboard/profile/${player.id}`}
-                              className="truncate font-semibold hover:text-accent-orange hover:underline"
+                              className="truncate text-sm font-semibold hover:text-accent-orange hover:underline"
                             >
                               {player.full_name}
                             </Link>
@@ -291,7 +300,17 @@ export default function EventDetails() {
                             </div>
                           </div>
                           <span className="truncate text-sm text-muted-foreground">
-                            {player.positions[0] || "Unassigned"}
+                            <p className="text-xs text-gray-500">
+                              {player.positions?.[event.league.sport]
+                                ? player.positions[event.league.sport]
+                                    .slice(0, 2)
+                                    .join(", ") +
+                                  (player.positions[event.league.sport].length >
+                                  2
+                                    ? "..."
+                                    : "")
+                                : "N/A"}
+                            </p>
                           </span>
                         </div>
                       </div>

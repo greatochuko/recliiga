@@ -7,15 +7,17 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchEventById } from "@/api/events";
 import { ArrowLeftIcon, ChevronLeftIcon } from "lucide-react";
 import FullScreenLoader from "@/components/FullScreenLoader";
-import { TeamType } from "@/types/events";
+import { EventType, TeamType } from "@/types/events";
 import { UserType } from "@/contexts/AuthContext";
 import { getInitials } from "@/lib/utils";
 
 function TeamRoster({
   team,
   attendance,
+  event,
 }: {
   team: TeamType;
+  event: EventType;
   attendance: UserType[];
 }) {
   return (
@@ -26,7 +28,7 @@ function TeamRoster({
         </h3>
       </div>
       <div className="space-y-4">
-        <div className="flex items-center gap-4 rounded-lg bg-gray-100 p-2 transition-colors hover:bg-gray-200">
+        <div className="flex items-center gap-4 rounded-lg bg-gray-100 p-2 text-sm transition-colors hover:bg-gray-200">
           <Avatar className="h-12 w-12">
             <AvatarImage
               src={team.captain.avatar_url}
@@ -59,7 +61,14 @@ function TeamRoster({
               </svg>
             </div>
             <span className="text-sm text-muted-foreground">
-              {team.captain.positions[0]}
+              {team.captain.positions?.[event.league.sport]
+                ? team.captain.positions[event.league.sport]
+                    .slice(0, 2)
+                    .join(", ") +
+                  (team.captain.positions[event.league.sport].length > 2
+                    ? "..."
+                    : "")
+                : "N/A"}
             </span>
           </div>
           <Badge
@@ -79,7 +88,7 @@ function TeamRoster({
           .map((player) => (
             <div
               key={player.id}
-              className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-100"
+              className="flex items-center gap-4 rounded-lg p-2 text-sm transition-colors hover:bg-gray-100"
             >
               <Avatar className="h-12 w-12">
                 <AvatarImage src={player.avatar_url} alt={player.full_name} />
@@ -93,7 +102,14 @@ function TeamRoster({
                   {player.full_name}
                 </Link>
                 <p className="text-sm text-muted-foreground">
-                  {player.positions[0]}
+                  {player.positions?.[event.league.sport]
+                    ? player.positions[event.league.sport]
+                        .slice(0, 2)
+                        .join(", ") +
+                      (player.positions[event.league.sport].length > 2
+                        ? "..."
+                        : "")
+                    : "N/A"}
                 </p>
               </div>
               <Badge
@@ -213,9 +229,12 @@ export default function EventResults() {
                     })}
                   </span>
                   <span className="text-gray-500">{event.location}</span>
-                  <span className="font-bold text-accent-orange">
+                  <Link
+                    to={`/dashboard/leagues/${event.leagueId}`}
+                    className="font-bold text-accent-orange hover:underline"
+                  >
                     {event.league.name}
-                  </span>
+                  </Link>
                 </div>
                 <span className="text-2xl font-bold">vs</span>
               </div>
@@ -267,10 +286,12 @@ export default function EventResults() {
               <h2 className="mb-4 text-2xl font-bold">Attendance</h2>
               <div className="grid gap-8 border-t pt-4 md:grid-cols-2">
                 <TeamRoster
+                  event={event}
                   team={event.teams[0]}
                   attendance={event.result.attendingPlayers}
                 />
                 <TeamRoster
+                  event={event}
                   team={event.teams[1]}
                   attendance={event.result.attendingPlayers}
                 />

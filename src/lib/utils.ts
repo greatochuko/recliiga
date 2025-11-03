@@ -49,7 +49,7 @@ export async function fetchApi<T>(
 
 export function getUpcomingEvents(events: EventType[]) {
   return events
-    .filter((event) => !isPast(event.startTime))
+    .filter((event) => !isPast(event.endTime))
     .sort(
       (a, b) =>
         new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
@@ -58,7 +58,7 @@ export function getUpcomingEvents(events: EventType[]) {
 
 export function getPastEvents(events: EventType[]) {
   return events
-    .filter((event) => isPast(event.startTime))
+    .filter((event) => isPast(event.endTime))
     .sort(
       (a, b) =>
         new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),

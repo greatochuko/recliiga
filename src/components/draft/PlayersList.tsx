@@ -60,7 +60,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 text-sm">
                       <p className="font-medium group-hover:text-accent-orange group-hover:underline">
                         {player.full_name}
                       </p>
@@ -69,7 +69,14 @@ export const PlayersList: React.FC<PlayersListProps> = ({
                       />
                     </div>
                     <p className="text-sm text-gray-500">
-                      {player.positions[0]}
+                      {player.positions?.[event.league.sport]
+                        ? player.positions[event.league.sport]
+                            .slice(0, 2)
+                            .join(", ") +
+                          (player.positions[event.league.sport].length > 2
+                            ? "..."
+                            : "")
+                        : "N/A"}
                     </p>
                   </div>
                 </Link>

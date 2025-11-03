@@ -19,7 +19,7 @@ export type ProfileRegistrationDataType = {
   date_of_birth: string;
   city: string;
   sports: string[];
-  positions: string[];
+  positions: Record<string, string[]>;
   avatar_url: string;
 };
 

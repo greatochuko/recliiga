@@ -8,6 +8,8 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 import { updateUser } from "@/api/user";
 import { uploadImage } from "@/lib/uploadImage";
 import PageHeader from "@/components/PageHeader";
+import SportsAndPositions from "@/components/player-registration/SportsAndPositions";
+import { PlayerProfile } from "./PlayerRegistration";
 
 interface ProfileFormData {
   full_name: string;
@@ -15,6 +17,8 @@ interface ProfileFormData {
   city: string;
   phone: string;
   avatar_url?: string;
+  sports: string[];
+  positions: Record<string, string[]>;
 }
 
 export default function Profile() {
@@ -28,7 +32,11 @@ export default function Profile() {
     city: user.city || "",
     phone: user.phone || "",
     avatar_url: user.avatar_url || "",
+    sports: user.sports || [],
+    positions: user.positions || {},
   });
+
+  console.log();
 
   const handleUpdateUser = async () => {
     try {
@@ -75,6 +83,13 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  function updatePlayerData(data: Partial<PlayerProfile>) {
+    setFormData((prev) => ({
+      ...prev,
+      ...data,
+    }));
+  }
+
   return (
     <main className="relative flex flex-1 flex-col gap-6 bg-background">
       <PageHeader title="Profile" />
@@ -98,6 +113,46 @@ export default function Profile() {
             loading={loading}
             onChange={handleFormChange}
           />
+
+          <div className="mt-6 flex flex-col gap-6 text-sm">
+            {!isEditing ? (
+              <>
+                <div>
+                  <span className="font-medium">Sports: </span>
+                  {formData?.sports?.length > 0
+                    ? formData.sports.join(", ")
+                    : "None selected"}
+                </div>
+                <div>
+                  <span className="font-medium">Positions: </span>
+                  {formData?.positions &&
+                  Object.keys(formData.positions).length > 0 ? (
+                    <ul className="list-inside list-disc pl-4">
+                      {Object.entries(formData.positions).map(
+                        ([sport, sportPositions]) => (
+                          <li key={sport}>
+                            <span className="font-medium text-gray-500">
+                              {sport}:{" "}
+                            </span>
+                            {sportPositions.length > 0
+                              ? sportPositions.join(", ")
+                              : "None selected"}
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  ) : (
+                    <span>None selected</span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <SportsAndPositions
+                playerData={formData}
+                updatePlayerData={updatePlayerData}
+              />
+            )}
+          </div>
         </div>
       </div>
     </main>

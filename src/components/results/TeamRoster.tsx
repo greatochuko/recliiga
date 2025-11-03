@@ -1,10 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Crown } from "lucide-react";
-import { TeamType } from "@/types/events";
+import { EventType, TeamType } from "@/types/events";
 import { getInitials } from "@/lib/utils";
 
 interface TeamRosterProps {
+  event: EventType;
   team: TeamType;
   attendingPlayers: string[];
   setAttendingPlayers: React.Dispatch<React.SetStateAction<string[]>>;
@@ -12,6 +13,7 @@ interface TeamRosterProps {
 
 export function TeamRoster({
   team,
+  event,
   attendingPlayers: attendance,
   setAttendingPlayers: setAttendance,
 }: TeamRosterProps) {
@@ -84,7 +86,14 @@ export function TeamRoster({
               <Crown className="h-4 w-4 text-accent-orange" />
             </div>
             <span className="text-sm text-muted-foreground">
-              {team.captain.positions[0]}
+              {team.captain.positions?.[event.league.sport]
+                ? team.captain.positions[event.league.sport]
+                    .slice(0, 2)
+                    .join(", ") +
+                  (team.captain.positions[event.league.sport].length > 2
+                    ? "..."
+                    : "")
+                : "N/A"}
             </span>
           </div>
           <Checkbox
@@ -106,7 +115,14 @@ export function TeamRoster({
             <div className="flex-1">
               <span className="font-semibold">{player.full_name}</span>
               <p className="text-sm text-muted-foreground">
-                {player.positions[0]}
+                {player.positions?.[event.league.sport]
+                  ? player.positions[event.league.sport]
+                      .slice(0, 2)
+                      .join(", ") +
+                    (player.positions[event.league.sport].length > 2
+                      ? "..."
+                      : "")
+                  : "N/A"}
               </p>
             </div>
             <Checkbox

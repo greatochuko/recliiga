@@ -66,7 +66,7 @@ export default function RateTeammatesByEvent() {
             <RatingDialog
               key={player.id}
               player={player}
-              eventId={event.id}
+              event={event}
               setTeammates={setTeammates}
             />
           ))}

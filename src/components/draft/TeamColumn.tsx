@@ -284,7 +284,14 @@ export const TeamColumn: React.FC<TeamColumnProps> = ({
                       <div>
                         <p className="font-medium">{player.full_name}</p>
                         <p className="text-sm text-gray-500">
-                          {player.positions[0]}
+                          {player.positions?.[event.league.sport]
+                            ? player.positions[event.league.sport]
+                                .slice(0, 2)
+                                .join(", ") +
+                              (player.positions[event.league.sport].length > 2
+                                ? "..."
+                                : "")
+                            : "N/A"}
                         </p>
                       </div>
                     </div>

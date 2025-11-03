@@ -1,7 +1,8 @@
-import { TeamType } from "@/types/events";
+import { EventType, TeamType } from "@/types/events";
 import { TeamRoster } from "./TeamRoster";
 
 interface TeamsAttendanceProps {
+  event: EventType;
   teams: TeamType[];
   attendingPlayers: string[];
   setAttendingPlayers: React.Dispatch<React.SetStateAction<string[]>>;
@@ -9,6 +10,7 @@ interface TeamsAttendanceProps {
 }
 
 export function TeamsAttendance({
+  event,
   teams,
   attendingPlayers,
   setAttendingPlayers,
@@ -26,6 +28,7 @@ export function TeamsAttendance({
     <div className="grid gap-8 border-t pt-8 md:grid-cols-2">
       {teams.map((team) => (
         <TeamRoster
+          event={event}
           key={team.id}
           team={team}
           attendingPlayers={attendingPlayers}

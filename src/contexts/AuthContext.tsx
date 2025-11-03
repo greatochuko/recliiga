@@ -14,7 +14,7 @@ export type UserType = {
   ratings: UserRatingType[];
   nickname: string | null;
   phone: string | null;
-  positions: string[] | null;
+  positions: Record<string, string[]> | null;
   role: string | null;
   sports: string[] | null;
   updated_at: string;

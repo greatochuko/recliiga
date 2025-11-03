@@ -1,6 +1,7 @@
 import { EventType } from "@/types/events";
 import { format } from "date-fns";
 import { Calendar, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface EventHeaderProps {
   event: EventType;
@@ -25,9 +26,12 @@ export function EventHeader({ event, type }: EventHeaderProps) {
         <MapPin className="mr-2 h-4 w-4 text-gray-500" />
         <span className="text-xs text-gray-500">{event.location}</span>
       </div>
-      <span className="text-xs font-bold text-accent-orange">
+      <Link
+        to={`/dashboard/leagues/${event.league.id}`}
+        className="text-xs font-bold text-accent-orange hover:underline"
+      >
         {event.league.name}
-      </span>
+      </Link>
     </div>
   );
 }

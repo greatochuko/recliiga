@@ -190,6 +190,7 @@ export default function EditResults() {
             <TeamsAttendance
               captainSelected={captainSelected}
               teams={event.teams}
+              event={event}
               attendingPlayers={attendingPlayers}
               setAttendingPlayers={setAttendingPlayers}
             />

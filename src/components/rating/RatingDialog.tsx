@@ -6,15 +6,16 @@ import ModalContainer from "../ModalContainer";
 import { Link } from "react-router-dom";
 import { rateTeammate } from "@/api/events";
 import { getInitials } from "@/lib/utils";
+import { EventType } from "@/types/events";
 
 interface RatingDialogProps {
-  eventId: string;
+  event: EventType;
   player: UserType;
   setTeammates: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 export function RatingDialog({
-  eventId,
+  event,
   player,
   setTeammates,
 }: RatingDialogProps) {
@@ -29,13 +30,15 @@ export function RatingDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await rateTeammate(eventId, player.id, rating);
+    const { error } = await rateTeammate(event.id, player.id, rating);
     if (!error) {
       setTeammates((prev) => prev.filter((tm) => tm.id !== player.id));
       setIsOpen(false);
     }
     setLoading(false);
   };
+
+  console.log();
 
   return (
     <>
@@ -59,7 +62,16 @@ export function RatingDialog({
             )}
             <div className="ml-2">
               <p className="font-medium">{player.full_name}</p>
-              <p className="text-xs text-neutral-500">{player.positions[0]}</p>
+              <p className="text-xs text-neutral-500">
+                {player.positions?.[event.league.sport]
+                  ? player.positions[event.league.sport]
+                      .slice(0, 2)
+                      .join(", ") +
+                    (player.positions[event.league.sport].length > 2
+                      ? "..."
+                      : "")
+                  : "N/A"}
+              </p>
             </div>
           </div>
           <div className="flex items-center rounded bg-orange-500 px-1 py-0.5">
@@ -98,7 +110,12 @@ export function RatingDialog({
             >
               {player.full_name}
             </Link>
-            <p className="text-neutral-600">{player.positions[0]}</p>
+            <p className="text-neutral-600">
+              {player.positions?.[event.league.sport]
+                ? player.positions[event.league.sport].slice(0, 2).join(", ") +
+                  (player.positions[event.league.sport].length > 2 ? "..." : "")
+                : "N/A"}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

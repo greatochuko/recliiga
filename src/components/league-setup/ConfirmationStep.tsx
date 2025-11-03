@@ -59,12 +59,12 @@ export function ConfirmationStep({
                 })}
               </dd>
             </div>
-            <div>
+            {/* <div>
               <dt className="text-sm font-medium text-gray-500">League Code</dt>
               <dd className="mt-1 text-sm capitalize text-gray-900">
                 {leagueData.leagueCode}
               </dd>
-            </div>
+            </div> */}
             {/* <div>
               <dt className="text-sm font-medium text-gray-500">
                 Total Events
