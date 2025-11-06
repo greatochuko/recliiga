@@ -42,6 +42,7 @@ export interface EventType {
   draftType: "alternating" | "snake";
   resultsEntered: boolean;
   players: UserType[];
+  unAttendingPlayers: UserType[];
   result?: ResultType;
 }
 

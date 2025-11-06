@@ -12,7 +12,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center">
+    <div className="flex flex-1 flex-col items-center justify-center text-center">
       <h1 className="text-6xl font-bold text-accent-orange">404</h1>
       <p className="mt-4 text-lg font-semibold text-gray-700">Page Not Found</p>
       <p className="mt-2 text-sm text-gray-500">

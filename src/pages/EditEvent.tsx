@@ -248,7 +248,7 @@ export default function EditEvent() {
   }
 
   if (event.creatorId !== user.id) {
-    return <Navigate to={"/manage-events"} replace />;
+    return <Navigate to={"/dashboard/manage-events"} replace />;
   }
 
   const eventStartHour = new Date(eventData.startTime).getHours();

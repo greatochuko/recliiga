@@ -19,11 +19,13 @@ export default function EventCard({
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [attendanceStatus, setAttendanceStatus] = useState<
-    "attending" | "not-attending"
+    "attending" | "neutral" | "not-attending"
   >(
     event.players.some((player) => player.id === user?.id)
       ? "attending"
-      : "not-attending",
+      : event.unAttendingPlayers.some((player) => player.id === user?.id)
+        ? "not-attending"
+        : "neutral",
   );
 
   return (

@@ -252,77 +252,154 @@ export default function EventDetails() {
                   </div>
                 </div>
               ) : (
-                <div className="border-t pt-8">
-                  <h3 className="mb-4 text-lg font-semibold">
-                    Attending Players ({event.players.length})
-                  </h3>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                    {event.players.map((player) => (
-                      <div
-                        key={player.id}
-                        className="flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
-                      >
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage
-                            src={player.avatar_url}
-                            alt={player.full_name}
-                            className="object-cover"
-                          />
-                          <AvatarFallback>
-                            {getInitials(player.full_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1">
-                            <Link
-                              to={`/dashboard/profile/${player.id}`}
-                              className="truncate text-sm font-semibold hover:text-accent-orange hover:underline"
-                            >
-                              {player.full_name}
-                            </Link>
-                            {event.teams.some(
-                              (team) => team.captainId === player.id,
-                            ) && (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="h-4 w-4 text-accent-orange"
+                <div className="flex flex-col md:flex-row">
+                  <div className="flex-1 border-t pt-8">
+                    <h3 className="mb-4 text-lg font-semibold">
+                      Attending Players ({event.players.length})
+                    </h3>
+                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4">
+                      {event.players.map((player) => (
+                        <div
+                          key={player.id}
+                          className="flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={player.avatar_url}
+                              alt={player.full_name}
+                              className="object-cover"
+                            />
+                            <AvatarFallback>
+                              {getInitials(player.full_name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1">
+                              <Link
+                                to={`/dashboard/profile/${player.id}`}
+                                className="truncate text-sm font-semibold hover:text-accent-orange hover:underline"
                               >
-                                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
-                              </svg>
-                            )}
-                            <div className="ml-1">
-                              <StarRating
-                                rating={getUserRating(
-                                  event.leagueId,
-                                  player.ratings,
-                                )}
-                                displayValue
+                                {player.full_name}
+                              </Link>
+                              {event.teams.some(
+                                (team) => team.captainId === player.id,
+                              ) && (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="h-4 w-4 text-accent-orange"
+                                >
+                                  <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                                </svg>
+                              )}
+                              <div className="ml-1">
+                                <StarRating
+                                  rating={getUserRating(
+                                    event.leagueId,
+                                    player.ratings,
+                                  )}
+                                  displayValue
+                                />
+                              </div>
+                            </div>
+                            <span className="truncate text-sm text-muted-foreground">
+                              <p className="text-xs text-gray-500">
+                                {player.positions?.[event.league.sport]
+                                  ? player.positions[event.league.sport]
+                                      .slice(0, 2)
+                                      .join(", ") +
+                                    (player.positions[event.league.sport]
+                                      .length > 2
+                                      ? "..."
+                                      : "")
+                                  : "N/A"}
+                              </p>
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {
+                    <div className="flex-1 border-t pt-8">
+                      <h3 className="mb-4 text-lg font-semibold">
+                        Players Not Attending ({event.unAttendingPlayers.length}
+                        )
+                      </h3>
+                      <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4">
+                        {event.unAttendingPlayers.map((player) => (
+                          <div
+                            key={player.id}
+                            className="flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-gray-50"
+                          >
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage
+                                src={player.avatar_url}
+                                alt={player.full_name}
+                                className="object-cover"
                               />
+                              <AvatarFallback>
+                                {getInitials(player.full_name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1">
+                                <Link
+                                  to={`/dashboard/profile/${player.id}`}
+                                  className="truncate text-sm font-semibold hover:text-accent-orange hover:underline"
+                                >
+                                  {player.full_name}
+                                </Link>
+                                {event.teams.some(
+                                  (team) => team.captainId === player.id,
+                                ) && (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-4 w-4 text-accent-orange"
+                                  >
+                                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                                  </svg>
+                                )}
+                                <div className="ml-1">
+                                  <StarRating
+                                    rating={getUserRating(
+                                      event.leagueId,
+                                      player.ratings,
+                                    )}
+                                    displayValue
+                                  />
+                                </div>
+                              </div>
+                              <span className="truncate text-sm text-muted-foreground">
+                                <p className="text-xs text-gray-500">
+                                  {player.positions?.[event.league.sport]
+                                    ? player.positions[event.league.sport]
+                                        .slice(0, 2)
+                                        .join(", ") +
+                                      (player.positions[event.league.sport]
+                                        .length > 2
+                                        ? "..."
+                                        : "")
+                                    : "N/A"}
+                                </p>
+                              </span>
                             </div>
                           </div>
-                          <span className="truncate text-sm text-muted-foreground">
-                            <p className="text-xs text-gray-500">
-                              {player.positions?.[event.league.sport]
-                                ? player.positions[event.league.sport]
-                                    .slice(0, 2)
-                                    .join(", ") +
-                                  (player.positions[event.league.sport].length >
-                                  2
-                                    ? "..."
-                                    : "")
-                                : "N/A"}
-                            </p>
-                          </span>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  }
                 </div>
               )}
             </div>

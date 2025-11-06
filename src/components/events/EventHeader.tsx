@@ -6,7 +6,7 @@ import { format } from "date-fns";
 
 interface EventHeaderProps {
   event: EventType;
-  attendanceStatus: "attending" | "not-attending" | null;
+  attendanceStatus: "attending" | "not-attending" | "neutral" | null;
   isPastEvent: boolean;
   spotsLeft: number;
 }

@@ -13,10 +13,12 @@ interface EventActionsProps {
   spotsLeft: number;
   setSpotsRemaining: React.Dispatch<React.SetStateAction<number>>;
   isPastEvent?: boolean;
-  attendanceStatus: "attending" | "not-attending" | null;
+  attendanceStatus: "attending" | "not-attending" | "neutral" | null;
   isEditing: boolean;
   setIsEditing: (editing: boolean) => void;
-  setAttendanceStatus: (status: "attending" | "not-attending" | null) => void;
+  setAttendanceStatus: (
+    status: "attending" | "not-attending" | "neutral" | null,
+  ) => void;
 }
 
 export const EventActions: React.FC<EventActionsProps> = ({
