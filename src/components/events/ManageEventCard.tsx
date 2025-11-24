@@ -112,7 +112,7 @@ export default function ManageEventCard({
         </div>
 
         <div className="mt-4 flex flex-wrap justify-center gap-2">
-          {!isRsvpOpen &&
+          {isRsvpOpen &&
             !event.resultsEntered &&
             eventStatus === "upcoming" && (
               <Link to={`/dashboard/${event.id}/select-captains`}>
